@@ -1,4 +1,7 @@
+// NextJS Imports
 import type { AppProps } from "next/app";
+
+// Stylesheet Imports
 import { ThemeProvider, DefaultTheme } from "styled-components";
 import GlobalStyle from "../components/globalstyles";
 
