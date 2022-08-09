@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
-import { Container } from "../components/sharedstyles";
+import Layout from "./Layout";
 import Home from "@components/Home";
 
 const Index: NextPage = () => {
   return (
-    <Container>
+    <Layout>
       <Home />
-    </Container>
+    </Layout>
   );
 };
 
