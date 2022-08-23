@@ -1,5 +1,4 @@
 const defaultTheme = require("tailwindcss/defaultTheme");
-const colors = require("tailwindcss/colors");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -21,8 +20,8 @@ module.exports = {
         mediumGray: "#838383",
       },
       fontFamily: {
-        sans: ["Inter", ...defaultTheme.fontFamily.sans],
-        heading: ["Poppins", ...defaultTheme.fontFamily.serif],
+        inter: ["Inter", ...defaultTheme.fontFamily.sans],
+        spaceGrotesk: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
       },
     },
   },
