@@ -11,7 +11,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: colors.indigo,
+        baseBlue: "#000E23",
+        baseBlueMid: "#001A42",
+        baseBlueDark: "#01050D",
+        primaryBlue: "#3780FF",
+        primaryWhite: "#EEF1FC",
+        blueSilver: "#E2E8FF",
+        bodyGray: "#EEF1FC",
+        mediumGray: "#838383",
       },
       fontFamily: {
         sans: ["Inter", ...defaultTheme.fontFamily.sans],
@@ -21,18 +28,3 @@ module.exports = {
   },
   plugins: [],
 };
-
-/* 
-const theme = {
-  dark: {
-    baseBlue: "#000E23",
-    baseBlueMid: "#001A42",
-    baseBlueDark: "01050D",
-    primaryBlue: "3780FF",
-    primaryWhite: "3780FF",
-  },
-  light: {},
-};
-
-export default theme;
-*/
