@@ -20,7 +20,9 @@ export default function Header() {
           target="_blank"
           rel="noreferrer"
         >
-          <Button>List your protocol</Button>
+          <Button type="secondary" size="small">
+            List your protocol
+          </Button>
         </a>
         <button
           className="h-max cursor-pointer"
