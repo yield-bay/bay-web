@@ -8,7 +8,6 @@ const Home = () => {
   useEffect(() => {
     fetchListicleFarms().then((res: any) => {
       setFarms(res.farms);
-      console.log("farms", res.farms);
     });
   }, []);
 
