@@ -24,8 +24,7 @@ const Home = () => {
         <div>
           {/* Listicle Table */}
           <div>
-            <p>Table Listicle</p>
-            {/* <div>{farms}</div> */}
+            <p className="text-white">Table Listicle</p>
           </div>
         </div>
       </main>

@@ -20,7 +20,7 @@ export default function Header() {
           target="_blank"
           rel="noreferrer"
         >
-          <Button type="secondary" size="small">
+          <Button type="primary" size="small">
             List your protocol
           </Button>
         </a>
