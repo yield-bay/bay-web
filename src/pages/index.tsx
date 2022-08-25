@@ -6,7 +6,6 @@ import Header from "@components/Header";
 const Index: NextPage = () => {
   return (
     <Layout>
-      <Header />
       <Home />
     </Layout>
   );
