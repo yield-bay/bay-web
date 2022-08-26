@@ -75,14 +75,17 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
         <div className="inline-block min-w-full align-middle md:px-0 lg:px-8 lg:py-0">
           {farms.length > 0 ? (
             <div className="overflow-hidden">
-              <table className="min-w-full dark:divide-neutral-600 text-baseBlue dark:text-white">
-                <thead className="bg-white transition duration-200 font-bold text-base leading-5">
+              <table className="min-w-full text-baseBlue dark:text-white">
+                <thead className="transition duration-200 font-bold text-base leading-5">
                   <tr>
                     <th
                       scope="col"
                       className="pt-9 pb-6 pl-4 pr-3 text-left sm:pl-6"
                     >
                       <span>Farm</span>
+                    </th>
+                    <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
+                      <span className="sr-only">Farm Assets</span>
                     </th>
                     <th
                       scope="col"
@@ -139,15 +142,18 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                         </Tooltip>
                       </div>
                     </th>
-                    <th
+                    {/* <th
                       scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-6"
+                      className="px-3 pt-9 pb-6 text-left cursor-pointer"
                     >
+                      <span>Rewards</span>
+                    </th> */}
+                    <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
                       <span className="sr-only">Go to farm</span>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600 bg-white dark:bg-neutral-800 transition duration-200">
+                <tbody className="divide-y divide-neutral-200 dark:divide-neutral-600 transition duration-200">
                   <FarmsList farms={sortedFarms} />
                 </tbody>
               </table>

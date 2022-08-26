@@ -58,7 +58,7 @@ const Home = () => {
             </div>
           </div>
           {/* Listicle Table */}
-          <div className="px-4 sm:px-6 md:px-28 bg-white">
+          <div className="px-4 sm:px-6 md:px-28 bg-white dark:bg-baseBlue transition duration-200">
             <ListicleTable farms={farms} noResult={false} />
           </div>
         </div>
