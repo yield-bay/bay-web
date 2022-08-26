@@ -6,6 +6,8 @@ import { fetchListicleFarms } from "@utils/api";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import ListicleTable from "./ListicleTable";
 import { SearchIcon } from "@heroicons/react/solid";
+import FarmStats from "@components/Library/FarmStats";
+import { protocolCount, tvlCount } from "@utils/statsMethods";
 
 const Home = () => {
   const router = useRouter();
@@ -31,11 +33,11 @@ const Home = () => {
       </Head>
       <main>
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
-        <div className="flex flex-col flex-1 ">
+        <div className="flex flex-col flex-1">
           {/* HERO SECTION */}
           <div>
             {/* Center Container */}
-            <div className="mx-auto max-w-3xl py-[60px] ">
+            <div className="mx-auto max-w-3xl py-[60px]">
               <h1 className="font-spaceGrotesk font-medium text-4xl leading-[46px] text-center text-white">
                 Discover yield oppurtunities across multiple protocols and
                 parachains on Polkadot and Kusama
@@ -48,6 +50,11 @@ const Home = () => {
                   className="w-full py-[11px] px-5 max-w-[480px] text-baseBlue bg-blueSilver font-semibold text-lg leading-[22px] rounded-lg"
                 />
               </div>
+              <FarmStats
+                totalTVL={tvlCount(farms)}
+                totalFarms={farms.length}
+                totalProtocols={protocolCount(farms)}
+              />
             </div>
           </div>
           {/* Listicle Table */}

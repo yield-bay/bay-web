@@ -55,7 +55,3 @@ export function isCritical(id: number, chef: string): boolean {
   });
   return state.includes(true);
 }
-
-export function protocolCount(farms: any): number {
-  return new Set(farms.map((farm: any) => farm?.protocol)).size;
-}
