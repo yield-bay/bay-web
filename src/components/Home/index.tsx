@@ -35,11 +35,11 @@ const Home = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="flex flex-col flex-1">
           {/* HERO SECTION */}
-          <div>
+          <div className="px-6">
             {/* Center Container */}
-            <div className="mx-auto max-w-3xl py-[60px]">
-              <h1 className="font-spaceGrotesk font-medium text-4xl leading-[46px] text-center text-white">
-                Discover yield oppurtunities across multiple protocols and
+            <div className="mx-auto max-w-lg md:max-w-2xl py-11 md:py-[60px]">
+              <h1 className="font-spaceGrotesk font-medium text-2xl sm:text-3xl md:text-4xl leading-8 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:bg-gradient-to-b from-[#ACCDFF] to-white">
+                Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>
               {/* Replace this with React-Select */}
@@ -47,7 +47,7 @@ const Home = () => {
                 <input
                   type="text"
                   placeholder="search by token, chain or protocol name"
-                  className="w-full py-[11px] px-5 max-w-[480px] text-baseBlue bg-blueSilver font-semibold text-lg leading-[22px] rounded-lg"
+                  className="w-full sm:w-4/5  md:w-full py-[11px] px-5 max-w-[480px] text-baseBlue bg-blueSilver font-semibold text-sm md:text-lg leading-[22px] rounded-lg"
                 />
               </div>
               <FarmStats
