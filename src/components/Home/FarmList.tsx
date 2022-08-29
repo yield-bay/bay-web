@@ -16,6 +16,7 @@ import Button from "@components/Library/Button";
 import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
 import ShareFarm from "@components/Library/ShareFarm";
+import YieldBreakdown from "@components/Library/YieldBreakdown";
 
 const FarmsList = ({ farms }: any) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -54,8 +55,14 @@ const FarmsList = ({ farms }: any) => {
             <td className="whitespace-nowrap py-8 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               {toDollarFormat(farm?.tvl)}
             </td>
-            <td className="whitespace-nowrap py-8 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
-              {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+            <td className="whitespace-nowrap py-8 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+              <div className="w-full inline-flex items-center gap-x-2">
+                {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+                <YieldBreakdown
+                  base={farm?.apr.base}
+                  reward={farm?.apr.reward}
+                />
+              </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">

@@ -4,6 +4,7 @@ import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
+import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
 // import { trackEventWithProperty } from "@utils/analytics";
 
 enum Order {
@@ -130,8 +131,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                           onButtonClick={() => handleSort("yield", true)}
                         >
                           <div>
-                            <span>Yield</span>
-                            {/* <QuestionMarkCircleIcon className="w-4 h-4 ml-1 text-neutral-500 dark:text-neutral-400" /> */}
+                            <span>APR</span>
                             {sortStatus.key == "yield" &&
                               (sortStatus.order == Order.DESC ? (
                                 <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
