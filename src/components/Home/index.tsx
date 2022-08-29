@@ -88,7 +88,17 @@ const Home = () => {
             {!idQuery ? (
               <ListicleTable farms={farms} noResult={false} />
             ) : (
-              <ListicleTable farms={specificFarm} noResult={false} />
+              <>
+                <ListicleTable farms={specificFarm} noResult={false} />
+                <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
+                  <div
+                    className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-default"
+                    onClick={() => router.push("/")}
+                  >
+                    Go to home
+                  </div>
+                </div>
+              </>
             )}
           </div>
         </div>
