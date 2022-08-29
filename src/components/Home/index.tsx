@@ -84,7 +84,7 @@ const Home = () => {
             )}
           </div>
           {/* Listicle Table */}
-          <div className="px-4 sm:px-6 md:px-28 bg-white dark:bg-baseBlueDark transition duration-200">
+          <div className="bg-white dark:bg-baseBlueDark transition duration-200">
             {!idQuery ? (
               <ListicleTable farms={farms} noResult={false} />
             ) : (

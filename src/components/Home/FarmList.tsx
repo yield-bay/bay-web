@@ -27,9 +27,9 @@ const FarmsList = ({ farms }: any) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`}>
-            <td className="whitespace-nowrap py-8 pl-4 pr-3 text-sm sm:pl-4">
-              <div className="flex items-center">
-                <div className="ml-1.5 flex flex-col gap-y-[10px]">
+            <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
+              <div>
+                <div className="flex flex-col gap-y-[10px]">
                   <div className="flex flex-row items-center">
                     <div className="dark:text-blueSilver font-bold text-base leading-5">
                       {tokenNames.map((tokenName, index) => (
@@ -57,8 +57,8 @@ const FarmsList = ({ farms }: any) => {
             <td className="whitespace-nowrap py-8 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
             </td>
-            <td className="whitespace-nowrap py-4 px-0 sm:px-0 text-right text-sm font-medium">
-              <div className="relative flex flex-row gap-x-3 items-center justify-start lg:justify-center">
+            <td className="whitespace-nowrap max-w-[288px] py-4 pr-6 lg:pr-14 text-right text-sm font-medium">
+              <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">
                 <div className="text-center">
                   <ShareFarm
                     farm={farm}
