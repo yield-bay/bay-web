@@ -3,16 +3,25 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 // import { trackPageview } from "fathom-client";
 import { fetchListicleFarms } from "@utils/api";
-import useFilteredFarms from "@hooks/useFilteredFarms";
+// import useFilteredFarms from "@hooks/useFilteredFarms";
+import useSpecificFarm from "@hooks/useSpecificFarm";
 import ListicleTable from "./ListicleTable";
-import { SearchIcon } from "@heroicons/react/solid";
 import FarmStats from "@components/Library/FarmStats";
 import { protocolCount, tvlCount } from "@utils/statsMethods";
+import { XIcon } from "@heroicons/react/outline";
+import Tooltip from "@components/Library/Tooltip";
 
 const Home = () => {
   const router = useRouter();
   const [farms, setFarms] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [farmQuery, setFarmQuery] = useState<string | string[] | undefined>();
+  const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
+  const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
+
+  useEffect(() => {
+    setFarmQuery(router.query.farm);
+    setIdQuery(router.query.id);
+  }, [router]);
 
   useEffect(() => {
     fetchListicleFarms().then((res: any) => {
@@ -56,10 +65,31 @@ const Home = () => {
                 totalProtocols={protocolCount(farms)}
               />
             </div>
+            {idQuery && (
+              <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base text-white leading-5">
+                <p>
+                  Showing Yield Farm with address{" "}
+                  <span className="font-bold">{farmQuery}</span> and pool ID:{" "}
+                  <span className="font-bold">{idQuery}</span>
+                </p>
+                <Tooltip content="back to all farms">
+                  <button
+                    onClick={() => router.push("/")}
+                    className="cursor-default transition-all duration-150"
+                  >
+                    <XIcon className="ml-2 w-4 text-blueSilver dark:text-[#999999]" />
+                  </button>
+                </Tooltip>
+              </div>
+            )}
           </div>
           {/* Listicle Table */}
-          <div className="px-4 sm:px-6 md:px-28 bg-white dark:bg-baseBlue transition duration-200">
-            <ListicleTable farms={farms} noResult={false} />
+          <div className="px-4 sm:px-6 md:px-28 bg-white dark:bg-baseBlueDark transition duration-200">
+            {!idQuery ? (
+              <ListicleTable farms={farms} noResult={false} />
+            ) : (
+              <ListicleTable farms={specificFarm} noResult={false} />
+            )}
           </div>
         </div>
       </main>

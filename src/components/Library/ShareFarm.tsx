@@ -98,13 +98,13 @@ const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
                   ])}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={() =>
-                    trackEventWithProperty("farm-share", {
-                      shareVia: "twitter",
-                      farmAddress: farm.asset?.address,
-                      farmId: farm.id,
-                    })
-                  }
+                  // onClick={() =>
+                  //   trackEventWithProperty("farm-share", {
+                  //     shareVia: "twitter",
+                  //     farmAddress: farm.asset?.address,
+                  //     farmId: farm.id,
+                  //   })
+                  // }
                 >
                   <span className="sr-only">Share on Twitter</span>
                   <svg
