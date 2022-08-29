@@ -15,6 +15,7 @@ import Tooltip from "@components/Library/Tooltip";
 import Button from "@components/Library/Button";
 import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
+import ShareFarm from "@components/Library/ShareFarm";
 
 const FarmsList = ({ farms }: any) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -57,31 +58,26 @@ const FarmsList = ({ farms }: any) => {
               {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
             </td>
             <td className="whitespace-nowrap py-4 px-0 sm:px-0 text-right text-sm font-medium">
-              <div className="relative flex items-center justify-start lg:justify-center">
-                {/* <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                  <button
-                    className="inline-flex items-center duration-50 rounded bg-indigo-50 dark:bg-indigo-300 px-5 py-2 transition-all duration-200 hover:shadow-lg font-semibold text-indigo-500 dark:text-indigo-800 active:bg-indigo-200 hover:ring-2 ring-indigo-400 dark:hover:bg-indigo-200 dark:active:bg-indigo-300"
+              <div className="relative flex flex-row gap-x-3 items-center justify-start lg:justify-center">
+                <div className="text-center">
+                  <ShareFarm
+                    farm={farm}
+                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
+                  />
+                </div>
+                <a href={farmURL(farm)} target="_blank" rel="noreferrer">
+                  <Button
+                    type="secondary"
+                    size="large"
                     // onClick={() =>
                     //   trackEventWithProperty("go-to-farm", {
                     //     protocol: farm?.protocol,
                     //   })
                     // }
                   >
-                    <p>Go to farm</p>
-                  </button>
-                </a> */}
-                <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                  <Button type="secondary" size="large">
                     Go to farm
                   </Button>
                 </a>
-
-                {/* <div className="ml-3 sm:ml-0 w-1/3 text-center">
-                  <ShareFarm
-                    farm={farm}
-                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-                  />
-                </div> */}
               </div>
             </td>
           </tr>
