@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Head from "next/head";
+import Image from "next/image";
 import { useRouter } from "next/router";
 // import { trackPageview } from "fathom-client";
 import { fetchListicleFarms } from "@utils/api";
@@ -8,8 +10,9 @@ import useSpecificFarm from "@hooks/useSpecificFarm";
 import ListicleTable from "./ListicleTable";
 import FarmStats from "@components/Library/FarmStats";
 import { protocolCount, tvlCount } from "@utils/statsMethods";
-import { XIcon } from "@heroicons/react/outline";
+import { XIcon, ArrowDownIcon } from "@heroicons/react/outline";
 import Tooltip from "@components/Library/Tooltip";
+import SelectFarmType from "@components/Library/SelectFarmType";
 
 const Home = () => {
   const router = useRouter();
@@ -44,7 +47,7 @@ const Home = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="flex flex-col flex-1">
           {/* HERO SECTION */}
-          <div className="px-6">
+          <div className="px-6 sm:px-0">
             {/* Center Container */}
             <div className="mx-auto max-w-lg md:max-w-2xl py-11 md:py-[60px]">
               <h1 className="font-spaceGrotesk font-medium text-2xl sm:text-3xl md:text-4xl leading-8 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:bg-gradient-to-b from-[#ACCDFF] to-white">
@@ -65,12 +68,33 @@ const Home = () => {
                 totalProtocols={protocolCount(farms)}
               />
             </div>
-            {idQuery && (
+            {!idQuery ? (
+              <div className="flex items-center justify-between font-medium text-base py-10 px-4 sm:px-6 md:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
+                <div className="flex gap-x-5 items-center">
+                  <div>
+                    <SelectFarmType />
+                  </div>
+                  <div className="border-2 rounded-[5px] py-1 px-2">
+                    {farms.length} Results
+                  </div>
+                </div>
+                <Link href="/">
+                  <a className="hover:underline inline-flex gap-x-2 cursor-pointer">
+                    <div>View All Protocols</div>
+                    <Image
+                      src="/OpenIcon.svg"
+                      alt="open-icon"
+                      height={10}
+                      width={10}
+                    />
+                  </a>
+                </Link>
+              </div>
+            ) : (
               <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base text-white leading-5">
-                <p>
-                  Showing Yield Farm with address{" "}
-                  <span className="font-bold">{farmQuery}</span> and pool ID:{" "}
-                  <span className="font-bold">{idQuery}</span>
+                <p className="font-bold">
+                  Showing Yield Farm with address <span>{farmQuery}</span> and
+                  pool ID: <span>{idQuery}</span>
                 </p>
                 <Tooltip content="back to all farms">
                   <button
@@ -85,6 +109,7 @@ const Home = () => {
           </div>
           {/* Listicle Table */}
           <div className="bg-white dark:bg-baseBlueDark transition duration-200">
+            {/* If queries - Show Specific Farm according to queries  */}
             {!idQuery ? (
               <ListicleTable farms={farms} noResult={false} />
             ) : (
