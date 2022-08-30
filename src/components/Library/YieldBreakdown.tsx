@@ -9,7 +9,7 @@ type YieldProps = {
 export default function YieldBreakdown({ base, reward }: YieldProps) {
   return (
     <BreakdownTooltip base={base} reward={reward}>
-      <QuestionMarkCircleIcon className="w-5 h-5 text-primaryBlue opacity-90" />
+      <QuestionMarkCircleIcon className="w-5 h-5 text-primaryBlue opacity-90 outline-none" />
     </BreakdownTooltip>
   );
 }

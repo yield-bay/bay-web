@@ -4,7 +4,7 @@ import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
-import { QuestionMarkCircleIcon } from "@heroicons/react/solid";
+import { QuestionMarkCircleIcon, XIcon } from "@heroicons/react/solid";
 // import { trackEventWithProperty } from "@utils/analytics";
 
 enum Order {
@@ -159,8 +159,8 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
               </table>
             </div>
           ) : noResult ? (
-            <div className="px-6 py-10 text-center border border-neutral-200 dark:border-neutral-600 sm:rounded-lg transition duration-200">
-              Sorry, there is no farm available according to your preference 😔
+            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
+              <p>No Results. Try searching for something else.</p>
             </div>
           ) : (
             <div className="px-6 py-10 text-center animate-pulse text-lg text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-600 sm:rounded-lg">
