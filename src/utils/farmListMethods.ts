@@ -25,7 +25,7 @@ export function formatTokenSymbols(farmName: string): string[] {
     tokenSymbols = tokenSymbols.replace("LP", "");
   }
   if (tokenSymbols.includes("-")) {
-    let tokenNames = tokenSymbols.split("-");
+    let tokenNames = tokenSymbols.trimEnd().split("-");
     return tokenNames;
   }
   return [farmName];

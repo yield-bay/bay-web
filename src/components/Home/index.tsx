@@ -1,20 +1,25 @@
+// React and Next Imports
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
-// import { trackPageview } from "fathom-client";
-import { fetchListicleFarms } from "@utils/api";
-import useSpecificFarm from "@hooks/useSpecificFarm";
-import ListicleTable from "./ListicleTable";
-import FarmStats from "@components/Library/FarmStats";
-import { protocolCount, tvlCount } from "@utils/statsMethods";
+
+// Library Imports
+import { useAtom } from "jotai";
 import { XIcon } from "@heroicons/react/outline";
+// import { trackPageview } from "fathom-client";
+
+// Misc Imports
+import FarmStats from "@components/Library/FarmStats";
 import Tooltip from "@components/Library/Tooltip";
 import SelectFarmType from "@components/Library/SelectFarmType";
+import SelectInput from "@components/Library/SelectInput";
+import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
-import { useAtom } from "jotai";
+import { fetchListicleFarms } from "@utils/api";
+import { protocolCount, tvlCount } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
+import ListicleTable from "./ListicleTable";
 
 const Home = () => {
   const router = useRouter();
@@ -58,13 +63,9 @@ const Home = () => {
                 Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>
-              {/* Replace this with React-Select */}
+              {/* // TODO: Replace this with React-Select -- WIP */}
               <div className="flex justify-center py-8">
-                <input
-                  type="text"
-                  placeholder="search by token, chain or protocol name"
-                  className="w-full sm:w-4/5  md:w-full py-[11px] px-5 max-w-[480px] text-baseBlue bg-blueSilver font-semibold text-sm md:text-lg leading-[22px] rounded-lg"
-                />
+                <SelectInput farms={farms} />
               </div>
               <FarmStats
                 totalTVL={tvlCount(farms)}
