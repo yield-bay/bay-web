@@ -1,5 +1,5 @@
+import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { filterFarmTypeAtom } from "@store/atoms";
@@ -64,7 +64,9 @@ export default function SelectFarmType() {
                     <>
                       <span
                         className={classNames(
-                          selected ? "text-primaryBlue" : "text-white",
+                          selected
+                            ? "text-primaryBlue"
+                            : " text-baseBlueDark dark:text-white",
                           "block truncate"
                         )}
                       >

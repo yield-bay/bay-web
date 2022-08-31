@@ -1,17 +1,17 @@
+// React Imports
 import { useState } from "react";
-import Image from "next/image";
+
+// Utility Imports
 import toDollarFormat from "@utils/toDollarFormat";
-// import { trackEventWithProperty } from "@utils/analytics";
 import {
   formatFirstLetter,
   farmURL,
   formatTokenSymbols,
-  isCritical,
   formatFarmType,
 } from "@utils/farmListMethods";
-// import ShareFarm from "./ShareFarm";
-// import CriticalFarmModal from "./CriticalFarmModal";
-import Tooltip from "@components/Library/Tooltip";
+// import { trackEventWithProperty } from "@utils/analytics";
+
+// Component Imports
 import Button from "@components/Library/Button";
 import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
@@ -19,9 +19,6 @@ import ShareFarm from "@components/Library/ShareFarm";
 import YieldBreakdown from "@components/Library/YieldBreakdown";
 
 const FarmsList = ({ farms }: any) => {
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [thisProtocol, setThisProtocol] = useState<string>("");
-
   return (
     <>
       {farms.map((farm: any) => {
@@ -90,11 +87,6 @@ const FarmsList = ({ farms }: any) => {
           </tr>
         );
       })}
-      {/* <CriticalFarmModal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        protocol={thisProtocol}
-      /> */}
     </>
   );
 };

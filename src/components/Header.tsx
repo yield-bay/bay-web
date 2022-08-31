@@ -1,5 +1,5 @@
 import { useTheme } from "next-themes";
-import Button from "./Library/Button";
+import Button from "@components/Library/Button";
 import { SunIcon, MoonIcon } from "@heroicons/react/solid";
 
 export default function Header() {

@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+// Library Imports
+import { useEffect } from "react";
 import { useAtom } from "jotai";
-import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
+
+// Utility and Component Imports
+import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
-import { QuestionMarkCircleIcon, XIcon } from "@heroicons/react/solid";
 // import { trackEventWithProperty } from "@utils/analytics";
 
 enum Order {
