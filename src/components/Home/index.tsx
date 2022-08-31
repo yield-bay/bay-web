@@ -5,21 +5,25 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 // import { trackPageview } from "fathom-client";
 import { fetchListicleFarms } from "@utils/api";
-// import useFilteredFarms from "@hooks/useFilteredFarms";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import ListicleTable from "./ListicleTable";
 import FarmStats from "@components/Library/FarmStats";
 import { protocolCount, tvlCount } from "@utils/statsMethods";
-import { XIcon, ArrowDownIcon } from "@heroicons/react/outline";
+import { XIcon } from "@heroicons/react/outline";
 import Tooltip from "@components/Library/Tooltip";
 import SelectFarmType from "@components/Library/SelectFarmType";
+import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
+import { useAtom } from "jotai";
+import { filterFarmTypeAtom } from "@store/atoms";
 
 const Home = () => {
   const router = useRouter();
+  const [filterFarmType] = useAtom(filterFarmTypeAtom);
   const [farms, setFarms] = useState([]);
   const [farmQuery, setFarmQuery] = useState<string | string[] | undefined>();
   const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
   const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
+  const [filteredFarms, noFarms] = useFilteredFarmTypes(farms, filterFarmType);
 
   useEffect(() => {
     setFarmQuery(router.query.farm);
@@ -75,20 +79,22 @@ const Home = () => {
                     <SelectFarmType />
                   </div>
                   <div className="border-2 rounded-[5px] py-1 px-2">
-                    {farms.length} Results
+                    {filteredFarms.length} Results
                   </div>
                 </div>
-                <Link href="/">
-                  <a className="hover:underline inline-flex gap-x-2 cursor-pointer">
-                    <div>View All Protocols</div>
-                    <Image
-                      src="/OpenIcon.svg"
-                      alt="open-icon"
-                      height={10}
-                      width={10}
-                    />
-                  </a>
-                </Link>
+                <a
+                  className="hover:underline inline-flex gap-x-2 cursor-pointer"
+                  // TODO: Haven't found a way to reset farmtype back to All Types - Refreshing page for now
+                  onClick={() => router.reload()}
+                >
+                  <div>View All Protocols</div>
+                  <Image
+                    src="/OpenIcon.svg"
+                    alt="open-icon"
+                    height={10}
+                    width={10}
+                  />
+                </a>
               </div>
             ) : (
               <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base text-white leading-5">
@@ -111,7 +117,7 @@ const Home = () => {
           <div className="bg-white dark:bg-baseBlueDark transition duration-200">
             {/* If queries - Show Specific Farm according to queries  */}
             {!idQuery ? (
-              <ListicleTable farms={farms} noResult={false} />
+              <ListicleTable farms={filteredFarms} noResult={noFarms} />
             ) : (
               <>
                 <ListicleTable farms={specificFarm} noResult={false} />

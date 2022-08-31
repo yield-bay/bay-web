@@ -1,12 +1,14 @@
 import { Listbox, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
-import { CheckIcon, ChevronDownIcon } from "@heroicons/react/solid";
+import { Fragment, useEffect, useState } from "react";
+import { useAtom } from "jotai";
+import { ChevronDownIcon } from "@heroicons/react/solid";
+import { filterFarmTypeAtom } from "@store/atoms";
 
 const farmTypes = [
   { id: 1, name: "All Types" },
   { id: 2, name: "Standard Swap" },
   { id: 3, name: "Stable Swap" },
-  { id: 5, name: "Single Staking" },
+  // { id: 4, name: "Single Staking" },
 ];
 
 function classNames(...classes: string[]) {
@@ -15,9 +17,16 @@ function classNames(...classes: string[]) {
 
 export default function SelectFarmType() {
   const [selectedFarmType, setSelectedFarmType] = useState(farmTypes[0]);
+  const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
 
   return (
-    <Listbox value={selectedFarmType} onChange={setSelectedFarmType}>
+    <Listbox
+      value={selectedFarmType}
+      onChange={(value) => {
+        setSelectedFarmType(value);
+        filterFarmTypeSet(value.id);
+      }}
+    >
       {({ open }) => (
         <>
           <Listbox.Button className=" flex items-center gap-x-2 w-full cursor-default focus:outline-none focus:ring-0 text-base leading-5 font-medium">
