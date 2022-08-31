@@ -84,17 +84,15 @@ const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-10 origin-top-left absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-neutral-700 ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
-          <div className="py-1.5">
+        <Menu.Items className="z-10 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+          <div>
             <Menu.Item>
               {({ active }: any) => (
                 <a
                   href={tweetUrl}
                   className={classNames([
-                    active
-                      ? "bg-blue-400 text-white"
-                      : "text-gray-700 dark:text-neutral-100",
-                    "group flex items-center px-4 py-2 text-sm",
+                    active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
+                    "group flex justify-center gap-x-2 px-6 py-4 text-sm w-full rounded-t-lg text-primaryBlue",
                   ])}
                   target="_blank"
                   rel="noreferrer"
@@ -108,7 +106,7 @@ const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
                 >
                   <span className="sr-only">Share on Twitter</span>
                   <svg
-                    className="h-5 w-5 mr-3"
+                    className="h-5 w-5"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
@@ -136,13 +134,11 @@ const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
                     // });
                   }}
                   className={classNames([
-                    active
-                      ? "bg-neutral-100 dark:bg-neutral-600 text-neutral-900 dark:text-white"
-                      : "text-gray-700 dark:text-neutral-100",
-                    "group flex items-center px-4 py-2 text-sm w-full",
+                    active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
+                    "group flex justify-center gap-x-2 px-6 py-4 rounded-b-lg border-t dark:border-gray-800 text-sm w-full",
                   ])}
                 >
-                  <ClipboardIcon className="mr-3 h-5 w-5" aria-hidden="true" />
+                  <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
                   Copy link
                 </button>
               )}

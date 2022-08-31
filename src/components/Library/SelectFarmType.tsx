@@ -54,9 +54,7 @@ export default function SelectFarmType() {
                   key={farmType.id}
                   className={({ active }) =>
                     classNames(
-                      active
-                        ? "text-baseBlueDark dark:text-white bg-blueSilver dark:bg-baseBlueMid"
-                        : "text-baseBlueDark",
+                      active ? "bg-blueSilver dark:bg-baseBlueMid" : "",
                       "relative cursor-default select-none py-[9px] px-6"
                     )
                   }
@@ -66,7 +64,7 @@ export default function SelectFarmType() {
                     <>
                       <span
                         className={classNames(
-                          selected ? "text-primaryBlue" : "",
+                          selected ? "text-primaryBlue" : "text-white",
                           "block truncate"
                         )}
                       >
