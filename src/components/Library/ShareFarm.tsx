@@ -84,7 +84,7 @@ const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-10 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+        <Menu.Items className="z-10 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-100 divide-y divide-gray-100 focus:outline-none">
           <div>
             <Menu.Item>
               {({ active }: any) => (

@@ -79,7 +79,7 @@ const FarmsList = ({ farms }: any) => {
                     //   })
                     // }
                   >
-                    Go to farm
+                    Visit Farm
                   </Button>
                 </a>
               </div>
