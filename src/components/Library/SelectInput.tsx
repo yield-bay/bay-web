@@ -3,11 +3,7 @@ import { arrayofItemsForFilteration } from "@utils/filterationMethods";
 // import Select from "react-select";
 // import makeAnimated from "react-select/animated";
 
-export default function SelectInput({ farms }: any) {
-  const handleSelect = (selection: any) => {
-    console.log("select:", selection);
-  };
-
+export default function SelectInput({ farms, setSearchArray }: any) {
   const totalOptions = arrayofItemsForFilteration(farms);
 
   const loadOptions = (searchValue: any, callback: any) => {
@@ -15,7 +11,6 @@ export default function SelectInput({ farms }: any) {
       const filteredOptions = totalOptions.filter((totalOption) =>
         totalOption.label.toLowerCase().includes(searchValue.toLowerCase())
       );
-      console.log("filter options", searchValue, filteredOptions);
       callback(filteredOptions);
     }, 500);
   };
@@ -24,7 +19,7 @@ export default function SelectInput({ farms }: any) {
     <div className="flex w-full">
       <AsyncSelect
         placeholder="search by token, chain or protocol name"
-        onChange={handleSelect}
+        onChange={(selection) => setSearchArray(selection)}
         loadOptions={loadOptions} // it loads the options on search. doesn't load it all at once.
         isMulti
         className="w-full sm:w-4/5 md:w-full min-w-max lg:min-w-[480px] text-baseBlue font-semibold text-sm md:text-lg"

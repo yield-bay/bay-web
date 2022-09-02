@@ -20,15 +20,26 @@ import { fetchListicleFarms } from "@utils/api";
 import { protocolCount, tvlCount } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
+import useFilteredFarms from "@hooks/useFilteredFarms";
 
 const Home = () => {
   const router = useRouter();
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
   const [farms, setFarms] = useState([]);
+  const [searchArray, setSearchArray] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [farmQuery, setFarmQuery] = useState<string | string[] | undefined>();
   const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
   const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
-  const [filteredFarms, noFarms] = useFilteredFarmTypes(farms, filterFarmType);
+  const [filteredByFarmTypes, noFarms] = useFilteredFarmTypes(
+    farms,
+    filterFarmType
+  );
+  const [filteredFarms, noFilteredFarms] = useFilteredFarms(
+    filteredByFarmTypes,
+    searchArray
+  );
 
   useEffect(() => {
     setFarmQuery(router.query.farm);
@@ -63,9 +74,12 @@ const Home = () => {
                 Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>
-              {/* // TODO: Replace this with React-Select -- WIP */}
+              {/* // TODO: Implement React-Select with all new filtering features */}
               <div className="flex justify-center py-8">
-                <SelectInput farms={farms} />
+                <SelectInput
+                  farms={filteredByFarmTypes}
+                  setSearchArray={setSearchArray}
+                />
               </div>
               <FarmStats
                 totalTVL={tvlCount(farms)}
