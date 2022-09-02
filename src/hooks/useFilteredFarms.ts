@@ -46,6 +46,7 @@ const createMatchTerm = (farm: any) => {
   return matchTerm.concat(farm?.protocol, "_", farm?.chain).toUpperCase();
 };
 
+// Function that returns intersection between two arrays
 const intersect = (a: any, b: any) => {
   let setB = new Set(b);
   let intersection = new Set(

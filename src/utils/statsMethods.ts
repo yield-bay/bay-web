@@ -1,4 +1,4 @@
-import toDollarFormat from "./toDollarFormat";
+import toDollarUnits from "./toDollarUnits";
 
 export function protocolCount(farms: any): number {
   return new Set(farms.map((farm: any) => farm?.protocol)).size;
@@ -9,5 +9,5 @@ export function tvlCount(farms: any): string {
   farms.forEach((farm: any) => {
     totalTVL += farm?.tvl;
   });
-  return toDollarFormat(totalTVL);
+  return toDollarUnits(totalTVL);
 }

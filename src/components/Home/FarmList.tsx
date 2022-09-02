@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 // Utility Imports
-import toDollarFormat from "@utils/toDollarFormat";
+import toDollarUnits from "@utils/toDollarUnits";
 import {
   formatFirstLetter,
   farmURL,
@@ -50,7 +50,7 @@ const FarmsList = ({ farms }: any) => {
               <FarmAssets logos={farm?.asset.logos} />
             </td>
             <td className="whitespace-nowrap py-8 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
-              {toDollarFormat(farm?.tvl)}
+              {toDollarUnits(farm?.tvl)}
             </td>
             <td className="whitespace-nowrap py-8 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="w-full inline-flex items-center gap-x-2">
