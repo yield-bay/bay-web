@@ -17,6 +17,7 @@ import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
 import ShareFarm from "@components/Library/ShareFarm";
 import YieldBreakdown from "@components/Library/YieldBreakdown";
+import Rewards from "@components/Library/Rewards";
 
 const FarmsList = ({ farms }: any) => {
   return (
@@ -60,6 +61,9 @@ const FarmsList = ({ farms }: any) => {
                   reward={farm?.apr.reward}
                 />
               </div>
+            </td>
+            <td className="whitespace-nowrap max-w-[130px] py-8 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+              <Rewards rewards={farm?.rewards} />
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">

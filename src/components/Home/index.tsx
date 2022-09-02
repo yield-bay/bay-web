@@ -74,7 +74,6 @@ const Home = () => {
                 Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>
-              {/* // TODO: Implement React-Select with all new filtering features */}
               <div className="flex justify-center py-8">
                 <SelectInput
                   farms={filteredByFarmTypes}

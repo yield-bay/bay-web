@@ -144,12 +144,12 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                         </Tooltip>
                       </div>
                     </th>
-                    {/* <th
+                    <th
                       scope="col"
                       className="px-3 pt-9 pb-6 text-left cursor-pointer"
                     >
                       <span>Rewards</span>
-                    </th> */}
+                    </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
                       <span className="sr-only">Go to farm</span>
                     </th>
