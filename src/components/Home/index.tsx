@@ -21,6 +21,7 @@ import { protocolCount, tvlCount } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
+import MobileFarmList from "./MobileFarmList";
 
 const Home = () => {
   const router = useRouter();
@@ -69,12 +70,12 @@ const Home = () => {
           {/* HERO SECTION */}
           <div className="px-6 sm:px-0">
             {/* Center Container */}
-            <div className="mx-auto max-w-lg md:max-w-2xl py-11 md:py-[60px]">
-              <h1 className="font-spaceGrotesk font-medium text-2xl sm:text-3xl md:text-4xl leading-8 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:bg-gradient-to-b from-[#ACCDFF] to-white">
+            <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
+              <h1 className="font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:bg-gradient-to-b from-[#ACCDFF] to-white">
                 Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>
-              <div className="flex justify-center py-8">
+              <div className="flex justify-center pt-9 pb-7 sm:py-8">
                 <SelectInput
                   farms={filteredByFarmTypes}
                   setSearchArray={setSearchArray}
@@ -128,7 +129,10 @@ const Home = () => {
             )}
           </div>
           {/* Listicle Table */}
-          <div className="bg-white dark:bg-baseBlueDark transition duration-200">
+          <div className="border border-red-500 bg-white dark:bg-baseBlueDark transition duration-200">
+            <MobileFarmList farms={filteredFarms} noResult={noFarms} />
+          </div>
+          <div className="hidden border border-red-500 bg-white dark:bg-baseBlueDark transition duration-200">
             {/* If queries - Show Specific Farm according to queries  */}
             {!idQuery ? (
               <ListicleTable farms={filteredFarms} noResult={noFarms} />

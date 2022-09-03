@@ -5,12 +5,12 @@ import { SunIcon, MoonIcon } from "@heroicons/react/solid";
 export default function Header() {
   const { theme, setTheme } = useTheme();
   return (
-    <div className="flex items-center justify-between w-full px-4 sm:px-11 lg:px-[120px] pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
+    <div className="flex items-center justify-between w-full px-6 sm:px-11 lg:px-[120px] pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
       <div className="flex flex-col items-center cursor-pointer">
-        <span className="font-bold font-spaceGrotesk text-white text-2xl">
+        <span className="font-bold font-spaceGrotesk text-white text-lg leading-[23px] sm:text-2xl sm:leading-8">
           yieldbay
         </span>
-        <div className="flex bg-white dark:bg-primaryBlue rounded-[10px] -mt-0.5 px-[14px] py-[3px] text-primaryBlue dark:text-white text-sm font-bold tracking-[0.46em] uppercase">
+        <div className="flex bg-white dark:bg-primaryBlue rounded-[10px] -mt-0.5 px-[11px] sm:px-[14px] py-[3px] text-primaryBlue dark:text-white text-[8px] leading-[10px] sm:text-sm sm:leading-[17px] font-bold tracking-[0.46em] uppercase">
           <span className="-mr-1">List</span>
         </div>
       </div>
