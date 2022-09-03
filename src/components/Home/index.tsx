@@ -129,10 +129,10 @@ const Home = () => {
             )}
           </div>
           {/* Listicle Table */}
-          <div className="border border-red-500 bg-white dark:bg-baseBlueDark transition duration-200">
+          <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
             <MobileFarmList farms={filteredFarms} noResult={noFarms} />
           </div>
-          <div className="hidden border border-red-500 bg-white dark:bg-baseBlueDark transition duration-200">
+          <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
             {/* If queries - Show Specific Farm according to queries  */}
             {!idQuery ? (
               <ListicleTable farms={filteredFarms} noResult={noFarms} />

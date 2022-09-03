@@ -5,7 +5,7 @@ import { SunIcon, MoonIcon } from "@heroicons/react/solid";
 export default function Header() {
   const { theme, setTheme } = useTheme();
   return (
-    <div className="flex items-center justify-between w-full px-6 sm:px-11 lg:px-[120px] pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
+    <div className="flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
       <div className="flex flex-col items-center cursor-pointer">
         <span className="font-bold font-spaceGrotesk text-white text-lg leading-[23px] sm:text-2xl sm:leading-8">
           yieldbay
@@ -19,6 +19,7 @@ export default function Header() {
           href="https://discord.gg/AKHuvbz7q4"
           target="_blank"
           rel="noreferrer"
+          className="hidden sm:block"
         >
           <Button type="primary" size="small">
             List your protocol
@@ -29,9 +30,9 @@ export default function Header() {
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
           {theme == "dark" ? (
-            <SunIcon className="w-8 text-white" />
+            <SunIcon className="w-6 sm:w-8 text-white" />
           ) : (
-            <MoonIcon className="w-8 text-white" />
+            <MoonIcon className="w-6 sm:w-8 text-white" />
           )}
         </button>
       </div>

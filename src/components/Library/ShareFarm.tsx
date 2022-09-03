@@ -37,7 +37,6 @@ export default function ShareFarm({ farm, apr }: any) {
     <div>
       {/* Menu in Desktop Mode */}
       <ShareMenu
-        farm={farm}
         url={url}
         tweetUrl={tweetUrl}
         isNotificationSet={isNotificationSet}
@@ -45,7 +44,7 @@ export default function ShareFarm({ farm, apr }: any) {
       {/* Modal for Mobile Mode */}
       <div className="sm:hidden">
         <div
-          className="p-2 hover:scale-105 active:scale-100 rounded-md bg-neutral-100 dark:bg-neutral-700 cursor-pointer text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white active:bg-neutral-200 dark:active:bg-neutral-600 transition-all duration-150"
+          className=" py-4 px-[19px] hover:scale-105 active:scale-100 rounded-md bg-bodyGray dark:bg-baseBlueMid text-primaryBlue dark:text-primaryWhite active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver transition-all duration-200"
           onClick={() => setModalOpen(true)}
         >
           <ShareIcon className="w-[18px]" />
@@ -64,7 +63,7 @@ export default function ShareFarm({ farm, apr }: any) {
   );
 }
 
-const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
+const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
       <Tooltip content="Share Farm link">
