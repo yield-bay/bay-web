@@ -88,8 +88,8 @@ const Home = () => {
               />
             </div>
             {!idQuery ? (
-              <div className="flex items-center justify-between font-medium text-base py-10 px-4 sm:px-6 md:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
-                <div className="flex gap-x-5 items-center">
+              <div className="flex items-center justify-between font-medium text-base py-14 px-4 sm:px-6 md:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
+                <div className="flex justify-between w-full sm:w-max gap-x-5 items-center">
                   <div>
                     <SelectFarmType />
                   </div>
@@ -98,7 +98,7 @@ const Home = () => {
                   </div>
                 </div>
                 <a
-                  className="hover:underline inline-flex gap-x-2 cursor-pointer"
+                  className="hidden sm:inline-flex hover:underline gap-x-2 cursor-pointer"
                   // TODO: Haven't found a way to reset farmtype back to All Types - Refreshing page for now
                   onClick={() => router.reload()}
                 >
