@@ -88,8 +88,8 @@ const Home = () => {
               />
             </div>
             {!idQuery ? (
-              <div className="flex items-center justify-between font-medium text-base py-14 px-4 sm:px-6 md:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
-                <div className="flex justify-between w-full sm:w-max gap-x-5 items-center">
+              <div className="flex items-center justify-between font-medium text-base pt-12 pb-7 sm:py-14 px-3 sm:px-6 md:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
+                <div className="flex justify-between w-full sm:w-max sm:gap-x-5 items-center">
                   <div>
                     <SelectFarmType />
                   </div>
