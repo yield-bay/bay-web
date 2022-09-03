@@ -47,7 +47,7 @@ const FarmsList = ({ farms }: any) => {
                 </div>
               </div>
             </td>
-            <td className="whitespace-nowrap">
+            <td className="hidden lg:table-cell whitespace-nowrap">
               <FarmAssets logos={farm?.asset.logos} />
             </td>
             <td className="whitespace-nowrap py-8 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
@@ -62,10 +62,10 @@ const FarmsList = ({ farms }: any) => {
                 />
               </div>
             </td>
-            <td className="whitespace-nowrap max-w-[130px] py-8 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               <Rewards rewards={farm?.rewards} />
             </td>
-            <td className="whitespace-nowrap max-w-[288px] py-4 pr-6 lg:pr-14 text-right text-sm font-medium">
+            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">
                 <div className="text-center">
                   <ShareFarm

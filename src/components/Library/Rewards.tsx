@@ -10,10 +10,9 @@ type RewardsProps = {
 };
 
 export default function Rewards({ rewards }: RewardsProps) {
-  console.log("rewards", rewards);
   return (
     <div className="flex justify-start pl-3 w-full">
-      <div className="hidden md:flex flex-row items-center justify-center p-1 -space-x-0.5">
+      <div className="flex flex-row items-center justify-center p-1 -space-x-0.5">
         {rewards.map((reward, index) => (
           <div
             key={index}

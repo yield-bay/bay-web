@@ -6,8 +6,8 @@ type FarmAssetsProps = {
 
 export default function FarmAssets({ logos }: FarmAssetsProps) {
   return (
-    <div className="max-w-[150px] flex justify-end my-3">
-      <div className="hidden md:flex flex-row items-center justify-center -space-x-3">
+    <div className="flex max-w-[150px] justify-end my-3">
+      <div className="flex flex-row items-center justify-center -space-x-3">
         {logos.map((logo: string, index: number) => (
           <div
             key={index}
