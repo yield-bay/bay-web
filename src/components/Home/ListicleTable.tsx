@@ -95,10 +95,10 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                     <th
                       scope="col"
-                      className="px-3 pt-9 pb-6 text-left cursor-pointer"
+                      className="px-3 pt-9 pb-6 cursor-pointer"
                       onClick={() => handleSort("tvl", true)}
                     >
-                      <div className="flex items-center">
+                      <div className="flex justify-end items-center">
                         <Tooltip
                           content="Total Value Locked. Amount of money currently invested in the farm, denoted in USD."
                           onButtonClick={() => {
@@ -122,7 +122,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                     <th
                       scope="col"
-                      className="flex px-3 pt-9 pb-6 text-left cursor-pointer"
+                      className="flex justify-end px-3 pt-9 pb-6 cursor-pointer"
                       onClick={() => {
                         handleSort("yield", true);
                         // trackEventWithProperty("table-sorting", {
@@ -130,22 +130,20 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                         // });
                       }}
                     >
-                      <div className="flex items-center">
-                        <Tooltip
-                          content="The percentage of returns the farm offers on staking for an year."
-                          onButtonClick={() => handleSort("yield", true)}
-                        >
-                          <div>
-                            <span>APR</span>
-                            {sortStatus.key == "yield" &&
-                              (sortStatus.order == Order.DESC ? (
-                                <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
-                              ) : (
-                                <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
-                              ))}
-                          </div>
-                        </Tooltip>
-                      </div>
+                      <Tooltip
+                        content="The percentage of returns the farm offers on staking for an year."
+                        onButtonClick={() => handleSort("yield", true)}
+                      >
+                        <div>
+                          <span>APR</span>
+                          {sortStatus.key == "yield" &&
+                            (sortStatus.order == Order.DESC ? (
+                              <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
+                            ) : (
+                              <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
+                            ))}
+                        </div>
+                      </Tooltip>
                     </th>
                     <th
                       scope="col"

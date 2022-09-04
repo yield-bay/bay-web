@@ -10,7 +10,7 @@ export default function Header() {
         <span className="font-bold font-spaceGrotesk text-white text-lg leading-[23px] sm:text-2xl sm:leading-8">
           yieldbay
         </span>
-        <div className="flex bg-white dark:bg-primaryBlue rounded-[10px] -mt-0.5 px-[11px] sm:px-[14px] py-[3px] text-primaryBlue dark:text-white text-[8px] leading-[10px] sm:text-sm sm:leading-[17px] font-bold tracking-[0.46em] uppercase">
+        <div className="flex bg-white dark:bg-primaryBlue rounded-[10px] -mt-0.5 px-[11px] sm:px-[14px] py-[3px] text-primaryBlue dark:text-white text-[8px] leading-[10px] sm:text-sm sm:leading-[17px] font-bold tracking-[0.46em] uppercase transition duration-200">
           <span className="-mr-1">List</span>
         </div>
       </div>

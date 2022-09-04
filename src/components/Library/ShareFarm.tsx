@@ -4,7 +4,6 @@ import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
 import { ShareIcon } from "@heroicons/react/solid";
 import { useAtom } from "jotai";
 import { isNotificationAtom } from "@store/atoms";
-import Tooltip from "./Tooltip";
 // import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 
@@ -35,7 +34,7 @@ export default function ShareFarm({ farm, apr }: any) {
 
   return (
     <div>
-      {/* Menu in Desktop Mode */}
+      {/* Menu for Desktop Mode */}
       <ShareMenu
         url={url}
         tweetUrl={tweetUrl}
@@ -44,7 +43,7 @@ export default function ShareFarm({ farm, apr }: any) {
       {/* Modal for Mobile Mode */}
       <div className="sm:hidden">
         <div
-          className=" py-4 px-[19px] hover:scale-105 active:scale-100 rounded-md bg-bodyGray dark:bg-baseBlueMid text-primaryBlue dark:text-primaryWhite active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver transition-all duration-200"
+          className="py-4 px-[19px] hover:scale-105 active:scale-100 rounded-md bg-bodyGray dark:bg-baseBlueMid text-primaryBlue dark:text-primaryWhite active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver transition-all duration-200"
           onClick={() => setModalOpen(true)}
         >
           <ShareIcon className="w-[18px]" />
@@ -66,13 +65,11 @@ export default function ShareFarm({ farm, apr }: any) {
 const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
-      <Tooltip content="Share Farm link">
-        <div className="">
-          <Menu.Button className="p-4 rounded-lg bg-bodyGray dark:bg-baseBlueMid hover:bg-primaryWhite dark:hover:bg-baseBlueDark active:bg-primaryWhite dark:active:bg-baseBlueMid hover:ring-[3px] dark:hover:ring-2 active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver dark:active:ring-0 cursor-pointer transition-all duration-200">
-            <ShareIcon className="w-4 h-4 text-primaryBlue dark:text-bodyGray" />
-          </Menu.Button>
-        </div>
-      </Tooltip>
+      <div className="">
+        <Menu.Button className="p-4 rounded-lg bg-bodyGray dark:bg-baseBlueMid hover:bg-primaryWhite dark:hover:bg-baseBlueDark active:bg-primaryWhite dark:active:bg-baseBlueMid hover:ring-[3px] dark:hover:ring-2 active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver dark:active:ring-0 cursor-pointer transition-all duration-200">
+          <ShareIcon className="w-4 h-4 text-primaryBlue dark:text-bodyGray" />
+        </Menu.Button>
+      </div>
 
       <Transition
         as={Fragment}
@@ -83,7 +80,7 @@ const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-10 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
           <div>
             <Menu.Item>
               {({ active }: any) => (
@@ -91,7 +88,7 @@ const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
                   href={tweetUrl}
                   className={classNames([
                     active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
-                    "group flex justify-center gap-x-2 px-6 py-4 text-sm w-full rounded-t-lg text-primaryBlue",
+                    "group flex justify-start gap-x-2 px-6 py-4 text-sm w-full rounded-t-lg text-primaryBlue",
                   ])}
                   target="_blank"
                   rel="noreferrer"
@@ -134,7 +131,7 @@ const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
                   }}
                   className={classNames([
                     active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
-                    "group flex justify-center gap-x-2 px-6 py-4 rounded-b-lg border-t dark:border-gray-800 text-sm w-full",
+                    "group flex justify-start gap-x-2 px-6 py-4 rounded-b-lg border-t dark:border-gray-800 text-sm w-full",
                   ])}
                 >
                   <ClipboardIcon className="h-5 w-5" aria-hidden="true" />

@@ -50,11 +50,11 @@ const FarmsList = ({ farms }: any) => {
             <td className="hidden lg:table-cell whitespace-nowrap">
               <FarmAssets logos={farm?.asset.logos} />
             </td>
-            <td className="whitespace-nowrap py-8 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-8 text-right sm:pr-3 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               {toDollarUnits(farm?.tvl)}
             </td>
-            <td className="whitespace-nowrap py-8 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
-              <div className="w-full inline-flex items-center gap-x-2">
+            <td className="whitespace-nowrap py-8 pl-0 pr-2 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+              <div className="w-full inline-flex justify-end items-center gap-x-2">
                 {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                 <YieldBreakdown
                   base={farm?.apr.base}

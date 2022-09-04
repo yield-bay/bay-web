@@ -68,5 +68,3 @@ export default function MobileFarmList({ farms }: any) {
     </div>
   );
 }
-
-// const FarmAssets = () => {};
