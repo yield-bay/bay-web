@@ -17,11 +17,12 @@ import SelectInput from "@components/Library/SelectInput";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import { fetchListicleFarms } from "@utils/api";
-import { protocolCount, tvlCount } from "@utils/statsMethods";
+import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
+import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 
 const Home = () => {
   const router = useRouter();
@@ -41,6 +42,7 @@ const Home = () => {
     filteredByFarmTypes,
     searchArray
   );
+  const [protocolModalOpen, setProtocolModalOpen] = useState(false);
 
   useEffect(() => {
     setFarmQuery(router.query.farm);
@@ -97,10 +99,9 @@ const Home = () => {
                     {filteredFarms.length} Results
                   </div>
                 </div>
-                <a
+                <button
                   className="hidden sm:inline-flex hover:underline gap-x-2 cursor-pointer"
-                  // TODO: Haven't found a way to reset farmtype back to All Types - Refreshing page for now
-                  onClick={() => router.reload()}
+                  onClick={() => setProtocolModalOpen(true)}
                 >
                   <div>View All Protocols</div>
                   <Image
@@ -109,7 +110,7 @@ const Home = () => {
                     height={10}
                     width={10}
                   />
-                </a>
+                </button>
               </div>
             ) : (
               <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base text-white leading-5">
@@ -151,6 +152,11 @@ const Home = () => {
             )}
           </div>
         </div>
+        <AllProtocolsModal
+          open={protocolModalOpen}
+          setOpen={setProtocolModalOpen}
+          protocols={protocolList(farms)}
+        />
       </main>
     </div>
   );
