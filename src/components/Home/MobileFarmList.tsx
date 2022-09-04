@@ -7,6 +7,7 @@ import {
   formatFirstLetter,
   formatTokenSymbols,
 } from "@utils/farmListMethods";
+import toDollarUnits from "@utils/toDollarUnits";
 
 export default function MobileFarmList({ farms }: any) {
   return (
@@ -45,11 +46,15 @@ export default function MobileFarmList({ farms }: any) {
               <div className="flex flex-col gap-y-[18px] font-medium font-spaceGrotesk text-right">
                 <div>
                   <p className="text-base opacity-50 leading-5">TVL</p>
-                  <p className="text-2xl leading-[30px]">$3.1M</p>
+                  <p className="text-2xl leading-[30px]">
+                    {toDollarUnits(farm?.tvl)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-base opacity-50 leading-5">APR</p>
-                  <p className="text-2xl leading-[30px]">75.76%</p>
+                  <p className="text-2xl leading-[30px]">
+                    {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+                  </p>
                 </div>
               </div>
             </div>
