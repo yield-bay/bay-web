@@ -24,6 +24,10 @@ module.exports = {
         spaceGrotesk: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
         montserrat: ["Montserrat", ...defaultTheme.fontFamily.sans],
       },
+      boxShadow: {
+        tooltipLight: "0px 0px 5px #A2C4FF",
+        tooltipDark: "0px 0px 5px #3780FF",
+      },
     },
   },
   plugins: [],

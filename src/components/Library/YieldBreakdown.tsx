@@ -25,11 +25,7 @@ function BreakdownTooltip({
   return (
     <Tippy
       render={(attrs) => (
-        <div
-          className="box text-base font-bold text-baseBlueMid dark:text-white p-3 shadow-md rounded-lg max-w-sm bg-blueSilver dark:bg-baseBlue border-2 border-baseBlueMid dark:border-primaryBlue"
-          tabIndex={-1}
-          {...attrs}
-        >
+        <div className="tooltip" tabIndex={-1} {...attrs}>
           <p>
             Base: <span className="font-bold">{base.toFixed(2)}%</span>
           </p>

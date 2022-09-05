@@ -10,4 +10,7 @@
   html {
     @apply antialiased;
   }
+  .tooltip {
+    @apply text-base font-bold text-primaryBlue dark:text-white p-3 shadow-tooltipLight dark:shadow-tooltipDark rounded-lg max-w-sm bg-bodyGray dark:bg-baseBlue;
+  }
 }

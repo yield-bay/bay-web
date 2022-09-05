@@ -16,7 +16,7 @@ export default function Tooltip({
     <Tippy
       render={(attrs) => (
         <div
-          className="box text-base font-bold text-baseBlueMid dark:text-white p-3 shadow-md rounded-lg max-w-sm bg-blueSilver dark:bg-baseBlue border-2 border-baseBlueMid dark:border-primaryBlue"
+          className="tooltip"
           tabIndex={-1}
           onClick={onButtonClick}
           {...attrs}
