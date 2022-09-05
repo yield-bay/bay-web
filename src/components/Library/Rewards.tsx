@@ -26,7 +26,9 @@ export default function Rewards({ rewards }: RewardsProps) {
                     height={12}
                   />
                 </div>
-                <span>{reward.amount.toFixed(1)}</span>
+                <span>
+                  {parseFloat(reward.amount.toFixed(1)).toLocaleString("en-US")}
+                </span>
                 <span>{reward.asset}/DAY</span>
               </div>
             ))}

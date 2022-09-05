@@ -11,7 +11,6 @@ export default function AllProtocolsModal({
   setOpen: (value: boolean) => void;
   protocols: string[];
 }) {
-  console.log("protocols", protocols);
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -39,23 +38,23 @@ export default function AllProtocolsModal({
           </span>
           <Transition.Child
             as={Fragment}
-            enter="ease-out duration-300"
+            enter="ease-out duration-200"
             enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             enterTo="opacity-100 translate-y-0 sm:scale-100"
             leave="ease-in duration-200"
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="relative inline-block align-bottom font-spaceGrotesk bg-white dark:bg-baseBlue rounded-t-lg sm:rounded-2xl text-left overflow-hidden shadow-xl px-4 py-5 sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
+            <div className="relative inline-block font-spaceGrotesk bg-white dark:bg-baseBlue rounded-t-lg sm:rounded-2xl text-left max-h-[600px] overflow-y-auto shadow-xl px-4 py-5 align-bottom sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
               <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                <div className="flex items-center p-1 group rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer">
+                <div className="flex items-center p-2 group rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer">
                   <button
                     type="button"
                     className="text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white focus:outline-none"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
-                    <XIcon className="w-4 h-4" aria-hidden="true" />
+                    <XIcon className="w-6 h-6" aria-hidden="true" />
                   </button>
                 </div>
               </div>
