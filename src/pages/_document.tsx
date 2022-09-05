@@ -14,31 +14,34 @@ class MyDocument extends Document {
 
   render() {
     const title = "YieldBay List";
-    const desc = "Discover Yield Farms in DotSama";
+    const desc =
+      "Discover yield opportunities across multiple protocols and parachains on Polkadot and Kusama.";
     const domain = "https://list.yieldbay.io/";
+    const twitterUsername = "@yield_bay";
+    const twitterCover = "/twitter-cover.png";
+    // const facebookCover = "/facebook-cover.png";
 
     return (
       <Html>
         <Head>
           <meta name="title" content={title} />
           <meta name="description" content={desc} />
-
           <meta property="og:type" content="website" />
           <meta property="og:url" content={domain} />
           <meta property="og:title" content={title} />
           <meta property="og:description" content={desc} />
-          <meta property="og:image" content="/cover-image.png" />
+          <meta property="og:image" content={twitterCover} />
           <meta
             name="keywords"
             content="yield-farming, yield farming, yield, defi, polkadot, dotsama, polkadot defi, yield aggregator, kusama, paraverse"
           />
           <meta property="twitter:card" content="summary_large_image" />
           <meta property="twitter:url" content={domain} />
-          <meta name="twitter:site" content={domain} />
-          <meta name="twitter:creator" content="@yield_bay" />
+          <meta name="twitter:site" content={twitterUsername} />
+          <meta name="twitter:creator" content={twitterUsername} />
           <meta property="twitter:title" content={title} />
           <meta property="twitter:description" content={desc} />
-          <meta property="twitter:image" content="/cover-image.png" />
+          <meta property="twitter:image" content={twitterCover} />
 
           <link rel="icon" href="/favicon/favicon.ico" />
           <link rel="manifest" href="/favicon/site.webmanifest" />
