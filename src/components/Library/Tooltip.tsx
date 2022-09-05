@@ -3,7 +3,7 @@ import Tippy from "@tippyjs/react/headless";
 
 type TooltipProps = {
   children: React.ReactElement;
-  content: string;
+  content: React.ReactElement;
   onButtonClick?: () => void;
 };
 
@@ -21,7 +21,7 @@ export default function Tooltip({
           onClick={onButtonClick}
           {...attrs}
         >
-          <span>{content}</span>
+          {content}
         </div>
       )}
     >

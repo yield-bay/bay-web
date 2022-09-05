@@ -100,7 +100,12 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     >
                       <div className="flex justify-end items-center">
                         <Tooltip
-                          content="Total Value Locked. Amount of money currently invested in the farm, denoted in USD."
+                          content={
+                            <span>
+                              Total Value Locked. Amount of money currently
+                              invested in the farm, denoted in USD.
+                            </span>
+                          }
                           onButtonClick={() => {
                             handleSort("tvl", true);
                             // trackEventWithProperty("table-sorting", {
@@ -131,7 +136,12 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                       }}
                     >
                       <Tooltip
-                        content="The percentage of returns the farm offers on staking for an year."
+                        content={
+                          <span>
+                            The percentage of returns the farm offers on staking
+                            for an year.
+                          </span>
+                        }
                         onButtonClick={() => handleSort("yield", true)}
                       >
                         <div>

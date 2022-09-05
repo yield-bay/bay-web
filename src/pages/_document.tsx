@@ -38,7 +38,6 @@ class MyDocument extends Document {
           <meta property="twitter:card" content="summary_large_image" />
           <meta property="twitter:url" content={domain} />
           <meta name="twitter:site" content={twitterUsername} />
-          <meta name="twitter:creator" content={twitterUsername} />
           <meta property="twitter:title" content={title} />
           <meta property="twitter:description" content={desc} />
           <meta property="twitter:image" content={twitterCover} />
