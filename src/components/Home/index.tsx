@@ -118,7 +118,7 @@ const Home = () => {
                   Showing Yield Farm with address <span>{farmQuery}</span> and
                   pool ID: <span>{idQuery}</span>
                 </p>
-                <Tooltip content="back to all farms">
+                <Tooltip content={<span>back to all farms</span>}>
                   <button
                     onClick={() => router.push("/")}
                     className="cursor-default transition-all duration-150"
