@@ -23,6 +23,7 @@ import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
+import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 
 const Home = () => {
   const router = useRouter();
@@ -38,6 +39,7 @@ const Home = () => {
     searchTerm
   );
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
   // const [searchArray, setSearchArray] = useState<
   //   { value: string; label: string }[]
   // >([]);
@@ -49,6 +51,18 @@ const Home = () => {
   // const handleFarmType = (setFarmType: any) => {
   //   setFarmType({ id: 1, name: "All Types" });
   // };
+
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 400) {
+          setShowScrollBtn(true);
+        } else {
+          setShowScrollBtn(false);
+        }
+      });
+    }
+  });
 
   useEffect(() => {
     setFarmQuery(router.query.farm);
@@ -74,7 +88,7 @@ const Home = () => {
       </Head>
       <main>
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
-        <div className="flex flex-col flex-1">
+        <div className="relative overflow-hidden flex flex-col flex-1">
           {/* HERO SECTION */}
           <div className="px-6 sm:px-0">
             {/* Center Container */}
@@ -178,6 +192,7 @@ const Home = () => {
             )}
           </div>
         </div>
+        {showScrollBtn && <ScrollToTopBtn />}
         <AllProtocolsModal
           open={protocolModalOpen}
           setOpen={setProtocolModalOpen}
