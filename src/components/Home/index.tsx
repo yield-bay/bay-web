@@ -113,25 +113,44 @@ const Home = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base text-white leading-5">
-                <p className="font-bold">
-                  Showing Yield Farm with address <span>{farmQuery}</span> and
-                  pool ID: <span>{idQuery}</span>
-                </p>
-                <Tooltip content={<span>back to all farms</span>}>
-                  <button
-                    onClick={() => router.push("/")}
-                    className="cursor-default transition-all duration-150"
-                  >
-                    <XIcon className="ml-2 w-4 text-blueSilver dark:text-[#999999]" />
-                  </button>
-                </Tooltip>
+              <div className="flex items-center justify-center px-6 py-4 sm:py-10 md:px-28 font-spaceGrotesk text-xs sm:text-base text-white leading-5">
+                <div className="relative px-4 sm:pl-[22px] sm:pr-11 py-3 w-max rounded-lg dark:bg-baseBlueDark transition duration-200">
+                  <p className="font-bold">
+                    Showing Yield Farm with address <span>{farmQuery}</span> and
+                    pool ID: <span>{idQuery}</span>
+                  </p>
+                  <Tooltip content={<span>back to all farms</span>}>
+                    <button
+                      onClick={() => router.push("/")}
+                      className="absolute top-2 right-2 sm:top-0 sm:bottom-0 sm:right-5 my-auto cursor-default transition-all duration-200"
+                    >
+                      <XIcon className="ml-2 w-4 text-blueSilver dark:text-[#999999]" />
+                    </button>
+                  </Tooltip>
+                </div>
               </div>
             )}
           </div>
           {/* Listicle Table */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
-            <MobileFarmList farms={filteredFarms} noResult={noFilteredFarms} />
+            {!idQuery ? (
+              <MobileFarmList
+                farms={filteredFarms}
+                noResult={noFilteredFarms}
+              />
+            ) : (
+              <>
+                <MobileFarmList farms={specificFarm} noResult={false} />
+                <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
+                  <div
+                    className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-default"
+                    onClick={() => router.push("/")}
+                  >
+                    Go to home
+                  </div>
+                </div>
+              </>
+            )}
           </div>
           <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
             {/* If queries - Show Specific Farm according to queries  */}

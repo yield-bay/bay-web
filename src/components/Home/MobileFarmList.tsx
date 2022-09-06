@@ -17,7 +17,7 @@ export default function MobileFarmList({ farms }: any) {
         return (
           <div
             key={index}
-            className="w-full p-9 border-b border-blueSilver dark:border-[#01060F]"
+            className="w-full p-9 border-b border-blueSilver dark:border-[#222A39] transition-all duration-200"
           >
             {/* Upper Container for left and right */}
             <div className="flex flex-row justify-between">
