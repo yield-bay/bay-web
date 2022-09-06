@@ -76,7 +76,7 @@ const Home = () => {
           <div className="px-6 sm:px-0">
             {/* Center Container */}
             <div className="mx-auto max-w-lg md:max-w-3xl py-6 sm:py-11 md:py-[60px]">
-              <h1 className="font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:bg-gradient-to-b from-[#ACCDFF] to-white">
+              <h1 className="mb-7 sm:mb-8 font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:bg-gradient-to-b from-[#ACCDFF] to-white">
                 Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>

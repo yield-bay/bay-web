@@ -5,7 +5,7 @@ import { SunIcon, MoonIcon } from "@heroicons/react/solid";
 export default function Header() {
   const { theme, setTheme } = useTheme();
   return (
-    <div className="flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
+    <div className="flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-8 sm:pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
       <div className="flex flex-col items-center cursor-pointer">
         <span className="font-bold font-spaceGrotesk text-white text-lg leading-[23px] sm:text-2xl sm:leading-8">
           yieldbay
