@@ -7,7 +7,7 @@ import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
-// import { trackEventWithProperty } from "@utils/analytics";
+import { trackEventWithProperty } from "@utils/analytics";
 
 enum Order {
   ASC,
@@ -108,9 +108,9 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                           }
                           onButtonClick={() => {
                             handleSort("tvl", true);
-                            // trackEventWithProperty("table-sorting", {
-                            //   sortingType: "tvl",
-                            // });
+                            trackEventWithProperty("table-sorting", {
+                              sortingType: "tvl",
+                            });
                           }}
                         >
                           <div>
@@ -130,9 +130,9 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                       className="flex justify-end px-3 pt-9 pb-6 cursor-pointer"
                       onClick={() => {
                         handleSort("yield", true);
-                        // trackEventWithProperty("table-sorting", {
-                        //   sortingType: "yield",
-                        // });
+                        trackEventWithProperty("table-sorting", {
+                          sortingType: "yield",
+                        });
                       }}
                     >
                       <Tooltip

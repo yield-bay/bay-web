@@ -7,13 +7,13 @@ import { useRouter } from "next/router";
 // Library Imports
 import { useAtom } from "jotai";
 import { XIcon } from "@heroicons/react/outline";
-// import { trackPageview } from "fathom-client";
+import { trackPageView } from "@utils/analytics";
 
 // Misc Imports
 import FarmStats from "@components/Library/FarmStats";
 import Tooltip from "@components/Library/Tooltip";
 import SelectFarmType from "@components/Library/SelectFarmType";
-import SelectInput from "@components/Library/SelectInput";
+// import SelectInput from "@components/Library/SelectInput";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import { fetchListicleFarms } from "@utils/api";
@@ -57,7 +57,7 @@ const Home = () => {
       setFarms(res.farms);
     });
 
-    // trackPageview();
+    trackPageView();
   }, []);
 
   return (

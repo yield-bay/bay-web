@@ -1,12 +1,10 @@
-// NextJS Imports
 import type { AppProps } from "next/app";
 import { ThemeProvider } from "next-themes";
-
-// Stylesheet Imports
+import useAnalyticsSetup from "@hooks/useAnalyticsSetup";
 import "../styles/globals.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  // Analytics Setup here
+  useAnalyticsSetup(process.env.NEXT_PUBLIC_FATHOM_CODE as string);
   return (
     <ThemeProvider attribute="class">
       <Component {...pageProps} />

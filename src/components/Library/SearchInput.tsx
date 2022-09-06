@@ -1,6 +1,6 @@
 import { SearchIcon } from "@heroicons/react/solid";
-import { useRef } from "react";
-// import { trackEventWithProperty } from "@utils/analytics";
+import { useRef, useState } from "react";
+import { trackEventWithProperty } from "@utils/analytics";
 
 type SearchInputProps = {
   term: string;
@@ -8,10 +8,18 @@ type SearchInputProps = {
 };
 
 export default function SearchInput({ term, setTerm }: SearchInputProps) {
-  const ref = useRef<any>(null);
+  const [inputFocus, setInputFocus] = useState(false);
+  // const myRef = useRef(null);
+
+  // const handleKey = (e: any, targetEle: any) => {
+  //   console.log("function called atleast");
+  //   if (e.key === "Enter" && targetEle) {
+  //     targetEle.focus();
+  //   }
+  // };
 
   return (
-    <div className="relative flex w-full max-w-sm sm:max-w-md lg:max-w-[482px] text-primaryBlue rounded-md shadow-sm ring-transparent">
+    <div className="relative flex w-full max-w-sm sm:max-w-md lg:max-w-[482px] text-primaryBlue dark:text-primaryWhite rounded-md shadow-sm ring-transparent">
       <div className="absolute pl-4 sm:pl-6 lg:pl-9 left-0 inset-y-0 flex items-center pointer-events-none">
         <SearchIcon
           className="w-[18px] text-primaryBlue dark:text-gray-300 transition-all duration-200"
@@ -22,19 +30,23 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
         type="search"
         id="text"
         value={term}
-        ref={ref}
+        // ref={myRef}
         onChange={(event) => {
           setTerm(event.target.value);
-          // trackEventWithProperty("farm-search"); // No proprty as none required
+          trackEventWithProperty("farm-search"); // No proprty as none required
         }}
-        className="block w-full pl-12 lg:pl-[84px] py-3 focus:ring-[3px] ring-[#8EB8FF] dark:ring-neutral-500 placeholder:text-primaryBlue text-primaryBlue text-xs sm:text-base leading-4 sm:leading-5 font-semibold dark:text-neutral-400 bg-bodyGray border-none outline-none rounded-xl dark:bg-gray-700 transition duration-200"
+        onFocus={() => setInputFocus(true)}
+        onBlur={() => setInputFocus(false)}
+        className="block w-full pl-12 lg:pl-[84px] py-3 focus:ring-[3px] ring-[#8EB8FF] dark:ring-baseBlueMid placeholder:text-primaryBlue dark:placeholder:text-primaryWhite text-xs sm:text-base leading-4 sm:leading-5 font-semibold bg-bodyGray dark:bg-baseBlueDark border-none outline-none rounded-xl transition duration-200"
         placeholder="Search by token, chain or protocol name"
       />
-      <div className="absolute hidden md:flex items-center pr-9 right-0 inset-y-0 pointer-events-none">
-        <div className="flex px-[9px] py-[3.5px] max-w-max border border-primaryBlue rounded-[3px]">
-          <span className="text-xs font-medium leading-[14.5px]">/</span>
+      {!inputFocus && (
+        <div className="absolute hidden md:flex items-center pr-9 right-0 inset-y-0 pointer-events-none">
+          <div className="flex px-[9px] py-[3.5px] max-w-max border-[0.5px] border-primaryBlue dark:border-primaryWhite rounded-[3px] transition duration-200">
+            <span className="text-xs font-medium leading-[14.5px]">/</span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

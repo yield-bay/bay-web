@@ -4,7 +4,7 @@ import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
 import { ShareIcon } from "@heroicons/react/solid";
 import { useAtom } from "jotai";
 import { isNotificationAtom } from "@store/atoms";
-// import { trackEventWithProperty } from "@utils/analytics";
+import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 
 function classNames(classes: string[]) {
@@ -36,6 +36,7 @@ export default function ShareFarm({ farm, apr }: any) {
     <div>
       {/* Menu for Desktop Mode */}
       <ShareMenu
+        farm={farm}
         url={url}
         tweetUrl={tweetUrl}
         isNotificationSet={isNotificationSet}
@@ -62,7 +63,7 @@ export default function ShareFarm({ farm, apr }: any) {
   );
 }
 
-const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
+const ShareMenu = ({ farm, url, tweetUrl, isNotificationSet }: any) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
       <div className="">
@@ -92,13 +93,13 @@ const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
                   ])}
                   target="_blank"
                   rel="noreferrer"
-                  // onClick={() =>
-                  //   trackEventWithProperty("farm-share", {
-                  //     shareVia: "twitter",
-                  //     farmAddress: farm.asset?.address,
-                  //     farmId: farm.id,
-                  //   })
-                  // }
+                  onClick={() =>
+                    trackEventWithProperty("farm-share", {
+                      shareVia: "twitter",
+                      farmAddress: farm.asset?.address,
+                      farmId: farm.id,
+                    })
+                  }
                 >
                   <span className="sr-only">Share on Twitter</span>
                   <svg
@@ -123,11 +124,11 @@ const ShareMenu = ({ url, tweetUrl, isNotificationSet }: any) => {
                       isNotificationSet(false);
                     }, 2000); // Duration for Toast
 
-                    // trackEventWithProperty("farm-share", {
-                    //   shareVia: "copy",
-                    //   farmAddress: farm.asset?.address,
-                    //   farmId: farm.id,
-                    // });
+                    trackEventWithProperty("farm-share", {
+                      shareVia: "copy",
+                      farmAddress: farm.asset?.address,
+                      farmId: farm.id,
+                    });
                   }}
                   className={classNames([
                     active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
@@ -220,11 +221,11 @@ const ShareModal = ({
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => {
-                        // trackEventWithProperty("farm-share", {
-                        //   shareVia: "twitter",
-                        //   farmAddress: farmAddress,
-                        //   farmId: farmId,
-                        // });
+                        trackEventWithProperty("farm-share", {
+                          shareVia: "twitter",
+                          farmAddress: farmAddress,
+                          farmId: farmId,
+                        });
                         setOpen(false);
                       }}
                     >
@@ -250,11 +251,11 @@ const ShareModal = ({
 
                         setOpen(false);
 
-                        // trackEventWithProperty("farm-share", {
-                        //   shareVia: "copy",
-                        //   farmAddress: farmAddress,
-                        //   farmId: farmId,
-                        // });
+                        trackEventWithProperty("farm-share", {
+                          shareVia: "copy",
+                          farmAddress: farmAddress,
+                          farmId: farmId,
+                        });
                       }}
                       className="text-sm inline-flex justify-center font-medium border-b border-neutral-100 dark:border-neutral-700 py-4 px-6 active:text-neutral-600 active:dark:text-neutral-100 active:bg-neutral-100 dark:active:bg-neutral-700 cursor-pointer"
                     >

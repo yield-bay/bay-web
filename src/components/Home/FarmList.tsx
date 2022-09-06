@@ -6,7 +6,7 @@ import {
   formatTokenSymbols,
   formatFarmType,
 } from "@utils/farmListMethods";
-// import { trackEventWithProperty } from "@utils/analytics";
+import { trackEventWithProperty } from "@utils/analytics";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -74,11 +74,11 @@ const FarmsList = ({ farms }: any) => {
                   <Button
                     type="secondary"
                     size="large"
-                    // onClick={() =>
-                    //   trackEventWithProperty("go-to-farm", {
-                    //     protocol: farm?.protocol,
-                    //   })
-                    // }
+                    onButtonClick={() =>
+                      trackEventWithProperty("go-to-farm", {
+                        protocol: farm?.protocol,
+                      })
+                    }
                   >
                     Visit Farm
                   </Button>
