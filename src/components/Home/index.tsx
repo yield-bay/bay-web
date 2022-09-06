@@ -23,26 +23,29 @@ import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
+import SearchInput from "@components/Library/SearchInput";
 
 const Home = () => {
   const router = useRouter();
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
-  const [farms, setFarms] = useState([]);
-  const [searchArray, setSearchArray] = useState<
-    { value: string; label: string }[]
-  >([]);
+  const [farms, setFarms] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [farmQuery, setFarmQuery] = useState<string | string[] | undefined>();
   const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
   const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
-  const [filteredByFarmTypes, noFarms] = useFilteredFarmTypes(
-    farms,
-    filterFarmType
-  );
+  const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
   const [filteredFarms, noFilteredFarms] = useFilteredFarms(
     filteredByFarmTypes,
-    searchArray
+    searchTerm
   );
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
+  // const [searchArray, setSearchArray] = useState<
+  //   { value: string; label: string }[]
+  // >([]);
+  // const [filteredFarms, noFilteredFarms] = useFilteredFarms(
+  //   filteredByFarmTypes,
+  //   searchArray
+  // );
 
   useEffect(() => {
     setFarmQuery(router.query.farm);
@@ -77,12 +80,6 @@ const Home = () => {
                 Discover yield opportunities across multiple protocols and
                 parachains on Polkadot and Kusama
               </h1>
-              <div className="flex justify-center pt-9 pb-7 sm:py-8">
-                <SelectInput
-                  farms={filteredByFarmTypes}
-                  setSearchArray={setSearchArray}
-                />
-              </div>
               <FarmStats
                 totalTVL={tvlCount(farms)}
                 totalFarms={farms.length}
@@ -90,17 +87,20 @@ const Home = () => {
               />
             </div>
             {!idQuery ? (
-              <div className="flex items-center justify-between font-medium text-base pt-12 pb-7 sm:py-14 px-3 sm:px-6 md:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
-                <div className="flex justify-between w-full sm:w-max sm:gap-x-5 items-center">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-between font-medium text-base pt-12 pb-7 sm:py-14 px-3 sm:px-6 md:pl-16 md:pr-8 lg:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
+                <div className="flex items-center justify-between w-full sm:w-max sm:gap-x-5 px-2 sm:px-0">
                   <div>
                     <SelectFarmType />
                   </div>
-                  <div className="border-2 rounded-[5px] py-1 px-2">
+                  <div className="border-2 min-w-max rounded-[5px] py-1 px-2">
                     {filteredFarms.length} Results
                   </div>
                 </div>
+                <div className="flex mb-4 sm:mb-0 w-full justify-center sm:justify-end lg:justify-center">
+                  <SearchInput term={searchTerm} setTerm={setSearchTerm} />
+                </div>
                 <button
-                  className="hidden sm:inline-flex hover:underline gap-x-2 cursor-pointer"
+                  className="hidden lg:inline-flex items-center min-w-max hover:underline gap-x-2 cursor-pointer"
                   onClick={() => setProtocolModalOpen(true)}
                 >
                   <div>View All Protocols</div>
@@ -131,12 +131,12 @@ const Home = () => {
           </div>
           {/* Listicle Table */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
-            <MobileFarmList farms={filteredFarms} noResult={noFarms} />
+            <MobileFarmList farms={filteredFarms} noResult={noFilteredFarms} />
           </div>
           <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
             {/* If queries - Show Specific Farm according to queries  */}
             {!idQuery ? (
-              <ListicleTable farms={filteredFarms} noResult={noFarms} />
+              <ListicleTable farms={filteredFarms} noResult={noFilteredFarms} />
             ) : (
               <>
                 <ListicleTable farms={specificFarm} noResult={false} />
