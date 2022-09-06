@@ -13,7 +13,6 @@ import { trackPageView } from "@utils/analytics";
 import FarmStats from "@components/Library/FarmStats";
 import Tooltip from "@components/Library/Tooltip";
 import SelectFarmType from "@components/Library/SelectFarmType";
-// import SelectInput from "@components/Library/SelectInput";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import { fetchListicleFarms } from "@utils/api";
@@ -46,6 +45,10 @@ const Home = () => {
   //   filteredByFarmTypes,
   //   searchArray
   // );
+
+  // const handleFarmType = (setFarmType: any) => {
+  //   setFarmType({ id: 1, name: "All Types" });
+  // };
 
   useEffect(() => {
     setFarmQuery(router.query.farm);
@@ -153,21 +156,25 @@ const Home = () => {
             )}
           </div>
           <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
-            {/* If queries - Show Specific Farm according to queries  */}
+            {/* Shows Shared farm if queries are available  */}
             {!idQuery ? (
               <ListicleTable farms={filteredFarms} noResult={noFilteredFarms} />
             ) : (
-              <>
-                <ListicleTable farms={specificFarm} noResult={false} />
-                <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
-                  <div
-                    className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-default"
-                    onClick={() => router.push("/")}
-                  >
-                    Go to home
-                  </div>
+              <ListicleTable farms={specificFarm} noResult={false} />
+            )}
+            {/* Showing Go to Home if queries or not showing all farms */}
+            {(idQuery || filteredFarms.length < farms.length) && (
+              <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
+                <div
+                  className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-default"
+                  onClick={() => {
+                    if (idQuery) router.push("/");
+                    else router.reload();
+                  }}
+                >
+                  Go to home
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>
