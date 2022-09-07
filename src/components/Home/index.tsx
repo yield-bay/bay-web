@@ -88,7 +88,7 @@ const Home = () => {
       </Head>
       <main>
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
-        <div className="relative overflow-hidden flex flex-col flex-1">
+        <div className="relative flex flex-col flex-1">
           {/* HERO SECTION */}
           <div className="px-6 sm:px-0">
             {/* Center Container */}
@@ -149,6 +149,7 @@ const Home = () => {
             )}
           </div>
           {/* Listicle Table */}
+          {/* MOBILE VIEW */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
             {!idQuery ? (
               <MobileFarmList
@@ -169,6 +170,7 @@ const Home = () => {
               </>
             )}
           </div>
+          {/* DESKTOP VIEW */}
           <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
             {/* Shows Shared farm if queries are available  */}
             {!idQuery ? (

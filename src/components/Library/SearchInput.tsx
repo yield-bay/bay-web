@@ -11,13 +11,6 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
   const [inputFocus, setInputFocus] = useState(false);
   // const myRef = useRef(null);
 
-  // const handleKey = (e: any, targetEle: any) => {
-  //   console.log("function called atleast");
-  //   if (e.key === "Enter" && targetEle) {
-  //     targetEle.focus();
-  //   }
-  // };
-
   return (
     <div className="relative flex w-full max-w-sm sm:max-w-md lg:max-w-[482px] text-primaryBlue dark:text-primaryWhite rounded-md shadow-sm ring-transparent">
       <div className="absolute pl-4 sm:pl-6 lg:pl-9 left-0 inset-y-0 flex items-center pointer-events-none">

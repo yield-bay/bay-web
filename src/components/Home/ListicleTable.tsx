@@ -1,5 +1,5 @@
 // Library Imports
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 
@@ -8,6 +8,7 @@ import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
 import { trackEventWithProperty } from "@utils/analytics";
+import LoadingSkeleton from "@components/Library/LoadingSkeleton";
 
 enum Order {
   ASC,
@@ -22,10 +23,19 @@ type ListicleType = {
 const ListicleTable = ({ farms, noResult }: ListicleType) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
+  const [hideSkeleton, setHideSkeleton] = useState(false);
 
   useEffect(() => {
     if (farms.length > 0) handleSort(sortStatus.key, false, sortStatus.order);
   }, [farms, sortedFarmsSet]);
+
+  useEffect(() => {
+    if (farms.length > 0) {
+      setTimeout(() => {
+        setHideSkeleton(true);
+      }, 500);
+    }
+  }, [setHideSkeleton, farms]);
 
   const handleSort = (key: string, toggle: boolean, defaultOrder?: number) => {
     let newSortStatus: {
@@ -76,7 +86,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
     <div className="flex flex-col">
       <div>
         <div className="inline-block min-w-full align-middle">
-          {farms.length > 0 ? (
+          {!noResult ? (
             <div>
               <table className="min-w-full text-baseBlue dark:text-white">
                 <thead className="transition duration-200 font-bold text-base leading-5">
@@ -167,17 +177,17 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#222A39] transition duration-200">
-                  <FarmsList farms={sortedFarms} />
+                  {hideSkeleton ? (
+                    <FarmsList farms={sortedFarms} />
+                  ) : (
+                    <LoadingSkeleton />
+                  )}
                 </tbody>
               </table>
             </div>
-          ) : noResult ? (
+          ) : (
             <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
               <p>No Results. Try searching for something else.</p>
-            </div>
-          ) : (
-            <div className="px-6 py-10 text-center animate-pulse text-lg text-neutral-800 dark:text-neutral-200 border border-neutral-200 dark:border-neutral-600 sm:rounded-lg">
-              🌾 Finding Farms 🌾
             </div>
           )}
         </div>

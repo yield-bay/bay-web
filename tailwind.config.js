@@ -28,6 +28,15 @@ module.exports = {
         tooltipLight: "0px 0px 5px #A2C4FF",
         tooltipDark: "0px 0px 5px #3780FF",
       },
+      animation: {
+        shiny: "shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      keyframes: {
+        shimmer: {
+          "0%, 100%": { opacity: 1 },
+          "50%": { opacity: 0.6 },
+        },
+      },
     },
   },
   plugins: [],
