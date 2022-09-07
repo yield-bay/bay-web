@@ -24,6 +24,7 @@ import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
+import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 
 const Home = () => {
   const router = useRouter();
@@ -51,6 +52,16 @@ const Home = () => {
   // const handleFarmType = (setFarmType: any) => {
   //   setFarmType({ id: 1, name: "All Types" });
   // };
+
+  const [hideSkeleton, setHideSkeleton] = useState(false);
+
+  useEffect(() => {
+    if (farms.length > 0) {
+      setTimeout(() => {
+        setHideSkeleton(true);
+      }, 500);
+    }
+  }, [setHideSkeleton, farms]);
 
   useEffect(() => {
     if (typeof window !== undefined) {
@@ -152,10 +163,12 @@ const Home = () => {
           {/* MOBILE VIEW */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
             {!idQuery ? (
-              <MobileFarmList
-                farms={filteredFarms}
-                noResult={noFilteredFarms}
-              />
+              <>
+                <MobileFarmList
+                  farms={filteredFarms}
+                  noResult={noFilteredFarms}
+                />
+              </>
             ) : (
               <>
                 <MobileFarmList farms={specificFarm} noResult={false} />
