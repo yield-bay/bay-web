@@ -38,6 +38,9 @@ module.exports = {
         },
       },
     },
+    backgroundImage: {
+      "bg-pattern": "url('/Pattern.png')",
+    },
   },
   plugins: [],
 };

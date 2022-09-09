@@ -193,7 +193,7 @@ const Home = () => {
             {(idQuery || filteredFarms.length < farms.length) && (
               <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
                 <div
-                  className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-default"
+                  className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-pointer"
                   onClick={() => {
                     if (idQuery) router.push("/");
                     else router.reload();
