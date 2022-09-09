@@ -1,9 +1,32 @@
+import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
-import Button from "@components/Library/Button";
 import { SunIcon, MoonIcon } from "@heroicons/react/solid";
+import Button from "@components/Library/Button";
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
+  const [themeIcon, setThemeIcon] = useState<React.ReactElement>();
+
+  useEffect(() => {
+    if (theme == "dark") {
+      setThemeIcon(
+        <SunIcon
+          className="w-6 sm:w-8 text-white"
+          fill="currentColor"
+          aria-hidden="true"
+        />
+      );
+    } else {
+      setThemeIcon(
+        <MoonIcon
+          className="w-6 sm:w-8 text-white"
+          fill="currentColor"
+          aria-hidden="true"
+        />
+      );
+    }
+  }, [setThemeIcon, theme]);
+
   return (
     <div className="flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-8 sm:pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
       <div className="flex flex-col items-center cursor-pointer">
@@ -29,11 +52,7 @@ export default function Header() {
           className="h-max cursor-pointer"
           onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
         >
-          {theme == "dark" ? (
-            <SunIcon className="w-6 sm:w-8 text-white" />
-          ) : (
-            <MoonIcon className="w-6 sm:w-8 text-white" />
-          )}
+          {themeIcon}
         </button>
       </div>
     </div>
