@@ -1,5 +1,5 @@
 // React and Next Imports
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -41,6 +41,7 @@ const Home = () => {
   );
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [MobileUI, setMobileUI] = useState<React.ReactNode>();
   // const [searchArray, setSearchArray] = useState<
   //   { value: string; label: string }[]
   // >([]);
@@ -87,6 +88,18 @@ const Home = () => {
 
     trackPageView();
   }, []);
+
+  // useEffect hook determines the MobileUI for farms
+  // Using because of hyderation bugs
+  useEffect(() => {
+    if (filteredFarms.length > 0) {
+      setMobileUI(
+        <MobileFarmList farms={filteredFarms} noResult={noFilteredFarms} />
+      );
+    } else {
+      setMobileUI(<MobileLoadingSkeleton />);
+    }
+  }, [filteredFarms, MobileFarmList, MobileLoadingSkeleton]);
 
   return (
     <div>
@@ -163,12 +176,7 @@ const Home = () => {
           {/* MOBILE VIEW */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
             {!idQuery ? (
-              <>
-                <MobileFarmList
-                  farms={filteredFarms}
-                  noResult={noFilteredFarms}
-                />
-              </>
+              <>{MobileUI}</>
             ) : (
               <>
                 <MobileFarmList farms={specificFarm} noResult={false} />
