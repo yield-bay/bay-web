@@ -10,6 +10,8 @@ export function farmURL(farm: any): string {
   else if (farm.protocol == "taiga")
     return `https://apps.karura.network/swap/liquidity?lp=sa://${farm.id}`;
   else if (farm.protocol == "curve") return "https://curve.fi/";
+  else if (farm.protocol == "zenlink")
+    return "https://dex.zenlink.pro/#/earn/stake";
   return "";
 }
 
