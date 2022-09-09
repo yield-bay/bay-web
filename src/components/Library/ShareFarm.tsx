@@ -163,7 +163,7 @@ const ShareModal = ({
         className="fixed z-10 inset-0 overflow-y-auto"
         onClose={setOpen}
       >
-        <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+        <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -173,7 +173,7 @@ const ShareModal = ({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Dialog.Overlay className="fixed inset-0 bg-zinc-500 bg-opacity-70 transition-opacity" />
+            <Dialog.Overlay className="fixed inset-0 bg-slate-500 bg-opacity-70 transition-opacity" />
           </Transition.Child>
           <span
             className="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -190,13 +190,13 @@ const ShareModal = ({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="relative inline-block sm:hidden align-middle bg-white dark:bg-neutral-800 rounded-lg pt-5 pb-6 overflow-hidden shadow-xl transform transition-all w-full max-w-sm">
+            <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-white dark:bg-[#011433] rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-sm">
               {/* Close Button */}
               <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                <div className="flex items-center p-1 group rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                <div className="flex items-center p-1 group rounded-full active:bg-neutral-100 dark:active:bg-neutral-700">
                   <button
                     type="button"
-                    className="text-neutral-600 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white focus:outline-none"
+                    className="text-neutral-600 dark:text-slate-600 active:text-neutral-900 dark:active:text-slate-200 focus:outline-none"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -208,16 +208,16 @@ const ShareModal = ({
               <div className="mt-3 w-full">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg text-center leading-6 px-5 font-heading font-medium text-neutral-900 dark:text-white"
+                  className="text-lg pb-3 text-center leading-6 px-5 font-spaceGrotesk font-medium text-neutral-900 dark:text-white"
                 >
                   Share farm
                 </Dialog.Title>
-                <div className="w-full pt-2">
-                  <div className="flex flex-col w-full text-neutral-500 dark:text-neutral-300">
+                <div className="w-full pt-0">
+                  <div className="flex flex-col w-full text-primaryBlue dark:text-white">
                     {/* Share on Twitter button */}
                     <a
                       href={tweetUrl}
-                      className="text-sm inline-flex justify-center font-medium border-y border-neutral-100 dark:border-neutral-700 py-4 px-6 active:text-neutral-600 active:dark:text-neutral-100 active:bg-neutral-100 dark:active:bg-neutral-700 cursor-pointer"
+                      className="group flex justify-center gap-x-2 w-full text-sm font-medium border-y border-bodyGray dark:border-slate-800 py-4 px-6 active:dark:text-neutral-100 active:bg-bodyGray dark:active:bg-baseBlueMid cursor-pointer"
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => {
@@ -231,7 +231,7 @@ const ShareModal = ({
                     >
                       <span className="sr-only">Share on Twitter</span>
                       <svg
-                        className="h-5 w-5 mr-3 text-blue-400"
+                        className="h-5 w-5 mr-3 text-primaryBlue"
                         fill="currentColor"
                         viewBox="0 0 24 24"
                         aria-hidden="true"

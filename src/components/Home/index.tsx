@@ -1,5 +1,5 @@
 // React and Next Imports
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -24,6 +24,7 @@ import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
+import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 
 const Home = () => {
   const router = useRouter();
@@ -40,6 +41,7 @@ const Home = () => {
   );
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [MobileUI, setMobileUI] = useState<React.ReactNode>();
   // const [searchArray, setSearchArray] = useState<
   //   { value: string; label: string }[]
   // >([]);
@@ -52,6 +54,7 @@ const Home = () => {
   //   setFarmType({ id: 1, name: "All Types" });
   // };
 
+  // state handler for visibility of scroll-to-top button
   useEffect(() => {
     if (typeof window !== undefined) {
       window.addEventListener("scroll", () => {
@@ -76,6 +79,17 @@ const Home = () => {
 
     trackPageView();
   }, []);
+
+  // useEffect hook determines the MobileUI for farms
+  useEffect(() => {
+    if (filteredFarms.length > 0) {
+      setMobileUI(
+        <MobileFarmList farms={filteredFarms} noResult={noFilteredFarms} />
+      );
+    } else {
+      setMobileUI(<MobileLoadingSkeleton />);
+    }
+  }, [filteredFarms, noFilteredFarms, MobileFarmList, MobileLoadingSkeleton]);
 
   return (
     <div>
@@ -152,10 +166,7 @@ const Home = () => {
           {/* MOBILE VIEW */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
             {!idQuery ? (
-              <MobileFarmList
-                farms={filteredFarms}
-                noResult={noFilteredFarms}
-              />
+              <>{MobileUI}</>
             ) : (
               <>
                 <MobileFarmList farms={specificFarm} noResult={false} />
@@ -182,7 +193,7 @@ const Home = () => {
             {(idQuery || filteredFarms.length < farms.length) && (
               <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
                 <div
-                  className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-default"
+                  className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-pointer"
                   onClick={() => {
                     if (idQuery) router.push("/");
                     else router.reload();

@@ -1,52 +1,6 @@
 export default function LoadingSkeleton() {
   const lengthArray = [1, 2, 3, 4, 5, 6, 7, 8];
   return (
-    // <div className="flex flex-col">
-    //   <div>
-    //     <div className="inline-block min-w-full align-middle">
-    //       <div>
-    //         <table className="min-w-full">
-    //           <thead className="transition duration-200">
-    //             <tr>
-    //               <th
-    //                 scope="col"
-    //                 className="pt-9 pb-6 pr-3 text-left pl-8 md:pl-14 lg:pl-28"
-    //               >
-    //                 <span>Farm</span>
-    //               </th>
-    //               <th
-    //                 scope="col"
-    //                 className="hidden lg:table-cell pt-9 pb-6 pl-4 pr-3 sm:pl-6"
-    //               >
-    //                 <span className="sr-only">Farm Assets</span>
-    //               </th>
-    //               <th scope="col" className="px-3 pt-9 pb-6 cursor-pointer">
-    //                 <div className="flex justify-end items-center">
-    //                   <div>
-    //                     <span>TVL</span>
-    //                   </div>
-    //                 </div>
-    //               </th>
-    //               <th
-    //                 scope="col"
-    //                 className="flex justify-end px-3 pt-9 pb-6 cursor-pointer"
-    //               >
-    //                 <div>
-    //                   <span>APR</span>
-    //                 </div>
-    //               </th>
-    //               <th
-    //                 scope="col"
-    //                 className="hidden md:table-cell px-3 pt-9 pb-6 text-left cursor-pointer"
-    //               >
-    //                 <span>Rewards</span>
-    //               </th>
-    //               <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
-    //                 <span className="sr-only">Go to farm</span>
-    //               </th>
-    //             </tr>
-    //           </thead>
-    // <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#222A39] transition duration-200">
     <>
       {lengthArray.map((ele: number) => (
         <tr key={ele}>
@@ -107,7 +61,8 @@ export default function LoadingSkeleton() {
           </td>
           <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14">
             <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">
-              <div className="">
+              {/* Share Farm */}
+              <div>
                 <div className="h-12 w-12 rounded-lg bg-slate-200 dark:bg-baseBlueMid animate-shiny" />
               </div>
               {/* CTA Button */}
