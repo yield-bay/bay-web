@@ -54,16 +54,7 @@ const Home = () => {
   //   setFarmType({ id: 1, name: "All Types" });
   // };
 
-  const [hideSkeleton, setHideSkeleton] = useState(false);
-
-  useEffect(() => {
-    if (farms.length > 0) {
-      setTimeout(() => {
-        setHideSkeleton(true);
-      }, 500);
-    }
-  }, [setHideSkeleton, farms]);
-
+  // state handler for visibility of scroll-to-top button
   useEffect(() => {
     if (typeof window !== undefined) {
       window.addEventListener("scroll", () => {
@@ -90,7 +81,6 @@ const Home = () => {
   }, []);
 
   // useEffect hook determines the MobileUI for farms
-  // Using because of hyderation bugs
   useEffect(() => {
     if (filteredFarms.length > 0) {
       setMobileUI(
@@ -99,7 +89,7 @@ const Home = () => {
     } else {
       setMobileUI(<MobileLoadingSkeleton />);
     }
-  }, [filteredFarms, MobileFarmList, MobileLoadingSkeleton]);
+  }, [filteredFarms, noFilteredFarms, MobileFarmList, MobileLoadingSkeleton]);
 
   return (
     <div>
