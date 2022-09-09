@@ -65,6 +65,10 @@ const Home = () => {
         }
       });
     }
+
+    return () => {
+      window.removeEventListener("scroll", () => {});
+    };
   });
 
   useEffect(() => {
