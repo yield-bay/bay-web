@@ -28,7 +28,7 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
         }}
         // onFocus={() => setInputFocus(true)}
         // onBlur={() => setInputFocus(false)}
-        className="block w-full pl-12 lg:pl-[84px] py-3 focus:ring-[3px] ring-[#8EB8FF] dark:ring-baseBlueMid placeholder:text-primaryBlue dark:placeholder:text-primaryWhite text-xs sm:text-base leading-4 sm:leading-5 font-semibold bg-bodyGray dark:bg-baseBlueDark border-none outline-none rounded-xl transition duration-200"
+        className="block w-full pl-12 pr-4 lg:pl-[84px] py-3 focus:ring-[3px] ring-[#8EB8FF] dark:ring-baseBlueMid placeholder:text-primaryBlue dark:placeholder:text-primaryWhite text-xs sm:text-base leading-4 sm:leading-5 font-semibold bg-bodyGray dark:bg-baseBlueDark border-none outline-none rounded-xl transition duration-200"
         placeholder="Search by token, chain or protocol name"
       />
       {/* {!inputFocus && (
