@@ -12,7 +12,7 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
 
   return (
     <div className="relative flex w-full max-w-sm sm:max-w-md lg:max-w-[482px] text-primaryBlue dark:text-primaryWhite rounded-md shadow-sm ring-transparent">
-      <div className="absolute pl-4 sm:pl-6 lg:pl-9 left-0 inset-y-0 flex items-center pointer-events-none">
+      <div className="absolute sm:pl-6 lg:pl-9 left-0 inset-y-0 flex items-center pointer-events-none">
         <SearchIcon
           className="w-[18px] text-primaryBlue dark:text-gray-300 transition-all duration-200"
           aria-hidden="true"
@@ -28,7 +28,7 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
         }}
         // onFocus={() => setInputFocus(true)}
         // onBlur={() => setInputFocus(false)}
-        className="block w-full pl-12 lg:pl-[84px] py-3 focus:ring-[3px] ring-[#8EB8FF] dark:ring-baseBlueMid placeholder:text-primaryBlue dark:placeholder:text-primaryWhite text-xs sm:text-base leading-4 sm:leading-5 font-semibold bg-bodyGray dark:bg-baseBlueDark border-none outline-none rounded-xl transition duration-200"
+        className="block w-full pl-12 pr-4 lg:pl-[84px] py-3 focus:ring-[3px] ring-[#8EB8FF] dark:ring-baseBlueMid placeholder:text-primaryBlue dark:placeholder:text-primaryWhite text-xs sm:text-base leading-4 sm:leading-5 font-semibold bg-bodyGray dark:bg-baseBlueDark border-none outline-none rounded-xl transition duration-200"
         placeholder="Search by token, chain or protocol name"
       />
       {/* {!inputFocus && (
