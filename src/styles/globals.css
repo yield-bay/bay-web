@@ -10,6 +10,10 @@
   html {
     @apply antialiased;
   }
+
+  .dark-hero-bg {
+    background-image: linear-gradient(to bottom, #ACCDFF, white);
+  }
 }
 
 /* .remove-scrollbar::-webkit-scrollbar {
