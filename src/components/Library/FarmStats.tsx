@@ -5,7 +5,7 @@ export default function FarmStats({
 }: any) {
   return (
     <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white">
-      <Stat value={totalTVL} title="TVL" />
+      <Stat value={totalTVL} title="Tracking TVL" />
       <Stat value={totalFarms} title="Farms" />
       <Stat value={totalProtocols} title="Protocols" />
     </div>
