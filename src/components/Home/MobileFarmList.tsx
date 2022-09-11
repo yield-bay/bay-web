@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
 import Button from "@components/Library/Button";
 import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
 import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 import ShareFarm from "@components/Library/ShareFarm";
 import {
+  farmURL,
   formatFarmType,
   formatFirstLetter,
   formatTokenSymbols,
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
+import { trackEventWithProperty } from "@utils/analytics";
 
 export default function MobileFarmList({ farms, noResult }: any) {
   return (
@@ -66,9 +67,19 @@ export default function MobileFarmList({ farms, noResult }: any) {
                   farm={farm}
                   apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
                 />
-                <Button size="large" type="secondary">
-                  Visit Farm
-                </Button>
+                <a href={farmURL(farm)} target="_blank" rel="noreferrer">
+                  <Button
+                    type="secondary"
+                    size="large"
+                    onButtonClick={() =>
+                      trackEventWithProperty("go-to-farm", {
+                        protocol: farm?.protocol,
+                      })
+                    }
+                  >
+                    Visit Farm
+                  </Button>
+                </a>
               </div>
             </div>
           );
