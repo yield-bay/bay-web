@@ -27,7 +27,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
 
   useEffect(() => {
     if (farms.length > 0) handleSort(sortStatus.key, false, sortStatus.order);
-  }, [farms, sortedFarmsSet]);
+  }, [farms]);
 
   useEffect(() => {
     if (farms.length > 0) {
