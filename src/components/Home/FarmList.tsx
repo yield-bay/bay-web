@@ -59,7 +59,7 @@ const FarmsList = ({ farms }: any) => {
                 />
               </div>
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 sm:pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               <Rewards rewards={farm?.rewards} />
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">

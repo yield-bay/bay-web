@@ -27,7 +27,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
 
   useEffect(() => {
     if (farms.length > 0) handleSort(sortStatus.key, false, sortStatus.order);
-  }, [farms, sortedFarmsSet]);
+  }, [farms]);
 
   useEffect(() => {
     if (farms.length > 0) {
@@ -167,7 +167,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                     <th
                       scope="col"
-                      className="hidden md:table-cell px-3 pt-9 pb-6 text-left cursor-pointer"
+                      className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-left cursor-pointer"
                     >
                       <span>Rewards</span>
                     </th>

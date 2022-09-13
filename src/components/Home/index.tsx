@@ -29,30 +29,23 @@ import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 const Home = () => {
   const router = useRouter();
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
+
+  // States
   const [farms, setFarms] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [farmQuery, setFarmQuery] = useState<string | string[] | undefined>();
   const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
+  const [protocolModalOpen, setProtocolModalOpen] = useState(false);
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [MobileUI, setMobileUI] = useState<React.ReactNode>();
+
+  // Hooks
   const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
   const [filteredFarms, noFilteredFarms] = useFilteredFarms(
     filteredByFarmTypes,
     searchTerm
   );
-  const [protocolModalOpen, setProtocolModalOpen] = useState(false);
-  const [showScrollBtn, setShowScrollBtn] = useState(false);
-  const [MobileUI, setMobileUI] = useState<React.ReactNode>();
-  // const [searchArray, setSearchArray] = useState<
-  //   { value: string; label: string }[]
-  // >([]);
-  // const [filteredFarms, noFilteredFarms] = useFilteredFarms(
-  //   filteredByFarmTypes,
-  //   searchArray
-  // );
-
-  // const handleFarmType = (setFarmType: any) => {
-  //   setFarmType({ id: 1, name: "All Types" });
-  // };
 
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
@@ -83,17 +76,6 @@ const Home = () => {
 
     trackPageView();
   }, []);
-
-  // useEffect hook determines the MobileUI for farms
-  useEffect(() => {
-    if (filteredFarms.length > 0) {
-      setMobileUI(
-        <MobileFarmList farms={filteredFarms} noResult={noFilteredFarms} />
-      );
-    } else {
-      setMobileUI(<MobileLoadingSkeleton />);
-    }
-  }, [filteredFarms, noFilteredFarms, MobileFarmList, MobileLoadingSkeleton]);
 
   return (
     <div>
@@ -174,7 +156,10 @@ const Home = () => {
           {/* MOBILE VIEW */}
           <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
             {!idQuery ? (
-              <>{MobileUI}</>
+              <MobileFarmList
+                farms={filteredFarms}
+                noResult={noFilteredFarms}
+              />
             ) : (
               <>
                 <MobileFarmList farms={specificFarm} noResult={false} />
