@@ -1,5 +1,5 @@
 import AsyncSelect from "react-select/async";
-import { arrayofItemsForFilteration } from "@utils/filterationMethods";
+import { arrayofItemsForFilteration } from "@utils/_filterationMethods";
 // import Select from "react-select";
 // import makeAnimated from "react-select/animated";
 
