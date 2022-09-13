@@ -34,10 +34,10 @@ export default function Footer() {
       title: "Docs",
       link: "https://docs.yieldbay.io/",
     },
-    // {
-    //   title: "Github",
-    //   link: "https://github.com/yield_bay/",
-    // }
+    {
+      title: "Github",
+      link: "https://github.com/yield-bay/",
+    },
   ];
 
   return (
