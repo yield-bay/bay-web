@@ -13,10 +13,10 @@ export function protocolList(farms: any): string[] {
   );
 }
 
-export function tvlCount(farms: any): string {
+export function tvlCount(farms: any): number {
   let totalTVL = 0;
   farms.forEach((farm: any) => {
     totalTVL += farm?.tvl;
   });
-  return toDollarUnits(totalTVL);
+  return totalTVL;
 }
