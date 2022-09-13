@@ -17,27 +17,25 @@ import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import { fetchListicleFarms } from "@utils/api";
 import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
-import { filterFarmTypeAtom } from "@store/atoms";
+import { farmQueryAtom, filterFarmTypeAtom, idQueryAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
-import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 
 const Home = () => {
   const router = useRouter();
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
+  const [idQuery, idQuerySet] = useAtom(idQueryAtom);
+  const [farmQuery, farmQuerySet] = useAtom(farmQueryAtom);
 
   // States
   const [farms, setFarms] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [farmQuery, setFarmQuery] = useState<string | string[] | undefined>();
-  const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
-  const [MobileUI, setMobileUI] = useState<React.ReactNode>();
 
   // Hooks
   const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
@@ -65,8 +63,8 @@ const Home = () => {
   });
 
   useEffect(() => {
-    setFarmQuery(router.query.farm);
-    setIdQuery(router.query.id);
+    farmQuerySet(router.query.farm);
+    idQuerySet(router.query.id);
   }, [router]);
 
   useEffect(() => {
