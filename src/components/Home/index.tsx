@@ -112,7 +112,9 @@ const Home = () => {
                     <SelectFarmType />
                   </div>
                   <div className="border-2 min-w-max rounded-[5px] py-1 px-2">
-                    {filteredFarms.length} Results
+                    {filteredFarms.length == 0
+                      ? "Loading..."
+                      : `${filteredFarms.length} Results`}
                   </div>
                 </div>
                 <div className="flex mb-4 sm:mb-0 w-full justify-center sm:justify-end lg:justify-center">
