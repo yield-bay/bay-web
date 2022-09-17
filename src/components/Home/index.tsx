@@ -112,6 +112,7 @@ const Home = () => {
                     <SelectFarmType />
                   </div>
                   <div className="border-2 min-w-max rounded-[5px] py-1 px-2">
+                    {/* TODO: While searching, if there're no farms, then too it shows Loading coz no farms */}
                     {filteredFarms.length == 0
                       ? "Loading..."
                       : `${filteredFarms.length} Results`}
