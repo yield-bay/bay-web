@@ -8,7 +8,7 @@ const farmTypes = [
   { id: 1, name: "All Types" },
   { id: 2, name: "Standard Swap" },
   { id: 3, name: "Stable Swap" },
-  // { id: 4, name: "Single Staking" },
+  { id: 4, name: "Single Staking" },
 ];
 
 function classNames(...classes: string[]) {
@@ -17,7 +17,7 @@ function classNames(...classes: string[]) {
 
 export default function SelectFarmType() {
   const [selectedFarmType, setSelectedFarmType] = useState(farmTypes[0]);
-  const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
+  const [, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
 
   return (
     <Listbox
