@@ -1,5 +1,5 @@
 type FarmBadgeProps = {
-  type: string | "standard" | "stable" | "single";
+  type: string;
 };
 
 export default function FarmBadge({ type }: FarmBadgeProps) {

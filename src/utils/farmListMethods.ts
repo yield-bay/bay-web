@@ -13,7 +13,6 @@ export function farmURL(farm: any): string {
     return `https://moonbeam.curve.fi/factory/${farm.id}/deposit`;
   else if (farm.protocol == "zenlink")
     return "https://dex.zenlink.pro/#/earn/stake";
-
   return "";
 }
 
@@ -25,36 +24,12 @@ export function formatFarmType(farmType: string): string {
 export function formatTokenSymbols(farmName: string): string[] {
   let tokenSymbols = farmName;
   if (farmName.includes("LP")) {
-    tokenSymbols = tokenSymbols.replace("LP", "");
+    tokenSymbols = tokenSymbols.replace("LP", "").trimEnd();
   }
+  // not else-if but two separate conditions
   if (tokenSymbols.includes("-")) {
-    let tokenNames = tokenSymbols.trimEnd().split("-");
+    let tokenNames = tokenSymbols.split("-");
     return tokenNames;
   }
   return [farmName];
-}
-
-export function isCritical(id: number, chef: string): boolean {
-  const criticalFarms = [
-    {
-      chef: "0xF3a5454496E26ac57da879bf3285Fa85DEBF0388",
-      ids: [11, 12, 13],
-    },
-    {
-      chef: "0xC6ca172FC8BDB803c5e12731109744fb0200587b",
-      ids: [15],
-    },
-  ];
-
-  function include(arr: number[], obj: number): boolean {
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i] == obj) return true;
-    }
-    return false;
-  }
-
-  const state = criticalFarms.map((farm) => {
-    return farm.chef == chef && include(farm.ids, id);
-  });
-  return state.includes(true);
 }
