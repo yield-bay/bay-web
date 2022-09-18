@@ -18,9 +18,8 @@ export function farmURL(farm: any): string {
 }
 
 export function formatFarmType(farmType: string): string {
-  let formatted = farmType.slice(0, -3).toUpperCase(); // removed Amm and uppercased
-  // formatted = formatted.slice(0, 1) + formatted.slice(1).toLowerCase();
-  return formatted;
+  if (farmType === "SingleStaking") return "single staking";
+  else return farmType.slice(0, -3) + " swap";
 }
 
 export function formatTokenSymbols(farmName: string): string[] {
