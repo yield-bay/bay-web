@@ -126,11 +126,13 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
             sortStatus.key == "tvl" ? "text-primaryBlue font-bold" : ""
           }
           onClick={() => {
-            handleSort(true, false);
-            trackEventWithProperty("table-sorting", {
-              sortingType: "tvl",
-            });
-            setOpen(false);
+            if (sortStatus.key != "tvl") {
+              handleSort(true, false);
+              trackEventWithProperty("table-sorting", {
+                sortingType: "tvl",
+              });
+              setOpen(false);
+            }
           }}
         >
           TVL
@@ -140,11 +142,13 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
             sortStatus.key == "yield" ? "text-primaryBlue font-bold" : ""
           }
           onClick={() => {
-            handleSort(true, false);
-            trackEventWithProperty("table-sorting", {
-              sortingType: "yield",
-            });
-            setOpen(false);
+            if (sortStatus.key != "yield") {
+              handleSort(true, false);
+              trackEventWithProperty("table-sorting", {
+                sortingType: "yield",
+              });
+              setOpen(false);
+            }
           }}
         >
           APR
@@ -156,11 +160,13 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
         <p
           className={sortStatus.order === 1 ? "text-primaryBlue font-bold" : ""}
           onClick={() => {
-            handleSort(false, true);
-            trackEventWithProperty("table-sorting", {
-              sortingType: sortStatus.key,
-            });
-            setOpen(false);
+            if (sortStatus.order != 1) {
+              handleSort(false, true);
+              trackEventWithProperty("table-sorting", {
+                sortingType: sortStatus.key,
+              });
+              setOpen(false);
+            }
           }}
         >
           Descending
@@ -168,11 +174,13 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
         <p
           className={sortStatus.order === 0 ? "text-primaryBlue font-bold" : ""}
           onClick={() => {
-            handleSort(false, true);
-            trackEventWithProperty("table-sorting", {
-              sortingType: sortStatus.key,
-            });
-            setOpen(false);
+            if (sortStatus.order != 0) {
+              handleSort(false, true);
+              trackEventWithProperty("table-sorting", {
+                sortingType: sortStatus.key,
+              });
+              setOpen(false);
+            }
           }}
         >
           Ascending
