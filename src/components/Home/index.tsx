@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 
 // Library Imports
 import { useAtom } from "jotai";
-import { XIcon } from "@heroicons/react/outline";
+import { XIcon, AdjustmentsIcon } from "@heroicons/react/outline";
 import { trackPageView } from "@utils/analytics";
 
 // Misc Imports
@@ -107,9 +107,12 @@ const Home = () => {
             </div>
             {!idQuery ? (
               <div className="flex flex-col-reverse sm:flex-row items-center justify-between font-medium text-base pt-12 pb-7 sm:py-14 px-3 sm:px-6 md:pl-16 md:pr-8 lg:px-28 font-spaceGrotesk text-white dark:text-blueSilver leading-5">
-                <div className="flex items-center justify-between w-full sm:w-max sm:gap-x-5 px-2 sm:px-0">
-                  <div>
+                <div className="flex items-center justify-between w-full sm:w-max sm:gap-x-5">
+                  <div className="hidden sm:block">
                     <SelectFarmType />
+                  </div>
+                  <div className="sm:hidden">
+                    <AdjustmentsIcon className="w-6 h-6 rotate-90" />
                   </div>
                   <div className="border-2 min-w-max rounded-[5px] py-1 px-2">
                     {/* TODO: While searching, if there're no farms, then too it shows Loading coz no farms */}
