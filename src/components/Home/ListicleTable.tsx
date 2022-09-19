@@ -106,7 +106,12 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     <th
                       scope="col"
                       className="px-3 pt-9 pb-6 cursor-pointer"
-                      onClick={() => handleSort("tvl", true)}
+                      onClick={() => {
+                        handleSort("tvl", true);
+                        trackEventWithProperty("table-sorting", {
+                          sortingType: "tvl",
+                        });
+                      }}
                     >
                       <div className="flex justify-end items-center">
                         <Tooltip
@@ -116,12 +121,6 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                               invested in the farm, denoted in USD.
                             </span>
                           }
-                          onButtonClick={() => {
-                            handleSort("tvl", true);
-                            trackEventWithProperty("table-sorting", {
-                              sortingType: "tvl",
-                            });
-                          }}
                         >
                           <div>
                             <span>TVL</span>
@@ -152,7 +151,6 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                             for an year.
                           </span>
                         }
-                        onButtonClick={() => handleSort("yield", true)}
                       >
                         <div>
                           <span>APR</span>

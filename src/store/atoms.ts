@@ -15,7 +15,7 @@ interface FarmTypesType {
 
 export const sortStatusAtom = atom<SortStatusType>({
   key: "tvl",
-  order: 1,
+  order: 1, // DESC
 });
 
 export const isNotificationAtom = atom<boolean>(false);

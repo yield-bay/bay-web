@@ -1,4 +1,4 @@
-// React  Imports
+// Library  Imports
 import { useState, useEffect } from "react";
 
 // Component Imports
@@ -8,7 +8,7 @@ import FarmBadge from "@components/Library/FarmBadge";
 import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 import ShareFarm from "@components/Library/ShareFarm";
 
-// Utils Imports
+// Misc Imports
 import {
   farmURL,
   formatFarmType,
