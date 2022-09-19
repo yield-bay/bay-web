@@ -2,7 +2,11 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import { useAtom } from "jotai";
-import { filterFarmTypeAtom, farmTypesAtom } from "@store/atoms";
+import {
+  filterFarmTypeAtom,
+  farmTypesAtom,
+  sortStatusAtom,
+} from "@store/atoms";
 
 type PreferencesModalProps = {
   open: boolean;
@@ -10,6 +14,10 @@ type PreferencesModalProps = {
 };
 
 type FarmTypeFilterProps = {
+  setOpen: (value: boolean) => void;
+};
+
+type SortingFilterProps = {
   setOpen: (value: boolean) => void;
 };
 
@@ -47,7 +55,7 @@ export default function PreferencesModal({
           >
             <div className="relative inline-block font-spaceGrotesk bg-white dark:bg-baseBlue rounded-lg text-left shadow-xl py-3 align-bottom w-full transform transition-all">
               <div className="absolute top-0 right-0 pt-7 pr-7">
-                <div className="flex items-center group rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer">
+                <div className="flex items-center group rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700">
                   <button
                     type="button"
                     className="text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white focus:outline-none"
@@ -61,12 +69,13 @@ export default function PreferencesModal({
               <div className="w-full">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-[#181E27]"
+                  className="text-lg leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-bodyGray dark:border-[#181E27]"
                 >
                   All Listed Protocols
                 </Dialog.Title>
-                <div className="mt-[10px]">
+                <div className="mt-[10px] font-medium text-base leading-5">
                   <FarmTypeFilter setOpen={setOpen} />
+                  <SortingFilter setOpen={setOpen} />
                 </div>
               </div>
             </div>
@@ -82,12 +91,12 @@ const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
   const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
 
   return (
-    <div className="px-9 py-[18px] flex flex-col gap-y-[15px] border-b-[1.5px] border-[#181E27]">
+    <div className="px-9 py-[18px] flex flex-col gap-y-[15px] border-b-[1.5px] border-bodyGray dark:border-[#181E27]">
       {farmTypes.map((item) => (
         <p
-          className={`font-medium text-base leading-5 ${
-            filterFarmType === item.id && "text-primaryBlue"
-          }`}
+          className={
+            filterFarmType === item.id ? "text-primaryBlue font-bold" : ""
+          }
           onClick={() => {
             filterFarmTypeSet(item.id);
             setOpen(false);
@@ -97,6 +106,66 @@ const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
           {item.name}
         </p>
       ))}
+    </div>
+  );
+};
+
+const SortingFilter = ({ setOpen }: SortingFilterProps) => {
+  const [sortStatus] = useAtom(sortStatusAtom);
+  return (
+    <div>
+      {/* Depends on the current "SORT" status */}
+      <div className="px-9 py-6 inline-flex gap-x-[15px] w-full border-b-[1.5px] border-bodyGray dark:border-[#181E27]">
+        <p className="font-bold">Sort By:</p>
+        <p
+          className={
+            sortStatus.key == "tvl" ? "text-primaryBlue font-bold" : ""
+          }
+          // onClick={() => {
+          //   handleSort("tvl", true);
+          //   trackEventWithProperty("table-sorting", {
+          //     sortingType: "tvl",
+          //   });
+          //   setOpen(false);
+          // }}
+        >
+          TVL
+        </p>
+        <p
+          className={
+            sortStatus.key == "yield" ? "text-primaryBlue font-bold" : ""
+          }
+          // onClick={() => {
+          //   handleSort("yield", true);
+          //   trackEventWithProperty("table-sorting", {
+          //     sortingType: "yield",
+          //   });
+          //   setOpen(false);
+          // }}
+        >
+          APR
+        </p>
+      </div>
+      {/* Depends on current "ORDER" of sorting */}
+      <div className="px-9 py-6 inline-flex gap-x-[15px]">
+        <p className="font-bold">Order:</p>
+        <p
+          className={sortStatus.order === 1 ? "text-primaryBlue font-bold" : ""}
+          onClick={() => {
+            setOpen(false);
+          }}
+        >
+          Descending
+        </p>
+        <p
+          className={sortStatus.order === 0 ? "text-primaryBlue font-bold" : ""}
+          onClick={() => {
+            setOpen(false);
+          }}
+        >
+          Ascending
+        </p>
+      </div>
     </div>
   );
 };
