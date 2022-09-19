@@ -24,6 +24,7 @@ import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
+import PreferencesModal from "@components/Library/PreferencesModal";
 
 const Home = () => {
   const router = useRouter();
@@ -34,6 +35,7 @@ const Home = () => {
   // States
   const [farms, setFarms] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [prefModalOpen, setPrefModalOpen] = useState(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
@@ -111,7 +113,10 @@ const Home = () => {
                   <div className="hidden sm:block">
                     <SelectFarmType />
                   </div>
-                  <div className="sm:hidden">
+                  <div
+                    className="sm:hidden"
+                    onClick={() => setPrefModalOpen(true)}
+                  >
                     <AdjustmentsIcon className="w-6 h-6 rotate-90" />
                   </div>
                   <div className="border-2 min-w-max rounded-[5px] py-1 px-2">
@@ -208,6 +213,7 @@ const Home = () => {
           setOpen={setProtocolModalOpen}
           protocols={protocolList(farms)}
         />
+        <PreferencesModal open={prefModalOpen} setOpen={setPrefModalOpen} />
       </main>
     </div>
   );
