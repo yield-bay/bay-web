@@ -2,20 +2,14 @@ import { Fragment, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { useAtom } from "jotai";
 import { ChevronDownIcon } from "@heroicons/react/solid";
-import { filterFarmTypeAtom } from "@store/atoms";
-
-const farmTypes = [
-  { id: 1, name: "All Types" },
-  { id: 2, name: "Standard Swap" },
-  { id: 3, name: "Stable Swap" },
-  { id: 4, name: "Single Staking" },
-];
+import { filterFarmTypeAtom, farmTypesAtom } from "@store/atoms";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function SelectFarmType() {
+  const [farmTypes] = useAtom(farmTypesAtom);
   const [selectedFarmType, setSelectedFarmType] = useState(farmTypes[0]);
   const [, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
 
