@@ -26,7 +26,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
   const [hideSkeleton, setHideSkeleton] = useState(false);
 
   useEffect(() => {
-    if (farms.length > 0) handleSort(sortStatus.key, false, sortStatus.order);
+    if (farms.length > 0) handleSort(sortStatus.key, false);
   }, [farms]);
 
   useEffect(() => {
@@ -37,10 +37,10 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
     }
   }, [setHideSkeleton, farms]);
 
-  const handleSort = (key: string, toggle: boolean, defaultOrder?: number) => {
+  const handleSort = (key: string, toggle: boolean) => {
     let newSortStatus: {
       key: string;
-      order: number | undefined;
+      order: number;
     };
 
     if (toggle) {
@@ -52,7 +52,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
     } else {
       newSortStatus = {
         key,
-        order: defaultOrder,
+        order: sortStatus.order,
       };
     }
 
@@ -106,7 +106,12 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     <th
                       scope="col"
                       className="px-3 pt-9 pb-6 cursor-pointer"
-                      onClick={() => handleSort("tvl", true)}
+                      onClick={() => {
+                        handleSort("tvl", true);
+                        trackEventWithProperty("table-sorting", {
+                          sortingType: "tvl",
+                        });
+                      }}
                     >
                       <div className="flex justify-end items-center">
                         <Tooltip
@@ -116,12 +121,6 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                               invested in the farm, denoted in USD.
                             </span>
                           }
-                          onButtonClick={() => {
-                            handleSort("tvl", true);
-                            trackEventWithProperty("table-sorting", {
-                              sortingType: "tvl",
-                            });
-                          }}
                         >
                           <div>
                             <span>TVL</span>
@@ -152,7 +151,6 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                             for an year.
                           </span>
                         }
-                        onButtonClick={() => handleSort("yield", true)}
                       >
                         <div>
                           <span>APR</span>

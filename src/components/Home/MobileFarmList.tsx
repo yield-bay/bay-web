@@ -1,5 +1,6 @@
-// React  Imports
+// Library  Imports
 import { useState, useEffect } from "react";
+import { useAtom } from "jotai";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -7,8 +8,9 @@ import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
 import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 import ShareFarm from "@components/Library/ShareFarm";
+import PreferencesModal from "@components/Library/PreferencesModal";
 
-// Utils Imports
+// Misc Imports
 import {
   farmURL,
   formatFarmType,
@@ -17,9 +19,33 @@ import {
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
 import { trackEventWithProperty } from "@utils/analytics";
+import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 
-export default function MobileFarmList({ farms, noResult }: any) {
+type FarmListType = {
+  farms: any;
+  noResult: boolean;
+  prefOpen: boolean;
+  setPrefOpen: (value: boolean) => void;
+};
+
+enum Order {
+  ASC,
+  DESC,
+}
+
+export default function MobileFarmList({
+  farms,
+  noResult,
+  prefOpen,
+  setPrefOpen,
+}: FarmListType) {
+  const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
+  const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
+
+  useEffect(() => {
+    if (farms.length > 0) handleSort(false, false);
+  }, [farms]);
 
   useEffect(() => {
     if (farms.length > 0) {
@@ -29,11 +55,63 @@ export default function MobileFarmList({ farms, noResult }: any) {
     }
   }, [setHideSkeleton, farms]);
 
+  const handleSort = (toggleKey: boolean, toggleOrder: boolean) => {
+    let newSortStatus: {
+      key: string;
+      order: number;
+    };
+
+    // Toggle for Order, as we are keeping key same
+    if (toggleOrder) {
+      newSortStatus = {
+        key: sortStatus.key,
+        order: sortStatus.order == Order.ASC ? Order.DESC : Order.ASC, // Flip the order
+      };
+    } else if (toggleKey) {
+      newSortStatus = {
+        key: sortStatus.key == "tvl" ? "yield" : "tvl",
+        order: sortStatus.order,
+      };
+    } else {
+      // when both are false
+      newSortStatus = {
+        key: sortStatus.key,
+        order: sortStatus.order,
+      };
+    }
+
+    // globally sets the sortStatus in store
+    sortStatusSet(newSortStatus);
+
+    let sortFn; // fn used to sort the pools
+    if (newSortStatus.key == "tvl") {
+      sortFn = (a: any, b: any) =>
+        newSortStatus.order == Order.ASC
+          ? a.tvl >= b.tvl
+            ? 1
+            : -1
+          : a.tvl < b.tvl
+          ? 1
+          : -1;
+    } else if (newSortStatus.key == "yield") {
+      sortFn = (a: any, b: any) =>
+        newSortStatus.order == Order.ASC
+          ? a.apr.reward + a.apr.base >= b.apr.reward + b.apr.base
+            ? 1
+            : -1
+          : a.apr.reward + a.apr.base < b.apr.reward + b.apr.base
+          ? 1
+          : -1;
+    }
+
+    sortedFarmsSet([...farms].sort(sortFn));
+  };
+
   return (
     <div className="text-baseBlueDark dark:text-blueSilver">
       {!noResult ? (
         hideSkeleton ? (
-          farms.map((farm: any, index: number) => {
+          sortedFarms.map((farm: any, index: number) => {
             const tokenNames = formatTokenSymbols(farm?.asset.symbol);
             return (
               <div
@@ -109,6 +187,11 @@ export default function MobileFarmList({ farms, noResult }: any) {
           <p>No Results. Try searching for something else.</p>
         </div>
       )}
+      <PreferencesModal
+        open={prefOpen}
+        setOpen={setPrefOpen}
+        handleSort={handleSort}
+      />
     </div>
   );
 }
