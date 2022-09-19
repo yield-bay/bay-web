@@ -7,10 +7,12 @@ import {
   farmTypesAtom,
   sortStatusAtom,
 } from "@store/atoms";
+import { trackEventWithProperty } from "@utils/analytics";
 
 type PreferencesModalProps = {
   open: boolean;
   setOpen: (value: boolean) => void;
+  handleSort: (toggleKey: boolean, toggleOrder: boolean) => void;
 };
 
 type FarmTypeFilterProps = {
@@ -19,11 +21,13 @@ type FarmTypeFilterProps = {
 
 type SortingFilterProps = {
   setOpen: (value: boolean) => void;
+  handleSort: (toggleKey: boolean, toggleOrder: boolean) => void;
 };
 
 export default function PreferencesModal({
   open,
   setOpen,
+  handleSort,
 }: PreferencesModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -75,7 +79,7 @@ export default function PreferencesModal({
                 </Dialog.Title>
                 <div className="mt-[10px] font-medium text-base leading-5">
                   <FarmTypeFilter setOpen={setOpen} />
-                  <SortingFilter setOpen={setOpen} />
+                  <SortingFilter setOpen={setOpen} handleSort={handleSort} />
                 </div>
               </div>
             </div>
@@ -110,24 +114,24 @@ const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
   );
 };
 
-const SortingFilter = ({ setOpen }: SortingFilterProps) => {
+const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
   const [sortStatus] = useAtom(sortStatusAtom);
   return (
     <div>
-      {/* Depends on the current "SORT" status */}
+      {/* Depends on the "Key" of Sorting */}
       <div className="px-9 py-6 inline-flex gap-x-[15px] w-full border-b-[1.5px] border-bodyGray dark:border-[#181E27]">
         <p className="font-bold">Sort By:</p>
         <p
           className={
             sortStatus.key == "tvl" ? "text-primaryBlue font-bold" : ""
           }
-          // onClick={() => {
-          //   handleSort("tvl", true);
-          //   trackEventWithProperty("table-sorting", {
-          //     sortingType: "tvl",
-          //   });
-          //   setOpen(false);
-          // }}
+          onClick={() => {
+            handleSort(true, false);
+            trackEventWithProperty("table-sorting", {
+              sortingType: "tvl",
+            });
+            setOpen(false);
+          }}
         >
           TVL
         </p>
@@ -135,23 +139,27 @@ const SortingFilter = ({ setOpen }: SortingFilterProps) => {
           className={
             sortStatus.key == "yield" ? "text-primaryBlue font-bold" : ""
           }
-          // onClick={() => {
-          //   handleSort("yield", true);
-          //   trackEventWithProperty("table-sorting", {
-          //     sortingType: "yield",
-          //   });
-          //   setOpen(false);
-          // }}
+          onClick={() => {
+            handleSort(true, false);
+            trackEventWithProperty("table-sorting", {
+              sortingType: "yield",
+            });
+            setOpen(false);
+          }}
         >
           APR
         </p>
       </div>
-      {/* Depends on current "ORDER" of sorting */}
+      {/* Depends on "ORDER" of sorting */}
       <div className="px-9 py-6 inline-flex gap-x-[15px]">
         <p className="font-bold">Order:</p>
         <p
           className={sortStatus.order === 1 ? "text-primaryBlue font-bold" : ""}
           onClick={() => {
+            handleSort(false, true);
+            trackEventWithProperty("table-sorting", {
+              sortingType: sortStatus.key,
+            });
             setOpen(false);
           }}
         >
@@ -160,6 +168,10 @@ const SortingFilter = ({ setOpen }: SortingFilterProps) => {
         <p
           className={sortStatus.order === 0 ? "text-primaryBlue font-bold" : ""}
           onClick={() => {
+            handleSort(false, true);
+            trackEventWithProperty("table-sorting", {
+              sortingType: sortStatus.key,
+            });
             setOpen(false);
           }}
         >

@@ -26,7 +26,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
   const [hideSkeleton, setHideSkeleton] = useState(false);
 
   useEffect(() => {
-    if (farms.length > 0) handleSort(sortStatus.key, false, sortStatus.order);
+    if (farms.length > 0) handleSort(sortStatus.key, false);
   }, [farms]);
 
   useEffect(() => {
@@ -37,10 +37,10 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
     }
   }, [setHideSkeleton, farms]);
 
-  const handleSort = (key: string, toggle: boolean, defaultOrder?: number) => {
+  const handleSort = (key: string, toggle: boolean) => {
     let newSortStatus: {
       key: string;
-      order: number | undefined;
+      order: number;
     };
 
     if (toggle) {
@@ -52,7 +52,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
     } else {
       newSortStatus = {
         key,
-        order: defaultOrder,
+        order: sortStatus.order,
       };
     }
 

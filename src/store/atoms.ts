@@ -3,7 +3,7 @@ import { atom } from "jotai";
 // Interfaces
 interface SortStatusType {
   key: string;
-  order: number | undefined;
+  order: number;
 }
 
 interface FarmTypesType {

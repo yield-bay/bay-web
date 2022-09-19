@@ -24,7 +24,6 @@ import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
-import PreferencesModal from "@components/Library/PreferencesModal";
 
 const Home = () => {
   const router = useRouter();
@@ -168,10 +167,17 @@ const Home = () => {
               <MobileFarmList
                 farms={filteredFarms}
                 noResult={noFilteredFarms}
+                prefOpen={prefModalOpen}
+                setPrefOpen={setPrefModalOpen}
               />
             ) : (
               <>
-                <MobileFarmList farms={specificFarm} noResult={false} />
+                <MobileFarmList
+                  farms={specificFarm}
+                  noResult={false}
+                  prefOpen={prefModalOpen}
+                  setPrefOpen={setPrefModalOpen}
+                />
                 <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
                   <div
                     className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-default"
@@ -213,7 +219,6 @@ const Home = () => {
           setOpen={setProtocolModalOpen}
           protocols={protocolList(farms)}
         />
-        <PreferencesModal open={prefModalOpen} setOpen={setPrefModalOpen} />
       </main>
     </div>
   );
