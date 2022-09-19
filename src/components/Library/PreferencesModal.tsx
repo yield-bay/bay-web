@@ -1,14 +1,22 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import { useAtom } from "jotai";
+import { filterFarmTypeAtom, farmTypesAtom } from "@store/atoms";
+
+type PreferencesModalProps = {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+};
+
+type FarmTypeFilterProps = {
+  setOpen: (value: boolean) => void;
+};
 
 export default function PreferencesModal({
   open,
   setOpen,
-}: {
-  open: boolean;
-  setOpen: (value: boolean) => void;
-}) {
+}: PreferencesModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -39,25 +47,27 @@ export default function PreferencesModal({
           >
             <div className="relative inline-block font-spaceGrotesk bg-white dark:bg-baseBlue rounded-lg text-left shadow-xl py-3 align-bottom w-full transform transition-all">
               <div className="absolute top-0 right-0 pt-7 pr-7">
-                <div className="flex items-center group rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer">
+                <div className="flex items-center group rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer">
                   <button
                     type="button"
                     className="text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white focus:outline-none"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
-                    <XIcon className="w-5 h-5" aria-hidden="true" />
+                    <XIcon className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
               <div className="w-full">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg leading-6 font-bold pl-9 py-4"
+                  className="text-lg leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-[#181E27]"
                 >
                   All Listed Protocols
                 </Dialog.Title>
-                <div>Testing</div>
+                <div className="mt-[10px]">
+                  <FarmTypeFilter setOpen={setOpen} />
+                </div>
               </div>
             </div>
           </Transition.Child>
@@ -66,3 +76,27 @@ export default function PreferencesModal({
     </Transition.Root>
   );
 }
+
+const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
+  const [farmTypes] = useAtom(farmTypesAtom);
+  const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
+
+  return (
+    <div className="px-9 py-[18px] flex flex-col gap-y-[15px] border-b-[1.5px] border-[#181E27]">
+      {farmTypes.map((item) => (
+        <p
+          className={`font-medium text-base leading-5 ${
+            filterFarmType === item.id && "text-primaryBlue"
+          }`}
+          onClick={() => {
+            filterFarmTypeSet(item.id);
+            setOpen(false);
+          }}
+          key={item.id}
+        >
+          {item.name}
+        </p>
+      ))}
+    </div>
+  );
+};
