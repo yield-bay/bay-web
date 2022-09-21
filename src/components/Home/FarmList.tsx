@@ -11,6 +11,7 @@ import { trackEventWithProperty } from "@utils/analytics";
 // Component Imports
 import Button from "@components/Library/Button";
 import FarmAssets from "@components/Library/FarmAssets";
+import React from "react";
 import FarmBadge from "@components/Library/FarmBadge";
 import ShareFarm from "@components/Library/ShareFarm";
 import YieldBreakdown from "@components/Library/YieldBreakdown";
@@ -92,4 +93,4 @@ const FarmsList = ({ farms }: any) => {
   );
 };
 
-export default FarmsList;
+export default React.memo(FarmsList);

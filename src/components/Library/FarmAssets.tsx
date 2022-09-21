@@ -1,10 +1,11 @@
+import React from "react";
 import Image from "next/image";
 
 type FarmAssetsProps = {
   logos: string[];
 };
 
-export default function FarmAssets({ logos }: FarmAssetsProps) {
+const FarmAssets = ({ logos }: FarmAssetsProps) => {
   return (
     <div className="flex justify-start sm:justify-end">
       <div className="hidden sm:flex flex-row items-center justify-center -space-x-3">
@@ -29,4 +30,6 @@ export default function FarmAssets({ logos }: FarmAssetsProps) {
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(FarmAssets);
