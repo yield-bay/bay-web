@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Menu, Dialog, Transition } from "@headlessui/react";
 import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
 import { ShareIcon } from "@heroicons/react/solid";
@@ -34,7 +34,7 @@ function classNames(classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function ShareFarm({ farm, apr }: ShareFarmPropsType) {
+const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
   const [, isNotificationSet] = useAtom(isNotificationAtom);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   let [url, setUrl] = useState<string>("");
@@ -79,7 +79,7 @@ export default function ShareFarm({ farm, apr }: ShareFarmPropsType) {
       />
     </div>
   );
-}
+};
 
 // Share menu to be used in desktop view
 const ShareMenu = ({
@@ -306,3 +306,5 @@ const ShareModal = ({
     </div>
   );
 };
+
+export default React.memo(ShareFarm);
