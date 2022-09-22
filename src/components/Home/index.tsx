@@ -84,6 +84,8 @@ const Home = () => {
           name="description"
           content="YieldBay List | Discover Yield Farms in DotSama"
         />
+        <meta property="og:image" content="/twitter-cover.png" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
       <main>
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}

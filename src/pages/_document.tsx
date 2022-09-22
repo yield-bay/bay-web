@@ -18,8 +18,6 @@ class MyDocument extends Document {
       "Discover yield opportunities across multiple protocols and parachains on Polkadot and Kusama.";
     const domain = "https://list.yieldbay.io/";
     const twitterUsername = "@yield_bay";
-    const twitterCover = "/twitter-cover.png";
-    // const facebookCover = "/facebook-cover.png";
 
     return (
       <Html>
@@ -30,7 +28,9 @@ class MyDocument extends Document {
           <meta property="og:url" content={domain} />
           <meta property="og:title" content={title} />
           <meta property="og:description" content={desc} />
-          <meta property="og:image" content={twitterCover} />
+          <meta property="og:image" content="/twitter-cover.png" />
+          {/* <meta property="og:locale" content={} /> */}
+          {/* <meta property="og:site_name" content="YieldBay Farms" /> */}
           <meta
             name="keywords"
             content="yield-farming, yield farming, yield, defi, polkadot, dotsama, polkadot defi, yield aggregator, kusama, paraverse"
@@ -38,9 +38,10 @@ class MyDocument extends Document {
           <meta property="twitter:card" content="summary_large_image" />
           <meta property="twitter:url" content={domain} />
           <meta name="twitter:site" content={twitterUsername} />
+          <meta name="twitter:creator" content="@yield_bay" />
           <meta property="twitter:title" content={title} />
           <meta property="twitter:description" content={desc} />
-          <meta property="twitter:image" content={twitterCover} />
+          <meta property="twitter:image" content="/twitter-cover.png" />
 
           <link rel="icon" href="/favicon/favicon.ico" />
           <link rel="manifest" href="/favicon/site.webmanifest" />
