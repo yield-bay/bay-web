@@ -1,6 +1,7 @@
 // Library  Imports
 import React, { useState, useEffect } from "react";
 import { useAtom } from "jotai";
+import { FixedSizeList } from "react-window";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -42,6 +43,13 @@ const MobileFarmList = ({
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
+  const [vpHeight, setVpHeight] = useState(0);
+  const [vpWidth, setVpWidth] = useState(0);
+
+  useEffect(() => {
+    setVpHeight(window.innerHeight);
+    setVpWidth(window.innerWidth);
+  }, []);
 
   useEffect(() => {
     if (farms.length > 0) handleSort(false, false);
@@ -107,78 +115,89 @@ const MobileFarmList = ({
     sortedFarmsSet([...farms].sort(sortFn));
   };
 
+  const MobileFarmCard = ({ index, style }: any) => {
+    const farm = sortedFarms[index];
+    const tokenNames = formatTokenSymbols(farm?.asset.symbol);
+    return (
+      <div
+        key={index}
+        style={style}
+        className="w-full p-9 border-b border-blueSilver dark:border-[#222A39] transition-all duration-200"
+      >
+        {/* Upper Container for left and right */}
+        <div className="flex flex-row justify-between">
+          {/* LEFT */}
+          <div className="flex flex-col gap-y-[6px]">
+            <div className="mb-[18px]">
+              <FarmAssets logos={farm?.asset.logos} />
+            </div>
+            <div className="flex flex-row items-center">
+              <div className="font-bold text-xs leading-[15px]">
+                {tokenNames.map((tokenName, index) => (
+                  <span key={index} className="mr-[3px]">
+                    {tokenName}
+                    {index !== tokenNames.length - 1 && " •"}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="text-mediumGray dark:text-[#9397A6] font-medium text-xs leading-[15px]">
+              {formatFirstLetter(farm?.protocol)} on{" "}
+              {formatFirstLetter(farm?.chain)}
+            </div>
+            <FarmBadge type={formatFarmType(farm?.farmType)} />
+          </div>
+          {/* RIGHT */}
+          <div className="flex flex-col gap-y-[18px] font-medium font-spaceGrotesk text-right">
+            <div>
+              <p className="text-base opacity-50 leading-5">TVL</p>
+              <p className="text-2xl leading-[30px]">
+                {toDollarUnits(farm?.tvl)}
+              </p>
+            </div>
+            <div>
+              <p className="text-base opacity-50 leading-5">APR</p>
+              <p className="text-2xl leading-[30px]">
+                {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-row gap-x-3 justify-between mt-9">
+          <ShareFarm
+            farm={farm}
+            apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
+          />
+          <a href={farmURL(farm)} target="_blank" rel="noreferrer">
+            <Button
+              type="secondary"
+              size="large"
+              onButtonClick={() =>
+                trackEventWithProperty("go-to-farm", {
+                  protocol: farm?.protocol,
+                })
+              }
+            >
+              Visit Farm
+            </Button>
+          </a>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="text-baseBlueDark dark:text-blueSilver">
       {!noResult ? (
         hideSkeleton ? (
-          sortedFarms.map((farm: any, index: number) => {
-            const tokenNames = formatTokenSymbols(farm?.asset.symbol);
-            return (
-              <div
-                key={index}
-                className="w-full p-9 border-b border-blueSilver dark:border-[#222A39] transition-all duration-200"
-              >
-                {/* Upper Container for left and right */}
-                <div className="flex flex-row justify-between">
-                  {/* LEFT */}
-                  <div className="flex flex-col gap-y-[6px]">
-                    <div className="mb-[18px]">
-                      <FarmAssets logos={farm?.asset.logos} />
-                    </div>
-                    <div className="flex flex-row items-center">
-                      <div className="font-bold text-xs leading-[15px]">
-                        {tokenNames.map((tokenName, index) => (
-                          <span key={index} className="mr-[3px]">
-                            {tokenName}
-                            {index !== tokenNames.length - 1 && " •"}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-mediumGray dark:text-[#9397A6] font-medium text-xs leading-[15px]">
-                      {formatFirstLetter(farm?.protocol)} on{" "}
-                      {formatFirstLetter(farm?.chain)}
-                    </div>
-                    <FarmBadge type={formatFarmType(farm?.farmType)} />
-                  </div>
-                  {/* RIGHT */}
-                  <div className="flex flex-col gap-y-[18px] font-medium font-spaceGrotesk text-right">
-                    <div>
-                      <p className="text-base opacity-50 leading-5">TVL</p>
-                      <p className="text-2xl leading-[30px]">
-                        {toDollarUnits(farm?.tvl)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-base opacity-50 leading-5">APR</p>
-                      <p className="text-2xl leading-[30px]">
-                        {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-row gap-x-3 justify-between mt-9">
-                  <ShareFarm
-                    farm={farm}
-                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-                  />
-                  <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                    <Button
-                      type="secondary"
-                      size="large"
-                      onButtonClick={() =>
-                        trackEventWithProperty("go-to-farm", {
-                          protocol: farm?.protocol,
-                        })
-                      }
-                    >
-                      Visit Farm
-                    </Button>
-                  </a>
-                </div>
-              </div>
-            );
-          })
+          <FixedSizeList
+            height={vpHeight}
+            width={vpWidth}
+            itemCount={sortedFarms.length}
+            itemSize={276}
+          >
+            {MobileFarmCard}
+          </FixedSizeList>
         ) : (
           <MobileLoadingSkeleton />
         )
