@@ -13,6 +13,7 @@ export function farmURL(farm: any): string {
     return `https://moonbeam.curve.fi/factory/${farm.id}/deposit`;
   else if (farm.protocol == "zenlink")
     return "https://dex.zenlink.pro/#/earn/stake";
+  else if (farm.protocol == "solarflare") return "https://solarflare.io/farm";
   return "";
 }
 
