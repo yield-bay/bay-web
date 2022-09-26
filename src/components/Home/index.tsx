@@ -15,6 +15,7 @@ import Tooltip from "@components/Library/Tooltip";
 import SelectFarmType from "@components/Library/SelectFarmType";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
+import useScreenSize from "@hooks/useScreenSize";
 import { fetchListicleFarms } from "@utils/api";
 import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
 import { farmQueryAtom, filterFarmTypeAtom, idQueryAtom } from "@store/atoms";
@@ -45,6 +46,7 @@ const Home = () => {
     filteredByFarmTypes,
     searchTerm
   );
+  const screenSize = useScreenSize();
 
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
@@ -163,57 +165,63 @@ const Home = () => {
             )}
           </div>
           {/* Listicle Table */}
-          {/* MOBILE VIEW */}
-          <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
-            {!idQuery ? (
-              <MobileFarmList
-                farms={filteredFarms}
-                noResult={noFilteredFarms}
-                prefOpen={prefModalOpen}
-                setPrefOpen={setPrefModalOpen}
-              />
-            ) : (
-              <>
+          {screenSize === "xs" ? (
+            // MOBILE VIEW
+            <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
+              {!idQuery ? (
                 <MobileFarmList
-                  farms={specificFarm}
-                  noResult={false}
+                  farms={filteredFarms}
+                  noResult={noFilteredFarms}
                   prefOpen={prefModalOpen}
                   setPrefOpen={setPrefModalOpen}
                 />
+              ) : (
+                <>
+                  <MobileFarmList
+                    farms={specificFarm}
+                    noResult={false}
+                    prefOpen={prefModalOpen}
+                    setPrefOpen={setPrefModalOpen}
+                  />
+                  <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
+                    <div
+                      className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-default"
+                      onClick={() => router.push("/")}
+                    >
+                      Go to home
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            // DESKTOP VIEW
+            <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
+              {/* Shows Shared farm if queries are available  */}
+              {!idQuery ? (
+                <ListicleTable
+                  farms={filteredFarms}
+                  noResult={noFilteredFarms}
+                />
+              ) : (
+                <ListicleTable farms={specificFarm} noResult={false} />
+              )}
+              {/* Showing Go to Home if queries or not showing all farms */}
+              {(idQuery || filteredFarms.length < farms.length) && (
                 <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
                   <div
-                    className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-default"
-                    onClick={() => router.push("/")}
+                    className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-pointer"
+                    onClick={() => {
+                      if (idQuery) router.push("/");
+                      else router.reload();
+                    }}
                   >
                     Go to home
                   </div>
                 </div>
-              </>
-            )}
-          </div>
-          {/* DESKTOP VIEW */}
-          <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
-            {/* Shows Shared farm if queries are available  */}
-            {!idQuery ? (
-              <ListicleTable farms={filteredFarms} noResult={noFilteredFarms} />
-            ) : (
-              <ListicleTable farms={specificFarm} noResult={false} />
-            )}
-            {/* Showing Go to Home if queries or not showing all farms */}
-            {(idQuery || filteredFarms.length < farms.length) && (
-              <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
-                <div
-                  className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-pointer"
-                  onClick={() => {
-                    if (idQuery) router.push("/");
-                    else router.reload();
-                  }}
-                >
-                  Go to home
-                </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
         {showScrollBtn && <ScrollToTopBtn />}
         <AllProtocolsModal
