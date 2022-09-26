@@ -6,6 +6,7 @@ import { useAtom } from "jotai";
 import { isNotificationAtom } from "@store/atoms";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
+import useScreenSize from "@hooks/useScreenSize";
 
 // Types
 type ShareFarmPropsType = {
@@ -38,6 +39,7 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
   const [, isNotificationSet] = useAtom(isNotificationAtom);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   let [url, setUrl] = useState<string>("");
+  const screenSize = useScreenSize();
 
   // Tweet's URL with required parameters
   const tweetUrl =
@@ -60,23 +62,28 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
     );
   }, [farm]);
 
+  console.log("screenSize inside sharefarm", screenSize);
+
   return (
     <div>
-      <ShareMenu
-        farm={farm}
-        url={url}
-        tweetUrl={tweetUrl}
-        isNotificationSet={isNotificationSet}
-      />
-      <ShareModal
-        open={modalOpen}
-        setOpen={setModalOpen}
-        url={url}
-        tweetUrl={tweetUrl}
-        isNotificationSet={isNotificationSet}
-        farmAddress={farm?.asset.address}
-        farmId={farm?.id}
-      />
+      {screenSize === "xs" ? (
+        <ShareModal
+          open={modalOpen}
+          setOpen={setModalOpen}
+          url={url}
+          tweetUrl={tweetUrl}
+          isNotificationSet={isNotificationSet}
+          farmAddress={farm?.asset.address}
+          farmId={farm?.id}
+        />
+      ) : (
+        <ShareMenu
+          farm={farm}
+          url={url}
+          tweetUrl={tweetUrl}
+          isNotificationSet={isNotificationSet}
+        />
+      )}
     </div>
   );
 };
