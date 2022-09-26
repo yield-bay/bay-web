@@ -20,7 +20,12 @@ import {
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
 import { trackEventWithProperty } from "@utils/analytics";
-import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import {
+  sortedFarmsAtom,
+  sortStatusAtom,
+  showScrollBtnAtom,
+} from "@store/atoms";
+import { ArrowUpIcon } from "@heroicons/react/outline";
 
 type FarmListType = {
   farms: any;
@@ -42,13 +47,23 @@ const MobileFarmList = ({
 }: FarmListType) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
+  const [showScrollBtn] = useAtom(showScrollBtnAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
   const [vpHeight, setVpHeight] = useState(0);
   const [vpWidth, setVpWidth] = useState(0);
 
+  // reference
+  const listRef = React.createRef<FixedSizeList<any>>();
+
   useEffect(() => {
     setVpHeight(window.innerHeight);
-    setVpWidth(window.innerWidth);
+
+    const handleWidth = () => {
+      setVpWidth(window.innerWidth);
+    };
+
+    window.addEventListener("scroll", handleWidth);
+    return () => window.removeEventListener("scroll", handleWidth);
   }, []);
 
   useEffect(() => {
@@ -195,6 +210,7 @@ const MobileFarmList = ({
             width={vpWidth}
             itemCount={sortedFarms.length}
             itemSize={276}
+            ref={listRef}
           >
             {MobileFarmCard}
           </FixedSizeList>
@@ -205,6 +221,17 @@ const MobileFarmList = ({
         <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
           <p>No Results. Try searching for something else.</p>
         </div>
+      )}
+      {/* Scrolling Button */}
+      {showScrollBtn && (
+        <button
+          className="fixed bottom-20 sm:bottom-[80px] right-12 sm:right-[120px] z-20 p-[10px] rounded-full hover:scale-105 active:scale-100 bg-bodyGray dark:bg-primaryBlue transition-all ease-in-out duration-200"
+          onClick={() => {
+            listRef.current?.scrollToItem(0, "smart");
+          }}
+        >
+          <ArrowUpIcon className="w-5 text-primaryBlue dark:text-white transition duration-200" />
+        </button>
       )}
       <PreferencesModal
         open={prefOpen}

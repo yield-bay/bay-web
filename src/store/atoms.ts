@@ -30,3 +30,5 @@ export const farmTypesAtom = atom<FarmTypesType[]>([
   { id: 3, name: "Stable Swap" },
   { id: 4, name: "Single Staking" },
 ]);
+
+export const showScrollBtnAtom = atom<boolean>(false);

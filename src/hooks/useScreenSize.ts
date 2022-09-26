@@ -35,7 +35,6 @@ const useScreenSize = () => {
     setResponsiveWidth(
       calculateScreenWidth(windowWidth == 0 ? window.innerWidth : windowWidth)
     );
-    console.log("responsive width", responsiveWidth);
   }, [windowWidth]);
 
   return responsiveWidth;

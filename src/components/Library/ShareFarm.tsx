@@ -62,8 +62,6 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
     );
   }, [farm]);
 
-  console.log("screenSize inside sharefarm", screenSize);
-
   return (
     <div>
       {screenSize === "xs" ? (

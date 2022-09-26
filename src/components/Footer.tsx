@@ -50,9 +50,16 @@ export default function Footer() {
               <span className="font-bold font-spaceGrotesk text-white text-2xl sm:text-[32px] leading-[37.12px]">
                 yieldbay
               </span>
-              <Button type="primary" size="small">
-                List your protocol
-              </Button>
+              <a
+                href="https://discord.gg/AKHuvbz7q4"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden sm:block"
+              >
+                <Button type="primary" size="small">
+                  List your protocol
+                </Button>
+              </a>
             </div>
             <div className="pt-8 pb-6 sm:py-9 font-normal text-xs sm:text-base leading-4 sm:leading-5">
               <p>Yield Farming hub for the Polkadot &amp; Kusama Parachains.</p>

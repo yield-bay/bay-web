@@ -18,7 +18,12 @@ import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
 import { fetchListicleFarms } from "@utils/api";
 import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
-import { farmQueryAtom, filterFarmTypeAtom, idQueryAtom } from "@store/atoms";
+import {
+  farmQueryAtom,
+  filterFarmTypeAtom,
+  idQueryAtom,
+  showScrollBtnAtom,
+} from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
@@ -31,13 +36,13 @@ const Home = () => {
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [farmQuery, farmQuerySet] = useAtom(farmQueryAtom);
+  const [showScrollBtn, showScrollBtnSet] = useAtom(showScrollBtnAtom);
 
   // States
   const [farms, setFarms] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [prefModalOpen, setPrefModalOpen] = useState(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
-  const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Hooks
   const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
@@ -53,9 +58,9 @@ const Home = () => {
     if (typeof window !== undefined) {
       window.addEventListener("scroll", () => {
         if (window.scrollY > 400) {
-          setShowScrollBtn(true);
+          showScrollBtnSet(true);
         } else {
-          setShowScrollBtn(false);
+          showScrollBtnSet(false);
         }
       });
     }
@@ -223,7 +228,7 @@ const Home = () => {
             </div>
           )}
         </div>
-        {showScrollBtn && <ScrollToTopBtn />}
+        {/* {showScrollBtn && <ScrollToTopBtn />} */}
         <AllProtocolsModal
           open={protocolModalOpen}
           setOpen={setProtocolModalOpen}
