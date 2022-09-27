@@ -35,34 +35,30 @@ type ListicleType = {
 };
 
 // Context for cross component communication
-const VirtualTabelContext = React.createContext<{
+const VirtualTableContext = React.createContext<{
   top: number;
   setTop: (top: number) => void;
   header: React.ReactNode;
-  footer: React.ReactNode;
 }>({
   top: 0,
   setTop: (value: number) => {},
   header: <></>,
-  footer: <></>,
 });
 
-// Virtual Table. It bsically accepts all of the same parans as the original FixedSizeList
+// Virtual Table. It basically accepts all of the same params as the original FixedSizeList
 function VirtualTable({
   row,
   header,
-  footer,
   ...rest
 }: {
   row: FixedSizeListProps["children"];
   header?: React.ReactNode;
-  footer?: React.ReactNode;
 } & Omit<FixedSizeListProps, "children" | "innerElementType">) {
   const listRef = useRef<FixedSizeList | null>();
   const [top, setTop] = useState(0);
 
   return (
-    <VirtualTabelContext.Provider value={{ top, setTop, header, footer }}>
+    <VirtualTableContext.Provider value={{ top, setTop, header }}>
       <FixedSizeList
         {...rest}
         innerElementType={Inner}
@@ -80,7 +76,7 @@ function VirtualTable({
       >
         {row}
       </FixedSizeList>
-    </VirtualTabelContext.Provider>
+    </VirtualTableContext.Provider>
   );
 }
 
@@ -91,7 +87,7 @@ function VirtualTable({
 */
 const Inner = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
   function Inner({ children, ...rest }, ref) {
-    const { header, footer, top } = useContext(VirtualTabelContext);
+    const { header, top } = useContext(VirtualTableContext);
     return (
       <div {...rest} ref={ref}>
         <table style={{ top, position: "absolute", width: "100%" }}>
@@ -99,7 +95,6 @@ const Inner = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
           <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#222A39] transition duration-200">
             {children}
           </tbody>
-          {footer}
         </table>
       </div>
     );
