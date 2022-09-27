@@ -280,7 +280,7 @@ const ListicleTable = ({ farms }: any) => {
 
   return (
     <VirtualTable
-      height={vpHeight}
+      height={farms.length >= 8 ? vpHeight : (142 * farms.length)}
       width="100%"
       itemCount={farms.length}
       itemSize={142}
