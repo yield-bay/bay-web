@@ -123,7 +123,7 @@ const ListicleTable = ({ farms }: any) => {
     const tokenNames = formatTokenSymbols(farm?.asset.symbol);
     return (
       <tr key={`${farm.asset.address}-${farm.tvl}`} style={newStyle}>
-        <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
+        <td className="whitespace-nowrap min-w-[265px] py-8 text-sm pl-8 md:pl-14 lg:pl-28 w-full">
           <div>
             <div className="flex flex-col gap-y-[10px]">
               <div className="flex flex-row items-center">
@@ -144,22 +144,22 @@ const ListicleTable = ({ farms }: any) => {
             </div>
           </div>
         </td>
-        <td className="hidden lg:flex whitespace-nowrap">
+        <td className="hidden lg:flex justify-end whitespace-nowrap w-full">
           <FarmAssets logos={farm?.asset.logos} />
         </td>
-        <td className="whitespace-nowrap flex items-center py-8 text-right sm:pr-3 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+        <td className="whitespace-nowrap flex justify-center items-center max-w-[300px] py-8 w-full text-right sm:pr-3 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
           {toDollarUnits(farm?.tvl)}
         </td>
-        <td className="whitespace-nowrap flex items-center py-8 pl-0 pr-2 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
-          <div className="w-full inline-flex justify-end items-center gap-x-2">
+        <td className="whitespace-nowrap flex w-full max-w-[300px] py-8 pl-0 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+          <div className="w-full inline-flex justify-center items-center gap-x-2">
             {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
             <YieldBreakdown base={farm?.apr.base} reward={farm?.apr.reward} />
           </div>
         </td>
-        <td className="hidden md:flex whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+        <td className="hidden md:flex justify-start whitespace-nowrap w-full max-w-[300px] h-full py-0 pl-0 lg:pl-6 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
           <Rewards rewards={farm?.rewards} />
         </td>
-        <td className="whitespace-nowrap flex items-center max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
+        <td className="whitespace-nowrap flex items-center w-full max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
           <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">
             <div className="text-center">
               <ShareFarm
@@ -186,13 +186,9 @@ const ListicleTable = ({ farms }: any) => {
     );
   }
 
-  return (
-    <VirtualTable
-      height={vpHeight}
-      width="100%"
-      itemCount={farms.length}
-      itemSize={142}
-      header={
+  function TableHeader() {
+    return (
+      <div>
         <thead className="transition duration-200 font-bold text-base leading-5">
           <tr>
             <th
@@ -278,7 +274,17 @@ const ListicleTable = ({ farms }: any) => {
             </th>
           </tr>
         </thead>
-      }
+      </div>
+    );
+  }
+
+  return (
+    <VirtualTable
+      height={vpHeight}
+      width="100%"
+      itemCount={farms.length}
+      itemSize={142}
+      // header={TableHeader}
       row={Row}
     />
   );
