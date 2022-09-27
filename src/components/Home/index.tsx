@@ -29,7 +29,6 @@ import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import SearchInput from "@components/Library/SearchInput";
-import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 
 const Home = () => {
   const router = useRouter();
@@ -57,7 +56,7 @@ const Home = () => {
   useEffect(() => {
     if (typeof window !== undefined) {
       window.addEventListener("scroll", () => {
-        if (window.scrollY > 400) {
+        if (window.scrollY > 300) {
           showScrollBtnSet(true);
         } else {
           showScrollBtnSet(false);
@@ -228,7 +227,6 @@ const Home = () => {
             </div>
           )}
         </div>
-        {/* {showScrollBtn && <ScrollToTopBtn />} */}
         <AllProtocolsModal
           open={protocolModalOpen}
           setOpen={setProtocolModalOpen}

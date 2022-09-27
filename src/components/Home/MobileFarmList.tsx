@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useAtom } from "jotai";
 import { FixedSizeList } from "react-window";
+import { ArrowUpIcon } from "@heroicons/react/outline";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -25,7 +26,6 @@ import {
   sortStatusAtom,
   showScrollBtnAtom,
 } from "@store/atoms";
-import { ArrowUpIcon } from "@heroicons/react/outline";
 
 type FarmListType = {
   farms: any;
@@ -222,11 +222,17 @@ const MobileFarmList = ({
           <p>No Results. Try searching for something else.</p>
         </div>
       )}
-      {/* Scrolling Button */}
+      {/* Scrolling Button - as listRef wasn't getting passed as a prop */}
       {showScrollBtn && (
         <button
           className="fixed bottom-20 sm:bottom-[80px] right-12 sm:right-[120px] z-20 p-[10px] rounded-full hover:scale-105 active:scale-100 bg-bodyGray dark:bg-primaryBlue transition-all ease-in-out duration-200"
           onClick={() => {
+            if (typeof window !== undefined) {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }
             listRef.current?.scrollToItem(0, "smart");
           }}
         >

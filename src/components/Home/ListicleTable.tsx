@@ -1,11 +1,19 @@
 // Library Imports
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { useAtom } from "jotai";
-import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
+import {
+  ChevronUpIcon,
+  ChevronDownIcon,
+  ArrowUpIcon,
+} from "@heroicons/react/outline";
 import { FixedSizeList, FixedSizeListProps } from "react-window";
 
 // Utility and Component Imports
-import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import {
+  sortedFarmsAtom,
+  sortStatusAtom,
+  showScrollBtnAtom,
+} from "@store/atoms";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
 import { trackEventWithProperty } from "@utils/analytics";
@@ -34,59 +42,73 @@ type ListicleType = {
   noResult?: boolean;
 };
 
-// Context for cross component communication
-const VirtualTableContext = React.createContext<{
-  top: number;
-  setTop: (top: number) => void;
-  header: React.ReactNode;
-}>({
-  top: 0,
-  setTop: (value: number) => {},
-  header: <></>,
-});
+// Main Component
+const ListicleTable = ({ farms }: any) => {
+  const [vpHeight, setVpHeight] = useState(0);
+  const [showScrollBtn] = useAtom(showScrollBtnAtom);
 
-// Virtual Table. It basically accepts all of the same params as the original FixedSizeList
-function VirtualTable({
-  row,
-  header,
-  ...rest
-}: {
-  row: FixedSizeListProps["children"];
-  header?: React.ReactNode;
-} & Omit<FixedSizeListProps, "children" | "innerElementType">) {
-  const listRef = useRef<FixedSizeList | null>();
-  const [top, setTop] = useState(0);
+  // reference
+  const scrollRef = React.createRef<FixedSizeList<any>>();
 
-  return (
-    <VirtualTableContext.Provider value={{ top, setTop, header }}>
-      <FixedSizeList
-        {...rest}
-        innerElementType={Inner}
-        onItemsRendered={(props) => {
-          const style =
-            listRef.current &&
-            // @ts-ignore private method access
-            listRef.current._getItemStyle(props.overscanStartIndex);
-          setTop((style && style.top) || 0);
+  useEffect(() => {
+    setVpHeight(window.innerHeight);
+  }, []);
 
-          // call the original callback
-          rest.onItemsRendered && rest.onItemsRendered(props);
-        }}
-        ref={(el) => listRef.current == el}
-      >
-        {row}
-      </FixedSizeList>
-    </VirtualTableContext.Provider>
-  );
-}
+  // Context for cross component communication
+  const VirtualTableContext = React.createContext<{
+    top: number;
+    setTop: (top: number) => void;
+    header: React.ReactNode;
+  }>({
+    top: 0,
+    setTop: (value: number) => {},
+    header: <></>,
+  });
 
-/*
+  // Virtual Table. It basically accepts all of the same params as the original FixedSizeList
+  function VirtualTable({
+    row,
+    header,
+    ...rest
+  }: {
+    row: FixedSizeListProps["children"];
+    header?: React.ReactNode;
+  } & Omit<FixedSizeListProps, "children" | "innerElementType">) {
+    // const listRef = useRef<FixedSizeList | null>();
+    const [top, setTop] = useState(0);
+
+    return (
+      <VirtualTableContext.Provider value={{ top, setTop, header }}>
+        <FixedSizeList
+          {...rest}
+          innerElementType={Inner}
+          onItemsRendered={(props) => {
+            const style =
+              scrollRef.current &&
+              // @ts-ignore private method access
+              scrollRef.current._getItemStyle(props.overscanStartIndex);
+            setTop((style && style.top) || 0);
+
+            // call the original callback
+            rest.onItemsRendered && rest.onItemsRendered(props);
+          }}
+          ref={(el) => scrollRef.current == el}
+        >
+          {row}
+        </FixedSizeList>
+      </VirtualTableContext.Provider>
+    );
+  }
+
+  /*
   The Inner component of the virtual list. This is the real deal.
   Capture what would have been the top elements position and apply it to the table
   Other than that, render an optional header and footer.
 */
-const Inner = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
-  function Inner({ children, ...rest }, ref) {
+  const Inner = React.forwardRef<
+    HTMLDivElement,
+    React.HTMLProps<HTMLDivElement>
+  >(function Inner({ children, ...rest }, ref) {
     const { header, top } = useContext(VirtualTableContext);
     return (
       <div {...rest} ref={ref}>
@@ -98,18 +120,7 @@ const Inner = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement>>(
         </table>
       </div>
     );
-  }
-);
-
-// Rendering Example
-const ListicleTable = ({ farms }: any) => {
-  const [vpHeight, setVpHeight] = useState(0);
-  // const [vpWidth, setVpWidth] = useState(0);
-
-  useEffect(() => {
-    setVpHeight(window.innerHeight);
-    // setVpWidth(window.innerWidth);
-  }, []);
+  });
 
   // Row components. This should be the table row. We aren't using the style that regulat react-window egs. passes in
   function Row({ index, style }: { index: number; style: any }) {
@@ -279,14 +290,32 @@ const ListicleTable = ({ farms }: any) => {
   }
 
   return (
-    <VirtualTable
-      height={farms.length >= 8 ? vpHeight : (142 * farms.length)}
-      width="100%"
-      itemCount={farms.length}
-      itemSize={142}
-      // header={TableHeader}
-      row={Row}
-    />
+    <>
+      <VirtualTable
+        height={farms.length >= 8 ? vpHeight : 142 * farms.length}
+        width="100%"
+        itemCount={farms.length}
+        itemSize={142}
+        // header={TableHeader}
+        row={Row}
+      />
+      {showScrollBtn && (
+        <button
+          className="fixed bottom-20 sm:bottom-[80px] right-12 sm:right-[120px] z-20 p-[10px] rounded-full hover:scale-105 active:scale-100 bg-bodyGray dark:bg-primaryBlue transition-all ease-in-out duration-200"
+          onClick={() => {
+            if (typeof window !== undefined) {
+              window.scrollTo({
+                top: 0,
+                behavior: "smooth",
+              });
+            }
+            scrollRef.current?.scrollToItem(0, "smart");
+          }}
+        >
+          <ArrowUpIcon className="w-5 text-primaryBlue dark:text-white transition duration-200" />
+        </button>
+      )}
+    </>
   );
 };
 
