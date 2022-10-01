@@ -1,3 +1,4 @@
+import { memo } from "react";
 import Image from "next/image";
 import useScreenSize from "@hooks/useScreenSize";
 
@@ -5,7 +6,7 @@ type FarmAssetsProps = {
   logos: string[];
 };
 
-export default function FarmAssets({ logos }: FarmAssetsProps) {
+const FarmAssets = ({ logos }: FarmAssetsProps) => {
   const screenSize = useScreenSize();
   return (
     <div className="flex justify-start sm:justify-end">
@@ -34,4 +35,6 @@ export default function FarmAssets({ logos }: FarmAssetsProps) {
       )}
     </div>
   );
-}
+};
+
+export default memo(FarmAssets);

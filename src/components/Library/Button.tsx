@@ -7,12 +7,7 @@ type ButtonProps = {
   onButtonClick?: () => void;
 };
 
-export default function Button({
-  children,
-  type,
-  size,
-  onButtonClick,
-}: ButtonProps) {
+const Button = ({ children, type, size, onButtonClick }: ButtonProps) => {
   return (
     <button
       className={`flex flex-row items-center justify-center group sm:gap-x-1 font-semibold rounded-lg leading-[14.52px] sm:leading-[17px] transition duration-200 ${
@@ -31,4 +26,6 @@ export default function Button({
       {children}
     </button>
   );
-}
+};
+
+export default React.memo(Button);
