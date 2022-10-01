@@ -1,5 +1,5 @@
 // Library  Imports
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { useAtom } from "jotai";
 
 // Component Imports
@@ -33,12 +33,12 @@ enum Order {
   DESC,
 }
 
-export default function MobileFarmList({
+const MobileFarmList = ({
   farms,
   noResult,
   prefOpen,
   setPrefOpen,
-}: FarmListType) {
+}: FarmListType) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
@@ -194,4 +194,6 @@ export default function MobileFarmList({
       />
     </div>
   );
-}
+};
+
+export default memo(MobileFarmList);
