@@ -1,5 +1,5 @@
 // Library Imports
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import { useAtom } from "jotai";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 
@@ -194,4 +194,4 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
   );
 };
 
-export default ListicleTable;
+export default memo(ListicleTable);

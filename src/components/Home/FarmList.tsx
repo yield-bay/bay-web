@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
 import {
@@ -92,4 +94,4 @@ const FarmsList = ({ farms }: any) => {
   );
 };
 
-export default FarmsList;
+export default memo(FarmsList);
