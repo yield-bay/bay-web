@@ -162,27 +162,17 @@ const Home = () => {
               </div>
             )}
           </div>
-          {/* Listicle Table */}
+          {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
             <div className="sm:hidden bg-white dark:bg-baseBlueDark transition duration-200">
-              {!idQuery ? (
-                <MobileFarmList
-                  farms={filteredFarms}
-                  noResult={noFilteredFarms}
-                  prefOpen={prefModalOpen}
-                  setPrefOpen={setPrefModalOpen}
-                />
-              ) : (
-                <>
-                  <MobileFarmList
-                    farms={specificFarm}
-                    noResult={false}
-                    prefOpen={prefModalOpen}
-                    setPrefOpen={setPrefModalOpen}
-                  />
-                </>
-              )}
+              {/* Shows Shared farm if queries are available  */}
+              <MobileFarmList
+                farms={!idQuery ? filteredFarms : specificFarm}
+                noResult={!idQuery ? noFilteredFarms : false}
+                prefOpen={prefModalOpen}
+                setPrefOpen={setPrefModalOpen}
+              />
               {(idQuery || filteredFarms.length < farms.length) && (
                 <GoToHome idQuery={idQuery} router={router} />
               )}
@@ -191,14 +181,10 @@ const Home = () => {
             // DESKTOP VIEW
             <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
               {/* Shows Shared farm if queries are available  */}
-              {!idQuery ? (
-                <ListicleTable
-                  farms={filteredFarms}
-                  noResult={noFilteredFarms}
-                />
-              ) : (
-                <ListicleTable farms={specificFarm} noResult={false} />
-              )}
+              <ListicleTable
+                farms={!idQuery ? filteredFarms : specificFarm}
+                noResult={!idQuery ? noFilteredFarms : false}
+              />
               {(idQuery || filteredFarms.length < farms.length) && (
                 <GoToHome idQuery={idQuery} router={router} />
               )}
