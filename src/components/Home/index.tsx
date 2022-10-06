@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { useRouter, NextRouter } from "next/router";
 
 // Library Imports
 import { useAtom } from "jotai";
@@ -181,15 +181,10 @@ const Home = () => {
                     prefOpen={prefModalOpen}
                     setPrefOpen={setPrefModalOpen}
                   />
-                  <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
-                    <div
-                      className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-default"
-                      onClick={() => router.push("/")}
-                    >
-                      Go to home
-                    </div>
-                  </div>
                 </>
+              )}
+              {(idQuery || filteredFarms.length < farms.length) && (
+                <GoToHome idQuery={idQuery} router={router} />
               )}
             </div>
           ) : (
@@ -204,19 +199,8 @@ const Home = () => {
               ) : (
                 <ListicleTable farms={specificFarm} noResult={false} />
               )}
-              {/* Showing Go to Home if queries or not showing all farms */}
               {(idQuery || filteredFarms.length < farms.length) && (
-                <div className="border-t dark:border-[#222A39] w-full pt-8 pb-9">
-                  <div
-                    className="py-4 dark:text-bodyGray font-bold text-base leading-5 text-center cursor-pointer"
-                    onClick={() => {
-                      if (idQuery) router.push("/");
-                      else router.reload();
-                    }}
-                  >
-                    Go to home
-                  </div>
-                </div>
+                <GoToHome idQuery={idQuery} router={router} />
               )}
             </div>
           )}
@@ -231,5 +215,26 @@ const Home = () => {
     </div>
   );
 };
+
+// Showing GoToHome if farms are shared or filtered
+const GoToHome = ({
+  idQuery,
+  router,
+}: {
+  idQuery: string | string[] | undefined;
+  router: NextRouter;
+}) => (
+  <div className="border-t border dark:border-[#222A39] w-full pt-8 pb-9">
+    <div
+      className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-pointer"
+      onClick={() => {
+        if (idQuery) router.push("/");
+        else router.reload();
+      }}
+    >
+      Go to home
+    </div>
+  </div>
+);
 
 export default Home;
