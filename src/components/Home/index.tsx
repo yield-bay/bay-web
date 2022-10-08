@@ -72,10 +72,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchListicleFarms().then((res: any) => {
-      const tempFilteredFarms = res.farms.filter(
-        (farm: any) => farm.protocol !== "taiga"
-      );
-      setFarms(tempFilteredFarms);
+      setFarms(res.farms);
     });
 
     trackPageView();
