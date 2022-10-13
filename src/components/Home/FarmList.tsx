@@ -17,6 +17,7 @@ import FarmBadge from "@components/Library/FarmBadge";
 import ShareFarm from "@components/Library/ShareFarm";
 import YieldBreakdown from "@components/Library/YieldBreakdown";
 import Rewards from "@components/Library/Rewards";
+import SafetyScorePill from "@components/Library/SafetyScorePill";
 
 const FarmsList = ({ farms }: any) => {
   return (
@@ -67,9 +68,7 @@ const FarmsList = ({ farms }: any) => {
             <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="flex flex-row items-center justify-end">
                 <span>8.4</span>
-                <div className="ml-2 py-[2px] px-[8.5px] bg-[#67C84B] text-[#224619] dark:text-black rounded-full w-max text-[10px] leading-3 font-bold">
-                  SAFE
-                </div>
+                <SafetyScorePill score={8.4} />
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">

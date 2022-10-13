@@ -1,5 +1,5 @@
 import CountUp from "react-countup";
-type FarmStatsType = {
+type FarmStatsProps = {
   totalTVL: number;
   totalFarms: number;
   totalProtocols: number;
@@ -18,7 +18,7 @@ export default function FarmStats({
   totalTVL,
   totalFarms,
   totalProtocols,
-}: FarmStatsType) {
+}: FarmStatsProps) {
   const [tvl, suffix] = tvlFormatter(totalTVL);
   return (
     <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white">
