@@ -165,9 +165,15 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                     <th
                       scope="col"
-                      className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-left cursor-pointer"
+                      className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right"
                     >
                       <span>Rewards</span>
+                    </th>
+                    <th
+                      scope="col"
+                      className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right"
+                    >
+                      <span>Safety Score</span>
                     </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
                       <span className="sr-only">Go to farm</span>
