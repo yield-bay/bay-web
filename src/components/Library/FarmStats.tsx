@@ -21,9 +21,9 @@ export default function FarmStats({
 }: FarmStatsProps) {
   const [tvl, suffix] = tvlFormatter(totalTVL);
   return (
-    <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white">
+    <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white opacity-60">
       <div>
-        <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium text-blueSilver">
+        <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
           <CountUp
             start={0}
             end={tvl}
@@ -35,8 +35,8 @@ export default function FarmStats({
             suffix={suffix}
           />
         </p>
-        <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium text-blueSilver opacity-70">
-          Tracking TVL
+        <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
+          TVL
         </p>
       </div>
       <Stat value={totalFarms} title="Farms" />
@@ -47,10 +47,10 @@ export default function FarmStats({
 
 const Stat = ({ value, title }: { value: number; title: string }) => (
   <div>
-    <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium text-blueSilver">
+    <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
       <CountUp start={0} end={value} duration={0.5} delay={0} />
     </p>
-    <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium text-blueSilver opacity-70">
+    <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
       {title}
     </p>
   </div>

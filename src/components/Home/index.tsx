@@ -93,13 +93,12 @@ const Home = () => {
           {/* HERO SECTION */}
           <div className="px-6 sm:px-0">
             {/* Center Container */}
-            <div className="mx-auto max-w-lg md:max-w-3xl py-6 sm:py-11 md:py-[60px]">
+            <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
               <h1
-                className="mb-7 sm:mb-8 font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center dark:text-transparent dark:bg-clip-text text-white dark:dark-hero-bg"
+                className="mb-7 sm:mb-8 font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
                 id="hero-heading"
               >
-                Discover yield opportunities across multiple protocols and
-                parachains on Polkadot and Kusama
+                discover & earn yield from polkadot and kusama paraverse
               </h1>
 
               <FarmStats
