@@ -119,7 +119,7 @@ const Home = () => {
                   >
                     <AdjustmentsIcon className="w-6 h-6 rotate-90" />
                   </div>
-                  <div className="border-2 min-w-max rounded-[5px] py-1 px-2">
+                  <div className="sm:hidden border-2 min-w-max rounded-[5px] py-1 px-2">
                     {/* TODO: While searching, if there're no farms, then too it shows Loading coz no farms */}
                     {filteredFarms.length == 0
                       ? "Loading..."
@@ -129,18 +129,11 @@ const Home = () => {
                 <div className="flex mb-4 sm:mb-0 w-full justify-center sm:justify-end lg:justify-center">
                   <SearchInput term={searchTerm} setTerm={setSearchTerm} />
                 </div>
-                <button
-                  className="hidden lg:inline-flex items-center min-w-max hover:underline gap-x-2 cursor-pointer"
-                  onClick={() => setProtocolModalOpen(true)}
-                >
-                  <div>View All Protocols</div>
-                  <Image
-                    src="/OpenIcon.svg"
-                    alt="open-icon"
-                    height={10}
-                    width={10}
-                  />
-                </button>
+                <div className="hidden sm:block min-w-max py-1 px-2 opacity-50">
+                  {filteredFarms.length == 0
+                    ? "Loading..."
+                    : `${filteredFarms.length} Results`}
+                </div>
               </div>
             ) : (
               <div className="flex items-center justify-center px-6 py-4 sm:py-10 md:px-28 font-spaceGrotesk text-xs sm:text-base text-white leading-5">
