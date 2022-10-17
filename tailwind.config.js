@@ -41,6 +41,10 @@ module.exports = {
     backgroundImage: {
       "bg-pattern": "url('/Pattern.png')",
     },
+    // backgroundImage: {
+    //   "hero-gradient":
+    //     "linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #0D0101 100%)",
+    // },
   },
   plugins: [],
 };

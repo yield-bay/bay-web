@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ButtonNew from "./Library/ButtonNew";
+import ButtonNew from "./Library/Button";
 
 export default function Header() {
   return (

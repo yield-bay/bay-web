@@ -81,8 +81,7 @@ const FarmsList = ({ farms }: any) => {
                 </div>
                 <a href={farmURL(farm)} target="_blank" rel="noreferrer">
                   <Button
-                    type="secondary"
-                    size="large"
+                    size="small"
                     onButtonClick={() =>
                       trackEventWithProperty("go-to-farm", {
                         protocol: farm?.protocol,
