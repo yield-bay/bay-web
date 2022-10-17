@@ -25,7 +25,7 @@ const FarmsList = ({ farms }: any) => {
       {farms.map((farm: any) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
         return (
-          <tr key={`${farm.asset.address}-${farm.tvl}`}>
+          <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
             <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
               <div>
                 <div className="flex flex-col gap-y-[10px]">
@@ -72,13 +72,7 @@ const FarmsList = ({ farms }: any) => {
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
-              <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">
-                <div className="text-center">
-                  <ShareFarm
-                    farm={farm}
-                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-                  />
-                </div>
+              <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
                 <a href={farmURL(farm)} target="_blank" rel="noreferrer">
                   <Button
                     size="small"
@@ -91,6 +85,12 @@ const FarmsList = ({ farms }: any) => {
                     Visit Farm
                   </Button>
                 </a>
+                <div className="text-center">
+                  <ShareFarm
+                    farm={farm}
+                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
+                  />
+                </div>
               </div>
             </td>
           </tr>

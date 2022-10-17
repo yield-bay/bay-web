@@ -95,11 +95,9 @@ const ShareMenu = ({
 }: ShareMenuPropsType) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
-      <div className="">
-        <Menu.Button className="p-4 rounded-lg bg-bodyGray dark:bg-baseBlueMid hover:bg-primaryWhite dark:hover:bg-baseBlueDark active:bg-primaryWhite dark:active:bg-baseBlueMid hover:ring-[3px] dark:hover:ring-2 active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver dark:active:ring-0 cursor-pointer transition-all duration-200">
-          <ShareIcon className="w-4 h-4 text-primaryBlue dark:text-bodyGray" />
-        </Menu.Button>
-      </div>
+      <Menu.Button className="p-4 scale-0 group-hover:scale-100 cursor-pointer transition-all duration-200">
+        <ShareIcon className="w-5 text-white" />
+      </Menu.Button>
 
       <Transition
         as={Fragment}
