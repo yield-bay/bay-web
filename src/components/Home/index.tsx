@@ -171,7 +171,7 @@ const Home = () => {
             </div>
           ) : (
             // DESKTOP VIEW
-            <div className="hidden sm:block bg-white dark:bg-baseBlueDark transition duration-200">
+            <div className="hidden sm:block bg-white dark:bg-[#01050D] transition duration-200">
               {/* Shows Shared farm if queries are available  */}
               <ListicleTable
                 farms={!idQuery ? filteredFarms : specificFarm}

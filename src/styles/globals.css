@@ -12,10 +12,6 @@
   }
 
   .dark-hero-bg {
-    background-image: linear-gradient(to bottom, #ACCDFF, white);
+    background: linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #0D0101 100%);
   }
 }
-
-/* .remove-scrollbar::-webkit-scrollbar {
-  display: none;
-} */

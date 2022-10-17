@@ -180,7 +180,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#222A39] transition duration-200">
+                <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#445AAD] dark:divide-opacity-50 transition duration-200">
                   {hideSkeleton ? (
                     <FarmsList farms={sortedFarms} />
                   ) : (
