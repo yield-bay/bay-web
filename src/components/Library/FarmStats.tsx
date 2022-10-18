@@ -21,7 +21,7 @@ export default function FarmStats({
 }: FarmStatsProps) {
   const [tvl, suffix] = tvlFormatter(totalTVL);
   return (
-    <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white opacity-60">
+    <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white sm:opacity-60">
       <div>
         <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
           <CountUp

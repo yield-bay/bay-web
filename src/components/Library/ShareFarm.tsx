@@ -187,10 +187,10 @@ const ShareModal = ({
   return (
     <div className="sm:hidden">
       <div
-        className="py-4 px-[19px] hover:scale-105 active:scale-100 rounded-md bg-bodyGray dark:bg-baseBlueMid text-primaryBlue dark:text-primaryWhite active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver transition-all duration-200"
+        className="py-4 transition-all duration-200"
         onClick={() => setOpen(true)}
       >
-        <ShareIcon className="w-[18px]" />
+        <ShareIcon className="w-4 text-white" />
       </div>
       <Transition.Root show={open} as={Fragment}>
         <Dialog
@@ -225,7 +225,7 @@ const ShareModal = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-white dark:bg-[#011433] rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-sm">
+              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-white dark:bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
                 {/* Close Button */}
                 <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
                   <div className="flex items-center p-1 group rounded-full active:bg-neutral-100 dark:active:bg-neutral-700">

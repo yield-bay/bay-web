@@ -75,7 +75,7 @@ const FarmsList = ({ farms }: any) => {
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
                 <a href={farmURL(farm)} target="_blank" rel="noreferrer">
                   <Button
-                    size="small"
+                    size="large"
                     onButtonClick={() =>
                       trackEventWithProperty("go-to-farm", {
                         protocol: farm?.protocol,

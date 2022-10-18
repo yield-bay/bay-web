@@ -42,6 +42,8 @@ module.exports = {
       "bg-pattern": "url('/Pattern.png')",
       "hero-gradient":
         "linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #01050D 100%)",
+      "hero-gradient-mob":
+        "linear-gradient(180deg, rgba(3, 14, 33, 0) -21.54%, #01060F 100%);",
     },
   },
   plugins: [],

@@ -1,24 +1,23 @@
 import Link from "next/link";
-import ButtonNew from "./Library/Button";
+import Button from "./Library/Button";
 
 export default function Header() {
   return (
-    <div className="flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-8 sm:pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
+    <div className="flex border justify-center sm:justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-9 sm:pt-12 pb-8 z-10 font-bold text-base text-neutral-800 leading-6 sm:leading-8 dark:text-white transition duration-200">
       <Link href="/">
-        <div className="flex flex-col items-center cursor-pointer">
-          <span className="font-bold font-spaceGrotesk text-white text-lg leading-[23px] sm:text-2xl sm:leading-8">
+        <div className="flex border flex-col items-center cursor-pointer">
+          <span className="font-bold font-spaceGrotesk text-white text-lg sm:text-2xl leading-[23px] sm:leading-[30px]">
             yieldbay
           </span>
         </div>
       </Link>
-      <div className="inline-flex items-center gap-x-4 sm:mr-2">
+      <div className="hidden sm:inline-flex items-center gap-x-4 sm:mr-2">
         <a
           href="https://discord.gg/AKHuvbz7q4"
           target="_blank"
           rel="noreferrer"
-          className="hidden sm:block"
         >
-          <ButtonNew size="large">List your protocol</ButtonNew>
+          <Button size="small">List your protocol</Button>
         </a>
       </div>
     </div>
