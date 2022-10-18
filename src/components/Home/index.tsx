@@ -91,11 +91,11 @@ const Home = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">
           {/* HERO SECTION */}
-          <div className="px-6 sm:px-0">
+          <div className="px-6 sm:px-0 bg-hero-gradient ">
             {/* Center Container */}
             <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
               <h1
-                className="mb-7 sm:mb-8 font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
+                className="mb-11 sm:mb-6 font-spaceGrotesk font-medium text-base px-8 sm:text-3xl md:text-4xl leading-5 sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
                 id="hero-heading"
               >
                 discover & earn yield from polkadot and kusama paraverse
