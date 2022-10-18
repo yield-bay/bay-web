@@ -42,7 +42,7 @@ export default function SelectFarmType() {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Listbox.Options className="absolute z-20 mt-4 max-h-60 max-w-max overflow-auto rounded-lg py-[7px] bg-white dark:bg-[#011433] text-baseBlueDark dark:text-white text-base font-medium leading-5 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Listbox.Options className="absolute z-20 mt-4 max-h-60 max-w-max overflow-auto rounded-lg py-[7px] bg-white dark:bg-baseBlue text-baseBlueDark dark:text-white text-base font-medium leading-5 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {farmTypes.map((farmType) => (
                 <Listbox.Option
                   key={farmType.id}
