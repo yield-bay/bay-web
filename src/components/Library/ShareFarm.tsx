@@ -95,7 +95,7 @@ const ShareMenu = ({
 }: ShareMenuPropsType) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
-      <Menu.Button className="p-4 scale-0 group-hover:scale-100 cursor-pointer transition-all duration-200">
+      <Menu.Button className="p-4 cursor-pointer transition-all duration-200">
         <ShareIcon className="w-5 text-white" />
       </Menu.Button>
 

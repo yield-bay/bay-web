@@ -43,7 +43,9 @@ module.exports = {
       "hero-gradient":
         "linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #01050D 100%)",
       "hero-gradient-mob":
-        "linear-gradient(180deg, rgba(3, 14, 33, 0) -21.54%, #01060F 100%);",
+        "linear-gradient(180deg, rgba(3, 14, 33, 0) -21.54%, #01060F 100%)",
+      "safety-scale":
+        "linear-gradient(270deg, #67C84B 0%, #F5AF46 48.46%, #C8524B 102.25%)",
     },
   },
   plugins: [],

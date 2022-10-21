@@ -9,7 +9,6 @@
   },
   "rules": {
     "prettier/prettier": "error",
-    "react-hooks/exhaustive-deps": "off",
-    "react/display-name": ["off", { "ignoreTranspilerName": true }]
+    "react-hooks/exhaustive-deps": "off"
   }
 }

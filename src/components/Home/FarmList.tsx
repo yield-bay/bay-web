@@ -1,4 +1,5 @@
 import { memo } from "react";
+import Link from "next/link";
 
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
@@ -73,19 +74,24 @@ const FarmsList = ({ farms }: any) => {
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
-                <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                  <Button
-                    size="large"
-                    onButtonClick={() =>
-                      trackEventWithProperty("go-to-farm", {
-                        protocol: farm?.protocol,
-                      })
-                    }
-                  >
-                    Visit Farm
-                  </Button>
-                </a>
-                <div className="text-center">
+                <Link
+                  href={`https://list.yieldbay.io/farm/${farm.id}/?addr=${farm.asset.address}`}
+                  passHref
+                >
+                  <a>
+                    <Button
+                      size="large"
+                      onButtonClick={() =>
+                        trackEventWithProperty("go-to-farm", {
+                          protocol: farm?.protocol,
+                        })
+                      }
+                    >
+                      Visit Farm
+                    </Button>
+                  </a>
+                </Link>
+                <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm
                     farm={farm}
                     apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
