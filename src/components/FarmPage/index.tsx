@@ -39,8 +39,10 @@ export default function FarmPage(props: any) {
     });
   }, []);
 
+  console.log("farm", farm);
+
   return farm?.asset.symbol.length > 0 ? (
-    <div className="flex flex-col gap-16  px-[120px]">
+    <div className="flex flex-col gap-y-16 px-[120px]">
       {/* Back Arrow Icon */}
       <div className="opacity-70 cursor-pointer">
         <Link href="/">
@@ -68,7 +70,7 @@ export default function FarmPage(props: any) {
         />
       </div>
       {/* First Row */}
-      <div className="flex flex-row gap-x-[72px] text-base font-bold leading-5 text-white">
+      <div className="flex flex-row gap-x-[72px] mb-24 text-base font-bold leading-5 text-white">
         <div className="">
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
@@ -87,7 +89,7 @@ export default function FarmPage(props: any) {
             ))}
           </div>
         </div>
-        <div className=" flex flex-col gap-y-6 min-w-[89px]">
+        <div className="flex flex-col gap-y-6 min-w-[89px]">
           <p className="opacity-70">Protocol</p>
           <p>{formatFirstLetter(farm?.protocol)}</p>
           <a
@@ -111,17 +113,18 @@ export default function FarmPage(props: any) {
             Know More
           </a>
         </div>
-        <div className=" flex flex-col gap-y-6">
+        <div className="flex flex-col gap-y-6">
           <p className="opacity-70 font-spaceGrotesk">Type</p>
           <p>{formatFirstLetter(farm?.farmType)}</p>
           <p className="font-medium leading-6 opacity-60 max-w-[306px]">
             The stable swap is a kind of automated market maker (AMM) dedicated
             to swapping tokens with stable values. Its goal is to facilitate
             swaps as efficiently as possible and allow users to trade
-            stablecoins with minimal loss. Know More about them here.
+            stablecoins with minimal loss. Know More about them{" "}
+            <a className="underline cursor-pointer">here</a>.
           </p>
         </div>
-        <div className=" flex flex-col gap-y-6">
+        <div className="flex flex-col gap-y-6">
           <p className="opacity-70 font-spaceGrotesk">Safety Score</p>
           <div className="flex items-center justify-start">
             <span>8.4</span>
@@ -144,7 +147,25 @@ export default function FarmPage(props: any) {
         </div>
       </div>
       {/* Second Row */}
-      <div className=""></div>
+      <div className="flex flex-row gap-x-[72px] text-base font-bold leading-5 text-white">
+        <div className="flex flex-col gap-y-6">
+          <p className="opacity-70">APR</p>
+          <div className="flex flex-col gap-y-[19px]">
+            <p className="text-blueSilver text-2xl leading-7 font-bold">{(farm?.apr.base + farm?.apr.reward).toFixed(2)}%</p>
+            <li className="flex">
+              <p className="opacity-70">Reward APR</p>
+              <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
+            </li>
+            <li className="flex">
+              <p className="opacity-70">Base APR</p>
+              <p className="ml-2">{farm?.apr.reward.toFixed(2)}%</p>
+            </li>
+          </div>
+        </div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   ) : (
     <div className="w-full text-center py-10">Loading...</div>

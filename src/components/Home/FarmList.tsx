@@ -75,7 +75,7 @@ const FarmsList = ({ farms }: any) => {
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
                 <Link
-                  href={`https://list.yieldbay.io/farm/${farm.id}/?addr=${farm.asset.address}`}
+                  href={`http://localhost:3000/farm/${farm.id}/?addr=${farm.asset.address}`}
                   passHref
                 >
                   <a>
