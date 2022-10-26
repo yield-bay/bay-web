@@ -1,5 +1,6 @@
 // React, Next Imports
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -13,8 +14,14 @@ import {
   formatFirstLetter,
   formatTokenSymbols,
 } from "@utils/farmListMethods";
-import Image from "next/image";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
+
+type RewardType = {
+  amount: number;
+  asset: string;
+  freq: string;
+  valueUSD: number;
+};
 
 export default function FarmPage(props: any) {
   const router = useRouter();
@@ -39,10 +46,22 @@ export default function FarmPage(props: any) {
     });
   }, []);
 
+  const calcTotalRewardValue = (rewards: RewardType[]) => {
+    let totalValueUSD = 0;
+    rewards.forEach((reward: any) => {
+      totalValueUSD += reward.valueUSD;
+    });
+    return totalValueUSD;
+  };
+
+  const calcAssetPercentage = (reward: RewardType, totalValue: number) => {
+    return ((reward.valueUSD * 100) / totalValue).toFixed(2);
+  };
+
   console.log("farm", farm);
 
   return farm?.asset.symbol.length > 0 ? (
-    <div className="flex flex-col gap-y-16 px-[120px]">
+    <div className="flex flex-col  pb-24 gap-y-16 px-[120px]">
       {/* Back Arrow Icon */}
       <div className="opacity-70 cursor-pointer">
         <Link href="/">
@@ -70,7 +89,7 @@ export default function FarmPage(props: any) {
         />
       </div>
       {/* First Row */}
-      <div className="flex flex-row gap-x-[72px] mb-24 text-base font-bold leading-5 text-white">
+      <div className="flex  flex-row justify-between gap-x-11 xl:gap-x-[72px] mb-24 text-base font-bold leading-5 text-white">
         <div className="">
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
@@ -147,11 +166,13 @@ export default function FarmPage(props: any) {
         </div>
       </div>
       {/* Second Row */}
-      <div className="flex flex-row gap-x-[72px] text-base font-bold leading-5 text-white">
+      <div className="flex flex-row  gap-x-11 xl:gap-x-[72px] text-base font-bold leading-5 text-white">
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">APR</p>
           <div className="flex flex-col gap-y-[19px]">
-            <p className="text-blueSilver text-2xl leading-7 font-bold">{(farm?.apr.base + farm?.apr.reward).toFixed(2)}%</p>
+            <p className="text-blueSilver text-2xl leading-7 font-bold">
+              {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+            </p>
             <li className="flex">
               <p className="opacity-70">Reward APR</p>
               <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
@@ -162,7 +183,38 @@ export default function FarmPage(props: any) {
             </li>
           </div>
         </div>
-        <div></div>
+        <div className="flex flex-col gap-y-6">
+          <p className="opacity-70">Rewards</p>
+          {farm?.rewards.map((reward: RewardType, index: number) => (
+            <div
+              className="flex items-center justify-between gap-x-[61px]"
+              key={index}
+            >
+              <div className="flex items-center">
+                <div className="flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-baseBlueMid mr-5">
+                  <Image
+                    src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
+                    alt={reward.asset}
+                    width={48}
+                    height={48}
+                    className="rounded-full max-h-max"
+                  />
+                </div>
+                <p>
+                  {parseFloat(reward.amount.toFixed(1)).toLocaleString("en-US")}{" "}
+                  {reward.asset.toUpperCase()}/DAY
+                </p>
+              </div>
+              <p>
+                {calcAssetPercentage(
+                  reward,
+                  calcTotalRewardValue(farm.rewards)
+                )}
+                %
+              </p>
+            </div>
+          ))}
+        </div>
         <div></div>
         <div></div>
       </div>
