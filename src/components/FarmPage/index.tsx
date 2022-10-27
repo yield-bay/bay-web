@@ -15,6 +15,7 @@ import {
   formatTokenSymbols,
 } from "@utils/farmListMethods";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
+import toDollarUnits from "@utils/toDollarUnits";
 
 type RewardType = {
   amount: number;
@@ -215,7 +216,21 @@ export default function FarmPage(props: any) {
             </div>
           ))}
         </div>
-        <div></div>
+        <div className="flex flex-col justify-start gap-y-6">
+          <p className="opacity-70">TVL</p>
+          <div className="flex flex-col">
+            <p className="mb-4">
+              <span className="mr-2 opacity-70">Total</span>
+              {toDollarUnits(farm?.tvl)}
+            </p>
+            <p className="mb-2">
+              <span className="mr-2 opacity-70">$1500</span>5000 USDC
+            </p>
+            <p>
+              <span className="mr-2 opacity-70">$500</span>200 MOVR
+            </p>
+          </div>
+        </div>
         <div></div>
       </div>
     </div>
