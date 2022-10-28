@@ -90,7 +90,7 @@ export default function FarmPage(props: any) {
         />
       </div>
       {/* First Row */}
-      <div className="flex  flex-row justify-between gap-x-11 xl:gap-x-[72px] mb-24 text-base font-bold leading-5 text-white">
+      <div className="flex flex-row justify-between gap-x-11 xl:gap-x-[72px] mb-24 text-base font-bold leading-5 text-white">
         <div className="">
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
@@ -167,7 +167,7 @@ export default function FarmPage(props: any) {
         </div>
       </div>
       {/* Second Row */}
-      <div className="flex flex-row  gap-x-11 xl:gap-x-[72px] text-base font-bold leading-5 text-white">
+      <div className="flex flex-row justify-xbetween gap-x-11 xl:gap-x-[72px] text-base font-bold leading-5 text-white">
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">APR</p>
           <div className="flex flex-col gap-y-[19px]">
@@ -231,7 +231,30 @@ export default function FarmPage(props: any) {
             </p>
           </div>
         </div>
-        <div></div>
+        <div className="border-2 border-[#314584] rounded-lg p-8 min-w-[321px]">
+          <div className="flex justify-between mb-6">
+            <p>Time Frame</p>
+            <p>ROI</p>
+          </div>
+          <div className="flex flex-col gap-y-4">
+            <div className="flex justify-between font-normal">
+              <p>1 day</p>
+              <p>0.17%</p>
+            </div>
+            <div className="flex justify-between font-normal">
+              <p>7 days</p>
+              <p>1.18%</p>
+            </div>
+            <div className="flex justify-between font-normal">
+              <p>30 days</p>
+              <p>5.01%</p>
+            </div>
+            <div className="flex justify-between font-normal">
+              <p>365 days</p>
+              <p>60.94%</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   ) : (
