@@ -108,7 +108,7 @@ const ShareMenu = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 min-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
           <div>
             <Menu.Item>
               {({ active }: any) => (
@@ -190,7 +190,7 @@ const ShareModal = ({
         className="py-4 transition-all duration-200"
         onClick={() => setOpen(true)}
       >
-        <ShareIcon className="w-4 text-white" />
+        <ShareIcon className="w-5 text-white" />
       </div>
       <Transition.Root show={open} as={Fragment}>
         <Dialog
