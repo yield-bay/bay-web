@@ -16,6 +16,11 @@ import {
 } from "@utils/farmListMethods";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import toDollarUnits from "@utils/toDollarUnits";
+import Button from "@components/Library/Button";
+import {
+  calcAssetPercentage,
+  calcTotalRewardValue,
+} from "@utils/farmPageMethods";
 
 type RewardType = {
   amount: number;
@@ -47,50 +52,42 @@ export default function FarmPage(props: any) {
     });
   }, []);
 
-  const calcTotalRewardValue = (rewards: RewardType[]) => {
-    let totalValueUSD = 0;
-    rewards.forEach((reward: any) => {
-      totalValueUSD += reward.valueUSD;
-    });
-    return totalValueUSD;
-  };
-
-  const calcAssetPercentage = (reward: RewardType, totalValue: number) => {
-    return ((reward.valueUSD * 100) / totalValue).toFixed(2);
-  };
-
   console.log("farm", farm);
 
   return farm?.asset.symbol.length > 0 ? (
-    <div className="flex flex-col  pb-24 gap-y-16 px-[120px]">
+    <div className="flex flex-col pb-20 sm:pb-24 px-9 sm:px-11 lg:px-[120px]">
       {/* Back Arrow Icon */}
-      <div className="opacity-70 cursor-pointer">
+      <div className="opacity-70 cursor-pointer mt-[6px] mb-11 sm:mb-14">
         <Link href="/">
           <div className="flex flex-row gap-x-[14px]">
             <ArrowLeftIcon className="w-[18px]" />
-            <span className=" font-semibold text-xl leading-6 select-none">
+            <span className="font-semibold text-lg sm:text-xl leading-5 sm:leading-6 select-none">
               back
             </span>
           </div>
         </Link>
       </div>
       {/* Heading */}
-      <div className=" flex flex-row items-center gap-x-9">
-        <p className=" text-[32px] font-bold leading-[39px] ">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-6 sm:gap-x-9">
+        <p className="text-[32px] font-bold leading-[39px]">
           {farm?.asset.symbol}
         </p>
-        <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-          <button className="flex flex-row items-center justify-center ring-2 text-base font-semibold leading-5 ring-[#1C284D] hover:ring-[#314173] text-white rounded-lg py-2 px-[18px] sm:py-[10.5px] sm:px-6 transition duration-200">
-            Visit Farm
-          </button>
-        </a>
-        <ShareFarm
-          farm={farm}
-          apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-        />
+        <div className="flex gap-x-5 items-center">
+          <a href={farmURL(farm)} target="_blank" rel="noreferrer">
+            <Button size="base">Visit Farm</Button>
+          </a>
+          <Button size="base" style="sm:hidden">
+            ROI
+          </Button>
+          <ShareFarm
+            farm={farm}
+            apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
+          />
+        </div>
       </div>
       {/* First Row */}
-      <div className="flex flex-row justify-between gap-x-11 xl:gap-x-[72px] mb-24 text-base font-bold leading-5 text-white">
+      {/* gap-x-11 xl:gap-x-[72px] */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-14 sm:gap-14 mb-0 sm:mb-24 text-base font-bold leading-5 text-white">
         <div className="">
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
@@ -104,34 +101,36 @@ export default function FarmPage(props: any) {
                     alt={asset}
                   />
                 </div>
-                <p className="">{asset}</p>
+                <p>{asset}</p>
               </div>
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-y-6 min-w-[89px]">
-          <p className="opacity-70">Protocol</p>
-          <p>{formatFirstLetter(farm?.protocol)}</p>
-          <a
-            href="https://google.com"
-            target="_blank"
-            rel="noreferrer"
-            className=" opacity-70 underline"
-          >
-            Know More
-          </a>
-        </div>
-        <div className=" flex flex-col gap-y-6 min-w-[89px]">
-          <p className="opacity-70">Chain</p>
-          <p>{formatFirstLetter(farm?.chain)}</p>
-          <a
-            href="https://google.com"
-            target="_blank"
-            rel="noreferrer"
-            className=" opacity-70 underline"
-          >
-            Know More
-          </a>
+        <div className="flex ">
+          <div className="flex w-1/2 flex-col  gap-y-6 min-w-[89px]">
+            <p className="opacity-70">Protocol</p>
+            <p>{formatFirstLetter(farm?.protocol)}</p>
+            <a
+              href="https://google.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:block opacity-70 underline"
+            >
+              Know More
+            </a>
+          </div>
+          <div className="flex flex-col w-1/2  gap-y-6 min-w-[89px]">
+            <p className="opacity-70">Chain</p>
+            <p>{formatFirstLetter(farm?.chain)}</p>
+            <a
+              href="https://google.com"
+              target="_blank"
+              rel="noreferrer"
+              className="hidden sm:block opacity-70 underline"
+            >
+              Know More
+            </a>
+          </div>
         </div>
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70 font-spaceGrotesk">Type</p>
@@ -154,8 +153,8 @@ export default function FarmPage(props: any) {
           <div>
             <div className="w-full h-4 bg-white rounded-lg bg-safety-scale" />
             <div className="flex justify-between mt-[7px]">
-              <p>0</p>
-              <p>10</p>
+              <span>0</span>
+              <span>10</span>
             </div>
           </div>
           <p className="font-medium leading-6 opacity-60 max-w-[306px]">
@@ -167,7 +166,7 @@ export default function FarmPage(props: any) {
         </div>
       </div>
       {/* Second Row */}
-      <div className="flex flex-row justify-xbetween gap-x-11 xl:gap-x-[72px] text-base font-bold leading-5 text-white">
+      <div className="hidden sm:flex flex-row justify-xbetween gap-x-11 xl:gap-x-[72px] text-base font-bold leading-5 text-white">
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">APR</p>
           <div className="flex flex-col gap-y-[19px]">
@@ -231,8 +230,8 @@ export default function FarmPage(props: any) {
             </p>
           </div>
         </div>
-        <div className="border-2 border-[#314584] rounded-lg p-8 min-w-[321px]">
-          <div className="flex justify-between mb-6">
+        <div className="hidden lg:block border-2 border-[#314584] rounded-lg p-8 min-w-[321px]">
+          <div className="flex justify-between mb`-6">
             <p>Time Frame</p>
             <p>ROI</p>
           </div>
