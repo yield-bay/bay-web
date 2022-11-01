@@ -11,6 +11,7 @@ import { ArrowLeftIcon } from "@heroicons/react/solid";
 import ShareFarm from "@components/Library/ShareFarm";
 import {
   farmURL,
+  formatFarmType,
   formatFirstLetter,
   formatTokenSymbols,
 } from "@utils/farmListMethods";
@@ -38,6 +39,7 @@ export default function FarmPage(props: any) {
   const [addrQuery, setAddrQuery] = useState<string | string[] | undefined>();
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
+  const tokenNames = farm ? formatTokenSymbols(farm?.asset.symbol) : [""];
 
   useEffect(() => {
     const { id, addr } = router.query;
@@ -51,8 +53,6 @@ export default function FarmPage(props: any) {
       setFarms(res.farms);
     });
   }, []);
-
-  console.log("farm", farm);
 
   return farm?.asset.symbol.length > 0 ? (
     <div className="flex flex-col pb-20 sm:pb-24 px-9 sm:px-11 lg:px-[120px]">
@@ -70,7 +70,12 @@ export default function FarmPage(props: any) {
       {/* Heading */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-6 sm:gap-x-9">
         <p className="text-[32px] font-bold leading-[39px]">
-          {farm?.asset.symbol}
+          {tokenNames.map((tokenName, index) => (
+            <span key={index} className="mr-[3px]">
+              {tokenName}
+              {index !== tokenNames.length - 1 && " •"}
+            </span>
+          ))}
         </p>
         <div className="flex gap-x-5 items-center">
           <a href={farmURL(farm)} target="_blank" rel="noreferrer">
@@ -132,7 +137,7 @@ export default function FarmPage(props: any) {
 
         <div className="flex flex-col gap-y-6 ">
           <p className="opacity-70 font-spaceGrotesk">Type</p>
-          <p>{formatFirstLetter(farm?.farmType)}</p>
+          <p>{formatFarmType(farm?.farmType)}</p>
           <p className="font-medium leading-6 opacity-60 max-w-[306px]">
             The stable swap is a kind of automated market maker (AMM) dedicated
             to swapping tokens with stable values. Its goal is to facilitate
@@ -229,7 +234,7 @@ export default function FarmPage(props: any) {
           </div>
         </div>
         <div className="hidden md:block border-2 border-[#314584] rounded-lg p-8 min-w-[321px]">
-          <div className="flex justify-between mb`-6">
+          <div className="flex justify-between mb-6">
             <p>Time Frame</p>
             <p>ROI</p>
           </div>
