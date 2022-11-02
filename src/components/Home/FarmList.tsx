@@ -76,20 +76,17 @@ const FarmsList = ({ farms }: any) => {
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
                 <Link
                   href={`http://localhost:3000/farm/${farm.id}/?addr=${farm.asset.address}`}
-                  passHref
                 >
-                  <a>
-                    <Button
-                      size="large"
-                      onButtonClick={() =>
-                        trackEventWithProperty("go-to-farm", {
-                          protocol: farm?.protocol,
-                        })
-                      }
-                    >
-                      Visit Farm
-                    </Button>
-                  </a>
+                  <Button
+                    size="large"
+                    onButtonClick={() =>
+                      trackEventWithProperty("go-to-farm", {
+                        protocol: farm?.protocol,
+                      })
+                    }
+                  >
+                    Visit Farm
+                  </Button>
                 </Link>
                 <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm

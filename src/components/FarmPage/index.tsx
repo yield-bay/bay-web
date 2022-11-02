@@ -238,20 +238,20 @@ export default function FarmPage(props: any) {
             <p>Time Frame</p>
             <p>ROI</p>
           </div>
-          <div className="flex flex-col gap-y-4">
-            <div className="flex justify-between font-normal">
+          <div className="flex flex-col gap-y-4 font-normal">
+            <div className="flex justify-between">
               <p>1 day</p>
               <p>0.17%</p>
             </div>
-            <div className="flex justify-between font-normal">
+            <div className="flex justify-between">
               <p>7 days</p>
               <p>1.18%</p>
             </div>
-            <div className="flex justify-between font-normal">
+            <div className="flex justify-between">
               <p>30 days</p>
               <p>5.01%</p>
             </div>
-            <div className="flex justify-between font-normal">
+            <div className="flex justify-between">
               <p>365 days</p>
               <p>60.94%</p>
             </div>
