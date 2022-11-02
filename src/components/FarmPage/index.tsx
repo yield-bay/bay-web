@@ -21,6 +21,7 @@ import Button from "@components/Library/Button";
 import {
   calcAssetPercentage,
   calcTotalRewardValue,
+  protocolURL,
 } from "@utils/farmPageMethods";
 
 type RewardType = {
@@ -114,7 +115,7 @@ export default function FarmPage(props: any) {
           <p className="opacity-70">Protocol</p>
           <p>{formatFirstLetter(farm?.protocol)}</p>
           <a
-            href="https://google.com"
+            href={protocolURL(farm?.protocol)}
             target="_blank"
             rel="noreferrer"
             className="hidden sm:block opacity-70 underline"

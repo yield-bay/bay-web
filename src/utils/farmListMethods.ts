@@ -14,6 +14,9 @@ export function farmURL(farm: any): string {
   else if (farm.protocol == "zenlink")
     return "https://dex.zenlink.pro/#/earn/stake";
   else if (farm.protocol == "solarflare") return "https://solarflare.io/farm";
+  else if (farm.protocol == "arthswap") return "https://app.arthswap.org/";
+  else if (farm.protocol == "tapio")
+    return `https://apps.acala.network/swap/liquidity?lp=sa://${farm.id}`;
   return "";
 }
 
