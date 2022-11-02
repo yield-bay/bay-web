@@ -21,6 +21,7 @@ import Button from "@components/Library/Button";
 import {
   calcAssetPercentage,
   calcTotalRewardValue,
+  chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
 
@@ -127,7 +128,7 @@ export default function FarmPage(props: any) {
           <p className="opacity-70">Chain</p>
           <p>{formatFirstLetter(farm?.chain)}</p>
           <a
-            href="https://google.com"
+            href={chainURL(farm?.chain)}
             target="_blank"
             rel="noreferrer"
             className="hidden sm:block opacity-70 underline"

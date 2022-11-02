@@ -30,3 +30,13 @@ export function protocolURL(protocol: any): string {
   else if (protocol == "tapio") return "https://www.tapioprotocol.io/";
   return "";
 }
+
+export function chainURL(chain: any): string {
+  if (chain == "moonbeam") return "https://moonbeam.network/";
+  else if (chain == "moonriver")
+    return "https://moonbeam.network/networks/moonriver/";
+  else if (chain == "astar") return "https://astar.network/";
+  else if (chain == "acala") return "https://acala.network/";
+  else if (chain == "karura") return "https://acala.network/karura";
+  return "";
+}
