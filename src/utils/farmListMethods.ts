@@ -16,6 +16,9 @@ export function farmURL(farm: any): string {
   else if (farm.protocol == "solarflare") return "https://solarflare.io/farm";
   else if (farm.protocol == "arthswap")
     return "https://app.arthswap.org/#/farms";
+  else if (farm.protocol == "tapio")
+    return `https://apps.acala.network/swap/liquidity?lp=sa://${farm.id}`;
+  else if (farm.protocol == "Mangata X") return "https://app.mangata.finance/";
   return "";
 }
 
