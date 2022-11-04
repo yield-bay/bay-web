@@ -1,5 +1,5 @@
 import { memo } from "react";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
@@ -21,6 +21,7 @@ import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 
 const FarmsList = ({ farms }: any) => {
+  const router = useRouter();
   return (
     <>
       {farms.map((farm: any) => {
@@ -74,20 +75,17 @@ const FarmsList = ({ farms }: any) => {
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
-                <Link
-                  href={`http://localhost:3000/farm/${farm.id}/?addr=${farm.asset.address}`}
+                <Button
+                  size="large"
+                  onButtonClick={() => {
+                    router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
+                    trackEventWithProperty("go-to-farm", {
+                      protocol: farm?.protocol,
+                    });
+                  }}
                 >
-                  <Button
-                    size="large"
-                    onButtonClick={() =>
-                      trackEventWithProperty("go-to-farm", {
-                        protocol: farm?.protocol,
-                      })
-                    }
-                  >
-                    Visit Farm
-                  </Button>
-                </Link>
+                  Visit Farm
+                </Button>
                 <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm
                     farm={farm}
