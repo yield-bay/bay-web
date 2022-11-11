@@ -41,7 +41,10 @@ export default function FarmPage(props: any) {
   const [addrQuery, setAddrQuery] = useState<string | string[] | undefined>();
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
-  const tokenNames = farm ? formatTokenSymbols(farm?.asset.symbol) : [""];
+  const tokenNames: string[] = farm
+    ? formatTokenSymbols(farm?.asset.symbol)
+    : [""];
+  const apr: number = farm ? farm?.apr.base + farm?.apr.reward : 0;
 
   useEffect(() => {
     const { id, addr } = router.query;
@@ -86,15 +89,13 @@ export default function FarmPage(props: any) {
           <Button size="base" style="md:hidden">
             ROI
           </Button>
-          <ShareFarm
-            farm={farm}
-            apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-          />
+          <ShareFarm farm={farm} apr={apr.toFixed(2)} />
         </div>
       </div>
       {/* First Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 sm:gap-16 lg:flex flex-row justify-between mb-10 sm:mb-[171px] text-base font-bold leading-5 text-white">
-        <div className="">
+        {/* Assets */}
+        <div>
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
             {formatTokenSymbols(farm?.asset.symbol).map((asset, index) => (
@@ -112,6 +113,7 @@ export default function FarmPage(props: any) {
             ))}
           </div>
         </div>
+        {/* Protocol */}
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">Protocol</p>
           <p>{formatFirstLetter(farm?.protocol)}</p>
@@ -124,6 +126,7 @@ export default function FarmPage(props: any) {
             Know More
           </a>
         </div>
+        {/* Chain */}
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">Chain</p>
           <p>{formatFirstLetter(farm?.chain)}</p>
@@ -136,7 +139,7 @@ export default function FarmPage(props: any) {
             Know More
           </a>
         </div>
-
+        {/* Farm Type */}
         <div className="flex flex-col gap-y-6 ">
           <p className="opacity-70 font-spaceGrotesk">Type</p>
           <p>{formatFarmType(farm?.farmType)}</p>
@@ -148,6 +151,7 @@ export default function FarmPage(props: any) {
             <a className="underline cursor-pointer">here</a>.
           </p>
         </div>
+        {/* Safety Score */}
         <div className="flex flex-col gap-y-6 ">
           <p className="opacity-70 font-spaceGrotesk">Safety Score</p>
           <div className="flex items-center justify-start">
@@ -172,22 +176,24 @@ export default function FarmPage(props: any) {
       </div>
       {/* Second Row */}
       <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-14 sm:gap-14 xl:flex flex-row justify-between text-base font-bold leading-5 text-white">
+        {/* APR */}
         <div className="flex flex-col gap-y-6 max-w-max">
           <p className="opacity-70">APR</p>
           <div className="flex flex-col gap-y-[19px]">
             <p className="text-blueSilver text-2xl leading-7 font-bold">
-              {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+              {apr.toFixed(2)}%
             </p>
             <li className="flex">
               <p className="opacity-70">Reward APR</p>
-              <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
+              <p className="ml-2">{farm?.apr.reward.toFixed(2)}%</p>
             </li>
             <li className="flex">
               <p className="opacity-70">Base APR</p>
-              <p className="ml-2">{farm?.apr.reward.toFixed(2)}%</p>
+              <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
             </li>
           </div>
         </div>
+        {/* Rewards */}
         <div className="flex flex-col gap-y-6 max-w-max">
           <p className="opacity-70">Rewards</p>
           {farm?.rewards.map((reward: RewardType, index: number) => (
@@ -220,6 +226,7 @@ export default function FarmPage(props: any) {
             </div>
           ))}
         </div>
+        {/* TVL */}
         <div className="flex flex-col justify-start gap-y-6 max-w-max">
           <p className="opacity-70">TVL</p>
           <div className="flex flex-col">
@@ -235,6 +242,7 @@ export default function FarmPage(props: any) {
             </p>
           </div>
         </div>
+        {/* Calculator */}
         <div className="hidden md:block border-2 border-[#314584] rounded-lg p-8 min-w-[321px]">
           <div className="flex justify-between mb-6">
             <p>Time Frame</p>
@@ -243,19 +251,19 @@ export default function FarmPage(props: any) {
           <div className="flex flex-col gap-y-4 font-normal">
             <div className="flex justify-between">
               <p>1 day</p>
-              <p>0.17%</p>
+              <p>{(apr / 365).toFixed(2)}%</p>
             </div>
             <div className="flex justify-between">
               <p>7 days</p>
-              <p>1.18%</p>
+              <p>{(apr / 52).toFixed(2)}%</p>
             </div>
             <div className="flex justify-between">
               <p>30 days</p>
-              <p>5.01%</p>
+              <p>{(apr / 12).toFixed(2)}%</p>
             </div>
             <div className="flex justify-between">
               <p>365 days</p>
-              <p>60.94%</p>
+              <p>{apr.toFixed(2)}%</p>
             </div>
           </div>
         </div>
