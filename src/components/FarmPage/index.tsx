@@ -62,7 +62,7 @@ export default function FarmPage(props: any) {
   return farm?.asset.symbol.length > 0 ? (
     <div className="flex flex-col pb-20 sm:pb-24 px-9 sm:px-11 lg:px-[120px]">
       {/* Back Arrow Icon */}
-      <div className="opacity-70 cursor-pointer mt-[6px] mb-11 sm:mb-14">
+      <div className="opacity-70 w-max cursor-pointer mt-[6px] mb-11 sm:mb-14">
         <Link href="/">
           <div className="flex flex-row gap-x-[14px]">
             <ArrowLeftIcon className="w-[18px]" />

@@ -22,7 +22,7 @@ export function protocolURL(protocol: any): string {
   else if (protocol == "solarbeam") return "https://solarbeam.io/";
   else if (protocol == "beamswap") return "https://beamswap.io/";
   else if (protocol == "sushi") return "https://sushi.com/";
-  else if (protocol == "taiga") return "https://acala.network/karura";
+  else if (protocol == "taiga") return "https://www.taigaprotocol.io/";
   else if (protocol == "curve") return "https://moonbeam.curve.fi/";
   else if (protocol == "zenlink") return "https://zenlink.pro/en/";
   else if (protocol == "solarflare") return "https://solarflare.io";
