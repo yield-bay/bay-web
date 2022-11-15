@@ -26,7 +26,7 @@ const FarmsList = ({ farms }: any) => {
     <>
       {farms.map((farm: any) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
-        const safetyScore = (farm?.safetyScore * 10).toFixed(2);
+        const safetyScore = (farm?.safetyScore * 10).toFixed(1);
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
             <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">

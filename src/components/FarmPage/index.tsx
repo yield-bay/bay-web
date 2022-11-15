@@ -64,7 +64,7 @@ export default function FarmPage(props: any) {
     trackEventWithProperty("farm-page-view");
   }, []);
 
-  const safetyScore = (farm?.safetyScore * 10).toFixed(2);
+  const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
   return farm?.asset.symbol.length > 0 ? (
     <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px]">
