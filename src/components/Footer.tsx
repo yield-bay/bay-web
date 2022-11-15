@@ -50,7 +50,13 @@ export default function Footer() {
               <span className="font-bold font-spaceGrotesk text-white text-2xl sm:text-[32px] leading-[37.12px]">
                 yieldbay
               </span>
-              <Button size="small">List your protocol</Button>
+              <a
+                href="https://discord.gg/AKHuvbz7q4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Button size="small">List your protocol</Button>
+              </a>
             </div>
             <div className="pt-8 pb-6 sm:py-9 font-normal text-xs sm:text-base leading-4 sm:leading-5">
               <p>Yield Farming hub for the Polkadot &amp; Kusama Parachains.</p>
@@ -67,7 +73,10 @@ export default function Footer() {
               <p className="text-base leading-3 font-bold tracking-[0.115em] uppercase font-montserrat">
                 Ecosystem
               </p>
-              <ul role="list" className="mt-4 space-y-4 text-base leading-4">
+              <ul
+                role="list"
+                className="mt-4 space-y-4 text-base leading-4 font-bold font-spaceGrotesk"
+              >
                 {ecosystem.map((ele, index) => (
                   <List key={index} title={ele.title} link={ele.link} />
                 ))}
@@ -77,7 +86,10 @@ export default function Footer() {
               <p className="text-base leading-3 font-bold tracking-[0.115em] uppercase font-montserrat">
                 Community
               </p>
-              <ul role="list" className="mt-4 space-y-4 text-base leading-4">
+              <ul
+                role="list"
+                className="mt-4 space-y-4 text-base leading-4 font-bold font-spaceGrotesk"
+              >
                 {community.map((ele, index) => (
                   <List key={index} title={ele.title} link={ele.link} />
                 ))}
@@ -95,7 +107,7 @@ const List = ({ title, link }: LinkProps): any => {
     <li>
       <a
         href={link}
-        className="inline-flex text-base leading-4 font-bold font-spaceGrotesk hover:opacity-80"
+        className="inline-flex hover:opacity-80"
         target="_blank"
         rel="noreferrer"
       >

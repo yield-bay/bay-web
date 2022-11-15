@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useRouter } from "next/router";
 
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
@@ -20,10 +21,12 @@ import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 
 const FarmsList = ({ farms }: any) => {
+  const router = useRouter();
   return (
     <>
       {farms.map((farm: any) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
+        const safetyScore = (farm?.safetyScore * 10).toFixed(1);
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
             <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
@@ -67,25 +70,21 @@ const FarmsList = ({ farms }: any) => {
             </td>
             <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="flex flex-row items-center justify-end">
-                <span>8.4</span>
-                <SafetyScorePill score={8.4} />
+                <span>{safetyScore}</span>
+                <SafetyScorePill score={safetyScore} />
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
-                <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                  <Button
-                    size="large"
-                    onButtonClick={() =>
-                      trackEventWithProperty("go-to-farm", {
-                        protocol: farm?.protocol,
-                      })
-                    }
-                  >
-                    Visit Farm
-                  </Button>
-                </a>
-                <div className="text-center">
+                <Button
+                  size="large"
+                  onButtonClick={() => {
+                    router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
+                  }}
+                >
+                  Visit Farm
+                </Button>
+                <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm
                     farm={farm}
                     apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}

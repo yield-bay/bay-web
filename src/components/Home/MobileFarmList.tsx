@@ -20,6 +20,7 @@ import {
 import toDollarUnits from "@utils/toDollarUnits";
 import { trackEventWithProperty } from "@utils/analytics";
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import { useRouter } from "next/router";
 
 type FarmListType = {
   farms: any;
@@ -42,6 +43,8 @@ const MobileFarmList = ({
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (farms.length > 0) handleSort(false, false);
@@ -162,18 +165,16 @@ const MobileFarmList = ({
                     farm={farm}
                     apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
                   />
-                  <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                    <Button
-                      size="large"
-                      onButtonClick={() =>
-                        trackEventWithProperty("go-to-farm", {
-                          protocol: farm?.protocol,
-                        })
-                      }
-                    >
-                      Visit Farm
-                    </Button>
-                  </a>
+                  <Button
+                    size="large"
+                    onButtonClick={() => {
+                      router.push(
+                        `/farm/${farm.id}/?addr=${farm.asset.address}`
+                      );
+                    }}
+                  >
+                    Visit Farm
+                  </Button>
                 </div>
               </div>
             );
