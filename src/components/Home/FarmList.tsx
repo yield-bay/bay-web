@@ -26,6 +26,7 @@ const FarmsList = ({ farms }: any) => {
     <>
       {farms.map((farm: any) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
+        const safetyScore = (farm?.safetyScore * 10).toFixed(2);
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
             <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
@@ -69,8 +70,8 @@ const FarmsList = ({ farms }: any) => {
             </td>
             <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="flex flex-row items-center justify-end">
-                <span>8.4</span>
-                <SafetyScorePill score={8.4} />
+                <span>{safetyScore}</span>
+                <SafetyScorePill score={safetyScore} />
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">

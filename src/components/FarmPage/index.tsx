@@ -59,6 +59,8 @@ export default function FarmPage(props: any) {
     });
   }, []);
 
+  const safetyScore = (farm?.safetyScore * 10).toFixed(2);
+
   return farm?.asset.symbol.length > 0 ? (
     <div className="flex flex-col pb-20 sm:pb-24 px-9 sm:px-11 lg:px-[120px]">
       {/* Back Arrow Icon */}
@@ -155,8 +157,8 @@ export default function FarmPage(props: any) {
         <div className="flex flex-col gap-y-6 ">
           <p className="opacity-70 font-spaceGrotesk">Safety Score</p>
           <div className="flex items-center justify-start">
-            <span>8.4</span>
-            <SafetyScorePill score={8.4} />
+            <span>{safetyScore}</span>
+            <SafetyScorePill score={safetyScore} />
           </div>
           {/* Safety Score Scale */}
           <div className="max-w-[326px]">
