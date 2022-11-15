@@ -24,6 +24,7 @@ import {
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
+import { trackEventWithProperty } from "@utils/analytics";
 
 type RewardType = {
   amount: number;
@@ -57,6 +58,8 @@ export default function FarmPage(props: any) {
     fetchListicleFarms().then((res: any) => {
       setFarms(res.farms);
     });
+
+    trackEventWithProperty("farm-page-view");
   }, []);
 
   const safetyScore = (farm?.safetyScore * 10).toFixed(2);
@@ -86,7 +89,16 @@ export default function FarmPage(props: any) {
         </p>
         <div className="flex gap-x-5 items-center">
           <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-            <Button size="base">Visit Farm</Button>
+            <Button
+              size="base"
+              onButtonClick={() => {
+                trackEventWithProperty("go-to-farm", {
+                  protocol: farm?.protocol,
+                });
+              }}
+            >
+              Visit Farm
+            </Button>
           </a>
           <Button size="base" style="md:hidden">
             ROI

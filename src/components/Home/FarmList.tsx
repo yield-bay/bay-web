@@ -80,9 +80,6 @@ const FarmsList = ({ farms }: any) => {
                   size="large"
                   onButtonClick={() => {
                     router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
-                    trackEventWithProperty("go-to-farm", {
-                      protocol: farm?.protocol,
-                    });
                   }}
                 >
                   Visit Farm
