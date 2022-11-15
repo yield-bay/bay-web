@@ -25,6 +25,7 @@ import {
   protocolURL,
 } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
+import CalculatorModal from "@components/Library/CalculatorModal";
 
 type RewardType = {
   amount: number;
@@ -40,6 +41,7 @@ export default function FarmPage(props: any) {
   const [farms, setFarms] = useState<any[]>([]);
   const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
   const [addrQuery, setAddrQuery] = useState<string | string[] | undefined>();
+  const [calcOpen, setCalcOpen] = useState<boolean>(false);
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
   const tokenNames: string[] = farm
@@ -100,7 +102,11 @@ export default function FarmPage(props: any) {
               Visit Farm
             </Button>
           </a>
-          <Button size="base" style="md:hidden">
+          <Button
+            size="base"
+            style="md:hidden"
+            onButtonClick={() => setCalcOpen(true)}
+          >
             ROI
           </Button>
           <ShareFarm farm={farm} apr={apr.toFixed(2)} />
@@ -281,6 +287,7 @@ export default function FarmPage(props: any) {
           </p>
         </div>
       </div>
+      <CalculatorModal open={calcOpen} setOpen={setCalcOpen} apr={apr} />
     </div>
   ) : (
     <div className="w-full text-center py-10">Loading...</div>
