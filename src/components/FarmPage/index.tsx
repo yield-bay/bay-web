@@ -65,7 +65,7 @@ export default function FarmPage(props: any) {
   const safetyScore = (farm?.safetyScore * 10).toFixed(2);
 
   return farm?.asset.symbol.length > 0 ? (
-    <div className="flex flex-col pb-20 sm:pb-24 px-9 sm:px-11 lg:px-[120px]">
+    <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px]">
       {/* Back Arrow Icon */}
       <div className="opacity-70 w-max cursor-pointer mt-[6px] mb-11 sm:mb-14">
         <Link href="/">
@@ -107,7 +107,100 @@ export default function FarmPage(props: any) {
         </div>
       </div>
       {/* First Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 sm:gap-16 lg:flex flex-row justify-between mb-10 sm:mb-[171px] text-base font-bold leading-5 text-white">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-14 sm:gap-14 xl:flex flex-row justify-between mb-10 sm:mb-[107px] text-base font-bold leading-5 text-white">
+        {/* TVL */}
+        <div className="flex flex-col justify-start gap-y-6 max-w-max">
+          <p className="opacity-70">TVL</p>
+          <div className="flex flex-col gap-y-[19px]">
+            <p className="text-blueSilver text-2xl leading-7 font-bold">
+              {toDollarUnits(farm?.tvl)}
+            </p>
+            <p>
+              <span className="mr-2 opacity-70">$1500</span>5000 USDC
+            </p>
+            <p>
+              <span className="mr-2 opacity-70">$500</span>200 MOVR
+            </p>
+          </div>
+        </div>
+        {/* APR */}
+        <div className="flex flex-col gap-y-6 max-w-max">
+          <p className="opacity-70">APR</p>
+          <div className="flex flex-col gap-y-[19px]">
+            <p className="text-blueSilver text-2xl leading-7 font-bold">
+              {apr.toFixed(2)}%
+            </p>
+            <li className="flex">
+              <p className="opacity-70">Reward APR</p>
+              <p className="ml-2">{farm?.apr.reward.toFixed(2)}%</p>
+            </li>
+            <li className="flex">
+              <p className="opacity-70">Base APR</p>
+              <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
+            </li>
+          </div>
+        </div>
+        {/* Rewards */}
+        <div className="flex flex-col gap-y-6 max-w-max">
+          <p className="opacity-70">Rewards</p>
+          {farm?.rewards.map((reward: RewardType, index: number) => (
+            <div
+              className="flex items-center justify-between gap-x-[61px]"
+              key={index}
+            >
+              <div className="flex items-center">
+                <div className="flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-baseBlueMid mr-5">
+                  <Image
+                    src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
+                    alt={reward.asset}
+                    width={48}
+                    height={48}
+                    className="rounded-full max-h-max"
+                  />
+                </div>
+                <p>
+                  {parseFloat(reward.amount.toFixed(1)).toLocaleString("en-US")}{" "}
+                  {reward.asset.toUpperCase()}/DAY
+                </p>
+              </div>
+              <p>
+                {calcAssetPercentage(
+                  reward,
+                  calcTotalRewardValue(farm.rewards)
+                )}
+                %
+              </p>
+            </div>
+          ))}
+        </div>
+        {/* Calculator */}
+        <div className="hidden md:block border-2 border-[#314584] rounded-lg p-8 h-max min-w-[321px]">
+          <div className="flex justify-between mb-6">
+            <p>Time Frame</p>
+            <p>ROI</p>
+          </div>
+          <div className="flex flex-col gap-y-4 font-normal">
+            <div className="flex justify-between">
+              <p>1 day</p>
+              <p>{(apr / 365).toFixed(2)}%</p>
+            </div>
+            <div className="flex justify-between">
+              <p>7 days</p>
+              <p>{(apr / 52).toFixed(2)}%</p>
+            </div>
+            <div className="flex justify-between">
+              <p>30 days</p>
+              <p>{(apr / 12).toFixed(2)}%</p>
+            </div>
+            <div className="flex justify-between">
+              <p>365 days</p>
+              <p>{apr.toFixed(2)}%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Second Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 sm:gap-16 lg:flex flex-row justify-between text-base font-bold leading-5 text-white">
         {/* Assets */}
         <div>
           <p className="opacity-70">Assets</p>
@@ -166,7 +259,7 @@ export default function FarmPage(props: any) {
           </p>
         </div>
         {/* Safety Score */}
-        <div className="flex flex-col gap-y-6 ">
+        <div className="flex flex-col gap-y-6">
           <p className="opacity-70 font-spaceGrotesk">Safety Score</p>
           <div className="flex items-center justify-start">
             <span>{safetyScore}</span>
@@ -186,100 +279,6 @@ export default function FarmPage(props: any) {
             frustratingly photogenic, which is not his fault — though he should
             be resented for it.
           </p>
-        </div>
-      </div>
-      {/* Second Row */}
-      <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-14 sm:gap-14 xl:flex flex-row justify-between text-base font-bold leading-5 text-white">
-        {/* APR */}
-        <div className="flex flex-col gap-y-6 max-w-max">
-          <p className="opacity-70">APR</p>
-          <div className="flex flex-col gap-y-[19px]">
-            <p className="text-blueSilver text-2xl leading-7 font-bold">
-              {apr.toFixed(2)}%
-            </p>
-            <li className="flex">
-              <p className="opacity-70">Reward APR</p>
-              <p className="ml-2">{farm?.apr.reward.toFixed(2)}%</p>
-            </li>
-            <li className="flex">
-              <p className="opacity-70">Base APR</p>
-              <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
-            </li>
-          </div>
-        </div>
-        {/* Rewards */}
-        <div className="flex flex-col gap-y-6 max-w-max">
-          <p className="opacity-70">Rewards</p>
-          {farm?.rewards.map((reward: RewardType, index: number) => (
-            <div
-              className="flex items-center justify-between gap-x-[61px]"
-              key={index}
-            >
-              <div className="flex items-center">
-                <div className="flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-baseBlueMid mr-5">
-                  <Image
-                    src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
-                    alt={reward.asset}
-                    width={48}
-                    height={48}
-                    className="rounded-full max-h-max"
-                  />
-                </div>
-                <p>
-                  {parseFloat(reward.amount.toFixed(1)).toLocaleString("en-US")}{" "}
-                  {reward.asset.toUpperCase()}/DAY
-                </p>
-              </div>
-              <p>
-                {calcAssetPercentage(
-                  reward,
-                  calcTotalRewardValue(farm.rewards)
-                )}
-                %
-              </p>
-            </div>
-          ))}
-        </div>
-        {/* TVL */}
-        <div className="flex flex-col justify-start gap-y-6 max-w-max">
-          <p className="opacity-70">TVL</p>
-          <div className="flex flex-col">
-            <p className="mb-4">
-              <span className="mr-2 opacity-70">Total</span>
-              {toDollarUnits(farm?.tvl)}
-            </p>
-            <p className="mb-2">
-              <span className="mr-2 opacity-70">$1500</span>5000 USDC
-            </p>
-            <p>
-              <span className="mr-2 opacity-70">$500</span>200 MOVR
-            </p>
-          </div>
-        </div>
-        {/* Calculator */}
-        <div className="hidden md:block border-2 border-[#314584] rounded-lg p-8 min-w-[321px]">
-          <div className="flex justify-between mb-6">
-            <p>Time Frame</p>
-            <p>ROI</p>
-          </div>
-          <div className="flex flex-col gap-y-4 font-normal">
-            <div className="flex justify-between">
-              <p>1 day</p>
-              <p>{(apr / 365).toFixed(2)}%</p>
-            </div>
-            <div className="flex justify-between">
-              <p>7 days</p>
-              <p>{(apr / 52).toFixed(2)}%</p>
-            </div>
-            <div className="flex justify-between">
-              <p>30 days</p>
-              <p>{(apr / 12).toFixed(2)}%</p>
-            </div>
-            <div className="flex justify-between">
-              <p>365 days</p>
-              <p>{apr.toFixed(2)}%</p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
