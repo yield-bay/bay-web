@@ -64,6 +64,12 @@ export default function LoadingSkeleton() {
               </div>
             </div>
           </td>
+          {/* SAFETY SCORE */}
+          <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <div className="flex flex-row items-center justify-end">
+              <div className="h-6 w-[65px] rounded-full bg-baseBlueMid animate-shiny" />
+            </div>
+          </td>
           <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14">
             <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-center">
               {/* Share Farm */}
@@ -77,11 +83,5 @@ export default function LoadingSkeleton() {
         </tr>
       ))}
     </>
-    // </tbody>
-    //         </table>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
   );
 }
