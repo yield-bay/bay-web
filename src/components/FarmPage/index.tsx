@@ -67,7 +67,7 @@ export default function FarmPage(props: any) {
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
   return farm?.asset.symbol.length > 0 ? (
-    <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px]">
+    <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px] bg-hero-gradient">
       {/* Back Arrow Icon */}
       <div className="opacity-70 w-max cursor-pointer mt-[6px] mb-11 sm:mb-14">
         <Link href="/">
