@@ -20,6 +20,7 @@ import {
 import toDollarUnits from "@utils/toDollarUnits";
 import { trackEventWithProperty } from "@utils/analytics";
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import { useRouter } from "next/router";
 
 type FarmListType = {
   farms: any;
@@ -42,6 +43,8 @@ const MobileFarmList = ({
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (farms.length > 0) handleSort(false, false);
@@ -126,7 +129,7 @@ const MobileFarmList = ({
                       <FarmAssets logos={farm?.asset.logos} />
                     </div>
                     <div className="flex flex-row items-center">
-                      <div className="font-bold text-xs leading-[15px]">
+                      <div className="font-bold text-sm leading-[17px]">
                         {tokenNames.map((tokenName, index) => (
                           <span key={index} className="mr-[3px]">
                             {tokenName}
@@ -142,39 +145,36 @@ const MobileFarmList = ({
                     <FarmBadge type={formatFarmType(farm?.farmType)} />
                   </div>
                   {/* RIGHT */}
-                  <div className="flex flex-col gap-y-[18px] font-medium font-spaceGrotesk text-right">
+                  <div className="flex flex-col gap-y-[18px] text-primaryWhite font-medium font-spaceGrotesk text-right">
                     <div>
-                      <p className="text-base opacity-50 leading-5">TVL</p>
+                      <p className="text-base leading-5 opacity-70">TVL</p>
                       <p className="text-2xl leading-[30px]">
                         {toDollarUnits(farm?.tvl)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-base opacity-50 leading-5">APR</p>
+                      <p className="text-base leading-5 opacity-70">APR</p>
                       <p className="text-2xl leading-[30px]">
                         {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                       </p>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-row gap-x-3 justify-between mt-9">
+                <div className="flex flex-row gap-x-3 items-center justify-between mt-9">
                   <ShareFarm
                     farm={farm}
                     apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
                   />
-                  <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                    <Button
-                      type="secondary"
-                      size="large"
-                      onButtonClick={() =>
-                        trackEventWithProperty("go-to-farm", {
-                          protocol: farm?.protocol,
-                        })
-                      }
-                    >
-                      Visit Farm
-                    </Button>
-                  </a>
+                  <Button
+                    size="large"
+                    onButtonClick={() => {
+                      router.push(
+                        `/farm/${farm.id}/?addr=${farm.asset.address}`
+                      );
+                    }}
+                  >
+                    Visit Farm
+                  </Button>
                 </div>
               </div>
             );
