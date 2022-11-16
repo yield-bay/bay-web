@@ -57,12 +57,12 @@ export default function PreferencesModal({
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-4"
           >
-            <div className="relative inline-block font-spaceGrotesk bg-white dark:bg-baseBlue rounded-lg text-left shadow-xl py-3 align-bottom w-full transform transition-all">
+            <div className="relative inline-block font-spaceGrotesk bg-baseBlue rounded-lg text-left shadow-xl py-3 align-bottom w-full transform transition-all">
               <div className="absolute top-0 right-0 pt-7 pr-7">
-                <div className="flex items-center group rounded-full p-1 hover:bg-neutral-100 dark:hover:bg-neutral-700">
+                <div className="flex items-center group rounded-full p-1 hover:bg-neutral-700">
                   <button
                     type="button"
-                    className="text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white focus:outline-none"
+                    className="text-neutral-400 group-hover:text-white focus:outline-none"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -73,7 +73,7 @@ export default function PreferencesModal({
               <div className="w-full">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-bodyGray dark:border-[#181E27]"
+                  className="text-lg leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-[#181E27]"
                 >
                   All Listed Protocols
                 </Dialog.Title>
@@ -95,7 +95,7 @@ const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
   const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
 
   return (
-    <div className="px-9 py-[18px] flex flex-col gap-y-[15px] border-b-[1.5px] border-bodyGray dark:border-[#181E27]">
+    <div className="px-9 py-[18px] flex flex-col gap-y-[15px] border-b-[1.5px] border-[#181E27]">
       {farmTypes.map((item) => (
         <p
           className={
@@ -119,7 +119,7 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
   return (
     <div>
       {/* Depends on the "Key" of Sorting */}
-      <div className="px-9 py-6 inline-flex gap-x-[15px] w-full border-b-[1.5px] border-bodyGray dark:border-[#181E27]">
+      <div className="px-9 py-6 inline-flex gap-x-[15px] w-full border-b-[1.5px] border-[#181E27]">
         <p className="font-bold">Sort By:</p>
         <p
           className={

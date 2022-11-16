@@ -88,7 +88,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
         <div className="inline-block min-w-full align-middle">
           {!noResult ? (
             <div>
-              <table className="min-w-full text-baseBlue dark:text-white">
+              <table className="min-w-full text-white">
                 <thead className="transition duration-200 font-bold text-base leading-5">
                   <tr>
                     <th
@@ -180,7 +180,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#445AAD] dark:divide-opacity-50 transition duration-200">
+                <tbody className="divide-y divide-[#445AAD] divide-opacity-50 transition duration-200">
                   {hideSkeleton ? (
                     <FarmsList farms={sortedFarms} />
                   ) : (
@@ -190,7 +190,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
               </table>
             </div>
           ) : (
-            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
+            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-bodyGray leading-5">
               <p>No Results. Try searching for something else.</p>
             </div>
           )}

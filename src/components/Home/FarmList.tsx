@@ -33,7 +33,7 @@ const FarmsList = ({ farms }: any) => {
               <div>
                 <div className="flex flex-col gap-y-[10px]">
                   <div className="flex flex-row items-center">
-                    <div className="dark:text-blueSilver font-bold text-base leading-5">
+                    <div className="text-blueSilver font-bold text-base leading-5">
                       {tokenNames.map((tokenName, index) => (
                         <span key={index} className="mr-[3px]">
                           {tokenName}
@@ -42,7 +42,7 @@ const FarmsList = ({ farms }: any) => {
                       ))}
                     </div>
                   </div>
-                  <div className="text-mediumGray dark:text-[#9397A6] font-medium text-base leading-5">
+                  <div className="text-[#9397A6] font-medium text-base leading-5">
                     {formatFirstLetter(farm?.protocol)} on{" "}
                     {formatFirstLetter(farm?.chain)}
                   </div>
@@ -53,10 +53,10 @@ const FarmsList = ({ farms }: any) => {
             <td className="hidden lg:table-cell whitespace-nowrap">
               <FarmAssets logos={farm?.asset.logos} />
             </td>
-            <td className="whitespace-nowrap py-8 text-right sm:pr-3 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-8 text-right sm:pr-3 sm:pl-4 text-blueSilver font-bold text-base leading-5 tracking-wide">
               {toDollarUnits(farm?.tvl)}
             </td>
-            <td className="whitespace-nowrap py-8 pl-0 pr-2 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-8 pl-0 pr-2 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="w-full inline-flex justify-end items-center gap-x-2">
                 {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                 <YieldBreakdown
@@ -65,10 +65,10 @@ const FarmsList = ({ farms }: any) => {
                 />
               </div>
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <Rewards rewards={farm?.rewards} />
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="flex flex-row items-center justify-end">
                 <span>{safetyScore}</span>
                 <SafetyScorePill score={safetyScore} />

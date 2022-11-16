@@ -108,14 +108,14 @@ const ShareMenu = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 min-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 min-w-max rounded-lg shadow-lg bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
           <div>
             <Menu.Item>
               {({ active }: any) => (
                 <a
                   href={tweetUrl}
                   className={classNames([
-                    active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
+                    active ? "bg-baseBlueMid" : "",
                     "group flex justify-start gap-x-2 px-6 py-4 text-sm w-full rounded-t-lg text-primaryBlue",
                   ])}
                   target="_blank"
@@ -158,8 +158,8 @@ const ShareMenu = ({
                     });
                   }}
                   className={classNames([
-                    active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
-                    "group flex justify-start gap-x-2 px-6 py-4 rounded-b-lg border-t dark:border-gray-800 text-sm w-full",
+                    active ? "bg-baseBlueMid" : "",
+                    "group flex justify-start gap-x-2 px-6 py-4 rounded-b-lg border-t border-gray-800 text-sm w-full",
                   ])}
                 >
                   <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
@@ -225,13 +225,13 @@ const ShareModal = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-white dark:bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
+              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
                 {/* Close Button */}
                 <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                  <div className="flex items-center p-1 group rounded-full active:bg-neutral-100 dark:active:bg-neutral-700">
+                  <div className="flex items-center p-1 group rounded-full active:bg-neutral-700">
                     <button
                       type="button"
-                      className="text-neutral-600 dark:text-slate-600 active:text-neutral-900 dark:active:text-slate-200 focus:outline-none"
+                      className="text-slate-600 active:text-slate-200 focus:outline-none"
                       onClick={() => setOpen(false)}
                     >
                       <span className="sr-only">Close</span>
@@ -243,16 +243,16 @@ const ShareModal = ({
                 <div className="mt-3 w-full">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg pb-3 text-center leading-6 px-5 font-spaceGrotesk font-medium text-neutral-900 dark:text-white"
+                    className="text-lg pb-3 text-center leading-6 px-5 font-spaceGrotesk font-medium text-white"
                   >
                     Share farm
                   </Dialog.Title>
                   <div className="w-full pt-0">
-                    <div className="flex flex-col w-full text-primaryBlue dark:text-white">
+                    <div className="flex flex-col w-full text-white">
                       {/* Share on Twitter button */}
                       <a
                         href={tweetUrl}
-                        className="group flex justify-center gap-x-2 w-full text-sm font-medium border-y border-bodyGray dark:border-slate-800 py-4 px-6 active:dark:text-neutral-100 active:bg-bodyGray dark:active:bg-baseBlueMid cursor-pointer"
+                        className="group flex justify-center gap-x-2 w-full text-sm font-medium border-y border-slate-800 py-4 px-6 active:text-neutral-100 active:bg-baseBlueMid cursor-pointer"
                         target="_blank"
                         rel="noreferrer"
                         onClick={() => {
@@ -290,7 +290,7 @@ const ShareModal = ({
                             farmId: farmId,
                           });
                         }}
-                        className="text-sm inline-flex justify-center font-medium border-b border-neutral-100 dark:border-neutral-700 py-4 px-6 active:text-neutral-600 active:dark:text-neutral-100 active:bg-neutral-100 dark:active:bg-neutral-700 cursor-pointer"
+                        className="text-sm inline-flex justify-center font-medium border-b border-neutral-700 py-4 px-6 active:text-neutral-100 active:bg-neutral-700 cursor-pointer"
                       >
                         <ClipboardIcon
                           className="mr-3 h-5 w-5"
