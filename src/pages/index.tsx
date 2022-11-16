@@ -5,10 +5,10 @@ import MetaTags from "@metaTags/MetaTags";
 
 const Index: NextPage = () => {
   return (
-    <Layout>
+    <>
       <MetaTags />
       <Home />
-    </Layout>
+    </>
   );
 };
 

@@ -4,9 +4,9 @@ import FarmPage from "@components/FarmPage/index";
 
 const Farm: NextPage = () => {
   return (
-    <Layout>
+    <>
       <FarmPage />
-    </Layout>
+    </>
   );
 };
 
