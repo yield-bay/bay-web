@@ -24,6 +24,7 @@ import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
+import MetaTags from "@metaTags/MetaTags";
 
 const Home = () => {
   const router = useRouter();
@@ -78,13 +79,7 @@ const Home = () => {
 
   return (
     <div>
-      <Head>
-        <title>YieldBay Farms</title>
-        <meta
-          name="description"
-          content="YieldBay List | Discover Yield Farms in DotSama"
-        />
-      </Head>
+      <MetaTags />
       <main>
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">

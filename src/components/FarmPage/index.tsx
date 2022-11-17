@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 // Misc Imports
+import config from "@metaTags/config";
+import MetaTags from "@metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -26,6 +28,7 @@ import {
 } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 import CalculatorModal from "@components/Library/CalculatorModal";
+import { defaultConfig } from "next/dist/server/config-shared";
 
 type RewardType = {
   amount: number;
@@ -36,6 +39,7 @@ type RewardType = {
 
 export default function FarmPage(props: any) {
   const router = useRouter();
+  const { defaultTitle } = config;
 
   // States
   const [farms, setFarms] = useState<any[]>([]);
@@ -68,6 +72,7 @@ export default function FarmPage(props: any) {
 
   return farm?.asset.symbol.length > 0 ? (
     <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px] bg-hero-gradient">
+      <MetaTags title={`Farm • ${defaultTitle}`} />
       {/* Back Arrow Icon */}
       <div className="opacity-70 w-max cursor-pointer mt-[6px] mb-11 sm:mb-14">
         <Link href="/">
