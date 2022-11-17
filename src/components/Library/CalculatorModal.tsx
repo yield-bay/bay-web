@@ -37,7 +37,7 @@ const CalculatorModal = ({ open, setOpen, apr }: CalculatorModalProps) => {
             leaveFrom="opacity-100 translate-y-0"
             leaveTo="opacity-0 translate-y-4"
           >
-            <div className="relative inline-block border-2 border-[#314584] bg-baseBlue rounded-lg text-left py-8 align-bottom w-full transform transition-all">
+            <div className="relative inline-block border-2 border-[#314584] bg-baseBlue rounded-lg text-left py-8 align-bottom  max-w-sm w-full transform transition-all">
               <div className="w-full px-8 text-base leading-5">
                 <div className="flex justify-between font-bold mb-6">
                   <p>Time Frame</p>
