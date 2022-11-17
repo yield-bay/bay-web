@@ -30,33 +30,31 @@ const FarmsList = ({ farms }: any) => {
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
             <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
-              <div>
-                <div className="flex flex-col gap-y-[10px]">
-                  <div className="flex flex-row items-center">
-                    <div className="dark:text-blueSilver font-bold text-base leading-5">
-                      {tokenNames.map((tokenName, index) => (
-                        <span key={index} className="mr-[3px]">
-                          {tokenName}
-                          {index !== tokenNames.length - 1 && " •"}
-                        </span>
-                      ))}
-                    </div>
+              <div className="flex flex-col gap-y-[10px]">
+                <div className="flex flex-row items-center">
+                  <div className="text-blueSilver font-bold text-base leading-5">
+                    {tokenNames.map((tokenName, index) => (
+                      <span key={index} className="mr-[3px]">
+                        {tokenName}
+                        {index !== tokenNames.length - 1 && " •"}
+                      </span>
+                    ))}
                   </div>
-                  <div className="text-mediumGray dark:text-[#9397A6] font-medium text-base leading-5">
-                    {formatFirstLetter(farm?.protocol)} on{" "}
-                    {formatFirstLetter(farm?.chain)}
-                  </div>
-                  <FarmBadge type={formatFarmType(farm?.farmType)} />
                 </div>
+                <div className="text-[#9397A6] font-medium text-base leading-5">
+                  {formatFirstLetter(farm?.protocol)} on{" "}
+                  {formatFirstLetter(farm?.chain)}
+                </div>
+                <FarmBadge type={formatFarmType(farm?.farmType)} />
               </div>
             </td>
             <td className="hidden lg:table-cell whitespace-nowrap">
               <FarmAssets logos={farm?.asset.logos} />
             </td>
-            <td className="whitespace-nowrap py-8 text-right sm:pr-3 sm:pl-4 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-8 text-right sm:pr-3 sm:pl-4 text-blueSilver font-bold text-base leading-5 tracking-wide">
               {toDollarUnits(farm?.tvl)}
             </td>
-            <td className="whitespace-nowrap py-8 pl-0 pr-2 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-8 pl-0 pr-2 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="w-full inline-flex justify-end items-center gap-x-2">
                 {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                 <YieldBreakdown
@@ -65,16 +63,16 @@ const FarmsList = ({ farms }: any) => {
                 />
               </div>
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <Rewards rewards={farm?.rewards} />
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 dark:text-blueSilver font-bold text-base leading-5 tracking-wide">
+            <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="flex flex-row items-center justify-end">
                 <span>{safetyScore}</span>
                 <SafetyScorePill score={safetyScore} />
               </div>
             </td>
-            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 lg:pr-14 text-right text-sm font-medium">
+            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
                 <Button
                   size="large"

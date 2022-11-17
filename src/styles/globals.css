@@ -11,6 +11,10 @@
     @apply antialiased;
   }
 
+  .page-center {
+    @apply flex justify-center items-center h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)];
+  }
+
   .dark-hero-bg {
     background: linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #0D0101 100%);
   }

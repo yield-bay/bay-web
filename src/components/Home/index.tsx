@@ -24,6 +24,7 @@ import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
+import MetaTags from "@metaTags/MetaTags";
 
 const Home = () => {
   const router = useRouter();
@@ -78,13 +79,7 @@ const Home = () => {
 
   return (
     <div>
-      <Head>
-        <title>YieldBay Farms</title>
-        <meta
-          name="description"
-          content="YieldBay List | Discover Yield Farms in DotSama"
-        />
-      </Head>
+      <MetaTags />
       <main>
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">
@@ -139,7 +134,7 @@ const Home = () => {
               </div>
             ) : (
               <div className="flex items-center justify-center px-6 py-4 sm:py-10 md:px-28 font-spaceGrotesk text-xs sm:text-base text-white leading-5">
-                <div className="relative px-4 sm:pl-[22px] sm:pr-11 py-3 w-max rounded-lg dark:bg-baseBlueDark transition duration-200">
+                <div className="relative px-4 sm:pl-[22px] sm:pr-11 py-3 w-max rounded-lg bg-baseBlueDark transition duration-200">
                   <p className="font-bold">
                     Showing Yield Farm with address <span>{farmQuery}</span> and
                     pool ID: <span>{idQuery}</span>
@@ -149,7 +144,7 @@ const Home = () => {
                       onClick={() => router.push("/")}
                       className="absolute top-2 right-2 sm:top-0 sm:bottom-0 sm:right-5 my-auto cursor-default transition-all duration-200"
                     >
-                      <XIcon className="ml-2 w-4 text-blueSilver dark:text-[#999999]" />
+                      <XIcon className="ml-2 w-4 text-[#999999]" />
                     </button>
                   </Tooltip>
                 </div>
@@ -159,7 +154,7 @@ const Home = () => {
           {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
-            <div className="sm:hidden bg-white dark:bg-[#01060F] transition duration-200">
+            <div className="sm:hidden bg-[#01060F] transition duration-200">
               {/* Shows Shared farm if queries are available  */}
               <MobileFarmList
                 farms={!idQuery ? filteredFarms : specificFarm}
@@ -173,7 +168,7 @@ const Home = () => {
             </div>
           ) : (
             // DESKTOP VIEW
-            <div className="hidden sm:block bg-white dark:bg-[#01050D] transition duration-200">
+            <div className="hidden sm:block bg-[#01050D] transition duration-200">
               {/* Shows Shared farm if queries are available  */}
               <ListicleTable
                 farms={!idQuery ? filteredFarms : specificFarm}
@@ -199,9 +194,9 @@ const GoToHome = ({
   idQuery: string | string[] | undefined;
   router: NextRouter;
 }) => (
-  <div className="border-t border dark:border-[#222A39] w-full pt-8 pb-9">
+  <div className="border-t border-[#222A39] w-full pt-8 pb-9">
     <div
-      className="py-2 sm:py-4 dark:text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-pointer"
+      className="py-2 sm:py-4 text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-pointer"
       onClick={() => {
         if (idQuery) router.push("/");
         else router.reload();

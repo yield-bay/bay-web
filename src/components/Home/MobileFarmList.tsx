@@ -111,7 +111,7 @@ const MobileFarmList = ({
   };
 
   return (
-    <div className="text-baseBlueDark dark:text-blueSilver">
+    <div className="text-blueSilver">
       {!noResult ? (
         hideSkeleton ? (
           sortedFarms.map((farm: any, index: number) => {
@@ -119,7 +119,7 @@ const MobileFarmList = ({
             return (
               <div
                 key={index}
-                className="w-full p-9 border-b border-blueSilver dark:border-[#222A39] transition-all duration-200"
+                className="w-full p-9 border-b border-[#222A39] transition-all duration-200"
               >
                 {/* Upper Container for left and right */}
                 <div className="flex flex-row justify-between">
@@ -138,7 +138,7 @@ const MobileFarmList = ({
                         ))}
                       </div>
                     </div>
-                    <div className="text-mediumGray dark:text-[#9397A6] font-medium text-xs leading-[15px]">
+                    <div className="text-[#9397A6] font-medium text-xs leading-[15px]">
                       {formatFirstLetter(farm?.protocol)} on{" "}
                       {formatFirstLetter(farm?.chain)}
                     </div>
@@ -183,7 +183,7 @@ const MobileFarmList = ({
           <MobileLoadingSkeleton />
         )
       ) : (
-        <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
+        <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-bodyGray leading-5">
           <p>No Results. Try searching for something else.</p>
         </div>
       )}
