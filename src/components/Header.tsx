@@ -14,7 +14,7 @@ export default function Header() {
   }, [resolvedTheme]);
 
   return (
-    <div className="flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-8 sm:pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
+    <div className="relative flex items-center justify-between w-full px-9 sm:px-11 lg:px-[120px] pt-8 sm:pt-12 pb-8 z-10 font-medium text-sm md:text-base text-neutral-800 dark:text-white transition duration-200">
       <div className="flex flex-col items-center cursor-pointer">
         <span className="font-bold font-spaceGrotesk text-white text-lg leading-[23px] sm:text-2xl sm:leading-8">
           yieldbay
@@ -24,8 +24,8 @@ export default function Header() {
         </div>
       </div>
       {banner && (
-        <div className="hidden md:flex flex-row items-center bg-opacity-20 dark:bg-opacity-100 bg-[#010813] text-white select-none text-xs rounded-xl py-[14px] px-[19px] gap-x-6 font-spaceGrotesk max-w-[340px] transition duration-200">
-          <span>
+        <div className="hidden md:flex flex-row items-center absolute left-[180px] lg:left-0 lg:right-0 mx-auto bg-opacity-20 dark:bg-opacity-100 bg-[#010813] text-white select-none rounded-xl py-[14px] px-[19px] gap-x-6 font-spaceGrotesk max-w-[340px] lg:max-w-sm transition duration-200">
+          <span className="text-xs lg:text-sm">
             We’ve currently de-listed Mangata X farms due to their Subscan being
             down.
           </span>
