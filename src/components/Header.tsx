@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 import Button from "@components/Library/Button";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
+import { XIcon } from "@heroicons/react/solid";
 
 export default function Header() {
   const { resolvedTheme, setTheme } = useTheme();
   const [darkSide, setDarkSide] = useState(false);
+  const [banner, setBanner] = useState(true);
 
   useEffect(() => {
     setDarkSide(resolvedTheme === "dark");
@@ -21,6 +23,18 @@ export default function Header() {
           <span className="-mr-1">List</span>
         </div>
       </div>
+      {banner && (
+        <div className="hidden md:flex flex-row items-center bg-opacity-20 dark:bg-opacity-100 bg-[#010813] text-white select-none text-xs rounded-xl py-[14px] px-[19px] gap-x-6 font-spaceGrotesk max-w-[340px] transition duration-200">
+          <span>
+            We’ve currently de-listed Mangata X farms due to their Subscan being
+            down.
+          </span>
+          <XIcon
+            onClick={() => setBanner(false)}
+            className="text-[#999999] w-[28px]"
+          />
+        </div>
+      )}
       <div className="inline-flex items-center gap-x-4 sm:mr-2">
         <a
           href="https://discord.gg/AKHuvbz7q4"
