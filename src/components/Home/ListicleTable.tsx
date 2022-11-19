@@ -173,7 +173,13 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                       scope="col"
                       className="hidden lg:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right"
                     >
-                      <span>Safety Score</span>
+                      <Tooltip
+                        content={
+                          <span>Score indicates the reliability of a farm</span>
+                        }
+                      >
+                        <span className="cursor-default">Safety Score</span>
+                      </Tooltip>
                     </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
                       <span className="sr-only">Visit Farm</span>

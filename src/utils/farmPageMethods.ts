@@ -40,3 +40,14 @@ export function chainURL(chain: any): string {
   else if (chain == "karura") return "https://acala.network/karura";
   return "";
 }
+
+export function farmTypeDesc(farmType: string): string {
+  if (farmType.toLowerCase() == "stableamm") {
+    return "Minimum to no impermanent loss thanks to the design of Stable AMMs.";
+  } else if (farmType.toLowerCase() == "standardamm") {
+    return "High impermanent loss risk unless the assets in the LP token are pegged to the same price. For example, GLMR-ETH LP has high IL risk, while USDC-BUSD LP has very low IL risk.";
+  } else if (farmType.toLowerCase() == "singlestaking") {
+    return "Impermanent loss is not a factor as an individual token is staked.";
+  }
+  return "";
+}

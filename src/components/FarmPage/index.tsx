@@ -4,13 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-// Misc Imports
+// Components, Hooks, Utils Imports
+import { ArrowLeftIcon } from "@heroicons/react/solid";
+import ShareFarm from "@components/Library/ShareFarm";
+import Button from "@components/Library/Button";
+import CalculatorModal from "@components/Library/CalculatorModal";
 import config from "@metaTags/config";
 import MetaTags from "@metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
-import { ArrowLeftIcon } from "@heroicons/react/solid";
-import ShareFarm from "@components/Library/ShareFarm";
 import {
   farmURL,
   formatFarmType,
@@ -19,16 +21,14 @@ import {
 } from "@utils/farmListMethods";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import toDollarUnits from "@utils/toDollarUnits";
-import Button from "@components/Library/Button";
 import {
   calcAssetPercentage,
   calcTotalRewardValue,
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
+import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
-import CalculatorModal from "@components/Library/CalculatorModal";
-import { defaultConfig } from "next/dist/server/config-shared";
 
 type RewardType = {
   amount: number;
@@ -262,11 +262,7 @@ export default function FarmPage(props: any) {
           <p className="opacity-70 font-spaceGrotesk">Type</p>
           <p>{formatFarmType(farm?.farmType)}</p>
           <p className="font-medium leading-6 opacity-60 max-w-[306px]">
-            The stable swap is a kind of automated market maker (AMM) dedicated
-            to swapping tokens with stable values. Its goal is to facilitate
-            swaps as efficiently as possible and allow users to trade
-            stablecoins with minimal loss. Know More about them{" "}
-            <a className="underline cursor-pointer">here</a>.
+            {farmTypeDesc(farm?.farmType)}
           </p>
         </div>
         {/* Safety Score */}
@@ -285,16 +281,19 @@ export default function FarmPage(props: any) {
             </div>
           </div>
           <p className="font-medium leading-6 opacity-60 max-w-[306px]">
-            This score is calculated on the basis of an algorithm that will come
-            from the brilliant mind of manan gouhari, he is the CPO and
-            frustratingly photogenic, which is not his fault — though he should
-            be resented for it.
+            The score is a relative indicator of the reliability of the farm
+            compared to the other opportunities listed on YieldBay. The score is
+            a calculated based on the current TVL, APR, and the rewards being
+            dished out in the farm.
           </p>
         </div>
       </div>
       <CalculatorModal open={calcOpen} setOpen={setCalcOpen} apr={apr} />
     </div>
   ) : (
-    <div className="w-full text-center py-10">Loading...</div>
+    <div className="flex-col gap-y-3 page-center font-spaceGrotesk bg-hero-gradient">
+      <span className="animate-bounce opacity-70 text-4xl select-none">🌾</span>
+      <span>loading farm...</span>
+    </div>
   );
 }
