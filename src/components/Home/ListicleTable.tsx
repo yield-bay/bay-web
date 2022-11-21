@@ -193,7 +193,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                           <span>Score indicates the reliability of a farm</span>
                         }
                       >
-                        <>
+                        <div>
                           <span>Safety Score</span>
                           {sortStatus.key == "safety" &&
                             (sortStatus.order == Order.DESC ? (
@@ -201,7 +201,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                             ) : (
                               <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
                             ))}
-                        </>
+                        </div>
                       </Tooltip>
                     </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
