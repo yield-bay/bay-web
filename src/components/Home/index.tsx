@@ -25,6 +25,7 @@ import MobileFarmList from "./MobileFarmList";
 import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@metaTags/MetaTags";
+import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 
 const Home = () => {
   const router = useRouter();
@@ -36,6 +37,7 @@ const Home = () => {
   const [farms, setFarms] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [prefModalOpen, setPrefModalOpen] = useState(false);
+  const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Hooks
@@ -94,12 +96,20 @@ const Home = () => {
                 discover & earn yield from polkadot and kusama paraverse
               </h1>
 
-              <FarmStats
-                totalTVL={tvlCount(farms)}
-                totalFarms={farms.length}
-                totalProtocols={protocolCount(farms)}
-              />
+              <div className="flex justify-center">
+                <div
+                  className="w-max cursor-pointer hover:scale-[1.02] transition-all duration-200"
+                  onClick={() => setProtocolModalOpen(true)}
+                >
+                  <FarmStats
+                    totalTVL={tvlCount(farms)}
+                    totalFarms={farms.length}
+                    totalProtocols={protocolCount(farms)}
+                  />
+                </div>
+              </div>
             </div>
+
             {!idQuery ? (
               <div
                 className="flex flex-col-reverse sm:flex-row items-center justify-between border-y sm:border-none border-[#334380] border-opacity-60
@@ -154,7 +164,7 @@ const Home = () => {
           {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
-            <div className="sm:hidden bg-[#01060F] transition duration-200">
+            <div className="sm:hidden bg-[#01050D] transition duration-200">
               {/* Shows Shared farm if queries are available  */}
               <MobileFarmList
                 farms={!idQuery ? filteredFarms : specificFarm}
@@ -181,6 +191,11 @@ const Home = () => {
           )}
         </div>
         {showScrollBtn && <ScrollToTopBtn />}
+        <AllProtocolsModal
+          open={protocolModalOpen}
+          setOpen={setProtocolModalOpen}
+          protocols={protocolList(farms)}
+        />
       </main>
     </div>
   );
