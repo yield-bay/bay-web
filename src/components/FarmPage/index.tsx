@@ -38,7 +38,7 @@ type RewardType = {
   valueUSD: number;
 };
 
-export default function FarmPage(props: any) {
+export default function FarmPage() {
   const router = useRouter();
   const { defaultTitle } = config;
 
@@ -211,17 +211,12 @@ export default function FarmPage(props: any) {
         <div>
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
-            {formatTokenSymbols(farm?.asset.symbol).map((asset, index) => (
+            {farm?.asset.logos.map((asset: any, index: number) => (
               <div key={index} className="flex gap-x-5 items-center">
                 <div className="flex rounded-full overflow-hidden ring-[3px] ring-[#01050D]">
-                  <Image
-                    height={48}
-                    width={48}
-                    src={farm?.asset.logos[index]}
-                    alt={asset}
-                  />
+                  <Image height={48} width={48} src={asset} alt={asset} />
                 </div>
-                <p>{asset}</p>
+                <p>{asset.trim().slice(61, -4)}</p>
               </div>
             ))}
           </div>
