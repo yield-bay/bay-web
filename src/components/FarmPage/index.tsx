@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 
 // Components, Hooks, Utils Imports
 import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { ExternalLinkIcon } from "@heroicons/react/outline";
 import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
 import CalculatorModal from "@components/Library/CalculatorModal";
@@ -126,12 +127,6 @@ export default function FarmPage(props: any) {
             <p className="text-blueSilver text-2xl leading-7 font-bold">
               {toDollarUnits(farm?.tvl)}
             </p>
-            <p>
-              <span className="mr-2 opacity-70">$1500</span>5000 USDC
-            </p>
-            <p>
-              <span className="mr-2 opacity-70">$500</span>200 MOVR
-            </p>
           </div>
         </div>
         {/* APR */}
@@ -234,27 +229,27 @@ export default function FarmPage(props: any) {
         {/* Protocol */}
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">Protocol</p>
-          <p>{formatFirstLetter(farm?.protocol)}</p>
           <a
             href={protocolURL(farm?.protocol)}
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:block opacity-70 underline"
+            className="hidden sm:flex items-center gap-x-1 hover:underline"
           >
-            Know More
+            <p>{formatFirstLetter(farm?.protocol)}</p>
+            <ExternalLinkIcon className="w-4" />
           </a>
         </div>
         {/* Chain */}
         <div className="flex flex-col gap-y-6">
           <p className="opacity-70">Chain</p>
-          <p>{formatFirstLetter(farm?.chain)}</p>
           <a
             href={chainURL(farm?.chain)}
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:block opacity-70 underline"
+            className="hidden sm:flex items-center gap-x-1 hover:underline"
           >
-            Know More
+            <p>{formatFirstLetter(farm?.chain)}</p>
+            <ExternalLinkIcon className="w-4" />
           </a>
         </div>
         {/* Farm Type */}
