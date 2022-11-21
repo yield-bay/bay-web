@@ -1,9 +1,9 @@
 import { Fragment, useEffect, useState, memo } from "react";
+import { useRouter } from "next/router";
 import { Menu, Dialog, Transition } from "@headlessui/react";
 import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
 import { ShareIcon } from "@heroicons/react/solid";
 import { useAtom } from "jotai";
-import { isNotificationAtom } from "@store/atoms";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
@@ -11,14 +11,13 @@ import useScreenSize from "@hooks/useScreenSize";
 // Types
 type ShareFarmPropsType = {
   farm: any;
-  apr: string;
+  pageShare: boolean;
 };
 
 type ShareMenuPropsType = {
   farm: any;
   url: string;
   tweetUrl: string;
-  isNotificationSet: (update: boolean) => void;
 };
 
 type ShareModalPropsType = {
@@ -26,20 +25,23 @@ type ShareModalPropsType = {
   setOpen: (value: boolean) => void;
   url: string;
   tweetUrl: string;
-  isNotificationSet: (value: boolean) => void;
-  farmAddress: string;
-  farmId: number;
+  farm: any;
 };
 
 function classNames(classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
-  const [, isNotificationSet] = useAtom(isNotificationAtom);
+const ShareFarm = ({ farm, pageShare }: ShareFarmPropsType) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   let [url, setUrl] = useState<string>("");
   const screenSize = useScreenSize();
+  const router = useRouter();
+
+  const apr = (farm?.apr.base + farm?.apr.reward).toFixed(2);
+  // UTM paramters for tracking
+  const utmLink =
+    "&utm_campaign=share-farm&utm_source=yb-list&utm_medium=textlink";
 
   // Tweet's URL with required parameters
   const tweetUrl =
@@ -48,17 +50,17 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
     )}%21%0A%0AWhen%20looking%20for%20yield%20farms%20in%20Dotsama%2C%20%40yield_bay%20is%20the%20place%20to%20go%20%F0%9F%8F%84%F0%9F%8F%96%EF%B8%8F%20%0A%0A%E2%86%92` +
     encodeURIComponent(url);
 
-  // UTM paramters for tracking
-  const utmLink =
-    "&utm_campaign=share-farm&utm_source=yb-list&utm_medium=textlink";
-
   useEffect(() => {
+    const urlPath = pageShare
+      ? router.asPath
+      : `/?farm=${farm?.asset?.address}&id=${farm?.id}`;
+
     setUrl(
       `${
         typeof window !== "undefined"
           ? window.location.host // for testing locally
           : "https://list.yieldbay.io"
-      }/?farm=${farm?.asset?.address}&id=${farm?.id}` + utmLink
+      }${urlPath}` + utmLink
     );
   }, [farm]);
 
@@ -70,29 +72,17 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
           setOpen={setModalOpen}
           url={url}
           tweetUrl={tweetUrl}
-          isNotificationSet={isNotificationSet}
-          farmAddress={farm?.asset.address}
-          farmId={farm?.id}
+          farm={farm}
         />
       ) : (
-        <ShareMenu
-          farm={farm}
-          url={url}
-          tweetUrl={tweetUrl}
-          isNotificationSet={isNotificationSet}
-        />
+        <ShareMenu farm={farm} url={url} tweetUrl={tweetUrl} />
       )}
     </div>
   );
 };
 
 // Share menu for desktop view
-const ShareMenu = ({
-  farm,
-  url,
-  tweetUrl,
-  isNotificationSet,
-}: ShareMenuPropsType) => {
+const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
       <Menu.Button className="p-4 cursor-pointer transition-all duration-200">
@@ -146,10 +136,6 @@ const ShareMenu = ({
                 <button
                   onClick={(e) => {
                     navigator.clipboard.writeText(url);
-                    isNotificationSet(true);
-                    setTimeout(() => {
-                      isNotificationSet(false);
-                    }, 2000); // Duration for Toast
 
                     trackEventWithProperty("farm-share", {
                       shareVia: "copy",
@@ -180,9 +166,7 @@ const ShareModal = ({
   setOpen,
   url,
   tweetUrl,
-  isNotificationSet,
-  farmAddress,
-  farmId,
+  farm,
 }: ShareModalPropsType) => {
   return (
     <div className="sm:hidden">
@@ -258,8 +242,8 @@ const ShareModal = ({
                         onClick={() => {
                           trackEventWithProperty("farm-share", {
                             shareVia: "twitter",
-                            farmAddress: farmAddress,
-                            farmId: farmId,
+                            farmAddress: farm?.asset.address,
+                            farmId: farm?.id,
                           });
                           setOpen(false);
                         }}
@@ -279,15 +263,11 @@ const ShareModal = ({
                       <button
                         onClick={(e) => {
                           navigator.clipboard.writeText(url);
-                          isNotificationSet(true);
-                          setTimeout(() => {
-                            isNotificationSet(false);
-                          }, 2000); // Duration for Toast
                           setOpen(false);
                           trackEventWithProperty("farm-share", {
                             shareVia: "copy",
-                            farmAddress: farmAddress,
-                            farmId: farmId,
+                            farmAddress: farm?.asset.address,
+                            farmId: farm?.id,
                           });
                         }}
                         className="text-sm inline-flex justify-center font-medium border-b border-neutral-700 py-4 px-6 active:text-neutral-100 active:bg-neutral-700 cursor-pointer"

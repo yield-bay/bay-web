@@ -161,10 +161,7 @@ const MobileFarmList = ({
                   </div>
                 </div>
                 <div className="flex flex-row gap-x-3 items-center justify-between mt-9">
-                  <ShareFarm
-                    farm={farm}
-                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-                  />
+                  <ShareFarm farm={farm} pageShare={false} />
                   <Button
                     size="large"
                     onButtonClick={() => {
