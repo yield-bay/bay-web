@@ -77,6 +77,15 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
           : a.apr.reward + a.apr.base < b.apr.reward + b.apr.base
           ? 1
           : -1;
+    } else if (newSortStatus.key == "safety") {
+      sortFn = (a: any, b: any) =>
+        newSortStatus.order == Order.ASC
+          ? a.safetyScore >= b.safetyScore
+            ? 1
+            : -1
+          : a.safetyScore < b.safetyScore
+          ? 1
+          : -1;
     }
 
     sortedFarmsSet([...farms].sort(sortFn));
@@ -171,14 +180,28 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                     <th
                       scope="col"
-                      className="hidden lg:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right"
+                      className="hidden lg:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right cursor-pointer"
+                      onClick={() => {
+                        handleSort("safety", true);
+                        trackEventWithProperty("table-sorting", {
+                          sortingType: "safety-score",
+                        });
+                      }}
                     >
                       <Tooltip
                         content={
                           <span>Score indicates the reliability of a farm</span>
                         }
                       >
-                        <span className="cursor-default">Safety Score</span>
+                        <>
+                          <span>Safety Score</span>
+                          {sortStatus.key == "safety" &&
+                            (sortStatus.order == Order.DESC ? (
+                              <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
+                            ) : (
+                              <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
+                            ))}
+                        </>
                       </Tooltip>
                     </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
