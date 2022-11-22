@@ -18,7 +18,7 @@ import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
 import { fetchListicleFarms } from "@utils/api";
 import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
-import { farmQueryAtom, filterFarmTypeAtom, idQueryAtom } from "@store/atoms";
+import { addrQueryAtom, filterFarmTypeAtom, idQueryAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MobileFarmList from "./MobileFarmList";
@@ -31,7 +31,7 @@ const Home = () => {
   const router = useRouter();
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
-  const [farmQuery, farmQuerySet] = useAtom(farmQueryAtom);
+  const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
 
   // States
   const [farms, setFarms] = useState<any[]>([]);
@@ -41,7 +41,7 @@ const Home = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Hooks
-  const specificFarm = useSpecificFarm(farms, idQuery, farmQuery);
+  const specificFarm = useSpecificFarm(farms, idQuery, addrQuery);
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
   const [filteredFarms, noFilteredFarms] = useFilteredFarms(
     filteredByFarmTypes,
@@ -67,7 +67,7 @@ const Home = () => {
   });
 
   useEffect(() => {
-    farmQuerySet(router.query.farm);
+    addrQuerySet(router.query.farm);
     idQuerySet(router.query.id);
   }, [router]);
 
@@ -95,7 +95,6 @@ const Home = () => {
               >
                 discover & earn yield from polkadot and kusama paraverse
               </h1>
-
               <div className="flex justify-center">
                 <div
                   className="w-max cursor-pointer hover:scale-[1.02] transition-all duration-200"
@@ -146,7 +145,7 @@ const Home = () => {
               <div className="flex items-center justify-center px-6 py-4 sm:py-10 md:px-28 font-spaceGrotesk text-xs sm:text-base text-white leading-5">
                 <div className="relative px-4 sm:pl-[22px] sm:pr-11 py-3 w-max rounded-lg bg-baseBlueDark transition duration-200">
                   <p className="font-bold">
-                    Showing Yield Farm with address <span>{farmQuery}</span> and
+                    Showing Yield Farm with address <span>{addrQuery}</span> and
                     pool ID: <span>{idQuery}</span>
                   </p>
                   <Tooltip content={<span>back to all farms</span>}>

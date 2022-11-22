@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useAtom } from "jotai";
 
 // Components, Hooks, Utils Imports
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -28,6 +29,7 @@ import {
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
+import { addrQueryAtom, idQueryAtom } from "@store/atoms";
 import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 
@@ -44,8 +46,10 @@ export default function FarmPage() {
 
   // States
   const [farms, setFarms] = useState<any[]>([]);
-  const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
-  const [addrQuery, setAddrQuery] = useState<string | string[] | undefined>();
+  const [idQuery, idQuerySet] = useAtom(idQueryAtom);
+  const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
+  // const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
+  // const [addrQuery, setAddrQuery] = useState<string | string[] | undefined>();
   const [calcOpen, setCalcOpen] = useState<boolean>(false);
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
@@ -55,10 +59,9 @@ export default function FarmPage() {
   const apr: number = farm ? farm?.apr.base + farm?.apr.reward : 0;
 
   useEffect(() => {
-    const { id, addr } = router.query;
-    setIdQuery(id);
-    setAddrQuery(addr);
-  }, []);
+    idQuerySet(router.query.id);
+    addrQuerySet(router.query.addr);
+  }, [router]);
 
   // fetching farms
   useEffect(() => {
@@ -71,7 +74,7 @@ export default function FarmPage() {
 
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
-  return farm?.asset.symbol.length > 0 ? (
+  return farm?.asset.symbol.length > 0 && idQuery ? (
     <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px] bg-hero-gradient">
       <MetaTags title={`Farm • ${defaultTitle}`} />
       {/* Back Arrow Icon */}
