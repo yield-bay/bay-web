@@ -23,7 +23,7 @@ export default function SelectFarmType() {
     >
       {({ open }) => (
         <>
-          <Listbox.Button className=" flex items-center gap-x-2 w-full cursor-default focus:outline-none focus:ring-0 text-base leading-5 font-medium">
+          <Listbox.Button className="flex items-center gap-x-2 w-full cursor-pointer focus:outline-none focus:ring-0 text-base leading-5 font-medium">
             <span className="block truncate">{selectedFarmType.name}</span>
             <span className="pointer-events-none flex items-center">
               <ChevronDownIcon
@@ -49,7 +49,7 @@ export default function SelectFarmType() {
                   className={({ active }) =>
                     classNames(
                       active ? "bg-baseBlueMid" : "",
-                      "relative cursor-default select-none py-[9px] px-6"
+                      "relative cursor-pointer select-none py-[9px] px-6"
                     )
                   }
                   value={farmType}

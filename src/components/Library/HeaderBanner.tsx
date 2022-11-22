@@ -12,7 +12,7 @@ const HeaderBanner = ({ note, isBanner, setIsBanner }: HeaderBannerProps) => {
       <span className="text-xs lg:text-sm">{note}</span>
       <XIcon
         onClick={() => setIsBanner(false)}
-        className="text-[#999999] w-[28px]"
+        className="text-[#999999] w-[28px] cursor-pointer"
       />
     </div>
   ) : (
