@@ -4,5 +4,5 @@ export default function toDollarUnits(num: number): string {
   } else if (num >= 1000 && num < 1000000) {
     return "$" + (num / 1000).toFixed(2) + "K";
   }
-  return "$" + num.toString();
+  return "$" + num.toFixed(0);
 }
