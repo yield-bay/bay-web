@@ -1,10 +1,5 @@
-import { idQueryAtom } from "@store/atoms";
-import { useAtom } from "jotai";
-
 export default function LoadingSkeleton() {
-  const [idQuery] = useAtom(idQueryAtom);
-  const lengthArray: number[] = idQuery ? [1] : [1, 2, 3, 4, 5];
-
+  const lengthArray: number[] = [1, 2, 3, 4, 5];
   return (
     <>
       {lengthArray.map((ele: number) => (
