@@ -9,9 +9,13 @@ function classNames(...classes: string[]) {
 }
 
 export default function SelectFarmType() {
-  const [farmTypes] = useAtom(farmTypesAtom);
-  const [selectedFarmType, setSelectedFarmType] = useState(farmTypes[0]);
-  const [, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
+  // Store
+  const [farmTypes, farmTypesSet] = useAtom(farmTypesAtom);
+  const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
+  // State
+  const [selectedFarmType, setSelectedFarmType] = useState(
+    farmTypes[filterFarmType - 1]
+  );
 
   return (
     <Listbox

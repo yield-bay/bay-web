@@ -48,8 +48,6 @@ export default function FarmPage() {
   const [farms, setFarms] = useState<any[]>([]);
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
-  // const [idQuery, setIdQuery] = useState<string | string[] | undefined>();
-  // const [addrQuery, setAddrQuery] = useState<string | string[] | undefined>();
   const [calcOpen, setCalcOpen] = useState<boolean>(false);
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);

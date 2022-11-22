@@ -1,34 +1,33 @@
 // React and Next Imports
-import React, { useEffect, useState } from "react";
-import Head from "next/head";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useRouter, NextRouter } from "next/router";
 
 // Library Imports
 import { useAtom } from "jotai";
 import { XIcon, AdjustmentsIcon } from "@heroicons/react/outline";
-import { trackPageView } from "@utils/analytics";
 
 // Misc Imports
 import FarmStats from "@components/Library/FarmStats";
 import Tooltip from "@components/Library/Tooltip";
 import SelectFarmType from "@components/Library/SelectFarmType";
+import AllProtocolsModal from "@components/Library/AllProtocolsModal";
+import MobileFarmList from "./MobileFarmList";
+import SearchInput from "@components/Library/SearchInput";
+import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
+import { trackPageView } from "@utils/analytics";
 import { fetchListicleFarms } from "@utils/api";
 import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
 import { addrQueryAtom, filterFarmTypeAtom, idQueryAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
-import MobileFarmList from "./MobileFarmList";
-import SearchInput from "@components/Library/SearchInput";
-import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@metaTags/MetaTags";
-import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 
 const Home = () => {
   const router = useRouter();
+  // Store
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
@@ -48,6 +47,8 @@ const Home = () => {
     searchTerm
   );
   const screenSize = useScreenSize();
+
+  console.log("filterfarmtype state", filterFarmType);
 
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
