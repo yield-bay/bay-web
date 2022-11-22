@@ -161,7 +161,7 @@ const MobileFarmList = ({
                   </div>
                 </div>
                 <div className="flex flex-row gap-x-3 items-center justify-between mt-9">
-                  <ShareFarm farm={farm} pageShare={false} />
+                  <ShareFarm farm={farm} />
                   <Button
                     size="large"
                     onButtonClick={() => {

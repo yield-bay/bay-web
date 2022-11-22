@@ -43,8 +43,6 @@ const Home = () => {
   );
   const screenSize = useScreenSize();
 
-  console.log("filterfarmtype state", filterFarmType);
-
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
     if (typeof window !== undefined) {
