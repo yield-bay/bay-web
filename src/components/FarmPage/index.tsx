@@ -66,9 +66,13 @@ export default function FarmPage() {
     fetchListicleFarms().then((res: any) => {
       setFarms(res.farms);
     });
-
-    trackEventWithProperty("farm-page-view");
   }, []);
+
+  useEffect(() => {
+    if (farm?.id) {
+      trackEventWithProperty("farm-page-view", farm?.asset.symbol);
+    }
+  }, [farm]);
 
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
