@@ -116,7 +116,7 @@ export default function FarmPage() {
           >
             ROI
           </Button>
-          <ShareFarm farm={farm} pageShare={true} />
+          <ShareFarm farm={farm} />
         </div>
       </div>
       {/* First Row */}

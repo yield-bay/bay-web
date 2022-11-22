@@ -83,7 +83,7 @@ const FarmsList = ({ farms }: any) => {
                   Visit Farm
                 </Button>
                 <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
-                  <ShareFarm farm={farm} pageShare={false} />
+                  <ShareFarm farm={farm} />
                 </div>
               </div>
             </td>

@@ -68,8 +68,15 @@ const Home = () => {
   });
 
   useEffect(() => {
-    addrQuerySet(router.query.farm);
-    idQuerySet(router.query.id);
+    if (router.query.id) {
+      router.push(
+        `${
+          typeof window !== "undefined"
+            ? `http://${window.location.host}` // for testing locally
+            : "https://list.yieldbay.io"
+        }/farm/${router.query.id}?addr=${router.query.farm}`
+      );
+    }
   }, [router]);
 
   useEffect(() => {

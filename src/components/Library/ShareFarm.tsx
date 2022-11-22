@@ -1,9 +1,7 @@
 import { Fragment, useEffect, useState, memo } from "react";
-import { useRouter } from "next/router";
 import { Menu, Dialog, Transition } from "@headlessui/react";
 import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
 import { ShareIcon } from "@heroicons/react/solid";
-import { useAtom } from "jotai";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
@@ -11,7 +9,6 @@ import useScreenSize from "@hooks/useScreenSize";
 // Types
 type ShareFarmPropsType = {
   farm: any;
-  pageShare: boolean;
 };
 
 type ShareMenuPropsType = {
@@ -32,11 +29,10 @@ function classNames(classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const ShareFarm = ({ farm, pageShare }: ShareFarmPropsType) => {
+const ShareFarm = ({ farm }: ShareFarmPropsType) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   let [url, setUrl] = useState<string>("");
   const screenSize = useScreenSize();
-  const router = useRouter();
 
   const apr = (farm?.apr.base + farm?.apr.reward).toFixed(2);
   // UTM paramters for tracking
@@ -51,14 +47,11 @@ const ShareFarm = ({ farm, pageShare }: ShareFarmPropsType) => {
     encodeURIComponent(url);
 
   useEffect(() => {
-    const urlPath = pageShare
-      ? router.asPath
-      : `/?farm=${farm?.asset?.address}&id=${farm?.id}`;
-
+    const urlPath = `/farm/${farm?.id}?addr=${farm?.asset.address}`;
     setUrl(
       `${
         typeof window !== "undefined"
-          ? window.location.host // for testing locally
+          ? `http://${window.location.host}` // for testing locally
           : "https://list.yieldbay.io"
       }${urlPath}` + utmLink
     );
