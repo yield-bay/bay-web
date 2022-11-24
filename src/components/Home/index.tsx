@@ -43,6 +43,10 @@ const Home = () => {
   );
   const screenSize = useScreenSize();
 
+  useEffect(() => {
+    setSearchTerm(router.query.q ? (router.query.q as string) : "");
+  }, [router]);
+
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
     if (typeof window !== undefined) {

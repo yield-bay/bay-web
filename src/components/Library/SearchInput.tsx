@@ -1,5 +1,5 @@
 import { SearchIcon } from "@heroicons/react/solid";
-import { MutableRefObject, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { trackEventWithProperty } from "@utils/analytics";
 import useKeyPress from "@hooks/useKeyPress";
 
