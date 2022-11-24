@@ -77,6 +77,15 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
           : a.apr.reward + a.apr.base < b.apr.reward + b.apr.base
           ? 1
           : -1;
+    } else if (newSortStatus.key == "safety") {
+      sortFn = (a: any, b: any) =>
+        newSortStatus.order == Order.ASC
+          ? a.safetyScore >= b.safetyScore
+            ? 1
+            : -1
+          : a.safetyScore < b.safetyScore
+          ? 1
+          : -1;
     }
 
     sortedFarmsSet([...farms].sort(sortFn));
@@ -88,7 +97,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
         <div className="inline-block min-w-full align-middle">
           {!noResult ? (
             <div>
-              <table className="min-w-full text-baseBlue dark:text-white">
+              <table className="min-w-full text-white">
                 <thead className="transition duration-200 font-bold text-base leading-5">
                   <tr>
                     <th
@@ -165,16 +174,42 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                     <th
                       scope="col"
-                      className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-left cursor-pointer"
+                      className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right"
                     >
                       <span>Rewards</span>
                     </th>
+                    <th
+                      scope="col"
+                      className="hidden lg:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right cursor-pointer"
+                      onClick={() => {
+                        handleSort("safety", true);
+                        trackEventWithProperty("table-sorting", {
+                          sortingType: "safety-score",
+                        });
+                      }}
+                    >
+                      <Tooltip
+                        content={
+                          <span>Score indicates the reliability of a farm</span>
+                        }
+                      >
+                        <div>
+                          <span>Safety Score</span>
+                          {sortStatus.key == "safety" &&
+                            (sortStatus.order == Order.DESC ? (
+                              <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
+                            ) : (
+                              <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
+                            ))}
+                        </div>
+                      </Tooltip>
+                    </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
-                      <span className="sr-only">Go to farm</span>
+                      <span className="sr-only">Visit Farm</span>
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#D9D9D9] dark:divide-[#222A39] transition duration-200">
+                <tbody className="divide-y divide-[#445AAD] divide-opacity-50 transition duration-200">
                   {hideSkeleton ? (
                     <FarmsList farms={sortedFarms} />
                   ) : (
@@ -184,7 +219,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
               </table>
             </div>
           ) : (
-            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
+            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-bodyGray leading-5">
               <p>No Results. Try searching for something else.</p>
             </div>
           )}

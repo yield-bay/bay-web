@@ -35,8 +35,9 @@ export default function SEOTags({
       <meta property="twitter:url" content={url} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <meta name="twitter:site" content={username} />
+      <meta name="twitter:site" content={defaultTitle} />
       <meta name="twitter:image" content={image} />
+      <meta property="twitter:creator" content={username} />
     </Head>
   );
 }

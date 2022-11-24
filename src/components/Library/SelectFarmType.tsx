@@ -9,9 +9,13 @@ function classNames(...classes: string[]) {
 }
 
 export default function SelectFarmType() {
-  const [farmTypes] = useAtom(farmTypesAtom);
-  const [selectedFarmType, setSelectedFarmType] = useState(farmTypes[0]);
-  const [, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
+  // Store
+  const [farmTypes, farmTypesSet] = useAtom(farmTypesAtom);
+  const [filterFarmType, filterFarmTypeSet] = useAtom(filterFarmTypeAtom);
+  // State
+  const [selectedFarmType, setSelectedFarmType] = useState(
+    farmTypes[filterFarmType - 1]
+  );
 
   return (
     <Listbox
@@ -23,7 +27,7 @@ export default function SelectFarmType() {
     >
       {({ open }) => (
         <>
-          <Listbox.Button className=" flex items-center gap-x-2 w-full cursor-default focus:outline-none focus:ring-0 text-base leading-5 font-medium">
+          <Listbox.Button className="flex items-center gap-x-2 w-full cursor-pointer focus:outline-none focus:ring-0 text-base leading-5 font-medium">
             <span className="block truncate">{selectedFarmType.name}</span>
             <span className="pointer-events-none flex items-center">
               <ChevronDownIcon
@@ -42,14 +46,14 @@ export default function SelectFarmType() {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Listbox.Options className="absolute z-20 mt-4 max-h-60 max-w-max overflow-auto rounded-lg py-[7px] bg-white dark:bg-[#011433] text-baseBlueDark dark:text-white text-base font-medium leading-5 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Listbox.Options className="absolute z-20 mt-4 max-h-60 max-w-max overflow-auto rounded-lg py-[7px] bg-baseBlue text-white text-base font-medium leading-5 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               {farmTypes.map((farmType) => (
                 <Listbox.Option
                   key={farmType.id}
                   className={({ active }) =>
                     classNames(
-                      active ? "bg-blueSilver dark:bg-baseBlueMid" : "",
-                      "relative cursor-default select-none py-[9px] px-6"
+                      active ? "bg-baseBlueMid" : "",
+                      "relative cursor-pointer select-none py-[9px] px-6"
                     )
                   }
                   value={farmType}
@@ -58,9 +62,7 @@ export default function SelectFarmType() {
                     <>
                       <span
                         className={classNames(
-                          selected
-                            ? "text-primaryBlue"
-                            : " text-baseBlueDark dark:text-white",
+                          selected ? "text-primaryBlue" : "text-white",
                           "block truncate"
                         )}
                       >

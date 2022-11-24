@@ -12,7 +12,7 @@ type RewardsProps = {
 
 export default function Rewards({ rewards }: RewardsProps) {
   return (
-    <div className="flex justify-start w-full">
+    <div className="flex justify-end w-full">
       <Tooltip
         content={
           <div>
@@ -39,7 +39,7 @@ export default function Rewards({ rewards }: RewardsProps) {
           {rewards.map((reward, index) => (
             <div
               key={index}
-              className="z-10 flex overflow-hidden ring-[3px] ring-white dark:ring-baseBlueMid rounded-full bg-white dark:bg-neutral-800 transition duration-200"
+              className="z-10 flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-neutral-800 transition duration-200"
             >
               <Image
                 src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}

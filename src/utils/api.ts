@@ -35,6 +35,8 @@ export const fetchListicleFarms = async () => {
               base
             }
             allocPoint
+            lastUpdatedAtUTC
+            safetyScore
           }
         }
       `

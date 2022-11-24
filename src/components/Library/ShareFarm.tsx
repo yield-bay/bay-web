@@ -2,8 +2,6 @@ import { Fragment, useEffect, useState, memo } from "react";
 import { Menu, Dialog, Transition } from "@headlessui/react";
 import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
 import { ShareIcon } from "@heroicons/react/solid";
-import { useAtom } from "jotai";
-import { isNotificationAtom } from "@store/atoms";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
@@ -11,14 +9,12 @@ import useScreenSize from "@hooks/useScreenSize";
 // Types
 type ShareFarmPropsType = {
   farm: any;
-  apr: string;
 };
 
 type ShareMenuPropsType = {
   farm: any;
   url: string;
   tweetUrl: string;
-  isNotificationSet: (update: boolean) => void;
 };
 
 type ShareModalPropsType = {
@@ -26,20 +22,22 @@ type ShareModalPropsType = {
   setOpen: (value: boolean) => void;
   url: string;
   tweetUrl: string;
-  isNotificationSet: (value: boolean) => void;
-  farmAddress: string;
-  farmId: number;
+  farm: any;
 };
 
 function classNames(classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
-  const [, isNotificationSet] = useAtom(isNotificationAtom);
+const ShareFarm = ({ farm }: ShareFarmPropsType) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   let [url, setUrl] = useState<string>("");
   const screenSize = useScreenSize();
+
+  const apr = (farm?.apr.base + farm?.apr.reward).toFixed(2);
+  // UTM paramters for tracking
+  const utmLink =
+    "&utm_campaign=share-farm&utm_source=yb-list&utm_medium=textlink";
 
   // Tweet's URL with required parameters
   const tweetUrl =
@@ -48,17 +46,14 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
     )}%21%0A%0AWhen%20looking%20for%20yield%20farms%20in%20Dotsama%2C%20%40yield_bay%20is%20the%20place%20to%20go%20%F0%9F%8F%84%F0%9F%8F%96%EF%B8%8F%20%0A%0A%E2%86%92` +
     encodeURIComponent(url);
 
-  // UTM paramters for tracking
-  const utmLink =
-    "&utm_campaign=share-farm&utm_source=yb-list&utm_medium=textlink";
-
   useEffect(() => {
+    const urlPath = `/farm/${farm?.id}?addr=${farm?.asset.address}`;
     setUrl(
       `${
         typeof window !== "undefined"
-          ? window.location.host // for testing locally
+          ? `http://${window.location.host}` // for testing locally
           : "https://list.yieldbay.io"
-      }/?farm=${farm?.asset?.address}&id=${farm?.id}` + utmLink
+      }${urlPath}` + utmLink
     );
   }, [farm]);
 
@@ -70,36 +65,22 @@ const ShareFarm = ({ farm, apr }: ShareFarmPropsType) => {
           setOpen={setModalOpen}
           url={url}
           tweetUrl={tweetUrl}
-          isNotificationSet={isNotificationSet}
-          farmAddress={farm?.asset.address}
-          farmId={farm?.id}
+          farm={farm}
         />
       ) : (
-        <ShareMenu
-          farm={farm}
-          url={url}
-          tweetUrl={tweetUrl}
-          isNotificationSet={isNotificationSet}
-        />
+        <ShareMenu farm={farm} url={url} tweetUrl={tweetUrl} />
       )}
     </div>
   );
 };
 
 // Share menu for desktop view
-const ShareMenu = ({
-  farm,
-  url,
-  tweetUrl,
-  isNotificationSet,
-}: ShareMenuPropsType) => {
+const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
-      <div className="">
-        <Menu.Button className="p-4 rounded-lg bg-bodyGray dark:bg-baseBlueMid hover:bg-primaryWhite dark:hover:bg-baseBlueDark active:bg-primaryWhite dark:active:bg-baseBlueMid hover:ring-[3px] dark:hover:ring-2 active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver dark:active:ring-0 cursor-pointer transition-all duration-200">
-          <ShareIcon className="w-4 h-4 text-primaryBlue dark:text-bodyGray" />
-        </Menu.Button>
-      </div>
+      <Menu.Button className="p-4 cursor-pointer transition-all duration-200">
+        <ShareIcon className="w-5 text-white" />
+      </Menu.Button>
 
       <Transition
         as={Fragment}
@@ -110,14 +91,14 @@ const ShareMenu = ({
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 max-w-max rounded-lg shadow-lg bg-white dark:bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 min-w-max rounded-lg shadow-lg bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
           <div>
             <Menu.Item>
               {({ active }: any) => (
                 <a
                   href={tweetUrl}
                   className={classNames([
-                    active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
+                    active ? "bg-baseBlueMid" : "",
                     "group flex justify-start gap-x-2 px-6 py-4 text-sm w-full rounded-t-lg text-primaryBlue",
                   ])}
                   target="_blank"
@@ -148,10 +129,6 @@ const ShareMenu = ({
                 <button
                   onClick={(e) => {
                     navigator.clipboard.writeText(url);
-                    isNotificationSet(true);
-                    setTimeout(() => {
-                      isNotificationSet(false);
-                    }, 2000); // Duration for Toast
 
                     trackEventWithProperty("farm-share", {
                       shareVia: "copy",
@@ -160,8 +137,8 @@ const ShareMenu = ({
                     });
                   }}
                   className={classNames([
-                    active ? "bg-bodyGray dark:bg-baseBlueMid" : "",
-                    "group flex justify-start gap-x-2 px-6 py-4 rounded-b-lg border-t dark:border-gray-800 text-sm w-full",
+                    active ? "bg-baseBlueMid" : "",
+                    "group flex justify-start gap-x-2 px-6 py-4 rounded-b-lg border-t border-gray-800 text-sm w-full",
                   ])}
                 >
                   <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
@@ -182,17 +159,15 @@ const ShareModal = ({
   setOpen,
   url,
   tweetUrl,
-  isNotificationSet,
-  farmAddress,
-  farmId,
+  farm,
 }: ShareModalPropsType) => {
   return (
     <div className="sm:hidden">
       <div
-        className="py-4 px-[19px] hover:scale-105 active:scale-100 rounded-md bg-bodyGray dark:bg-baseBlueMid text-primaryBlue dark:text-primaryWhite active:ring-2 ring-[#B5D0FF] dark:ring-blueSilver transition-all duration-200"
+        className="py-4 transition-all duration-200"
         onClick={() => setOpen(true)}
       >
-        <ShareIcon className="w-[18px]" />
+        <ShareIcon className="w-5 text-white" />
       </div>
       <Transition.Root show={open} as={Fragment}>
         <Dialog
@@ -227,13 +202,13 @@ const ShareModal = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-white dark:bg-[#011433] rounded-lg overflow-hidden shadow-xl transform transition-all w-full max-w-sm">
+              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
                 {/* Close Button */}
                 <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                  <div className="flex items-center p-1 group rounded-full active:bg-neutral-100 dark:active:bg-neutral-700">
+                  <div className="flex items-center p-1 group rounded-full active:bg-neutral-700">
                     <button
                       type="button"
-                      className="text-neutral-600 dark:text-slate-600 active:text-neutral-900 dark:active:text-slate-200 focus:outline-none"
+                      className="text-slate-600 active:text-slate-200 focus:outline-none"
                       onClick={() => setOpen(false)}
                     >
                       <span className="sr-only">Close</span>
@@ -245,23 +220,23 @@ const ShareModal = ({
                 <div className="mt-3 w-full">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg pb-3 text-center leading-6 px-5 font-spaceGrotesk font-medium text-neutral-900 dark:text-white"
+                    className="text-lg pb-3 text-center leading-6 px-5 font-spaceGrotesk font-medium text-white"
                   >
                     Share farm
                   </Dialog.Title>
                   <div className="w-full pt-0">
-                    <div className="flex flex-col w-full text-primaryBlue dark:text-white">
+                    <div className="flex flex-col w-full text-white">
                       {/* Share on Twitter button */}
                       <a
                         href={tweetUrl}
-                        className="group flex justify-center gap-x-2 w-full text-sm font-medium border-y border-bodyGray dark:border-slate-800 py-4 px-6 active:dark:text-neutral-100 active:bg-bodyGray dark:active:bg-baseBlueMid cursor-pointer"
+                        className="group flex justify-center gap-x-2 w-full text-sm font-medium border-y border-slate-800 py-4 px-6 active:text-neutral-100 active:bg-baseBlueMid cursor-pointer"
                         target="_blank"
                         rel="noreferrer"
                         onClick={() => {
                           trackEventWithProperty("farm-share", {
                             shareVia: "twitter",
-                            farmAddress: farmAddress,
-                            farmId: farmId,
+                            farmAddress: farm?.asset.address,
+                            farmId: farm?.id,
                           });
                           setOpen(false);
                         }}
@@ -281,18 +256,14 @@ const ShareModal = ({
                       <button
                         onClick={(e) => {
                           navigator.clipboard.writeText(url);
-                          isNotificationSet(true);
-                          setTimeout(() => {
-                            isNotificationSet(false);
-                          }, 2000); // Duration for Toast
                           setOpen(false);
                           trackEventWithProperty("farm-share", {
                             shareVia: "copy",
-                            farmAddress: farmAddress,
-                            farmId: farmId,
+                            farmAddress: farm?.asset.address,
+                            farmId: farm?.id,
                           });
                         }}
-                        className="text-sm inline-flex justify-center font-medium border-b border-neutral-100 dark:border-neutral-700 py-4 px-6 active:text-neutral-600 active:dark:text-neutral-100 active:bg-neutral-100 dark:active:bg-neutral-700 cursor-pointer"
+                        className="text-sm inline-flex justify-center font-medium border-b border-neutral-700 py-4 px-6 active:text-neutral-100 active:bg-neutral-700 cursor-pointer"
                       >
                         <ClipboardIcon
                           className="mr-3 h-5 w-5"

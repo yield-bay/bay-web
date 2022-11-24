@@ -18,9 +18,8 @@ export const sortStatusAtom = atom<SortStatusType>({
   order: 1, // DESC
 });
 
-export const isNotificationAtom = atom<boolean>(false);
 export const idQueryAtom = atom<string | string[] | undefined>("");
-export const farmQueryAtom = atom<string | string[] | undefined>("");
+export const addrQueryAtom = atom<string | string[] | undefined>("");
 
 export const sortedFarmsAtom = atom<any[]>([]);
 export const filterFarmTypeAtom = atom<number>(1);

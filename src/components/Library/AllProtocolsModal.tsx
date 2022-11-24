@@ -2,15 +2,17 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 
+type AllProtocolsModalProps = {
+  open: boolean;
+  setOpen: (value: boolean) => void;
+  protocols: string[];
+};
+
 export default function AllProtocolsModal({
   open,
   setOpen,
   protocols,
-}: {
-  open: boolean;
-  setOpen: (value: boolean) => void;
-  protocols: string[];
-}) {
+}: AllProtocolsModalProps) {
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -45,12 +47,12 @@ export default function AllProtocolsModal({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="relative inline-block font-spaceGrotesk bg-white dark:bg-baseBlue rounded-t-lg sm:rounded-2xl text-left max-h-[600px] overflow-y-auto shadow-xl px-4 py-5 align-bottom sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
+            <div className="relative inline-block font-spaceGrotesk bg-[#01050D] rounded-t-lg sm:rounded-2xl text-left max-h-[600px] overflow-y-auto shadow-xl px-4 py-5 align-bottom sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
               <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                <div className="flex items-center p-2 group rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-700 cursor-pointer">
+                <div className="flex items-center p-2 group rounded-full hover:bg-neutral-800 cursor-pointer">
                   <button
                     type="button"
-                    className="text-neutral-500 dark:text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white focus:outline-none"
+                    className="text-neutral-400 group-hover:text-white focus:outline-none"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -70,7 +72,7 @@ export default function AllProtocolsModal({
                     {protocols.map((protocol, index) => (
                       <p
                         key={index}
-                        className="font-normal text-2xl px-4 sm:px-8 leading-[70.28px] text-left py-4 border-b border-blueSilver dark:border-gray-800"
+                        className="font-normal text-2xl px-4 sm:px-8 leading-[70.28px] text-left py-4 border-b border-gray-800"
                       >
                         {index + 1}. {protocol}
                       </p>

@@ -20,6 +20,7 @@ import {
 import toDollarUnits from "@utils/toDollarUnits";
 import { trackEventWithProperty } from "@utils/analytics";
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import { useRouter } from "next/router";
 
 type FarmListType = {
   farms: any;
@@ -42,6 +43,8 @@ const MobileFarmList = ({
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     if (farms.length > 0) handleSort(false, false);
@@ -108,7 +111,7 @@ const MobileFarmList = ({
   };
 
   return (
-    <div className="text-baseBlueDark dark:text-blueSilver">
+    <div className="text-blueSilver">
       {!noResult ? (
         hideSkeleton ? (
           sortedFarms.map((farm: any, index: number) => {
@@ -116,7 +119,7 @@ const MobileFarmList = ({
             return (
               <div
                 key={index}
-                className="w-full p-9 border-b border-blueSilver dark:border-[#222A39] transition-all duration-200"
+                className="w-full p-9 border-b border-[#222A39] transition-all duration-200"
               >
                 {/* Upper Container for left and right */}
                 <div className="flex flex-row justify-between">
@@ -126,7 +129,7 @@ const MobileFarmList = ({
                       <FarmAssets logos={farm?.asset.logos} />
                     </div>
                     <div className="flex flex-row items-center">
-                      <div className="font-bold text-xs leading-[15px]">
+                      <div className="font-bold text-sm leading-[17px]">
                         {tokenNames.map((tokenName, index) => (
                           <span key={index} className="mr-[3px]">
                             {tokenName}
@@ -135,46 +138,40 @@ const MobileFarmList = ({
                         ))}
                       </div>
                     </div>
-                    <div className="text-mediumGray dark:text-[#9397A6] font-medium text-xs leading-[15px]">
+                    <div className="text-[#9397A6] font-medium text-xs leading-[15px]">
                       {formatFirstLetter(farm?.protocol)} on{" "}
                       {formatFirstLetter(farm?.chain)}
                     </div>
                     <FarmBadge type={formatFarmType(farm?.farmType)} />
                   </div>
                   {/* RIGHT */}
-                  <div className="flex flex-col gap-y-[18px] font-medium font-spaceGrotesk text-right">
+                  <div className="flex flex-col gap-y-[18px] text-primaryWhite font-medium font-spaceGrotesk text-right">
                     <div>
-                      <p className="text-base opacity-50 leading-5">TVL</p>
+                      <p className="text-base leading-5 opacity-70">TVL</p>
                       <p className="text-2xl leading-[30px]">
                         {toDollarUnits(farm?.tvl)}
                       </p>
                     </div>
                     <div>
-                      <p className="text-base opacity-50 leading-5">APR</p>
+                      <p className="text-base leading-5 opacity-70">APR</p>
                       <p className="text-2xl leading-[30px]">
                         {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                       </p>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-row gap-x-3 justify-between mt-9">
-                  <ShareFarm
-                    farm={farm}
-                    apr={(farm?.apr.base + farm?.apr.reward).toFixed(2)}
-                  />
-                  <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-                    <Button
-                      type="secondary"
-                      size="large"
-                      onButtonClick={() =>
-                        trackEventWithProperty("go-to-farm", {
-                          protocol: farm?.protocol,
-                        })
-                      }
-                    >
-                      Visit Farm
-                    </Button>
-                  </a>
+                <div className="flex flex-row gap-x-3 items-center justify-between mt-9">
+                  <ShareFarm farm={farm} />
+                  <Button
+                    size="large"
+                    onButtonClick={() => {
+                      router.push(
+                        `/farm/${farm.id}/?addr=${farm.asset.address}`
+                      );
+                    }}
+                  >
+                    Visit Farm
+                  </Button>
                 </div>
               </div>
             );
@@ -183,7 +180,7 @@ const MobileFarmList = ({
           <MobileLoadingSkeleton />
         )
       ) : (
-        <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-baseBlueDark dark:text-bodyGray leading-5">
+        <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-bodyGray leading-5">
           <p>No Results. Try searching for something else.</p>
         </div>
       )}
