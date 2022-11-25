@@ -80,7 +80,7 @@ const FarmsList = ({ farms }: any) => {
                     router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
                   }}
                 >
-                  Visit Farm
+                  View More
                 </Button>
                 <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm farm={farm} />
