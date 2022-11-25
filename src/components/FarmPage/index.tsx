@@ -241,7 +241,7 @@ export default function FarmPage() {
             href={protocolURL(farm?.protocol)}
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:flex items-center gap-x-1 hover:underline"
+            className="sm:flex items-center gap-x-1 hover:underline"
           >
             <p>{formatFirstLetter(farm?.protocol)}</p>
             <ExternalLinkIcon className="w-4" />
@@ -254,7 +254,7 @@ export default function FarmPage() {
             href={chainURL(farm?.chain)}
             target="_blank"
             rel="noreferrer"
-            className="hidden sm:flex items-center gap-x-1 hover:underline"
+            className="sm:flex items-center gap-x-1 hover:underline"
           >
             <p>{formatFirstLetter(farm?.chain)}</p>
             <ExternalLinkIcon className="w-4" />
