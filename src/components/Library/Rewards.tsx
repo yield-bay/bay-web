@@ -32,7 +32,9 @@ export default function Rewards({ rewards }: RewardsProps) {
                 <span>
                   {parseFloat(reward.amount.toFixed(1)).toLocaleString("en-US")}
                 </span>
-                <span>{reward.asset}/DAY</span>
+                <span>
+                  {reward.asset}/{reward.freq === "Weekly" ? "WEEK" : "DAY"}
+                </span>
               </div>
             ))}
           </div>
