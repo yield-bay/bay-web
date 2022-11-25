@@ -6,11 +6,11 @@ export default function SafetyScorePill({ score }: { score: string }) {
     </div>
   ) : scoreNum >= 4 ? (
     <div className="ml-2 py-[2px] px-[8.5px] bg-[#C8BB4B] text-black rounded-full w-max text-[10px] leading-3 font-bold">
-      OKAY
+      MODERATE
     </div>
   ) : (
     <div className="ml-2 py-[2px] px-[8.5px] bg-[#C84B4B] text-black rounded-full w-max text-[10px] leading-3 font-bold">
-      BAD
+      RISKY
     </div>
   );
 }
