@@ -177,7 +177,8 @@ export default function FarmPage() {
                     {parseFloat(reward.amount.toFixed(1)).toLocaleString(
                       "en-US"
                     )}{" "}
-                    {reward.asset.toUpperCase()}/DAY
+                    {reward.asset.toUpperCase()}/
+                    {reward.freq === "Weekly" ? "WEEK" : "DAY"}
                   </p>
                 </Tooltip>
               </div>
