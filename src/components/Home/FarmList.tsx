@@ -85,7 +85,7 @@ const FarmsList = ({ farms }: any) => {
               <Rewards rewards={farm?.rewards} />
             </td>
             <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 text-blueSilver font-bold text-base leading-5 tracking-wide">
-              <div className="flex flex-row items-center justify-end">
+              <div className="flex flex-col items-end gap-2 justify-end">
                 <span>{safetyScore}</span>
                 <SafetyScorePill score={safetyScore} />
               </div>
