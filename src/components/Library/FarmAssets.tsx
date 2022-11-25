@@ -22,13 +22,13 @@ const FarmAssets = ({ logos }: FarmAssetsProps) => {
           ))}
         </div>
       ) : (
-        <div className="hidden sm:flex flex-row items-center justify-center -space-x-3">
+        <div className="hidden sm:flex flex-row items-center justify-center -space-x-1">
           {logos.map((logo: string, index: number) => (
             <div
               key={index}
               className="z-10 flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-neutral-800 transition duration-200"
             >
-              <Image src={logo} alt={logo} width={48} height={48} />
+              <Image src={logo} alt={logo} width={36} height={36} />
             </div>
           ))}
         </div>
