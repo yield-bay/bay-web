@@ -17,7 +17,10 @@ export default function Rewards({ rewards }: RewardsProps) {
         content={
           <div>
             {rewards.map((reward, index) => (
-              <div key={index} className="flex justify-start gap-x-2">
+              <div
+                key={index}
+                className="flex justify-start items-center gap-x-2"
+              >
                 <div>
                   <Image
                     src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
