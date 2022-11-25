@@ -32,6 +32,7 @@ import {
 import { addrQueryAtom, idQueryAtom } from "@store/atoms";
 import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
+import Tooltip from "@components/Library/Tooltip";
 
 type RewardType = {
   amount: number;
@@ -169,10 +170,16 @@ export default function FarmPage() {
                     className="rounded-full max-h-max"
                   />
                 </div>
-                <p>
-                  {parseFloat(reward.amount.toFixed(1)).toLocaleString("en-US")}{" "}
-                  {reward.asset.toUpperCase()}/DAY
-                </p>
+                <Tooltip
+                  content={<div>{reward.valueUSD.toFixed(1) + " USD"}</div>}
+                >
+                  <p>
+                    {parseFloat(reward.amount.toFixed(1)).toLocaleString(
+                      "en-US"
+                    )}{" "}
+                    {reward.asset.toUpperCase()}/DAY
+                  </p>
+                </Tooltip>
               </div>
               <p>
                 {calcAssetPercentage(
