@@ -171,7 +171,7 @@ export default function FarmPage() {
                   />
                 </div>
                 <Tooltip
-                  content={<div>{reward.valueUSD.toFixed(1) + " USD"}</div>}
+                  content={<div>{"$" + reward.valueUSD.toFixed(1)}</div>}
                 >
                   <p>
                     {parseFloat(reward.amount.toFixed(1)).toLocaleString(
