@@ -19,6 +19,7 @@ import ShareFarm from "@components/Library/ShareFarm";
 import YieldBreakdown from "@components/Library/YieldBreakdown";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
+import Tooltip from "@components/Library/Tooltip";
 
 const FarmsList = ({ farms }: any) => {
   const router = useRouter();
@@ -56,11 +57,28 @@ const FarmsList = ({ farms }: any) => {
             </td>
             <td className="whitespace-nowrap py-8 pl-0 pr-2 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="w-full inline-flex justify-end items-center gap-x-2">
-                {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
-                <YieldBreakdown
-                  base={farm?.apr.base}
-                  reward={farm?.apr.reward}
-                />
+                <Tooltip
+                  content={
+                    <>
+                      <p>
+                        Base:{" "}
+                        <span className="font-bold">
+                          {farm?.apr.base.toFixed(2)}%
+                        </span>
+                      </p>
+                      <p>
+                        Reward:{" "}
+                        <span className="font-bold">
+                          {farm?.apr.reward.toFixed(2)}%
+                        </span>
+                      </p>
+                    </>
+                  }
+                >
+                  <p className="cursor-pointer underline underline-offset-4 decoration-dotted	decoration-3 decoration-blueSilver">
+                    {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+                  </p>
+                </Tooltip>
               </div>
             </td>
             <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 text-blueSilver font-bold text-base leading-5 tracking-wide">
