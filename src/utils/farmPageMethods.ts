@@ -17,7 +17,8 @@ export function calcAssetPercentage(reward: RewardType, totalValue: number) {
   return ((reward.valueUSD * 100) / totalValue).toFixed(2);
 }
 
-export function protocolURL(protocol: any): string {
+export function protocolURL(protocolName: string): string {
+  const protocol = protocolName.toLowerCase();
   if (protocol == "stellaswap") return "https://stellaswap.com/";
   else if (protocol == "solarbeam") return "https://solarbeam.io/";
   else if (protocol == "beamswap") return "https://beamswap.io/";
@@ -28,16 +29,21 @@ export function protocolURL(protocol: any): string {
   else if (protocol == "solarflare") return "https://solarflare.io";
   else if (protocol == "arthswap") return "https://app.arthswap.org/";
   else if (protocol == "tapio") return "https://www.tapioprotocol.io/";
+  else if (protocol == "karura dex") return "https://apps.karura.network/";
+  else if (protocol == "mangata x") return "https://x.mangata.finance/";
+  else if (protocol == "sirius") return "https://www.sirius.finance/";
   return "";
 }
 
-export function chainURL(chain: any): string {
+export function chainURL(chainName: any): string {
+  const chain = chainName.toLowerCase();
   if (chain == "moonbeam") return "https://moonbeam.network/";
   else if (chain == "moonriver")
     return "https://moonbeam.network/networks/moonriver/";
   else if (chain == "astar") return "https://astar.network/";
   else if (chain == "acala") return "https://acala.network/";
   else if (chain == "karura") return "https://acala.network/karura";
+  else if (chain == "mangata kusama") return "https://www.mangata.finance/";
   return "";
 }
 

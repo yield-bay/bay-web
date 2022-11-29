@@ -19,6 +19,11 @@ export function farmURL(farm: any): string {
   else if (farm.protocol == "tapio")
     return `https://apps.acala.network/swap/liquidity?lp=sa://${farm.id}`;
   else if (farm.protocol == "Mangata X") return "https://app.mangata.finance/";
+  else if (farm.protocol == "Sirius") {
+    if (farm.asset.symbol == "nASTR-ASTR LP")
+      return "https://app.sirius.finance/#/farms/Liquid%20ASTR";
+    return `https://app.sirius.finance/#/farms/${farm.asset.symbol}`;
+  }
   return "";
 }
 
