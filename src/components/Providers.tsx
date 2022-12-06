@@ -17,7 +17,7 @@ const connectors = [
       qrcode: true,
     },
   }),
-  //new TalismanConnector(),
+  new TalismanConnector(),
 ];
 
 const client = createClient({
