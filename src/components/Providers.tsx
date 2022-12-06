@@ -7,6 +7,7 @@ import { Provider } from "jotai";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { TalismanConnector } from "@talismn/wagmi-connector";
+import { SubWalletConnector } from "@wagmi-connector";
 
 const connectors = [
   new MetaMaskConnector({
@@ -18,6 +19,7 @@ const connectors = [
     },
   }),
   new TalismanConnector(),
+  new SubWalletConnector(),
 ];
 
 const client = createClient({
