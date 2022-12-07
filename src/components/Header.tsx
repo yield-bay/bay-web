@@ -1,40 +1,39 @@
 import Link from "next/link";
 import Button from "./Library/Button";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
 import { useEffect } from "react";
-const axios = require("axios");
-// import { id } from "ethers/lib/utils";
+import { hashAtom } from "@store/atoms";
+import { useAtom } from "jotai";
 
 async function fetchUserHash(address: `0x${string}` | undefined) {
   const query = { address };
-  // let data = await (
-  //   await fetch("https://leaderboard-api-dev.onrender.com/leaderboard", {
-  //     method: "GET",
-  //     headers: { "Content-Type": "application/json" },
-  //     //body: JSON.stringify(query),
-  //   })
-  // ).json();
-  // console.log(data);
-  try {
-    const response = await axios.get(
-      "https://leaderboard-api-dev.onrender.com/leaderboard"
-    );
-    console.log(response);
-  } catch (error) {
-    console.error(error);
-  }
+  let data = await (
+    await fetch("https://leaderboard-api-dev.onrender.com/user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(query),
+    })
+  ).json();
+  console.log(data.hash);
+
+  // try {
+  //   const response = await axios.get(
+  //     "https://leaderboard-api-dev.onrender.com/leaderboard"
+  //   );
+  //   console.log(response);
+  // } catch (error) {
+  //   console.error(error);
+  // }
 }
 
 function Profile() {
   const { address, isConnected } = useAccount();
   const { connect, connectors } = useConnect();
-  connectors;
   const { disconnect } = useDisconnect();
 
   useEffect(() => {
     if (isConnected) {
-      fetchUserHash(address).then(console.log);
+      fetchUserHash(address);
     }
   }, [isConnected]);
   if (isConnected) {

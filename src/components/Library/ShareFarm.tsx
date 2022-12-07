@@ -6,6 +6,10 @@ import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
 
+//Import hash from the atom
+
+const hashVal = "xxx";
+
 // Types
 type ShareFarmPropsType = {
   farm: any;
@@ -39,6 +43,9 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
   const utmLink =
     "&utm_campaign=share-farm&utm_source=yb-list&utm_medium=textlink";
 
+  //Hash parameters for tracking
+  const hashLink = hashVal ? `&hash=${hashVal}` : "";
+
   // Tweet's URL with required parameters
   const tweetUrl =
     `https://twitter.com/share?text=I%20found%20this%20farm%20with%20${apr}%25%20APR%20on%20${formatFirstLetter(
@@ -53,7 +60,9 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
         typeof window !== "undefined"
           ? `http://${window.location.host}` // for testing locally
           : "https://list.yieldbay.io"
-      }${urlPath}` + utmLink
+      }${urlPath}` +
+        utmLink +
+        hashLink
     );
   }, [farm]);
 

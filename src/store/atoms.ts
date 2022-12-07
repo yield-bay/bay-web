@@ -20,7 +20,7 @@ export const sortStatusAtom = atom<SortStatusType>({
 
 export const idQueryAtom = atom<string | string[] | undefined>("");
 export const addrQueryAtom = atom<string | string[] | undefined>("");
-
+export const hashAtom = atom<string | undefined>("");
 export const sortedFarmsAtom = atom<any[]>([]);
 export const filterFarmTypeAtom = atom<number>(1);
 export const farmTypesAtom = atom<FarmTypesType[]>([
