@@ -1,9 +1,10 @@
 import Link from "next/link";
 import Button from "./Library/Button";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { hashAtom } from "@store/atoms";
 import { useAtom } from "jotai";
+import Modal from "./Modal";
 
 async function fetchUserHash(address: `0x${string}` | undefined) {
   const query = { address };
@@ -15,15 +16,7 @@ async function fetchUserHash(address: `0x${string}` | undefined) {
     })
   ).json();
   console.log(data.hash);
-
-  // try {
-  //   const response = await axios.get(
-  //     "https://leaderboard-api-dev.onrender.com/leaderboard"
-  //   );
-  //   console.log(response);
-  // } catch (error) {
-  //   console.error(error);
-  // }
+  return data.hash;
 }
 
 function Profile() {
@@ -31,33 +24,23 @@ function Profile() {
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
 
+  const [_, setHash] = useAtom(hashAtom);
   useEffect(() => {
     if (isConnected) {
-      fetchUserHash(address);
+      fetchUserHash(address).then((_hash) => {
+        setHash(_hash);
+      });
     }
   }, [isConnected]);
   if (isConnected) {
-    // (async () => {
-    //   const query = { address };
-    //   let data = await (
-    //     await fetch("https://leaderboard-api.onrender.com/leaderboard", {
-    //       method: "POST",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(query),
-    //     })
-    //   ).json();
-    //   console.log(data);
-    // })();
     return (
       <div>
-        Connected to {address}
         <Button size="small" onButtonClick={() => disconnect()}>
-          Disconnect
+          {address?.slice(0, 4)}...{address?.slice(-4)}
         </Button>
       </div>
     );
   }
-  // return <button onClick={() => connect()}>Connect Wallet</button>;
   return (
     <>
       {connectors.map((c) => (
@@ -74,7 +57,6 @@ function Profile() {
 }
 
 export default function Header() {
-  // const { address, isConnected } = useAccount();
   return (
     <div className="relative flex justify-center sm:justify-between w-full px-9 sm:px-11 lg:px-[120px] py-[42px] sm:py-12 z-10 font-bold text-base leading-6 sm:leading-8 text-white transition duration-200">
       <Link href="/">
@@ -92,8 +74,8 @@ export default function Header() {
         >
           <Button size="small">List your protocol</Button>
         </a>
-        {/* <Button size="small" onClick={Profile}>Connect Metamask Wallet</Button> */}
         <Profile />
+        <Modal />
       </div>
     </div>
   );

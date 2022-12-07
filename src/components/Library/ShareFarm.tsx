@@ -5,10 +5,8 @@ import { ShareIcon } from "@heroicons/react/solid";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
-
-//Import hash from the atom
-
-const hashVal = "xxx";
+import { useAtom } from "jotai";
+import { hashAtom } from "@store/atoms";
 
 // Types
 type ShareFarmPropsType = {
@@ -38,6 +36,8 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
   let [url, setUrl] = useState<string>("");
   const screenSize = useScreenSize();
 
+  const [hashVal, _] = useAtom(hashAtom);
+
   const apr = (farm?.apr.base + farm?.apr.reward).toFixed(2);
   // UTM paramters for tracking
   const utmLink =
@@ -64,7 +64,7 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
         utmLink +
         hashLink
     );
-  }, [farm]);
+  }, [farm, hashVal]);
 
   return (
     <div>
