@@ -1,8 +1,12 @@
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { useConnect } from "wagmi";
+import { useState } from "react";
 import Button from "./Library/Button";
+import { Transition } from "@headlessui/react";
+import { Fragment } from "react";
+import { Dialog } from "@headlessui/react";
 
 export default function Modal() {
+  const { connect, connectors } = useConnect();
   let [isOpen, setIsOpen] = useState(false);
 
   function closeModal() {
@@ -51,13 +55,21 @@ export default function Modal() {
                     as="h3"
                     className="text-lg font-medium leading-6 text-white"
                   >
-                    Payment successful
+                    Select Wallet
                   </Dialog.Title>
 
-                  <div className="mt-4">
-                    <Button size="small" onButtonClick={closeModal}>
-                      Got it, thanks!
-                    </Button>
+                  <div className="mt-4 grid place-items-center space-y-7">
+                    <>
+                      {connectors.map((c) => (
+                        <Button
+                          key={c.id}
+                          size="small"
+                          onButtonClick={() => connect({ connector: c })}
+                        >
+                          Connect to {c.name}
+                        </Button>
+                      ))}
+                    </>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

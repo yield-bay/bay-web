@@ -1,10 +1,11 @@
 import Link from "next/link";
-import Button from "./Library/Button";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import { Fragment, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
+import { useEffect } from "react";
 import { hashAtom } from "@store/atoms";
 import { useAtom } from "jotai";
-import { Dialog, Transition } from "@headlessui/react";
+import LeaderBanner from "./Library/LeaderBanner";
+import MenuComp from "./MenuComp";
+import Modal from "./Modal";
 
 async function fetchUserHash(address: `0x${string}` | undefined) {
   const query = { address };
@@ -19,75 +20,8 @@ async function fetchUserHash(address: `0x${string}` | undefined) {
   return data.hash;
 }
 
-function Modal() {
-  let [isOpen, setIsOpen] = useState(false);
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  function openModal() {
-    setIsOpen(true);
-  }
-
-  return (
-    <>
-      <div className="items-center justify-center">
-        <Button onButtonClick={openModal} size="small">
-          Connect Wallet
-        </Button>
-      </div>
-
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#010C1D] p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-white"
-                  >
-                    Select Wallet
-                  </Dialog.Title>
-
-                  <div className="mt-4 grid place-items-center space-y-7">
-                    <Profile />
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-    </>
-  );
-}
-
 function Profile() {
   const { address, isConnected } = useAccount();
-  const { connect, connectors } = useConnect();
-  const { disconnect } = useDisconnect();
 
   const [_, setHash] = useAtom(hashAtom);
   useEffect(() => {
@@ -100,25 +34,11 @@ function Profile() {
   if (isConnected) {
     return (
       <div>
-        <Button size="small" onButtonClick={() => disconnect()}>
-          {address?.slice(0, 4)}...{address?.slice(-4)}
-        </Button>
+        <MenuComp address={address} />
       </div>
     );
   }
-  return (
-    <>
-      {connectors.map((c) => (
-        <Button
-          key={c.id}
-          size="small"
-          onButtonClick={() => connect({ connector: c })}
-        >
-          Connect to {c.name}
-        </Button>
-      ))}
-    </>
-  );
+  return <Modal />;
 }
 
 export default function Header() {
@@ -131,15 +51,17 @@ export default function Header() {
           </span>
         </div>
       </Link>
+      {/* <LeaderBanner /> */}
       <div className="hidden sm:inline-flex items-center gap-x-4 sm:mr-2">
-        <a
+        {/* <a
           href="https://discord.gg/AKHuvbz7q4"
           target="_blank"
           rel="noreferrer"
         >
           <Button size="small">List your protocol</Button>
-        </a>
-        <Modal />
+        </a> */}
+        <LeaderBanner />
+        <Profile />
       </div>
     </div>
   );
