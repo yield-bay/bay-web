@@ -57,17 +57,6 @@ export default function MenuComp({
                     className={`${
                       active ? "text-gray-200" : "text-white"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  >
-                    My Rewards
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "text-gray-200" : "text-white"
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
                     onClick={() => {
                       router.push(`/leaderboard`);
                     }}
