@@ -1,21 +1,21 @@
 import { useConnect } from "wagmi";
 import { useState } from "react";
-import Button from "./Library/Button";
+import Button from "./Button";
 import { Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { Dialog } from "@headlessui/react";
 
-export default function Modal() {
+export default function ConnectWallet() {
   const { connect, connectors } = useConnect();
   let [isOpen, setIsOpen] = useState(false);
 
-  function closeModal() {
+  const closeModal = () => {
     setIsOpen(false);
-  }
+  };
 
-  function openModal() {
+  const openModal = () => {
     setIsOpen(true);
-  }
+  };
 
   return (
     <>
