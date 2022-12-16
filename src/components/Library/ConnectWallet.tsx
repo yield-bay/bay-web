@@ -20,9 +20,12 @@ export default function ConnectWallet() {
   return (
     <>
       <div className="items-center justify-center">
-        <Button onButtonClick={openModal} size="small">
+        <button
+          onClick={openModal}
+          className="ex flex-row items-center justify-center ring-1 text-base ring-[#314584] hover:ring-[#455b9c] text-white font-semibold rounded-xl leading-5 transition duration-200 py-2 px-[18px] sm:py-[12px] sm:px-[33px]"
+        >
           Connect Wallet
-        </Button>
+        </button>
       </div>
 
       <Transition appear show={isOpen} as={Fragment}>
