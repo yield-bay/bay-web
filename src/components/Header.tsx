@@ -1,11 +1,11 @@
+import { useEffect } from "react";
 import Link from "next/link";
 import { useAccount } from "wagmi";
-import { useEffect } from "react";
-import { hashAtom } from "@store/atoms";
 import { useAtom } from "jotai";
-import LeaderBanner from "./Library/LeaderBanner";
-import MenuComp from "./MenuComp";
-import Modal from "./Modal";
+import { hashAtom } from "@store/atoms";
+import LeaderBanner from "@components/Library/LeaderBanner";
+import MenuComp from "@components/Library/HeaderMenu";
+import Modal from "@components/Library/ConnectWallet";
 
 async function fetchUserHash(address: `0x${string}` | undefined) {
   const query = { address };
@@ -20,10 +20,10 @@ async function fetchUserHash(address: `0x${string}` | undefined) {
   return data.hash;
 }
 
-function Profile() {
+const Profile = () => {
   const { address, isConnected } = useAccount();
-
   const [_, setHash] = useAtom(hashAtom);
+
   useEffect(() => {
     if (isConnected) {
       fetchUserHash(address).then((_hash) => {
@@ -31,15 +31,9 @@ function Profile() {
       });
     }
   }, [isConnected]);
-  if (isConnected) {
-    return (
-      <div>
-        <MenuComp address={address} />
-      </div>
-    );
-  }
-  return <Modal />;
-}
+
+  return isConnected ? <MenuComp address={address} /> : <Modal />;
+};
 
 export default function Header() {
   return (

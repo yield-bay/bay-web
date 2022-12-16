@@ -4,7 +4,7 @@ import Header from "./Header";
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex flex-col min-h-screen font bg-baseBlue text-white bg-bg-pattern">
+    <div className="flex flex-col min-h-screen font-inter bg-baseBlue text-white bg-bg-pattern">
       <Header />
       {children}
       <Footer />
