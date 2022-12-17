@@ -98,7 +98,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
           {!noResult ? (
             <div>
               <table className="min-w-full text-white">
-                <thead className="transition duration-200 font-bold text-base leading-5">
+                <thead className="font-bold text-base leading-5">
                   <tr>
                     <th
                       scope="col"
@@ -209,7 +209,7 @@ const ListicleTable = ({ farms, noResult }: ListicleType) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#445AAD] divide-opacity-50 transition duration-200">
+                <tbody className="divide-y divide-[#445AAD] divide-opacity-50">
                   {hideSkeleton ? (
                     <FarmsList farms={sortedFarms} />
                   ) : (

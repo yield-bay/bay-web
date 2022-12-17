@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
 import CountUp from "react-countup";
+import Image from "next/image";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
@@ -22,7 +23,8 @@ async function fetchLeaderboard() {
       headers: { "Content-Type": "application/json" },
     })
   ).json();
-  data.sort(function (a, b) {
+
+  data.sort(function (a: any, b: any) {
     return b.users_brought - a.users_brought;
   });
   console.log(data);
@@ -53,89 +55,138 @@ export default function Leaderboard() {
     console.log("Address", address);
   }
 
-  return isConnected ? (
+  return (
     <main>
       <div className="relative flex flex-col flex-1">
+        {/* Hero Section */}
         <div className="sm:bg-hero-gradient">
-          <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
-            <h1
-              className="mb-11 sm:mb-6 font-spaceGrotesk font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
+          {/* heading / description / stats board */}
+          <div className="font-spaceGrotesk mx-auto max-w-lg md:max-w-2xl pt-1 pb-[87px] sm:py-11 md:pt-16 md:pb-[115px]">
+            <p
+              className="mb-9 sm:mb-6 px-4 font-bold text-2xl sm:text-3xl md:text-[40px] leading-[30.62px] sm:leading-10 md:leading-[51px] text-center text-[#D9D9D9]"
               id="hero-heading"
             >
               Sharing Leaderboard
-            </h1>
-            <div className="w-1/2 text-center text-base font-medium mx-auto">
-              <span>
-                Share farms listed on yieldbay and get Reward NFTs as you climb
-                higher up the leaderboard.
-              </span>
+            </p>
+            <div className="max-w-[290px] text-center text-base leading-5 font-medium text-[#D9D9D9] mx-auto">
+              Share farms listed on yieldbay and get Reward NFTs as you climb
+              higher up the leaderboard.
             </div>
-            <div className="py-2 px-[18px] h-[127px] sm:py-3 sm:px-6 mt-[51px] ring-2 text-base ring-[#314584] rounded-xl mx-auto text-center w-[280px]">
-              <div className="grid grid-cols-3 gap-[24px] py-2">
-                <span className="flex-auto text-[16px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                  Shares
-                </span>
-                <span className="flex-auto text-[16px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                  Rank
-                </span>
-                <span className="flex-auto text-[16px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                  Reward
-                </span>
-                <span className="flex-auto text-[40px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
+            <div className="p-6 mt-[45px] sm:mt-[51px] bg-[#010E23] ring-1 text-base ring-[#314584] rounded-2xl mx-auto text-center w-[280px]">
+              <div className="grid grid-cols-3 gap-[24px] text-[#D9D9D9] font-bold">
+                {/* titles */}
+                <span className="flex-auto text-[16px] leading-5">Shares</span>
+                <span className="flex-auto text-[16px] leading-5">Rank</span>
+                <span className="flex-auto text-[16px] leading-5">Reward</span>
+                {/* values */}
+                <span className="flex-auto text-[40px] leading-[51px]">
                   <CountUp start={0} end={userCount} duration={0.5} />
                 </span>
-                <span className="flex-auto text-[40px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                  x
-                </span>
-                <span className="flex-auto text-[40px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                  x
-                </span>
+                <span className="flex-auto text-[40px] leading-[51px]">4</span>
+                <div
+                  className={`overflow-hidden h-12 w-full flex justify-center ${
+                    userCount > 5 ? "opacity-100" : "opacity-30"
+                  }`}
+                >
+                  <Image
+                    src="/CommendationNFT.png"
+                    height={48}
+                    width={48}
+                    alt="commendation nft"
+                    className="rounded-full"
+                  />
+                </div>
               </div>
             </div>
-            <div className="mt-[40px] grid grid-cols-3 gap-[24px] py-2">
-              <span className="flex-auto text-[40px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                Rank
-              </span>
-              <span className="flex-auto text-[40px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                Address
-              </span>
-              <span className="flex-auto text-[40px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                Shares
-              </span>
-            </div>
-            <>
-              {leaderboardStats.map((c, index) => (
-                <div key={c.hash} className="grid grid-cols-3 gap-[24px]">
-                  <span className="flex-auto text-[16x] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                    {index + 1}
-                  </span>
-                  <span className="flex-auto text-[16x] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                    {c.address?.slice(0, 4)}...{c.address?.slice(-4)}
-                  </span>
-                  <span className="flex-auto text-[16px] font-[700] font-spaceGrotesk text-[#D9D9D9]">
-                    {c.users_brought}
-                  </span>
-                </div>
-              ))}
-            </>
           </div>
         </div>
-      </div>
-    </main>
-  ) : (
-    <main>
-      <div className="relative flex flex-col flex-1">
-        <div className="sm:bg-hero-gradient">
-          <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
-            <h1
-              className="mb-11 sm:mb-6 font-spaceGrotesk font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
-              id="hero-heading"
-            >
-              Connect your wallet
-            </h1>
+        {/* Table Section - Desktop */}
+        <div className="hidden border border-purple-500 sm:block bg-[#0C0306]">
+          <div className="inline-block min-w-full align-middle">
+            <div>
+              <table className="min-w-full text-white">
+                <thead className="font-bold text-base leading-5">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="pt-9 pb-6 pl-8 md:pl-56 lg:pl-[369px] border"
+                    >
+                      Rank
+                    </th>
+                    <th scope="col" className="pt-9 pb-6 border">
+                      Address
+                    </th>
+                    <th
+                      scope="col"
+                      className="pt-9 pb-6 md:pr-56 lg:pr-[390px] border"
+                    >
+                      Shares
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#445AAD] divide-opacity-50">
+                  {leaderboardStats.map((c, index: number) => (
+                    <div key={index} className="grid grid-cols-3 gap-[24px]">
+                      <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+                        {index + 1}
+                      </span>
+                      <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+                        {c.address?.slice(0, 4)}...{c.address?.slice(-4)}
+                      </span>
+                      <span className="flex-auto text-[16px] font-[700] text-[#D9D9D9]">
+                        {c.users_brought}
+                      </span>
+                    </div>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </main>
   );
 }
+
+/* 
+   <div className="mt-[0px]">
+   <div className="grid grid-cols-3 gap-[24px] py-2">
+     <span className="flex-auto text-[40px] font-[700] text-[#D9D9D9]">
+       Rank
+     </span>
+     <span className="flex-auto text-[40px] font-[700] text-[#D9D9D9]">
+       Address
+     </span>
+     <span className="flex-auto text-[40px] font-[700] text-[#D9D9D9]">
+       Shares
+     </span>
+   </div>
+   <div>
+     {leaderboardStats.map((c, index: number) => (
+       <div key={index} className="grid grid-cols-3 gap-[24px]">
+         <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+           {index + 1}
+         </span>
+         <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+           {c.address?.slice(0, 4)}...{c.address?.slice(-4)}
+         </span>
+         <span className="flex-auto text-[16px] font-[700] text-[#D9D9D9]">
+           {c.users_brought}
+         </span>
+       </div>
+     ))}
+   </div>
+ </div>
+*/
+
+// IS NOT CONNECTED
+/* 
+  <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
+              <h1
+                className="mb-11 sm:mb-6 font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
+                id="hero-heading"
+              >
+                Connect your wallet
+              </h1>
+  </div>
+*/

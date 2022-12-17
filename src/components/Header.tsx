@@ -4,8 +4,8 @@ import { useAccount } from "wagmi";
 import { useAtom } from "jotai";
 import { hashAtom } from "@store/atoms";
 import LeaderBanner from "@components/Library/LeaderBanner";
-import MenuComp from "@components/Library/HeaderMenu";
-import Modal from "@components/Library/ConnectWallet";
+import HeaderMenu from "@components/Library/HeaderMenu";
+import ConnectWallet from "@components/Library/ConnectWallet";
 
 async function fetchUserHash(address: `0x${string}` | undefined) {
   const query = { address };
@@ -32,7 +32,7 @@ const Profile = () => {
     }
   }, [isConnected]);
 
-  return isConnected ? <MenuComp address={address} /> : <Modal />;
+  return isConnected ? <HeaderMenu address={address} /> : <ConnectWallet />;
 };
 
 export default function Header() {
