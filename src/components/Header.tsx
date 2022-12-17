@@ -45,15 +45,7 @@ export default function Header() {
           </span>
         </div>
       </Link>
-      {/* <LeaderBanner /> */}
       <div className="hidden sm:inline-flex items-center gap-x-4 sm:mr-2">
-        {/* <a
-          href="https://discord.gg/AKHuvbz7q4"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Button size="small">List your protocol</Button>
-        </a> */}
         <LeaderBanner />
         <Profile />
       </div>

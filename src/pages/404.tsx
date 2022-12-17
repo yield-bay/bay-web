@@ -1,8 +1,9 @@
-import MetaTags from "@metaTags/MetaTags";
-import config from "@metaTags/config";
+import MetaTags from "@components/metaTags/MetaTags";
+import config from "@components/metaTags/config";
 import Link from "next/link";
+import { FC } from "react";
 
-export default function Custom404() {
+const Custom404: FC = () => {
   const { defaultTitle } = config;
   return (
     <div className="flex-col page-center bg-hero-gradient">
@@ -22,4 +23,6 @@ export default function Custom404() {
       </div>
     </div>
   );
-}
+};
+
+export default Custom404;

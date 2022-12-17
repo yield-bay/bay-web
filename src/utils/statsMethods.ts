@@ -1,4 +1,3 @@
-import toDollarUnits from "./toDollarUnits";
 import { formatFirstLetter } from "./farmListMethods";
 
 export function protocolCount(farms: any): number {

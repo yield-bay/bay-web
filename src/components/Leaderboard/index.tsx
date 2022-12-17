@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import type { NextPage } from "next";
+import Image from "next/image";
 import { useAccount } from "wagmi";
 import CountUp from "react-countup";
-import Image from "next/image";
+import { LeaderboardType } from "@utils/types";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
@@ -24,17 +26,18 @@ async function fetchLeaderboard() {
     })
   ).json();
 
-  data.sort(function (a: any, b: any) {
+  data.sort((a: LeaderboardType, b: LeaderboardType) => {
     return b.users_brought - a.users_brought;
   });
+
   console.log(data);
   return data;
 }
 
-export default function Leaderboard() {
+const Leaderboard: NextPage = () => {
   // Hooks
   const [userCount, setUserCount] = useState(0);
-  const [leaderboardStats, setLeaderboardStats] = useState([]);
+  const [leaderboardStats, setLeaderboardStats] = useState<LeaderboardType[]>([]);
   const [rank, setRank] = useState(0);
   const { address, isConnected } = useAccount();
 
@@ -146,7 +149,9 @@ export default function Leaderboard() {
       </div>
     </main>
   );
-}
+};
+
+export default Leaderboard;
 
 /* 
    <div className="mt-[0px]">

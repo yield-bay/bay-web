@@ -1,3 +1,4 @@
+import { FarmType } from "@utils/types";
 import { atom } from "jotai";
 
 // Interfaces
@@ -21,7 +22,7 @@ export const sortStatusAtom = atom<SortStatusType>({
 export const idQueryAtom = atom<string | string[] | undefined>("");
 export const addrQueryAtom = atom<string | string[] | undefined>("");
 export const hashAtom = atom<string | undefined>("");
-export const sortedFarmsAtom = atom<any[]>([]);
+export const sortedFarmsAtom = atom<FarmType[]>([]);
 export const filterFarmTypeAtom = atom<number>(1);
 export const farmTypesAtom = atom<FarmTypesType[]>([
   { id: 1, name: "All Types" },

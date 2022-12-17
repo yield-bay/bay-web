@@ -1,5 +1,5 @@
 // Library Imports
-import { useEffect, useState, memo } from "react";
+import { useEffect, useState, memo, FC } from "react";
 import { useAtom } from "jotai";
 import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
 
@@ -9,18 +9,19 @@ import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
 import { trackEventWithProperty } from "@utils/analytics";
 import LoadingSkeleton from "@components/Library/LoadingSkeleton";
+import { FarmType } from "@utils/types";
 
 enum Order {
   ASC,
   DESC,
 }
 
-type ListicleType = {
-  farms: any;
+interface Props {
+  farms: FarmType[];
   noResult?: boolean;
-};
+}
 
-const ListicleTable = ({ farms, noResult }: ListicleType) => {
+const ListicleTable: FC<Props> = ({ farms, noResult }) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [hideSkeleton, setHideSkeleton] = useState(false);
