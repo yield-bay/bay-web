@@ -1,6 +1,7 @@
 import { useConnect } from "wagmi";
 import { useState } from "react";
 import Button from "./Button";
+import ClientOnly from "./ClientOnly";
 import { Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { Dialog } from "@headlessui/react";
@@ -18,7 +19,7 @@ export default function ConnectWallet() {
   };
 
   return (
-    <>
+    <ClientOnly>
       <div className="items-center justify-center">
         <button
           onClick={openModal}
@@ -80,6 +81,6 @@ export default function ConnectWallet() {
           </div>
         </Dialog>
       </Transition>
-    </>
+    </ClientOnly>
   );
 }

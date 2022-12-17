@@ -1,5 +1,6 @@
-import { Fragment } from "react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import ClientOnly from "./ClientOnly";
 import { Menu } from "@headlessui/react";
 import { useDisconnect } from "wagmi";
 import { ChevronDownIcon } from "@heroicons/react/outline";
@@ -14,7 +15,7 @@ export default function HeaderMenu({
   const { disconnect } = useDisconnect();
 
   return (
-    <>
+    <ClientOnly>
       <Menu as="div" className="relative inline-block text-left">
         <Menu.Button className="flex flex-row items-center justify-center ring-1 text-base ring-[#314584] hover:ring-[#455b9c] text-white font-semibold rounded-xl leading-5 transition duration-200 py-2 px-[18px] sm:py-3 sm:px-8">
           <span>
@@ -66,6 +67,6 @@ export default function HeaderMenu({
           </Menu.Items>
         </Transition>
       </Menu>
-    </>
+    </ClientOnly>
   );
 }
