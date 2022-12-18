@@ -23,7 +23,7 @@ export default function ConnectWallet() {
       <div className="items-center justify-center">
         <button
           onClick={openModal}
-          className="ex flex-row items-center justify-center ring-1 text-base ring-[#314584] hover:ring-[#455b9c] text-white font-semibold rounded-xl leading-5 transition duration-200 py-2 px-[18px] sm:py-[12px] sm:px-[33px]"
+          className="flex flex-row items-center justify-center ring-1 text-base ring-[#314584] hover:ring-[#455b9c] text-white font-semibold rounded-xl leading-5 transition duration-200 py-[10.5px] px-4 sm:py-[12px] sm:px-[33px]"
         >
           Connect Wallet
         </button>
@@ -54,26 +54,29 @@ export default function ConnectWallet() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-[#010C1D] p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg font-medium leading-6 text-white"
-                  >
+                {/* 
+                  font-family: Inter;
+                  font-size: 16px;
+                  font-weight: 600;
+                  line-height: 19px;
+                  letter-spacing: 0em;
+                  text-align: left;
+                */}
+                <Dialog.Panel className="border font-inter border-[#314584] w-full max-w-md text-base font-bold text-white leading-5 transform overflow-hidden rounded-2xl bg-[#010C1D] px-12 py-16 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3" className="text-white border">
                     Select Wallet
                   </Dialog.Title>
 
-                  <div className="mt-4 grid place-items-center space-y-7">
-                    <>
-                      {connectors.map((c) => (
-                        <Button
-                          key={c.id}
-                          size="small"
-                          onButtonClick={() => connect({ connector: c })}
-                        >
-                          Connect to {c.name}
-                        </Button>
-                      ))}
-                    </>
+                  <div className="mt-8 grid grid-cols-2 gap-0 place-items-center space-y-7 border">
+                    {connectors.map((c) => (
+                      <button
+                        key={c.id}
+                        className="border border-[#314584] bg-[#010710] px-6 py-[10.5px] rounded-full"
+                        onClick={() => connect({ connector: c })}
+                      >
+                        {c.name}
+                      </button>
+                    ))}
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
