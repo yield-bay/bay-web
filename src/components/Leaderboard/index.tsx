@@ -88,11 +88,11 @@ const Leaderboard: NextPage = () => {
                 <span className="flex-auto text-[40px] leading-[51px]">4</span>
                 <div
                   className={`overflow-hidden h-12 w-full flex justify-center ${
-                    userCount > 5 ? "opacity-100" : "opacity-30"
+                    userCount > 5 ? "opacity-100" : "opacity-50"
                   }`}
                 >
                   <Image
-                    src="/CommendationNFT.png"
+                    src="/nft-crown.svg"
                     height={48}
                     width={48}
                     alt="commendation nft"
