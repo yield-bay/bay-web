@@ -1,10 +1,8 @@
+import { useState, Fragment } from "react";
+import Image from "next/image";
 import { useConnect } from "wagmi";
-import { useState } from "react";
-import Button from "./Button";
-import ClientOnly from "./ClientOnly";
-import { Transition } from "@headlessui/react";
-import { Fragment } from "react";
-import { Dialog } from "@headlessui/react";
+import { Transition, Dialog } from "@headlessui/react";
+import ClientOnly from "@components/Library/ClientOnly";
 
 export default function ConnectWallet() {
   const { connect, connectors } = useConnect();
@@ -16,6 +14,17 @@ export default function ConnectWallet() {
 
   const openModal = () => {
     setIsOpen(true);
+  };
+
+  const formatWalletName = (walletName: string): string => {
+    switch (walletName.toLowerCase()) {
+      case "metamask":
+        return "Metamask";
+      case "subwallet":
+        return "Subwallet";
+      default:
+        return walletName;
+    }
   };
 
   return (
@@ -54,27 +63,24 @@ export default function ConnectWallet() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                {/* 
-                  font-family: Inter;
-                  font-size: 16px;
-                  font-weight: 600;
-                  line-height: 19px;
-                  letter-spacing: 0em;
-                  text-align: left;
-                */}
-                <Dialog.Panel className="border font-inter border-[#314584] w-full max-w-md text-base font-bold text-white leading-5 transform overflow-hidden rounded-2xl bg-[#010C1D] px-12 py-16 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title as="h3" className="text-white border">
-                    Select Wallet
-                  </Dialog.Title>
+                <Dialog.Panel className="border font-inter border-[#314584] w-full max-w-fit text-base font-bold text-white leading-5 transform overflow-hidden rounded-2xl bg-[#010C1D] px-12 py-8 sm:p-[40px] text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title as="h3">Select Wallet</Dialog.Title>
 
-                  <div className="mt-8 grid grid-cols-2 gap-0 place-items-center space-y-7 border">
+                  <div className="mt-8 flex flex-col gap-y-4">
                     {connectors.map((c) => (
                       <button
                         key={c.id}
-                        className="border border-[#314584] bg-[#010710] px-6 py-[10.5px] rounded-full"
+                        className="flex flex-row  items-center justify-between ring-1 active:ring-2 ring-[#314584] sm:ring-opacity-50 sm:hover:ring-opacity-100 min-w-full bg-[#010710] px-6 py-[10px] rounded-full"
                         onClick={() => connect({ connector: c })}
                       >
-                        {c.name}
+                        {formatWalletName(c.name)}
+                        <Image
+                          src={`/icons/${c.name}.svg`}
+                          width={24}
+                          height={24}
+                          alt="wallet"
+                          className="ml-[14px]"
+                        />
                       </button>
                     ))}
                   </div>

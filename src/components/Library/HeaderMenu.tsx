@@ -22,7 +22,7 @@ export default function HeaderMenu({
             {address?.slice(0, 4)}...{address?.slice(-4)}
           </span>
           <ChevronDownIcon
-            className="hidden sm:block ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"
+            className="ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"
             aria-hidden="true"
           />
         </Menu.Button>
