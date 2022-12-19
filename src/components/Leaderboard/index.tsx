@@ -39,6 +39,14 @@ async function fetchLeaderboard() {
   return data;
 }
 
+function findUserRank(
+  statsList: LeaderboardType[],
+  userAddress: string
+): number {
+  const rank = statsList.findIndex((stats) => stats.address == userAddress);
+  return rank + 1;
+}
+
 const Leaderboard: NextPage = () => {
   const { defaultTitle } = config;
 
@@ -49,8 +57,7 @@ const Leaderboard: NextPage = () => {
   const [leaderboardStats, setLeaderboardStats] = useState<LeaderboardType[]>(
     []
   );
-  // todo: setRank
-  const [rank, setRank] = useState(0);
+  const [userRank, setUserRank] = useState(0);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // fetching user shares & leaderboard stats
@@ -65,6 +72,10 @@ const Leaderboard: NextPage = () => {
       setLeaderboardStats(_stats);
     });
   }, [address, isConnected, userCount]);
+
+  useEffect(() => {
+    setUserRank(findUserRank(leaderboardStats, address as string));
+  }, [leaderboardStats, address]);
 
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
@@ -92,7 +103,7 @@ const Leaderboard: NextPage = () => {
       />
       <div className="relative flex flex-col flex-1">
         {/* Hero */}
-        <Hero userCount={userCount} />
+        <Hero userCount={userCount} userRank={userRank} />
         {/* Table and Cards */}
         {screenSize === "xs" ? (
           <div className="sm:hidden bg-[#01060F]">
