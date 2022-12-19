@@ -7,6 +7,8 @@ import RankingTable from "./RankingTable";
 import useScreenSize from "@hooks/useScreenSize";
 import RankingCards from "./RankingCards";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
+import MetaTags from "@components/metaTags/MetaTags";
+import config from "@components/metaTags/config";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
@@ -38,6 +40,8 @@ async function fetchLeaderboard() {
 }
 
 const Leaderboard: NextPage = () => {
+  const { defaultTitle } = config;
+
   // Hooks
   const { address, isConnected } = useAccount();
   const screenSize = useScreenSize();
@@ -81,6 +85,11 @@ const Leaderboard: NextPage = () => {
 
   return (
     <main>
+      <MetaTags
+        title={`Leaderboard | Get rewarded for sharing listed farms`}
+        url="https://list.yieldbay.io/leaderboard"
+        description="Share farms listed on yieldbay and get Reward NFTs as you climb higher up the leaderboard."
+      />
       <div className="relative flex flex-col flex-1">
         {/* Hero */}
         <Hero userCount={userCount} />
