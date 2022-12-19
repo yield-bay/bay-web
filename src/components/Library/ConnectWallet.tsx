@@ -70,7 +70,7 @@ export default function ConnectWallet() {
                     {connectors.map((c) => (
                       <button
                         key={c.id}
-                        className="flex flex-row  items-center justify-between ring-1 active:ring-2 ring-[#314584] sm:ring-opacity-50 sm:hover:ring-opacity-100 min-w-full bg-[#010710] px-6 py-[10px] rounded-full"
+                        className="flex flex-row items-center justify-between ring-1 active:ring-2 ring-[#314584] sm:ring-opacity-50 sm:hover:ring-opacity-100 h-10 min-w-full bg-[#010710] px-6 py-[10px] rounded-full"
                         onClick={() => connect({ connector: c })}
                       >
                         {formatWalletName(c.name)}

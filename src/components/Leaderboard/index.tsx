@@ -6,6 +6,7 @@ import Hero from "./Hero";
 import RankingTable from "./RankingTable";
 import useScreenSize from "@hooks/useScreenSize";
 import RankingCards from "./RankingCards";
+import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
@@ -38,14 +39,15 @@ async function fetchLeaderboard() {
 
 const Leaderboard: NextPage = () => {
   // Hooks
+  const { address, isConnected } = useAccount();
+  const screenSize = useScreenSize();
   const [userCount, setUserCount] = useState(0);
   const [leaderboardStats, setLeaderboardStats] = useState<LeaderboardType[]>(
     []
   );
   // todo: setRank
   const [rank, setRank] = useState(0);
-  const { address, isConnected } = useAccount();
-  const screenSize = useScreenSize();
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // fetching user shares & leaderboard stats
   useEffect(() => {
@@ -53,24 +55,36 @@ const Leaderboard: NextPage = () => {
       fetchUserShares(address).then((_count) => {
         setUserCount(_count);
       });
-
-      fetchLeaderboard().then((_stats) => {
-        setLeaderboardStats(_stats);
-      });
     }
+
+    fetchLeaderboard().then((_stats) => {
+      setLeaderboardStats(_stats);
+    });
   }, [address, isConnected, userCount]);
 
-  if (isConnected) {
-    console.log("Address", address);
-  }
+  // state handler for visibility of scroll-to-top button
+  useEffect(() => {
+    if (typeof window !== undefined) {
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 400) {
+          setShowScrollBtn(true);
+        } else {
+          setShowScrollBtn(false);
+        }
+      });
+    }
+
+    return () => {
+      window.removeEventListener("scroll", () => {});
+    };
+  });
 
   return (
     <main>
       <div className="relative flex flex-col flex-1">
-        {/* Hero Section */}
+        {/* Hero */}
         <Hero userCount={userCount} />
         {/* Table and Cards */}
-
         {screenSize === "xs" ? (
           <div className="sm:hidden bg-[#01060F]">
             <RankingCards leaderboardStats={leaderboardStats} />
@@ -81,20 +95,9 @@ const Leaderboard: NextPage = () => {
           </div>
         )}
       </div>
+      {showScrollBtn && <ScrollToTopBtn />}
     </main>
   );
 };
 
 export default Leaderboard;
-
-// IS NOT CONNECTED
-/* 
-  <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
-              <h1
-                className="mb-11 sm:mb-6 font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
-                id="hero-heading"
-              >
-                Connect your wallet
-              </h1>
-  </div>
-*/

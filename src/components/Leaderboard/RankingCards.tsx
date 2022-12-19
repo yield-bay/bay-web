@@ -20,7 +20,7 @@ const RankingCards: FC<{ leaderboardStats: LeaderboardType[] }> = ({
               {stat.address?.slice(0, 4)}...{stat.address?.slice(-4)}
             </span>
             <span className="text-right text-base leading-5 opacity-80">
-              {stat.users_brought}
+              {stat.users_brought} Shares
             </span>
           </div>
         </div>
