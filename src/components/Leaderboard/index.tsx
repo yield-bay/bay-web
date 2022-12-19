@@ -37,7 +37,9 @@ async function fetchLeaderboard() {
 const Leaderboard: NextPage = () => {
   // Hooks
   const [userCount, setUserCount] = useState(0);
-  const [leaderboardStats, setLeaderboardStats] = useState<LeaderboardType[]>([]);
+  const [leaderboardStats, setLeaderboardStats] = useState<LeaderboardType[]>(
+    []
+  );
   const [rank, setRank] = useState(0);
   const { address, isConnected } = useAccount();
 
@@ -104,7 +106,7 @@ const Leaderboard: NextPage = () => {
           </div>
         </div>
         {/* Table Section - Desktop */}
-        <div className="hidden border border-purple-500 sm:block bg-[#0C0306]">
+        <div className="hidden sm:block bg-[#0C0306]">
           <div className="inline-block min-w-full align-middle">
             <div>
               <table className="min-w-full text-white">
@@ -112,34 +114,34 @@ const Leaderboard: NextPage = () => {
                   <tr>
                     <th
                       scope="col"
-                      className="pt-9 pb-6 pl-8 md:pl-56 lg:pl-[369px] border"
+                      className="pt-9 pb-6 pl-8 lg:pl-56 xl:pl-[369px]"
                     >
-                      Rank
+                      <span className="">Rank</span>
                     </th>
-                    <th scope="col" className="pt-9 pb-6 border">
+                    <th scope="col" className="pt-9 pb-6 ">
                       Address
                     </th>
                     <th
                       scope="col"
-                      className="pt-9 pb-6 md:pr-56 lg:pr-[390px] border"
+                      className="pt-9 pb-6 lg:pr-56 xl:pr-[390px] "
                     >
-                      Shares
+                      <span>Shares</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#445AAD] divide-opacity-50">
                   {leaderboardStats.map((c, index: number) => (
-                    <div key={index} className="grid grid-cols-3 gap-[24px]">
-                      <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
-                        {index + 1}
-                      </span>
-                      <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+                    <tr key={c.address}>
+                      <td className="py-8 pl-8 lg:pl-[240px] xl:pl-[390px] text-center whitespace-nowrap">
+                        <span className="">{index + 1}</span>
+                      </td>
+                      <td className=" py-8 text-center whitespace-nowrap">
                         {c.address?.slice(0, 4)}...{c.address?.slice(-4)}
-                      </span>
-                      <span className="flex-auto text-[16px] font-[700] text-[#D9D9D9]">
+                      </td>
+                      <td className="text-center py-8 lg:pr-[250px] xl:pr-[420px] whitespace-nowrap">
                         {c.users_brought}
-                      </span>
-                    </div>
+                      </td>
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -156,26 +158,26 @@ export default Leaderboard;
 /* 
    <div className="mt-[0px]">
    <div className="grid grid-cols-3 gap-[24px] py-2">
-     <span className="flex-auto text-[40px] font-[700] text-[#D9D9D9]">
+     <span className="border py-8 pl-8 md:pl-14 lg:pl-28 text-[40px] font-[700] text-[#D9D9D9]">
        Rank
      </span>
-     <span className="flex-auto text-[40px] font-[700] text-[#D9D9D9]">
+     <span className="border py-8 pl-8 md:pl-14 lg:pl-28 text-[40px] font-[700] text-[#D9D9D9]">
        Address
      </span>
-     <span className="flex-auto text-[40px] font-[700] text-[#D9D9D9]">
+     <span className="border py-8 pl-8 md:pl-14 lg:pl-28 text-[40px] font-[700] text-[#D9D9D9]">
        Shares
      </span>
    </div>
    <div>
      {leaderboardStats.map((c, index: number) => (
        <div key={index} className="grid grid-cols-3 gap-[24px]">
-         <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+         <span className="border py-8 pl-8 md:pl-14 lg:pl-28 ">
            {index + 1}
          </span>
-         <span className="flex-auto text-[16x] font-[700] text-[#D9D9D9]">
+         <span className="border py-8 pl-8 md:pl-14 lg:pl-28 ">
            {c.address?.slice(0, 4)}...{c.address?.slice(-4)}
          </span>
-         <span className="flex-auto text-[16px] font-[700] text-[#D9D9D9]">
+         <span className="border py-8 pl-8 md:pl-14 lg:pl-28 text-[16px] font-[700] text-[#D9D9D9]">
            {c.users_brought}
          </span>
        </div>
