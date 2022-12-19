@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
+import axios from "axios";
 import { LeaderboardType } from "@utils/types";
 import Hero from "./Hero";
 import RankingTable from "./RankingTable";
@@ -8,35 +9,32 @@ import useScreenSize from "@hooks/useScreenSize";
 import RankingCards from "./RankingCards";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@components/metaTags/MetaTags";
-import config from "@components/metaTags/config";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
-  let data = await (
-    await fetch("https://leaderboard-api-dev.onrender.com/user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(query),
-    })
-  ).json();
-  console.log(data.users_brought);
-  return data.users_brought;
+  try {
+    const userShares = await axios.post(
+      "https://leaderboard-api-dev.onrender.com/user",
+      JSON.stringify(query)
+    );
+    return userShares.data.users_brought;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 async function fetchLeaderboard() {
-  let data = await (
-    await fetch("https://leaderboard-api-dev.onrender.com/leaderboard", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-  ).json();
-
-  data.sort((a: LeaderboardType, b: LeaderboardType) => {
-    return b.users_brought - a.users_brought;
-  });
-
-  console.log(data);
-  return data;
+  try {
+    let leaderboard = await axios.get(
+      "https://leaderboard-api-dev.onrender.com/leaderboard"
+    );
+    leaderboard.data.sort((a: LeaderboardType, b: LeaderboardType) => {
+      return b.users_brought - a.users_brought;
+    });
+    return leaderboard.data;
+  } catch (error) {
+    console.log("error");
+  }
 }
 
 function findUserRank(
@@ -48,8 +46,6 @@ function findUserRank(
 }
 
 const Leaderboard: NextPage = () => {
-  const { defaultTitle } = config;
-
   // Hooks
   const { address, isConnected } = useAccount();
   const screenSize = useScreenSize();
