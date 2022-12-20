@@ -16,7 +16,7 @@ async function fetchUserHash(address: `0x${string}` | undefined) {
       body: JSON.stringify(query),
     })
   ).json();
-  console.log(data.hash);
+  // console.log(data.hash);
   return data.hash;
 }
 

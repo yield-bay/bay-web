@@ -24,11 +24,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (router.query.hash) {
-      console.log("hash", router.query.hash);
+      // console.log("hash", router.query.hash);
       updateUser(router.query.hash);
-    } else {
-      console.log("No hash");
     }
+    // else {
+    //   console.log("No hash");
+    // }
   }, [router]);
 
   const { initialState } = pageProps;
