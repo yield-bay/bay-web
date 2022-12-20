@@ -6,12 +6,17 @@ import axios from "axios";
 import useAnalyticsSetup from "@hooks/useAnalyticsSetup";
 const Providers = lazy(() => import("@components/Providers"));
 const Layout = lazy(() => import("@components/Layout"));
+import {
+  FATHOM_CODE,
+  // LEADERBOARD_API_DEV,
+  LEADERBOARD_API_PROD,
+} from "@utils/constants";
 
 async function updateUser(hash: string | undefined | string[]) {
   const query = { hash };
   try {
     const data = await axios.post(
-      "https://leaderboard-api-dev.onrender.com/update",
+      LEADERBOARD_API_PROD as string,
       JSON.stringify(query)
     );
   } catch (error) {
@@ -24,16 +29,12 @@ export default function App({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     if (router.query.hash) {
-      // console.log("hash", router.query.hash);
       updateUser(router.query.hash);
     }
-    // else {
-    //   console.log("No hash");
-    // }
   }, [router]);
 
   const { initialState } = pageProps;
-  useAnalyticsSetup(process.env.NEXT_PUBLIC_FATHOM_CODE as string);
+  useAnalyticsSetup(FATHOM_CODE as string);
 
   return (
     <Providers initialState={initialState}>

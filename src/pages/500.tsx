@@ -1,13 +1,12 @@
 import MetaTags from "@components/metaTags/MetaTags";
-import config from "@components/metaTags/config";
+import { APP_NAME } from "@utils/constants";
 import Link from "next/link";
 import { FC } from "react";
 
 const Custom500: FC = () => {
-  const { defaultTitle } = config;
   return (
     <div className="flex-col page-center bg-hero-gradient">
-      <MetaTags title={`500 • ${defaultTitle}`} />
+      <MetaTags title={`500 • ${APP_NAME}`} />
       <div className="flex flex-col gap-y-6 md:gap-y-8 items-center font-spaceGrotesk font-bold text-[#D9D9D9]">
         <p className="text-7xl sm:text-8xl md:text-[154px] leading-10 sm:leading-[56px] md:leading-[196px]">
           whoops

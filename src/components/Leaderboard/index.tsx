@@ -10,15 +10,19 @@ import RankingCards from "./RankingCards";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@components/metaTags/MetaTags";
 import { trackEventWithProperty } from "@utils/analytics";
+import {
+  // LEADERBOARD_API_DEV,
+  LEADERBOARD_API_PROD,
+} from "@utils/constants";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
   try {
     const userShares = await axios.post(
-      "https://leaderboard-api-dev.onrender.com/user",
+      (LEADERBOARD_API_PROD as string) + "user",
       JSON.stringify(query)
     );
-    return userShares.data.users_brought;
+    return userShares.data;
   } catch (error) {
     console.log(error);
   }
@@ -27,7 +31,7 @@ async function fetchUserShares(address: `0x${string}` | undefined) {
 async function fetchLeaderboard() {
   try {
     let leaderboard = await axios.get(
-      "https://leaderboard-api-dev.onrender.com/leaderboard"
+      (LEADERBOARD_API_PROD as string) + "leaderboard"
     );
     leaderboard.data.sort((a: LeaderboardType, b: LeaderboardType) => {
       return b.users_brought - a.users_brought;
@@ -55,13 +59,15 @@ const Leaderboard: NextPage = () => {
     []
   );
   const [userRank, setUserRank] = useState(0);
+  const [ownsNft, setOwnsNft] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // fetching user shares & leaderboard stats
   useEffect(() => {
     if (isConnected) {
-      fetchUserShares(address).then((_count) => {
-        setUserCount(_count);
+      fetchUserShares(address).then((_data) => {
+        setUserCount(_data.users_brought);
+        setOwnsNft(_data.owns_nft);
       });
     }
 
@@ -104,7 +110,7 @@ const Leaderboard: NextPage = () => {
       />
       <div className="relative flex flex-col flex-1">
         {/* Hero */}
-        <Hero userCount={userCount} userRank={userRank} />
+        <Hero userCount={userCount} userRank={userRank} ownsNft={ownsNft} />
         {/* Table and Cards */}
         {leaderboardStats.length !== 0 ? (
           screenSize === "xs" ? (
