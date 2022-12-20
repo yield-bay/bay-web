@@ -6,11 +6,12 @@ import { hashAtom } from "@store/atoms";
 import LeaderBanner from "@components/Library/LeaderBanner";
 import HeaderMenu from "@components/Library/HeaderMenu";
 import ConnectWallet from "@components/Library/ConnectWallet";
+import { LEADERBOARD_API_PROD } from "@utils/constants";
 
 async function fetchUserHash(address: `0x${string}` | undefined) {
   const query = { address };
   let data = await (
-    await fetch("https://leaderboard-api-dev.onrender.com/user", {
+    await fetch((LEADERBOARD_API_PROD as string) + "user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(query),
