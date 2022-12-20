@@ -9,6 +9,7 @@ import useScreenSize from "@hooks/useScreenSize";
 import RankingCards from "./RankingCards";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@components/metaTags/MetaTags";
+import { trackEventWithProperty } from "@utils/analytics";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
@@ -67,11 +68,15 @@ const Leaderboard: NextPage = () => {
     fetchLeaderboard().then((_stats) => {
       setLeaderboardStats(_stats);
     });
-  }, [address, isConnected, userCount]);
+  }, [address, isConnected]);
 
   useEffect(() => {
     setUserRank(findUserRank(leaderboardStats, address as string));
   }, [leaderboardStats, address]);
+
+  useEffect(() => {
+    trackEventWithProperty("leaderboard-view");
+  }, []);
 
   // state handler for visibility of scroll-to-top button
   useEffect(() => {
@@ -101,13 +106,22 @@ const Leaderboard: NextPage = () => {
         {/* Hero */}
         <Hero userCount={userCount} userRank={userRank} />
         {/* Table and Cards */}
-        {screenSize === "xs" ? (
-          <div className="sm:hidden bg-[#01060F]">
-            <RankingCards leaderboardStats={leaderboardStats} />
-          </div>
+        {leaderboardStats.length !== 0 ? (
+          screenSize === "xs" ? (
+            <div className="sm:hidden bg-[#01060F]">
+              <RankingCards leaderboardStats={leaderboardStats} />
+            </div>
+          ) : (
+            <div className="hidden sm:block bg-[#0C0306]">
+              <RankingTable leaderboardStats={leaderboardStats} />
+            </div>
+          )
         ) : (
-          <div className="hidden sm:block bg-[#0C0306]">
-            <RankingTable leaderboardStats={leaderboardStats} />
+          <div className="flex flex-col gap-y-3 pt-12 pb-60 text-center font-spaceGrotesk bg-[#01060F] sm:bg-[#0C0306]">
+            <span className="animate-bounce opacity-70 text-4xl select-none">
+              🌾
+            </span>
+            <span>loading leaderboard...</span>
           </div>
         )}
       </div>

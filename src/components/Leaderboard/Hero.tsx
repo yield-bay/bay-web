@@ -10,21 +10,21 @@ const Hero: FC<{ userCount: number; userRank: number }> = ({
 }) => {
   const { isConnected } = useAccount();
   return (
-    <ClientOnly>
-      <div className="sm:bg-hero-gradient z-0">
-        {/* heading / description / stats board */}
-        <div className="font-spaceGrotesk mx-auto max-w-lg md:max-w-2xl pt-1 pb-[87px] sm:py-11 md:pt-16 md:pb-[115px]">
-          <p
-            className="mb-9 sm:mb-6 px-4 font-bold text-2xl sm:text-3xl md:text-[40px] leading-[30.62px] sm:leading-10 md:leading-[51px] text-center text-[#D9D9D9]"
-            id="hero-heading"
-          >
-            Sharing Leaderboard
-          </p>
-          <div className="max-w-[290px] text-center text-base leading-5 font-medium text-[#D9D9D9] mx-auto">
-            Share farms listed on yieldbay and get Reward NFTs as you climb
-            higher up the leaderboard.
-          </div>
-          {/* Stats board */}
+    <div className="sm:bg-hero-gradient z-0">
+      {/* heading / description / stats board */}
+      <div className="font-spaceGrotesk mx-auto max-w-lg md:max-w-2xl pt-1 pb-[87px] sm:py-11 md:pt-16 md:pb-[115px]">
+        <p
+          className="mb-9 sm:mb-6 px-4 font-bold text-2xl sm:text-3xl md:text-[40px] leading-[30.62px] sm:leading-10 md:leading-[51px] text-center text-[#D9D9D9]"
+          id="hero-heading"
+        >
+          Sharing Leaderboard
+        </p>
+        <div className="max-w-[290px] text-center text-base leading-5 font-medium text-[#D9D9D9] mx-auto">
+          Share farms listed on yieldbay and get Reward NFTs as you climb higher
+          up the leaderboard.
+        </div>
+        {/* Stats board */}
+        <ClientOnly>
           {isConnected ? (
             <div className="z-20 p-6 mt-[45px] sm:mt-[51px] bg-[#010E23] ring-1 text-base ring-[#314584] rounded-2xl mx-auto text-center w-[280px]">
               <div className="grid grid-cols-3 gap-[24px] text-[#D9D9D9] text-[16px] leading-5 font-bold">
@@ -66,9 +66,9 @@ const Hero: FC<{ userCount: number; userRank: number }> = ({
               </div>
             </div>
           )}
-        </div>
+        </ClientOnly>
       </div>
-    </ClientOnly>
+    </div>
   );
 };
 
