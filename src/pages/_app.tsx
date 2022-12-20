@@ -16,7 +16,7 @@ async function updateUser(hash: string | undefined | string[]) {
   const query = { hash };
   try {
     const data = await axios.post(
-      LEADERBOARD_API_PROD as string,
+      (LEADERBOARD_API_PROD as string) + "update",
       JSON.stringify(query)
     );
   } catch (error) {
