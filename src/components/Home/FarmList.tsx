@@ -1,27 +1,29 @@
-import { memo } from "react";
+import { FC, memo } from "react";
 import { useRouter } from "next/router";
 
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
 import {
   formatFirstLetter,
-  farmURL,
   formatTokenSymbols,
   formatFarmType,
 } from "@utils/farmListMethods";
-import { trackEventWithProperty } from "@utils/analytics";
+import { FarmType } from "@utils/types";
 
 // Component Imports
 import Button from "@components/Library/Button";
 import FarmAssets from "@components/Library/FarmAssets";
 import FarmBadge from "@components/Library/FarmBadge";
 import ShareFarm from "@components/Library/ShareFarm";
-import YieldBreakdown from "@components/Library/YieldBreakdown";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
 
-const FarmsList = ({ farms }: any) => {
+interface Props {
+  farms: FarmType[];
+}
+
+const FarmsList: FC<Props> = ({ farms }) => {
   const router = useRouter();
   return (
     <>

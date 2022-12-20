@@ -5,6 +5,8 @@ import { ShareIcon } from "@heroicons/react/solid";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
+import { useAtom } from "jotai";
+import { hashAtom } from "@store/atoms";
 
 // Types
 type ShareFarmPropsType = {
@@ -34,10 +36,15 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
   let [url, setUrl] = useState<string>("");
   const screenSize = useScreenSize();
 
+  const [hashVal, _] = useAtom(hashAtom);
+
   const apr = (farm?.apr.base + farm?.apr.reward).toFixed(2);
   // UTM paramters for tracking
   const utmLink =
     "&utm_campaign=share-farm&utm_source=yb-list&utm_medium=textlink";
+
+  //Hash parameters for tracking
+  const hashLink = hashVal ? `&hash=${hashVal}` : "";
 
   // Tweet's URL with required parameters
   const tweetUrl =
@@ -53,9 +60,11 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
         typeof window !== "undefined"
           ? `http://${window.location.host}` // for testing locally
           : "https://list.yieldbay.io"
-      }${urlPath}` + utmLink
+      }${urlPath}` +
+        utmLink +
+        hashLink
     );
-  }, [farm]);
+  }, [farm, hashVal]);
 
   return (
     <div>

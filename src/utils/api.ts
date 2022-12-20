@@ -1,7 +1,8 @@
 import { createClient, defaultExchanges, gql } from "@urql/core";
+import { API_URL } from "./constants";
 
 const client = createClient({
-  url: process.env.NEXT_PUBLIC_API_URL as string,
+  url: API_URL as string,
   exchanges: defaultExchanges,
 });
 

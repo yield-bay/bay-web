@@ -1,12 +1,12 @@
-import MetaTags from "@metaTags/MetaTags";
-import config from "@metaTags/config";
+import MetaTags from "@components/metaTags/MetaTags";
+import { APP_NAME } from "@utils/constants";
 import Link from "next/link";
+import { FC } from "react";
 
-export default function Custom404() {
-  const { defaultTitle } = config;
+const Custom404: FC = () => {
   return (
     <div className="flex-col page-center bg-hero-gradient">
-      <MetaTags title={`404 • ${defaultTitle}`} />
+      <MetaTags title={`404 • ${APP_NAME}`} />
       <div className="flex flex-col gap-y-6 md:gap-y-8 items-center font-spaceGrotesk font-bold text-[#D9D9D9]">
         <p className="text-7xl sm:text-8xl md:text-[154px] leading-10 sm:leading-[56px] md:leading-[196px]">
           404
@@ -22,4 +22,6 @@ export default function Custom404() {
       </div>
     </div>
   );
-}
+};
+
+export default Custom404;

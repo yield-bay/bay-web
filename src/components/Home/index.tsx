@@ -1,6 +1,7 @@
 // React and Next Imports
 import { useEffect, useState } from "react";
 import { useRouter, NextRouter } from "next/router";
+import { NextPage } from "next";
 
 // Library Imports
 import { useAtom } from "jotai";
@@ -21,9 +22,9 @@ import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
-import MetaTags from "@metaTags/MetaTags";
+import MetaTags from "@components/metaTags/MetaTags";
 
-const Home = () => {
+const Home: NextPage = () => {
   const router = useRouter();
   // Store
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
@@ -43,7 +44,10 @@ const Home = () => {
   );
   const screenSize = useScreenSize();
 
-  /** Was trying to dynamically update the search param based on the term, but it's causing a few bugs. */
+  /* 
+    Was trying to dynamically update the search param based on the term,
+    but it's causing a few bugs. 
+  */
   // useEffect(() => {
   //   if (searchTerm.length > 0)
   //     router.push(`/?q=${searchTerm}`, undefined, { shallow: true });
@@ -99,7 +103,7 @@ const Home = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">
           {/* HERO SECTION */}
-          <div className="sm:bg-hero-gradient">
+          <div className="bg-hero-gradient-mob sm:bg-hero-gradient">
             {/* Center Container */}
             <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
               <h1
@@ -156,7 +160,7 @@ const Home = () => {
           {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
-            <div className="sm:hidden bg-[#01050D] transition duration-200">
+            <div className="sm:hidden bg-[#01050D]">
               {/* Shows Shared farm if queries are available  */}
               <MobileFarmList
                 farms={filteredFarms}
@@ -170,7 +174,7 @@ const Home = () => {
             </div>
           ) : (
             // DESKTOP VIEW
-            <div className="hidden sm:block bg-[#01050D] transition duration-200">
+            <div className="hidden sm:block bg-[#01050D]">
               {/* Shows Shared farm if queries are available  */}
               <ListicleTable farms={filteredFarms} noResult={noFilteredFarms} />
               {filteredFarms.length < farms.length && (
