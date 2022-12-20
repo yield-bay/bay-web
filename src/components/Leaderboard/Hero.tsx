@@ -3,10 +3,33 @@ import { FC } from "react";
 import CountUp from "react-countup";
 import { useAccount } from "wagmi";
 import ClientOnly from "@components/Library/ClientOnly";
+import Tooltip from "@components/Library/Tooltip";
 
-const Hero: FC<{ userCount: number; userRank: number }> = ({
+function nftTooltip(userCount: number, ownsNft: boolean): React.ReactElement {
+  if (userCount < 5) {
+    return (
+      <span>
+        You get a special NFT gift when you bring more than 5 people to
+        YieldBay.
+      </span>
+    );
+  } else if (userCount >= 5 && !ownsNft) {
+    return (
+      <span>
+        Ahoy Sailor, you’re entitled to one YieldBay Farmer NFT! Keep an eye, we
+        send them out every hour.
+      </span>
+    );
+  } else if (ownsNft) {
+    return <span>Congratulations on earning the YieldBay Farmers NFT!</span>;
+  }
+  return <></>;
+}
+
+const Hero: FC<{ userCount: number; userRank: number; ownsNft: boolean }> = ({
   userCount,
   userRank,
+  ownsNft,
 }) => {
   const { isConnected } = useAccount();
   return (
@@ -39,21 +62,21 @@ const Hero: FC<{ userCount: number; userRank: number }> = ({
                 <span className="flex-auto text-[40px] leading-[51px]">
                   <CountUp start={0} end={userRank} duration={0.5} />
                 </span>
-                <div
-                  className={`overflow-hidden h-12 w-full flex justify-center ${
-                    userCount > 5
-                      ? "opacity-100"
-                      : "opacity-50 cursor-not-allowed"
-                  }`}
-                >
-                  <Image
-                    src="/nft-crown.svg"
-                    height={48}
-                    width={48}
-                    alt="commendation nft"
-                    className="rounded-full"
-                  />
-                </div>
+                <Tooltip content={nftTooltip(userCount, ownsNft)}>
+                  <div
+                    className={`overflow-hidden h-12 w-full flex justify-center ${
+                      ownsNft ? "opacity-100" : "opacity-50"
+                    }`}
+                  >
+                    <Image
+                      src="/nft-crown.svg"
+                      height={48}
+                      width={48}
+                      alt="commendation nft"
+                      className="rounded-full"
+                    />
+                  </div>
+                </Tooltip>
               </div>
             </div>
           ) : (
