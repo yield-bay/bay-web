@@ -10,12 +10,13 @@ import RankingCards from "./RankingCards";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@components/metaTags/MetaTags";
 import { trackEventWithProperty } from "@utils/analytics";
+import { LEADERBOARD_API_PROD } from "@utils/constants";
 
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
   try {
     const userShares = await axios.post(
-      "https://leaderboard-api-dev.onrender.com/user",
+      (LEADERBOARD_API_PROD as string) + "user",
       JSON.stringify(query)
     );
     return userShares.data.users_brought;
@@ -27,7 +28,7 @@ async function fetchUserShares(address: `0x${string}` | undefined) {
 async function fetchLeaderboard() {
   try {
     let leaderboard = await axios.get(
-      "https://leaderboard-api-dev.onrender.com/leaderboard"
+      (LEADERBOARD_API_PROD as string) + "leaderboard"
     );
     leaderboard.data.sort((a: LeaderboardType, b: LeaderboardType) => {
       return b.users_brought - a.users_brought;
