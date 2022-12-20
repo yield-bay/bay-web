@@ -1,5 +1,6 @@
 // React, Next Imports
 import { useState, useEffect } from "react";
+import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,8 +12,8 @@ import { ExternalLinkIcon } from "@heroicons/react/outline";
 import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
 import CalculatorModal from "@components/Library/CalculatorModal";
-import config from "@metaTags/config";
-import MetaTags from "@metaTags/MetaTags";
+import config from "@components/metaTags/config";
+import MetaTags from "@components/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
 import {
@@ -41,7 +42,7 @@ type RewardType = {
   valueUSD: number;
 };
 
-export default function FarmPage() {
+const FarmPage: NextPage = () => {
   const router = useRouter();
   const { defaultTitle } = config;
 
@@ -299,4 +300,6 @@ export default function FarmPage() {
       <span>loading farm...</span>
     </div>
   );
-}
+};
+
+export default FarmPage;
