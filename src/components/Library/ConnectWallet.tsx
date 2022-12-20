@@ -75,7 +75,7 @@ export default function ConnectWallet() {
                       >
                         {formatWalletName(c.name)}
                         <Image
-                          src={`/icons/${c.name}.svg`}
+                          src={`/icons/${c.name.toLowerCase()}.svg`}
                           width={24}
                           height={24}
                           alt="wallet"
