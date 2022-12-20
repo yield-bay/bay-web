@@ -12,7 +12,7 @@ import { ExternalLinkIcon } from "@heroicons/react/outline";
 import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
 import CalculatorModal from "@components/Library/CalculatorModal";
-import config from "@components/metaTags/config";
+import { APP_NAME } from "@utils/constants";
 import MetaTags from "@components/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
@@ -44,7 +44,6 @@ type RewardType = {
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
-  const { defaultTitle } = config;
 
   // States
   const [farms, setFarms] = useState<any[]>([]);
@@ -80,7 +79,7 @@ const FarmPage: NextPage = () => {
 
   return farm?.asset.symbol.length > 0 && idQuery ? (
     <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px] bg-hero-gradient">
-      <MetaTags title={`Farm • ${defaultTitle}`} />
+      <MetaTags title={`Farm • ${APP_NAME}`} />
       {/* Back Arrow Icon */}
       <div className="opacity-70 w-max cursor-pointer mt-[6px] mb-11 sm:mb-14">
         <Link href="/">
