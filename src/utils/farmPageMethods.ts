@@ -5,6 +5,11 @@ type RewardType = {
   valueUSD: number;
 };
 
+/**
+ *
+ * @param rewards - Array of rewards of a Farm
+ * @returns - Total amount of Rewards
+ */
 export function calcTotalRewardValue(rewards: RewardType[]) {
   let totalValueUSD = 0;
   rewards.forEach((reward: any) => {
@@ -13,10 +18,21 @@ export function calcTotalRewardValue(rewards: RewardType[]) {
   return totalValueUSD;
 }
 
+/**
+ *
+ * @param reward - Any particular rewards of a Farm
+ * @param totalValue - Total values of Rewards
+ * @returns - Percentage of that reward's value in total value
+ */
 export function calcAssetPercentage(reward: RewardType, totalValue: number) {
   return ((reward.valueUSD * 100) / totalValue).toFixed(2);
 }
 
+/**
+ *
+ * @param protocolName - Protocol whose URL is required
+ * @returns - Protocol URL
+ */
 export function protocolURL(protocolName: string): string {
   const protocol = protocolName.toLowerCase();
   if (protocol == "stellaswap") return "https://stellaswap.com/";
@@ -35,6 +51,11 @@ export function protocolURL(protocolName: string): string {
   return "";
 }
 
+/**
+ *
+ * @param protocolName - Chain whose URL is required
+ * @returns - Chain URL
+ */
 export function chainURL(chainName: any): string {
   const chain = chainName.toLowerCase();
   if (chain == "moonbeam") return "https://moonbeam.network/";
@@ -47,6 +68,11 @@ export function chainURL(chainName: any): string {
   return "";
 }
 
+/**
+ *
+ * @param farmType - Type of farm
+ * @returns - Copy of that Farm type
+ */
 export function farmTypeDesc(farmType: string): string {
   if (farmType.toLowerCase() == "stableamm") {
     return "Minimum to no impermanent loss thanks to the design of Stable AMMs.";

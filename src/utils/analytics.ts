@@ -9,6 +9,10 @@ export function trackPageView() {
   }
 }
 
+/**
+ * @param event - Event required in Aplitude event
+ * @param properties - Properties for triggered event
+ */
 export function trackEventWithProperty(event: string, properties?: any) {
   if (typeof window != undefined) {
     amplitude

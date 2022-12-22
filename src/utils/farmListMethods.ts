@@ -2,6 +2,11 @@ export function formatFirstLetter(name: string): string {
   return name.slice(0, 1).toUpperCase() + name.slice(1);
 }
 
+/**
+ *
+ * @param farm - Farm whose protocol URL is required
+ * @returns - Protocol URL of the farm
+ */
 export function farmURL(farm: any): string {
   if (farm.protocol == "stellaswap") return "https://app.stellaswap.com/farm";
   else if (farm.protocol == "solarbeam") return "https://app.solarbeam.io/farm";

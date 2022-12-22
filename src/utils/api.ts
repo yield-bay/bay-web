@@ -6,6 +6,9 @@ const client = createClient({
   exchanges: defaultExchanges,
 });
 
+/**
+ * @returns list of farms
+ */
 export const fetchListicleFarms = async () => {
   const farmObj = await client
     .query(
