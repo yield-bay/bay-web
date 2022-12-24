@@ -8,6 +8,10 @@
 # testing
 /coverage
 
+# package manager
+/yarn.lock
+/package-lock.json
+
 # next.js
 /.next/
 /out/
