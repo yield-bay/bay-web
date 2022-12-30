@@ -2,7 +2,7 @@ import { createClient, defaultExchanges, gql } from "@urql/core";
 import { API_URL } from "./constants";
 
 const client = createClient({
-  url: API_URL as string,
+  url: API_URL,
   exchanges: defaultExchanges,
 });
 

@@ -44,16 +44,6 @@ const Home: NextPage = () => {
   );
   const screenSize = useScreenSize();
 
-  /* 
-    Was trying to dynamically update the search param based on the term,
-    but it's causing a few bugs. 
-  */
-  // useEffect(() => {
-  //   if (searchTerm.length > 0)
-  //     router.push(`/?q=${searchTerm}`, undefined, { shallow: true });
-  //   else router.push(`/`, undefined, { shallow: true });
-  // }, [searchTerm]);
-
   useEffect(() => {
     if (farms.length == 0) return;
     setSearchTerm(router.query.q ? (router.query.q as string) : "");
