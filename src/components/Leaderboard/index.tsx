@@ -11,7 +11,8 @@ import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import MetaTags from "@components/metaTags/MetaTags";
 import { trackEventWithProperty } from "@utils/analytics";
 import {
-  // LEADERBOARD_API_DEV,
+  IS_PRODUCTION,
+  LEADERBOARD_API_DEV,
   LEADERBOARD_API_PROD,
 } from "@utils/constants";
 
@@ -19,7 +20,7 @@ async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
   try {
     const userShares = await axios.post(
-      (LEADERBOARD_API_PROD as string) + "user",
+      (IS_PRODUCTION ? LEADERBOARD_API_PROD : LEADERBOARD_API_DEV) + "user",
       JSON.stringify(query)
     );
     return userShares.data;
@@ -31,14 +32,15 @@ async function fetchUserShares(address: `0x${string}` | undefined) {
 async function fetchLeaderboard() {
   try {
     let leaderboard = await axios.get(
-      (LEADERBOARD_API_PROD as string) + "leaderboard"
+      (IS_PRODUCTION ? LEADERBOARD_API_PROD : LEADERBOARD_API_DEV) +
+        "leaderboard"
     );
     leaderboard.data.sort((a: LeaderboardType, b: LeaderboardType) => {
       return b.users_brought - a.users_brought;
     });
     return leaderboard.data;
   } catch (error) {
-    console.log("error");
+    console.error(error);
   }
 }
 

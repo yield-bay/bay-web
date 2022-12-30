@@ -7,8 +7,9 @@ import useAnalyticsSetup from "@hooks/useAnalyticsSetup";
 const Providers = lazy(() => import("@components/Providers"));
 const Layout = lazy(() => import("@components/Layout"));
 import {
+  IS_PRODUCTION,
   FATHOM_CODE,
-  // LEADERBOARD_API_DEV,
+  LEADERBOARD_API_DEV,
   LEADERBOARD_API_PROD,
 } from "@utils/constants";
 
@@ -16,11 +17,11 @@ async function updateUser(hash: string | undefined | string[]) {
   const query = { hash };
   try {
     const data = await axios.post(
-      (LEADERBOARD_API_PROD as string) + "update",
+      (IS_PRODUCTION ? LEADERBOARD_API_PROD : LEADERBOARD_API_DEV) + "update",
       JSON.stringify(query)
     );
   } catch (error) {
-    console.log("error", error);
+    console.error(error);
   }
 }
 
@@ -34,7 +35,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [router]);
 
   const { initialState } = pageProps;
-  useAnalyticsSetup(FATHOM_CODE as string);
+  useAnalyticsSetup(FATHOM_CODE);
 
   return (
     <Providers initialState={initialState}>
