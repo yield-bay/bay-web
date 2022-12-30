@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useRef } from "react";
 
+/**
+ *
+ * @param keys - List of keys values
+ * @param callback - callback function on press
+ * @param node
+ */
 const useKeyPress = (
   keys: any,
   callback: (value: any) => void,
