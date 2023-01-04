@@ -3,11 +3,11 @@ import { WagmiConfig, createClient } from "wagmi";
 import { getDefaultProvider } from "ethers";
 import { ThemeProvider } from "next-themes";
 import { Provider as JotaiProvider } from "jotai";
-// import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { TalismanConnector } from "@talismn/wagmi-connector";
 import { SubWalletConnector } from "@wagmi-connector";
+import NextNProgress from "nextjs-progressbar";
 
 const connectors = [
   new MetaMaskConnector({
@@ -38,7 +38,10 @@ const Providers = ({
   return (
     <WagmiConfig client={client}>
       <ThemeProvider attribute="class">
-        <JotaiProvider initialValues={initialState}>{children}</JotaiProvider>
+        <JotaiProvider initialValues={initialState}>
+          <NextNProgress color="#0073B7" />
+          {children}
+        </JotaiProvider>
       </ThemeProvider>
     </WagmiConfig>
   );

@@ -2,10 +2,13 @@ import { createClient, defaultExchanges, gql } from "@urql/core";
 import { API_URL } from "./constants";
 
 const client = createClient({
-  url: API_URL as string,
+  url: API_URL,
   exchanges: defaultExchanges,
 });
 
+/**
+ * @returns list of farms
+ */
 export const fetchListicleFarms = async () => {
   const farmObj = await client
     .query(

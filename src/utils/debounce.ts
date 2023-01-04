@@ -1,3 +1,9 @@
+/**
+ *
+ * @param func - Function to be debounced
+ * @param delay - Amount of delay in milliseconds
+ * @returns - Debouned version of that function
+ */
 function debounce(
   func: (...args: []) => any,
   delay: number
