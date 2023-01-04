@@ -1,9 +1,16 @@
 import { formatTokenSymbols } from "@utils/farmListMethods";
+import { FarmType } from "@utils/types";
 
+/**
+ *
+ * @param farms - Farms list
+ * @param search - Search term
+ * @returns Filtered farms list according to search term
+ */
 export default function useFilteredFarms(
-  farms: any[],
+  farms: FarmType[],
   search: string
-): [any[], boolean] {
+): [FarmType[], boolean] {
   if (!farms) return [[], true];
   if (search === "") return [farms, false];
   const searchTerm = search.trim().toUpperCase();
