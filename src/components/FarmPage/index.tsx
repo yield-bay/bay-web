@@ -1,10 +1,11 @@
-// React, Next Imports
+// Library Imports
 import { useState, useEffect } from "react";
 import { NextPage } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
+import { useQuery } from "@tanstack/react-query";
 
 // Components, Hooks, Utils Imports
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -34,6 +35,7 @@ import { addrQueryAtom, idQueryAtom } from "@store/atoms";
 import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
+import { FarmType } from "@utils/types";
 
 type RewardType = {
   amount: number;
@@ -64,10 +66,26 @@ const FarmPage: NextPage = () => {
 
   // fetching farms
   useEffect(() => {
-    fetchListicleFarms().then((res: any) => {
+    fetchListicleFarms().then((res: { farms: FarmType[] }) => {
       setFarms(res.farms);
     });
   }, []);
+
+  // Fetch farms using react query
+  const { isLoading, data, error, isError } = useQuery({
+    queryKey: ["farmsList"],
+    queryFn: async () => {
+      const farms = await fetchListicleFarms();
+      // fetchListicleFarms().then((res: { farms: FarmType[] }) => {
+      //   console.log("farmsdata", res.farms);
+      //   return res.farms;
+      // });
+      console.log("farms", farms);
+      return farms;
+    },
+  });
+
+  console.log("data", data);
 
   useEffect(() => {
     if (farm?.id) {
