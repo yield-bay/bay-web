@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
-import { useQuery } from "@tanstack/react-query";
 
 // Components, Hooks, Utils Imports
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -70,22 +69,6 @@ const FarmPage: NextPage = () => {
       setFarms(res.farms);
     });
   }, []);
-
-  // Fetch farms using react query
-  const { isLoading, data, error, isError } = useQuery({
-    queryKey: ["farmsList"],
-    queryFn: async () => {
-      const farms = await fetchListicleFarms();
-      // fetchListicleFarms().then((res: { farms: FarmType[] }) => {
-      //   console.log("farmsdata", res.farms);
-      //   return res.farms;
-      // });
-      console.log("farms", farms);
-      return farms;
-    },
-  });
-
-  console.log("data", data);
 
   useEffect(() => {
     if (farm?.id) {

@@ -5,25 +5,23 @@ import { NextPage } from "next";
 
 // Library Imports
 import { useAtom } from "jotai";
-import { AdjustmentsIcon } from "@heroicons/react/outline";
+import { useQuery } from "@tanstack/react-query";
 
 // Misc Imports
-import FarmStats from "@components/Library/FarmStats";
-import SelectFarmType from "@components/Library/SelectFarmType";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import MobileFarmList from "./MobileFarmList";
-import SearchInput from "@components/Library/SearchInput";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
 import { trackPageView } from "@utils/analytics";
 import { fetchListicleFarms } from "@utils/api";
-import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
+import { protocolList } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
 import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/metaTags/MetaTags";
 import Hero from "./Hero";
+import { FarmType } from "@utils/types";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -31,13 +29,35 @@ const Home: NextPage = () => {
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
 
   // States
-  const [farms, setFarms] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [prefModalOpen, setPrefModalOpen] = useState(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Hooks
+  // Fetch farms using react query
+  const {
+    isLoading,
+    data: farmsList,
+    error,
+    isError,
+  } = useQuery({
+    queryKey: ["farmsList"],
+    queryFn: async (): Promise<any> => {
+      try {
+        const { farms } = await fetchListicleFarms();
+        return farms;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+  const farms = farmsList ? farmsList : new Array<FarmType>();
+
+  useEffect(() => {
+    console.log("farms", farms);
+  }, [farms]);
+
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
   const [filteredFarms, noFilteredFarms] = useFilteredFarms(
     filteredByFarmTypes,
@@ -79,15 +99,6 @@ const Home: NextPage = () => {
     }
   }, [router]);
 
-  // Fetching the farms & assigning them to `farms` state
-  useEffect(() => {
-    fetchListicleFarms().then((res: any) => {
-      setFarms(res.farms);
-    });
-
-    trackPageView();
-  }, []);
-
   return (
     <div>
       <MetaTags />
@@ -122,7 +133,11 @@ const Home: NextPage = () => {
             // DESKTOP VIEW
             <div className="hidden sm:block bg-[#01050D]">
               {/* Shows Shared farm if queries are available  */}
-              <ListicleTable farms={filteredFarms} noResult={noFilteredFarms} />
+              <ListicleTable
+                farms={filteredFarms}
+                noResult={noFilteredFarms}
+                isLoading={isLoading}
+              />
               {filteredFarms.length < farms.length && (
                 <GoToHome router={router} />
               )}

@@ -27,7 +27,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
   const router = useRouter();
   return (
     <>
-      {farms.map((farm: any) => {
+      {farms.map((farm: FarmType) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
         const safetyScore = (farm?.safetyScore * 10).toFixed(1);
         return (
