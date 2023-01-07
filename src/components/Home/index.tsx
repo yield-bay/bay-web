@@ -54,10 +54,6 @@ const Home: NextPage = () => {
   });
   const farms = farmsList ? farmsList : new Array<FarmType>();
 
-  useEffect(() => {
-    console.log("farms", farms);
-  }, [farms]);
-
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
   const [filteredFarms, noFilteredFarms] = useFilteredFarms(
     filteredByFarmTypes,
@@ -122,6 +118,7 @@ const Home: NextPage = () => {
               <MobileFarmList
                 farms={filteredFarms}
                 noResult={noFilteredFarms}
+                isLoading={isLoading}
                 prefOpen={prefModalOpen}
                 setPrefOpen={setPrefModalOpen}
               />

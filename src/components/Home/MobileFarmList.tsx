@@ -1,5 +1,5 @@
 // Library  Imports
-import { useState, useEffect, memo } from "react";
+import { useEffect, memo } from "react";
 import { useAtom } from "jotai";
 
 // Component Imports
@@ -12,19 +12,18 @@ import PreferencesModal from "@components/Library/PreferencesModal";
 
 // Misc Imports
 import {
-  farmURL,
   formatFarmType,
   formatFirstLetter,
   formatTokenSymbols,
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
-import { trackEventWithProperty } from "@utils/analytics";
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import { useRouter } from "next/router";
 
 type FarmListType = {
   farms: any;
   noResult: boolean;
+  isLoading: boolean;
   prefOpen: boolean;
   setPrefOpen: (value: boolean) => void;
 };
@@ -37,26 +36,18 @@ enum Order {
 const MobileFarmList = ({
   farms,
   noResult,
+  isLoading,
   prefOpen,
   setPrefOpen,
 }: FarmListType) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
-  const [hideSkeleton, setHideSkeleton] = useState(false);
 
   const router = useRouter();
 
   useEffect(() => {
     if (farms.length > 0) handleSort(false, false);
   }, [farms]);
-
-  useEffect(() => {
-    if (farms.length > 0) {
-      setTimeout(() => {
-        setHideSkeleton(true);
-      }, 500);
-    }
-  }, [setHideSkeleton, farms]);
 
   const handleSort = (toggleKey: boolean, toggleOrder: boolean) => {
     let newSortStatus: {
@@ -113,7 +104,7 @@ const MobileFarmList = ({
   return (
     <div className="text-blueSilver">
       {!noResult ? (
-        hideSkeleton ? (
+        !isLoading ? (
           sortedFarms.map((farm: any, index: number) => {
             const tokenNames = formatTokenSymbols(farm?.asset.symbol);
             return (
@@ -170,7 +161,7 @@ const MobileFarmList = ({
                       );
                     }}
                   >
-                    Visit Farm
+                    View Farm
                   </Button>
                 </div>
               </div>

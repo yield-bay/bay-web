@@ -100,7 +100,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
                     router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
                   }}
                 >
-                  View More
+                  View Farm
                 </Button>
                 <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm farm={farm} />
