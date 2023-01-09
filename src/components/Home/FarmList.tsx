@@ -27,7 +27,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
   const router = useRouter();
   return (
     <>
-      {farms.map((farm: any) => {
+      {farms.map((farm: FarmType) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
         const safetyScore = (farm?.safetyScore * 10).toFixed(1);
         return (
@@ -100,7 +100,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
                     router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
                   }}
                 >
-                  View More
+                  View Farm
                 </Button>
                 <div className="text-center scale-0 group-hover:scale-100 transition duration-200">
                   <ShareFarm farm={farm} />

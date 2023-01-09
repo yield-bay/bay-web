@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import type { NextPage } from "next";
 import { useAccount } from "wagmi";
 import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 import { LeaderboardType } from "@utils/types";
 import Hero from "./Hero";
 import RankingTable from "./RankingTable";
@@ -16,6 +17,11 @@ import {
   LEADERBOARD_API_PROD,
 } from "@utils/constants";
 
+/**
+ *
+ * @param address - Address of user
+ * @returns Farm sharing data of the user
+ */
 async function fetchUserShares(address: `0x${string}` | undefined) {
   const query = { address };
   try {
@@ -25,7 +31,7 @@ async function fetchUserShares(address: `0x${string}` | undefined) {
     );
     return userShares.data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -44,6 +50,12 @@ async function fetchLeaderboard() {
   }
 }
 
+/**
+ *
+ * @param statsList - List of Leaderboard stats
+ * @param userAddress - Address of the User
+ * @returns Rank of the user
+ */
 function findUserRank(
   statsList: LeaderboardType[],
   userAddress: string
@@ -56,31 +68,35 @@ const Leaderboard: NextPage = () => {
   // Hooks
   const { address, isConnected } = useAccount();
   const screenSize = useScreenSize();
-  const [userCount, setUserCount] = useState(0);
-  const [leaderboardStats, setLeaderboardStats] = useState<LeaderboardType[]>(
-    []
-  );
   const [userRank, setUserRank] = useState(0);
-  const [ownsNft, setOwnsNft] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // fetching user shares & leaderboard stats
-  useEffect(() => {
-    if (isConnected) {
-      fetchUserShares(address).then((_data) => {
-        setUserCount(_data.users_brought);
-        setOwnsNft(_data.owns_nft);
-      });
-    }
+  const { isLoading: isLoadingShares, data: userShares } = useQuery({
+    queryKey: ["userShares"],
+    queryFn: async () => {
+      return await fetchUserShares(address);
+    },
+  });
 
-    fetchLeaderboard().then((_stats) => {
-      setLeaderboardStats(_stats);
-    });
-  }, [address, isConnected]);
+  const { isLoading: isLoadingStats, data: leaderboardData } = useQuery({
+    queryKey: ["leaderboardStats"],
+    queryFn: async () => {
+      return await fetchLeaderboard();
+    },
+  });
+
+  const userCount: number = isLoadingShares ? 0 : userShares?.users_brought;
+  const ownsNft: boolean = isLoadingShares ? false : userShares?.owns_nft;
+  const leaderboardStats: LeaderboardType[] = isLoadingStats
+    ? new Array<LeaderboardType>()
+    : leaderboardData;
 
   useEffect(() => {
-    setUserRank(findUserRank(leaderboardStats, address as string));
-  }, [leaderboardStats, address]);
+    setUserRank(
+      isLoadingShares ? 0 : findUserRank(leaderboardStats, address as string)
+    );
+  }, [isLoadingShares, leaderboardStats, address]);
 
   useEffect(() => {
     trackEventWithProperty("leaderboard-view");
@@ -114,7 +130,7 @@ const Leaderboard: NextPage = () => {
         {/* Hero */}
         <Hero userCount={userCount} userRank={userRank} ownsNft={ownsNft} />
         {/* Table and Cards */}
-        {leaderboardStats.length !== 0 ? (
+        {!isLoadingStats ? (
           screenSize === "xs" ? (
             <div className="sm:hidden bg-[#01060F]">
               <RankingCards leaderboardStats={leaderboardStats} />

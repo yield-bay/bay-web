@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { WagmiConfig, createClient } from "wagmi";
 import { getDefaultProvider } from "ethers";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "next-themes";
 import { Provider as JotaiProvider } from "jotai";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
@@ -28,6 +29,9 @@ const client = createClient({
   connectors: connectors,
 });
 
+// Creating React-Query Client
+const queryClient = new QueryClient();
+
 const Providers = ({
   children,
   initialState,
@@ -37,12 +41,14 @@ const Providers = ({
 }) => {
   return (
     <WagmiConfig client={client}>
-      <ThemeProvider attribute="class">
-        <JotaiProvider initialValues={initialState}>
-          <NextNProgress color="#0073B7" />
-          {children}
-        </JotaiProvider>
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider attribute="class">
+          <JotaiProvider initialValues={initialState}>
+            <NextNProgress color="#0073B7" />
+            {children}
+          </JotaiProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </WagmiConfig>
   );
 };

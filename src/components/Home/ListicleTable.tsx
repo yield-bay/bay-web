@@ -18,25 +18,17 @@ enum Order {
 
 interface Props {
   farms: FarmType[];
+  isLoading: boolean;
   noResult?: boolean;
 }
 
-const ListicleTable: FC<Props> = ({ farms, noResult }) => {
+const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
-  const [hideSkeleton, setHideSkeleton] = useState(false);
 
   useEffect(() => {
     if (farms.length > 0) handleSort(sortStatus.key, false);
   }, [farms]);
-
-  useEffect(() => {
-    if (farms.length > 0) {
-      setTimeout(() => {
-        setHideSkeleton(true);
-      }, 500);
-    }
-  }, [setHideSkeleton, farms]);
 
   const handleSort = (key: string, toggle: boolean) => {
     let newSortStatus: {
@@ -211,7 +203,7 @@ const ListicleTable: FC<Props> = ({ farms, noResult }) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#445AAD] divide-opacity-50">
-                  {hideSkeleton ? (
+                  {!isLoading ? (
                     <FarmsList farms={sortedFarms} />
                   ) : (
                     <LoadingSkeleton />
