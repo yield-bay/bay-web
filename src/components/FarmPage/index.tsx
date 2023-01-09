@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
+import { useQuery } from "@tanstack/react-query";
 
 // Components, Hooks, Utils Imports
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -46,8 +47,19 @@ type RewardType = {
 const FarmPage: NextPage = () => {
   const router = useRouter();
 
-  // States
-  const [farms, setFarms] = useState<any[]>([]);
+  // Hooks
+  const { isLoading, data: farmsList } = useQuery({
+    queryKey: ["farmsList"],
+    queryFn: async () => {
+      try {
+        const { farms } = await fetchListicleFarms();
+        return farms;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
   const [calcOpen, setCalcOpen] = useState<boolean>(false);
@@ -63,13 +75,6 @@ const FarmPage: NextPage = () => {
     addrQuerySet(router.query.addr);
   }, [router]);
 
-  // fetching farms
-  useEffect(() => {
-    fetchListicleFarms().then((res: { farms: FarmType[] }) => {
-      setFarms(res.farms);
-    });
-  }, []);
-
   useEffect(() => {
     if (farm?.id) {
       trackEventWithProperty("farm-page-view", farm?.asset.symbol);
@@ -78,7 +83,7 @@ const FarmPage: NextPage = () => {
 
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
-  return farm?.asset.symbol.length > 0 && idQuery ? (
+  return !isLoading && idQuery ? (
     <div className="flex flex-col pb-20 sm:pb-24 md:pb-[141px] px-9 sm:px-11 lg:px-[120px] bg-hero-gradient">
       <MetaTags title={`Farm • ${APP_NAME}`} />
       {/* Back Arrow Icon */}

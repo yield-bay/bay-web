@@ -35,13 +35,7 @@ const Home: NextPage = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Hooks
-  // Fetch farms using react query
-  const {
-    isLoading,
-    data: farmsList,
-    error,
-    isError,
-  } = useQuery({
+  const { isLoading, data: farmsList } = useQuery({
     queryKey: ["farmsList"],
     queryFn: async (): Promise<any> => {
       try {
@@ -52,7 +46,7 @@ const Home: NextPage = () => {
       }
     },
   });
-  const farms = farmsList ? farmsList : new Array<FarmType>();
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
 
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
   const [filteredFarms, noFilteredFarms] = useFilteredFarms(
