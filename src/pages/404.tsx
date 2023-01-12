@@ -1,9 +1,9 @@
+import { NextPage } from "next";
+import Link from "next/link";
 import MetaTags from "@components/metaTags/MetaTags";
 import { APP_NAME } from "@utils/constants";
-import Link from "next/link";
-import { FC } from "react";
 
-const Custom404: FC = () => {
+const Custom404: NextPage = () => {
   return (
     <div className="flex-col page-center bg-hero-gradient">
       <MetaTags title={`404 • ${APP_NAME}`} />
