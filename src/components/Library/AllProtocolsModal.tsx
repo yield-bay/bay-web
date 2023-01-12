@@ -47,7 +47,7 @@ export default function AllProtocolsModal({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="relative inline-block font-spaceGrotesk bg-[#01050D] rounded-t-lg sm:rounded-2xl text-left max-h-[600px] overflow-y-auto shadow-xl px-4 py-5 align-bottom sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
+            <div className="relative inline-block font-spaceGrotesk bg-[#01050D] text-white rounded-t-lg sm:rounded-2xl text-left max-h-[600px] overflow-y-auto shadow-xl px-4 py-5 align-bottom sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
               <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
                 <div className="flex items-center p-2 group rounded-full hover:bg-neutral-800 cursor-pointer">
                   <button

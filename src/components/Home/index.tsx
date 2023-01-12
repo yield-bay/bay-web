@@ -37,7 +37,7 @@ const Home: NextPage = () => {
   // Hooks
   const { isLoading, data: farmsList } = useQuery({
     queryKey: ["farmsList"],
-    queryFn: async (): Promise<any> => {
+    queryFn: async () => {
       try {
         const { farms } = await fetchListicleFarms();
         return farms;
@@ -76,6 +76,10 @@ const Home: NextPage = () => {
       window.removeEventListener("scroll", () => {});
     };
   });
+
+  useEffect(() => {
+    trackPageView();
+  }, []);
 
   useEffect(() => {
     if (router.query.id) {
