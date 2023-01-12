@@ -1,24 +1,18 @@
+import { FC, memo } from "react";
 import CountUp from "react-countup";
+import { tvlFormatter } from "@utils/statsMethods";
+
 type FarmStatsProps = {
   totalTVL: number;
   totalFarms: number;
   totalProtocols: number;
 };
 
-const tvlFormatter = (tvl: number): [number, string] => {
-  if (tvl >= 1000000) {
-    return [parseFloat((tvl / 1000000).toFixed(2)), "M"];
-  } else if (tvl >= 1000 && tvl < 1000000) {
-    return [parseFloat((tvl / 1000).toFixed(2)), "K"];
-  }
-  return [tvl, ""];
-};
-
-export default function FarmStats({
+const FarmStats: FC<FarmStatsProps> = ({
   totalTVL,
   totalFarms,
   totalProtocols,
-}: FarmStatsProps) {
+}) => {
   const [tvl, suffix] = tvlFormatter(totalTVL);
   return (
     <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white sm:opacity-60">
@@ -27,7 +21,7 @@ export default function FarmStats({
           <CountUp
             start={0}
             end={tvl}
-            duration={0.5}
+            duration={0.75}
             separator=","
             decimals={2}
             decimal="."
@@ -43,15 +37,17 @@ export default function FarmStats({
       <Stat value={totalProtocols} title="Protocols" />
     </div>
   );
-}
+};
 
 const Stat = ({ value, title }: { value: number; title: string }) => (
   <div>
     <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
-      <CountUp start={0} end={value} duration={0.5} delay={0} />
+      <CountUp start={0} end={value} duration={0.75} delay={0} />
     </p>
     <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
       {title}
     </p>
   </div>
 );
+
+export default memo(FarmStats);

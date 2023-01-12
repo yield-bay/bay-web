@@ -1,7 +1,7 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 import FarmStats from "@components/Library/FarmStats";
 import SelectFarmType from "@components/Library/SelectFarmType";
-import { protocolCount, tvlCount, protocolList } from "@utils/statsMethods";
+import { protocolCount, tvlCount } from "@utils/statsMethods";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import SearchInput from "@components/Library/SearchInput";
 import { FarmType } from "@utils/types";
@@ -78,4 +78,4 @@ const Hero: FC<Props> = ({
   );
 };
 
-export default Hero;
+export default memo(Hero);

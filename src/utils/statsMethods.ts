@@ -18,3 +18,17 @@ export function tvlCount(farms: FarmType[]): number {
   });
   return totalTVL;
 }
+
+/**
+ *
+ * @param tvl - Total TVL of all listed Farms
+ * @returns An array containing TVL & dollar units suffix
+ */
+export function tvlFormatter(tvl: number): [number, string] {
+  if (tvl >= 1000000) {
+    return [parseFloat((tvl / 1000000).toFixed(2)), "M"];
+  } else if (tvl >= 1000 && tvl < 1000000) {
+    return [parseFloat((tvl / 1000).toFixed(2)), "K"];
+  }
+  return [tvl, ""];
+}
