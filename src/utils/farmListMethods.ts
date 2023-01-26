@@ -28,6 +28,8 @@ export function farmURL(farm: any): string {
     if (farm.asset.symbol == "nASTR-ASTR LP")
       return "https://app.sirius.finance/#/farms/Liquid%20ASTR";
     return `https://app.sirius.finance/#/farms/${farm.asset.symbol}`;
+  } else if (farm.protocol == "demeter") {
+    return "https://farming.deotoken.io/farms";
   }
   return "";
 }
