@@ -1,8 +1,10 @@
+import { FarmType } from "@utils/types";
+
 export default function useSpecificFarm(
-  farms: any[],
+  farms: FarmType[],
   idQuery: string | string[] | undefined,
   farmQuery: string | string[] | undefined
-) {
+): FarmType[] {
   if (!farms) return [];
   if (!farmQuery || !idQuery) return farms;
 

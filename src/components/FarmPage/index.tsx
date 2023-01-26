@@ -37,13 +37,6 @@ import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
 import { FarmType } from "@utils/types";
 
-type RewardType = {
-  amount: number;
-  asset: string;
-  freq: string;
-  valueUSD: number;
-};
-
 const FarmPage: NextPage = () => {
   const router = useRouter();
 
@@ -161,7 +154,7 @@ const FarmPage: NextPage = () => {
         {/* Rewards */}
         <div className="flex flex-col gap-y-6 max-w-max">
           <p className="opacity-70">Rewards</p>
-          {farm?.rewards.map((reward: RewardType, index: number) => (
+          {farm?.rewards.map((reward, index) => (
             <div
               className="flex items-center justify-between gap-x-[61px]"
               key={index}
@@ -230,12 +223,12 @@ const FarmPage: NextPage = () => {
         <div>
           <p className="opacity-70">Assets</p>
           <div className="flex flex-col items-start gap-y-3 mt-6">
-            {farm?.asset.logos.map((asset: any, index: number) => (
+            {farm?.asset.logos.map((logo, index) => (
               <div key={index} className="flex gap-x-5 items-center">
                 <div className="flex rounded-full overflow-hidden ring-[3px] ring-[#01050D]">
-                  <Image height={48} width={48} src={asset} alt={asset} />
+                  <Image height={48} width={48} src={logo} alt={logo} />
                 </div>
-                <p>{asset.trim().slice(61, -4)}</p>
+                <p>{logo.trim().slice(61, -4)}</p>
               </div>
             ))}
           </div>
