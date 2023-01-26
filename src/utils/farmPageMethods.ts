@@ -22,7 +22,7 @@ export function calcTotalRewardValue(rewards: RewardType[]) {
  *
  * @param reward - Any particular rewards of a Farm
  * @param totalValue - Total values of Rewards
- * @returns - Percentage of that reward's value in total value
+ * @returns Percentage of that reward's value in total value
  */
 export function calcAssetPercentage(reward: RewardType, totalValue: number) {
   return ((reward.valueUSD * 100) / totalValue).toFixed(2);
@@ -30,8 +30,8 @@ export function calcAssetPercentage(reward: RewardType, totalValue: number) {
 
 /**
  *
- * @param protocolName - Protocol whose URL is required
- * @returns - Protocol URL
+ * @param protocolName - Protocol whose URL is needed
+ * @returns Protocol URL
  */
 export function protocolURL(protocolName: string): string {
   const protocol = protocolName.toLowerCase();
@@ -48,13 +48,15 @@ export function protocolURL(protocolName: string): string {
   else if (protocol == "karura dex") return "https://apps.karura.network/";
   else if (protocol == "mangata x") return "https://x.mangata.finance/";
   else if (protocol == "sirius") return "https://www.sirius.finance/";
+  else if (protocol == "demeter")
+    return "https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Ceres%2BToken%2B-%2BDemeter%2BLitepaper%2B09.12.2021.pdf";
   return "";
 }
 
 /**
  *
- * @param protocolName - Chain whose URL is required
- * @returns - Chain URL
+ * @param chainName - Chain whose URL is needed
+ * @returns Chain URL
  */
 export function chainURL(chainName: any): string {
   const chain = chainName.toLowerCase();
@@ -65,13 +67,14 @@ export function chainURL(chainName: any): string {
   else if (chain == "acala") return "https://acala.network/";
   else if (chain == "karura") return "https://acala.network/karura";
   else if (chain == "mangata kusama") return "https://www.mangata.finance/";
+  else if (chain == "sora") return "https://sora.org/";
   return "";
 }
 
 /**
  *
  * @param farmType - Type of farm
- * @returns - Copy of that Farm type
+ * @returns Copy content of that farm type
  */
 export function farmTypeDesc(farmType: string): string {
   if (farmType.toLowerCase() == "stableamm") {
