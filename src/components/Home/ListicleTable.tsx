@@ -85,7 +85,7 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col border-t-2 border-t-gray-800 border-opacity-50">
       <div>
         <div className="inline-block min-w-full align-middle">
           {!noResult ? (
