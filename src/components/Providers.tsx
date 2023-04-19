@@ -32,18 +32,12 @@ const client = createClient({
 // Creating React-Query Client
 const queryClient = new QueryClient();
 
-const Providers = ({
-  children,
-  initialState,
-}: {
-  children: ReactNode;
-  initialState: any;
-}) => {
+const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <WagmiConfig client={client}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class">
-          <JotaiProvider initialValues={initialState}>
+          <JotaiProvider>
             <NextNProgress color="#0073B7" />
             {children}
           </JotaiProvider>

@@ -34,11 +34,10 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [router]);
 
-  const { initialState } = pageProps;
   useAnalyticsSetup(FATHOM_CODE);
 
   return (
-    <Providers initialState={initialState}>
+    <Providers>
       <Layout>
         <Component {...pageProps} />
       </Layout>
