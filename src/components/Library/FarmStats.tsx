@@ -1,5 +1,5 @@
 import { FC, memo } from "react";
-import CountUp from "react-countup";
+// import CountUp from "react-countup";
 import { tvlFormatter } from "@utils/statsMethods";
 
 type FarmStatsProps = {
@@ -18,7 +18,7 @@ const FarmStats: FC<FarmStatsProps> = ({
     <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white sm:opacity-60">
       <div>
         <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
-          <CountUp
+          {/* <CountUp
             start={0}
             end={tvl}
             duration={0.75}
@@ -27,7 +27,8 @@ const FarmStats: FC<FarmStatsProps> = ({
             decimal="."
             prefix="$"
             suffix={suffix}
-          />
+          /> */}
+          {`${tvl}${suffix}`}
         </p>
         <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
           TVL
@@ -42,7 +43,8 @@ const FarmStats: FC<FarmStatsProps> = ({
 const Stat = ({ value, title }: { value: number; title: string }) => (
   <div>
     <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
-      <CountUp start={0} end={value} duration={0.75} delay={0} />
+      {/* <CountUp start={0} end={value} duration={0.75} delay={0} /> */}
+      {value}
     </p>
     <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
       {title}
