@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { FC } from "react";
-import CountUp from "react-countup";
+// import CountUp from "react-countup";
 import { useAccount } from "wagmi";
 import ClientOnly from "@components/Library/ClientOnly";
 import Tooltip from "@components/Library/Tooltip";
@@ -57,10 +57,12 @@ const Hero: FC<{ userCount: number; userRank: number; ownsNft: boolean }> = ({
                 <span className="flex-auto">Reward</span>
                 {/* values */}
                 <span className="flex-auto text-[40px] leading-[51px]">
-                  <CountUp start={0} end={userCount} duration={0.5} />
+                  {/* <CountUp start={0} end={userCount} duration={0.5} /> */}
+                  {userCount}
                 </span>
                 <span className="flex-auto text-[40px] leading-[51px]">
-                  <CountUp start={0} end={userRank} duration={0.5} />
+                  {/* <CountUp start={0} end={userRank} duration={0.5} /> */}
+                  {userRank}
                 </span>
                 <Tooltip content={nftTooltip(userCount, ownsNft)}>
                   <div
