@@ -11,6 +11,8 @@ export const LEADERBOARD_API_DEV = process.env
 // KEYS
 export const FATHOM_CODE = process.env.NEXT_PUBLIC_FATHOM_CODE as string;
 export const AMPLITUDE_CODE = process.env.NEXT_PUBLIC_AMPLITUDE_CODE as string;
+export const WALLET_CONNECT_PROJECT_ID = process.env
+  .NEXT_PUBLIC_WALLETCONNECT_ID as string;
 
 // APPLICATION
 export const SITE_NAME = "list.yieldbay.io";
