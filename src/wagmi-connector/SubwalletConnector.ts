@@ -5,17 +5,19 @@ import {
   Chain,
   ConnectorNotFoundError,
   InjectedConnector,
-  ResourceUnavailableError,
+  InjectedConnectorOptions,
+} from "@wagmi/core";
+import {
   RpcError,
   UserRejectedRequestError,
-} from "@wagmi/core";
-import { InjectedConnectorOptions } from "@wagmi/core/dist/declarations/src/connectors/injected";
+  ResourceUnavailableRpcError,
+} from "viem";
 
-export interface WagmiSubConnectOptions extends InjectedConnectorOptions {}
+export interface SubwalletConnectorOptions extends InjectedConnectorOptions {}
 
 type WagmiConstructorParams = {
   chains?: Chain[];
-  options?: WagmiSubConnectOptions;
+  options?: SubwalletConnectorOptions;
 };
 
 export class SubWalletConnector extends InjectedConnector {
@@ -28,7 +30,7 @@ export class SubWalletConnector extends InjectedConnector {
       options: {
         name: "SubWallet",
         shimDisconnect: true,
-        shimChainChangedDisconnect: true,
+        // shimChainChangedDisconnect: true,
         ..._options,
       },
     });
@@ -59,10 +61,11 @@ export class SubWalletConnector extends InjectedConnector {
       }
 
       return { account, chain: { id, unsupported }, provider };
-    } catch (e) {
+    } catch (e: any) {
       if (this.isUserRejectedRequestError(e))
         throw new UserRejectedRequestError(e);
-      if ((<RpcError>e).code === -32002) throw new ResourceUnavailableError(e);
+      if ((<RpcError>e).code === -32002)
+        throw new ResourceUnavailableRpcError(e);
 
       throw e;
     }
@@ -70,7 +73,6 @@ export class SubWalletConnector extends InjectedConnector {
 
   async getProvider() {
     if (typeof window === "undefined") return;
-
     return window.SubWallet;
   }
 }
