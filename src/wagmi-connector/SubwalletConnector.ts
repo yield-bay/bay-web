@@ -3,15 +3,9 @@
 
 import {
   Chain,
-  ConnectorNotFoundError,
   InjectedConnector,
   InjectedConnectorOptions,
 } from "@wagmi/core";
-import {
-  RpcError,
-  UserRejectedRequestError,
-  ResourceUnavailableRpcError,
-} from "viem";
 
 export interface SubwalletConnectorOptions extends InjectedConnectorOptions {}
 
@@ -30,45 +24,9 @@ export class SubWalletConnector extends InjectedConnector {
       options: {
         name: "SubWallet",
         shimDisconnect: true,
-        // shimChainChangedDisconnect: true,
         ..._options,
       },
     });
-  }
-
-  async connect({ chainId }: { chainId?: number } = {}) {
-    try {
-      const provider = await this.getProvider();
-      if (!provider) throw new ConnectorNotFoundError();
-
-      if (provider.on) {
-        provider.on("accountsChanged", this.onAccountsChanged);
-        provider.on("chainChanged", this.onChainChanged);
-        provider.on("disconnect", this.onDisconnect);
-      }
-
-      this.emit("message", { type: "connecting" });
-
-      const account = await this.getAccount();
-      // Switch to chain if provided
-      let id = await this.getChainId();
-      let unsupported = this.isChainUnsupported(id);
-
-      if (chainId && id !== chainId) {
-        const chain = await this.switchChain(chainId);
-        id = chain.id;
-        unsupported = this.isChainUnsupported(id);
-      }
-
-      return { account, chain: { id, unsupported }, provider };
-    } catch (e: any) {
-      if (this.isUserRejectedRequestError(e))
-        throw new UserRejectedRequestError(e);
-      if ((<RpcError>e).code === -32002)
-        throw new ResourceUnavailableRpcError(e);
-
-      throw e;
-    }
   }
 
   async getProvider() {

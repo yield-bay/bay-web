@@ -32,7 +32,7 @@ export default function ConnectWallet() {
       <div className="items-center justify-center">
         <button
           onClick={openModal}
-          className="flex flex-row items-center justify-center ring-1 text-base ring-[#314584] hover:ring-[#455b9c] text-white font-semibold rounded-xl leading-5 transition duration-200 py-[10.5px] px-4 sm:py-[12px] sm:px-[33px]"
+          className="flex flex-row items-center justify-center ring-1 font-semibold text-sm leading-[16.94px] bg-[#37376A] text-white rounded-lg transition duration-200 py-[10.5px] px-4 sm:py-[10px] sm:px-4"
         >
           Connect Wallet
         </button>
@@ -63,7 +63,7 @@ export default function ConnectWallet() {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="border font-inter border-[#314584] w-full max-w-fit text-base font-bold text-white leading-5 transform overflow-hidden rounded-2xl bg-[#010C1D] px-12 py-8 sm:p-[40px] text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="font-inter w-full max-w-fit text-base font-bold text-white leading-5 transform overflow-hidden rounded-2xl bg-[#010C1D] px-12 py-8 sm:p-[40px] text-left align-middle shadow-xl transition-all">
                   <Dialog.Title as="h3">Select Wallet</Dialog.Title>
 
                   <div className="mt-8 flex flex-col gap-y-4">
