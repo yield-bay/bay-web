@@ -17,11 +17,11 @@ const connectors = [
   new MetaMaskConnector({
     options: { shimDisconnect: true },
   }),
-  new WalletConnectConnector({
-    options: {
-      projectId: WALLET_CONNECT_PROJECT_ID,
-    },
-  }),
+  // new WalletConnectConnector({
+  //   options: {
+  //     projectId: WALLET_CONNECT_PROJECT_ID,
+  //   },
+  // }),
   new TalismanConnector({
     options: {
       name: "Talisman",

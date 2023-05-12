@@ -1,11 +1,12 @@
 {
   "name": "yieldbay",
-  "version": "2.0.0",
+  "version": "3.0.1",
+  "author": "yield-bay",
   "description": "discover and earn yield from polkadot and kusama paraverse",
-  "repository": "git@github.com:yield-bay/bay-listicle-v2.git",
-  "bugs": "https://github.com/yield-bay/bay-listicle-v2/issues",
+  "license": "GPL-3.0-or-later",
+  "repository": "git@github.com:yield-bay/bay-web.git",
+  "bugs": "https://github.com/yield-bay/bay-web/issues",
   "homepage": "https://list.yieldbay.io",
-  "license": "unlicensed",
   "private": true,
   "scripts": {
     "dev": "next",

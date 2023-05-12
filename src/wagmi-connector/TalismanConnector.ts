@@ -22,7 +22,6 @@ export class TalismanConnector extends InjectedConnector {
       options: {
         name: "Talisman",
         shimDisconnect: true,
-        // shimChainChangedDisconnect: true,
         ..._options,
       },
     });
