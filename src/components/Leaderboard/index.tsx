@@ -16,6 +16,7 @@ import {
   LEADERBOARD_API_DEV,
   LEADERBOARD_API_PROD,
 } from "@utils/constants";
+import { useRouter } from "next/router";
 
 /**
  *
@@ -65,6 +66,12 @@ function findUserRank(
 }
 
 const Leaderboard: NextPage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/404");
+  }, []);
+
   // Hooks
   const { address, isConnected } = useAccount();
   const screenSize = useScreenSize();

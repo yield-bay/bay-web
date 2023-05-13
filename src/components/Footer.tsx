@@ -8,15 +8,11 @@ type LinkProps = {
 export default function Footer() {
   const ecosystem: LinkProps[] = [
     {
-      title: "Home",
+      title: "Landing",
       link: "https://www.yieldbay.io/",
     },
     {
       title: "App",
-      link: "https://app.yieldbay.io/",
-    },
-    {
-      title: "Farms List",
       link: "https://list.yieldbay.io/",
     },
   ];

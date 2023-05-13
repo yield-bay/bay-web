@@ -50,7 +50,7 @@ export default function HeaderMenu({
                 </button>
               )}
             </Menu.Item>
-            <Menu.Item>
+            {/* <Menu.Item>
               {({ active }) => (
                 <button
                   className={`${
@@ -63,7 +63,7 @@ export default function HeaderMenu({
                   Leaderboard
                 </button>
               )}
-            </Menu.Item>
+            </Menu.Item> */}
           </Menu.Items>
         </Transition>
       </Menu>
