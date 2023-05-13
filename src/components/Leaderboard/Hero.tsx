@@ -35,7 +35,7 @@ const Hero: FC<{ userCount: number; userRank: number; ownsNft: boolean }> = ({
   return (
     <div className="sm:bg-hero-gradient z-0">
       {/* heading / description / stats board */}
-      <div className="font-spaceGrotesk mx-auto max-w-lg md:max-w-2xl pt-1 pb-[87px] sm:py-11 md:pt-16 md:pb-[115px]">
+      <div className="mx-auto max-w-lg md:max-w-2xl pt-1 pb-[87px] sm:py-11 md:pt-16 md:pb-[115px]">
         <p
           className="mb-9 sm:mb-6 px-4 font-bold text-2xl sm:text-3xl md:text-[40px] leading-[30.62px] sm:leading-10 md:leading-[51px] text-center text-[#D9D9D9]"
           id="hero-heading"

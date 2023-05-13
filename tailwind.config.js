@@ -17,10 +17,12 @@ module.exports = {
         blueSilver: "#E2E8FF",
         bodyGray: "#EEF1FC",
         mediumGray: "#838383",
+        success300: "#C5FFDC",
+        success500: "#12B76A",
+        success700: "#027A48",
       },
       fontFamily: {
         inter: ["Inter", ...defaultTheme.fontFamily.sans],
-        spaceGrotesk: ["Space Grotesk", ...defaultTheme.fontFamily.sans],
         montserrat: ["Montserrat", ...defaultTheme.fontFamily.sans],
       },
       boxShadow: {
@@ -41,6 +43,8 @@ module.exports = {
       "bg-pattern": "url('/Pattern.png')",
       "hero-gradient":
         "linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #01050D 100%)",
+      "hero-gradient-new":
+        "linear-gradient(180.12deg, #070813 22.59%, rgba(139, 105, 235, 0.47) 414.39%)",
       "hero-gradient-mob":
         "linear-gradient(180deg, rgba(3, 14, 33, 0) -21.54%, #01060F 100%)",
       "safety-scale":

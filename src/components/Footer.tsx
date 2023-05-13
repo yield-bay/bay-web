@@ -43,7 +43,7 @@ export default function Footer() {
           {/* LEFT SIDE */}
           <div className="sm:p-[10px] sm:pl-0">
             <div className="flex items-center justify-between">
-              <span className="font-bold font-spaceGrotesk text-white text-2xl sm:text-[32px] leading-[37.12px]">
+              <span className="font-bold text-white text-2xl sm:text-[32px] leading-[37.12px]">
                 yieldbay
               </span>
               <a
@@ -71,7 +71,7 @@ export default function Footer() {
               </p>
               <ul
                 role="list"
-                className="mt-4 space-y-4 text-base leading-4 font-bold font-spaceGrotesk"
+                className="mt-4 space-y-4 text-base leading-4 font-bold"
               >
                 {ecosystem.map((ele, index) => (
                   <List key={index} title={ele.title} link={ele.link} />
@@ -84,7 +84,7 @@ export default function Footer() {
               </p>
               <ul
                 role="list"
-                className="mt-4 space-y-4 text-base leading-4 font-bold font-spaceGrotesk"
+                className="mt-4 space-y-4 text-base leading-4 font-bold"
               >
                 {community.map((ele, index) => (
                   <List key={index} title={ele.title} link={ele.link} />

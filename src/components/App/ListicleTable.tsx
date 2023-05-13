@@ -212,7 +212,7 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
               </table>
             </div>
           ) : (
-            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 font-spaceGrotesk text-base font-bold text-bodyGray leading-5">
+            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 text-base font-bold text-bodyGray leading-5">
               <p>No Results. Try searching for something else.</p>
             </div>
           )}

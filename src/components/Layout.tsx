@@ -8,7 +8,7 @@ interface Props {
 
 const Layout: FC<Props> = ({ children }) => {
   return (
-    <div className="flex flex-col min-h-screen font-inter bg-baseBlue text-white bg-bg-pattern">
+    <div className="flex flex-col min-h-screen font-inter bg-baseBlue text-white">
       <Header />
       {children}
       <Footer />

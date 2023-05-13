@@ -15,41 +15,19 @@ const FarmStats: FC<FarmStatsProps> = ({
 }) => {
   const [tvl, suffix] = tvlFormatter(totalTVL);
   return (
-    <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white sm:opacity-60">
-      <div>
-        <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
-          {/* <CountUp
-            start={0}
-            end={tvl}
-            duration={0.75}
-            separator=","
-            decimals={2}
-            decimal="."
-            prefix="$"
-            suffix={suffix}
-          /> */}
-          {`${tvl}${suffix}`}
-        </p>
-        <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
-          TVL
+    <div className="inline-flex items-center gap-x-2 py-1 pl-[6px] pr-3 rounded-full bg-[#E7F8F354] bg-opacity-30 mix-blend-normal">
+      <div className="rounded-full bg-success300 inline-flex items-center gap-x-1 pl-[6px] pr-2 py-[2px] ">
+        <div className="rounded-full w-[6px] h-[6px] bg-success500" />
+        <p className="font-inter font-medium text-[13px] leading-[18px] text-success700">
+          Tracking ${tvl}
+          {suffix} TVL
         </p>
       </div>
-      <Stat value={totalFarms} title="Farms" />
-      <Stat value={totalProtocols} title="Protocols" />
+      <p>
+        across {totalFarms} Farms and {totalProtocols} Protocols
+      </p>
     </div>
   );
 };
-
-const Stat = ({ value, title }: { value: number; title: string }) => (
-  <div>
-    <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
-      {/* <CountUp start={0} end={value} duration={0.75} delay={0} /> */}
-      {value}
-    </p>
-    <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
-      {title}
-    </p>
-  </div>
-);
 
 export default memo(FarmStats);

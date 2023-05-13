@@ -26,30 +26,25 @@ const Hero: FC<Props> = ({
   return (
     <div className="bg-hero-gradient-mob sm:bg-hero-gradient">
       {/* Center Container */}
-      <div className="mx-auto max-w-lg md:max-w-2xl py-6 sm:py-11 md:py-[60px]">
+      <div className="mx-auto max-w-lg md:max-w-2xl py-10">
         <h1
-          className="mb-11 sm:mb-6 font-spaceGrotesk font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
+          className="mb-11 sm:mb-4 font-inter font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
           id="hero-heading"
         >
           discover & earn yield from polkadot and kusama paraverse
         </h1>
-        <div className="flex justify-center">
-          <div
-            className="w-max cursor-pointer hover:scale-[1.02] transition-all duration-200"
-            onClick={() => setProtocolModalOpen(true)}
-          >
-            <FarmStats
-              totalTVL={tvlCount(farms)}
-              totalFarms={farms.length}
-              totalProtocols={protocolCount(farms)}
-            />
-          </div>
+        <div className="flex justify-center w-full">
+          <FarmStats
+            totalTVL={tvlCount(farms)}
+            totalFarms={farms.length}
+            totalProtocols={protocolCount(farms)}
+          />
         </div>
       </div>
       <div
         className="flex flex-col-reverse sm:flex-row items-center justify-between border-y sm:border-none border-[#334380] border-opacity-60
                           mt-8 sm:mt-0 py-0 sm:py-10 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-28 bg-hero-gradient-mob
-                          font-spaceGrotesk font-medium text-base text-blueSilver leading-5"
+                          font-medium text-base text-blueSilver leading-5"
       >
         <div className="flex items-center py-5 sm:py-0 px-9 sm:px-0 justify-between w-full sm:w-max sm:gap-x-5">
           <div className="hidden sm:block">
