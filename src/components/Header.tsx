@@ -43,7 +43,7 @@ const Profile = () => {
 
 export default function Header() {
   return (
-    <div className="relative w-full font-inter px-9 sm:px-11 lg:px-[72px] py-[38px] sm:py-12 z-10 font-bold text-base leading-6 sm:leading-8 text-white transition duration-200">
+    <div className="relative w-full px-9 sm:px-11 lg:px-[72px] py-[38px] sm:py-12 z-10 font-bold text-base leading-6 sm:leading-8 text-white transition duration-200">
       <div className="w-full flex justify-between items-center">
         <Link href="/">
           <div className="flex flex-col justify-center cursor-pointer">

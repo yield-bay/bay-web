@@ -1,4 +1,4 @@
-const defaultTheme = require("tailwindcss/defaultTheme");
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -22,8 +22,9 @@ module.exports = {
         success700: "#027A48",
       },
       fontFamily: {
-        inter: ["Inter", ...defaultTheme.fontFamily.sans],
-        montserrat: ["Montserrat", ...defaultTheme.fontFamily.sans],
+        inter: ["Inter", ...fontFamily.sans],
+        montserrat: ["Montserrat", ...fontFamily.sans],
+        satoshi: ["var(--font-satoshi)", ...fontFamily.sans],
       },
       boxShadow: {
         tooltipLight: "0px 0px 5px #A2C4FF",
@@ -51,5 +52,5 @@ module.exports = {
         "linear-gradient(270deg, #67C84B 0%, #F5AF46 48.46%, #C8524B 102.25%)",
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 };

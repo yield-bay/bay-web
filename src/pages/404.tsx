@@ -15,7 +15,7 @@ const Custom404: NextPage = () => {
           uh oh, seem like this page does not exist.
         </p>
         <Link href="/">
-          <p className="underline cursor-pointer text-white opacity-70 font-inter font-semibold text-lg sm:text-xl md:text-2xl">
+          <p className="underline cursor-pointer text-white opacity-70 font-semibold text-lg sm:text-xl md:text-2xl">
             go to homepage
           </p>
         </Link>

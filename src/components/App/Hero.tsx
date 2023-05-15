@@ -28,7 +28,7 @@ const Hero: FC<Props> = ({
       {/* Center Container */}
       <div className="mx-auto max-w-lg md:max-w-2xl py-10">
         <h1
-          className="mb-11 sm:mb-4 font-inter font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
+          className="mb-11 sm:mb-4 font-satoshi font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
           id="hero-heading"
         >
           discover & earn yield from polkadot and kusama paraverse
