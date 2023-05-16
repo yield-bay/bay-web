@@ -61,7 +61,6 @@ const Providers = ({ children }: { children: ReactNode }) => {
       walletsOrder.includes(wallet.extensionName)
     );
     if (!unmounted) {
-      console.log("supportedWallets", supportedWallets);
       setWallets(supportedWallets);
     }
     return () => {

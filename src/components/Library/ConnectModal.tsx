@@ -16,10 +16,6 @@ const ConnectModal: FC = () => {
   const [, setWallet] = useAtom(dotWalletAtom);
   const [, setAccount] = useAtom(dotAccountAtom);
 
-  useEffect(() => {
-    console.log("wallets inside connect wallet modal", wallets);
-  }, [wallets]);
-
   const connected = walletAccounts !== null;
 
   return (
