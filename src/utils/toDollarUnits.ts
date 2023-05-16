@@ -1,7 +1,7 @@
 /**
  *
  * @param num - Number to convert into Dollar Notation
- * @returns - Coneverted amounts in Dollars
+ * @returns - Converted amounts in Dollars
  */
 export default function toDollarUnits(num: number): string {
   if (num >= 1000000) {

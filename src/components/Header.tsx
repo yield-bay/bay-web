@@ -1,44 +1,28 @@
-import { useEffect } from "react";
 import Link from "next/link";
-import { useAccount } from "wagmi";
-import { useAtom } from "jotai";
-import { hashAtom } from "@store/atoms";
-import LeaderBanner from "@components/Library/LeaderBanner";
 import HeaderMenu from "@components/Library/HeaderMenu";
-import ConnectWallet from "@components/Library/ConnectWallet";
-import axios from "axios";
-import {
-  IS_PRODUCTION,
-  LEADERBOARD_API_PROD,
-  LEADERBOARD_API_DEV,
-} from "@utils/constants";
-
-async function fetchUserHash(address: `0x${string}` | undefined) {
-  const query = { address };
-  try {
-    const userHashData = await axios.post(
-      (IS_PRODUCTION ? LEADERBOARD_API_PROD : LEADERBOARD_API_DEV) + "user",
-      JSON.stringify(query)
-    );
-    return userHashData.data.hash;
-  } catch (error) {
-    console.error(error);
-  }
-}
+import ConnectWalletEvm from "@components/Library/ConnectWalletEvm";
+import ConnectWalletDot from "@components/Library/ConnectWalletDot";
+import ClientOnly from "./Library/ClientOnly";
+import { useAccount } from "wagmi";
 
 const Profile = () => {
   const { address, isConnected } = useAccount();
-  const [_, setHash] = useAtom(hashAtom);
-
-  useEffect(() => {
-    if (isConnected) {
-      fetchUserHash(address).then((_hash) => {
-        setHash(_hash);
-      });
-    }
-  }, [isConnected]);
-
-  return isConnected ? <HeaderMenu address={address} /> : <ConnectWallet />;
+  return (
+    <ClientOnly>
+      <div className="inline-flex gap-x-3 items-center">
+        {/* EVM Wallet */}
+        <div>
+          {isConnected ? (
+            <HeaderMenu address={address} />
+          ) : (
+            <ConnectWalletEvm />
+          )}
+        </div>
+        {/* Polkadot Wallet */}
+        <ConnectWalletDot />
+      </div>
+    </ClientOnly>
+  );
 };
 
 export default function Header() {
@@ -53,7 +37,6 @@ export default function Header() {
           </div>
         </Link>
         <div className="inline-flex items-center gap-x-4">
-          {/* <LeaderBanner /> */}
           <Profile />
         </div>
       </div>

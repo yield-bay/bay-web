@@ -4,7 +4,7 @@ import { useConnect } from "wagmi";
 import { Transition, Dialog } from "@headlessui/react";
 import ClientOnly from "@components/Library/ClientOnly";
 
-export default function ConnectWallet() {
+export default function ConnectWalletEvm() {
   const { connect, connectors } = useConnect();
   let [isOpen, setIsOpen] = useState(false);
 
@@ -34,7 +34,7 @@ export default function ConnectWallet() {
           onClick={openModal}
           className="flex flex-row items-center justify-center ring-1 font-semibold text-sm leading-[16.94px] bg-[#37376A] text-white rounded-lg transition duration-200 py-[10.5px] px-4 sm:py-[10px] sm:px-4"
         >
-          Connect Wallet
+          Connect EVM Wallet
         </button>
       </div>
 

@@ -1,7 +1,7 @@
-import React from "react";
+import { ReactNode, memo } from "react";
 
 type ButtonProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   size: "small" | "base" | "large";
   style?: string;
   onButtonClick?: () => void;
@@ -24,4 +24,4 @@ const Button = ({ children, size, style, onButtonClick }: ButtonProps) => {
   );
 };
 
-export default React.memo(Button);
+export default memo(Button);

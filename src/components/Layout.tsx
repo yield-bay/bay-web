@@ -3,6 +3,7 @@ import Footer from "./Footer";
 import Header from "./Header";
 import { satoshiFont } from "@utils/localFont";
 import clsx from "clsx";
+import ConnectModal from "./Library/ConnectModal";
 
 interface Props {
   children: ReactNode;
@@ -16,6 +17,7 @@ const Layout: FC<Props> = ({ children }) => {
         satoshiFont.variable
       )}
     >
+      <ConnectModal />
       <Header />
       {children}
       <Footer />
