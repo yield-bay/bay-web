@@ -50,20 +50,6 @@ export default function HeaderMenu({
                 </button>
               )}
             </Menu.Item>
-            {/* <Menu.Item>
-              {({ active }) => (
-                <button
-                  className={`${
-                    active ? "text-gray-200" : "text-white"
-                  } group flex p-5 w-full items-center rounded-b-md font-medium text-base leading-5`}
-                  onClick={() => {
-                    router.push(`/leaderboard`);
-                  }}
-                >
-                  Leaderboard
-                </button>
-              )}
-            </Menu.Item> */}
           </Menu.Items>
         </Transition>
       </Menu>

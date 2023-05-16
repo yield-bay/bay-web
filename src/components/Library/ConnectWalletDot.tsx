@@ -275,24 +275,17 @@ const DisconnectAccountModal: FC<DisconnectModalProps> = ({
 };
 
 const ConnectWalletDot = () => {
-  const [account] = useAtom(dotAccountAtom);
   const [wallets] = useAtom(dotWalletsAtom);
   useEffect(() => {
     console.log("Wallets in ConnetWalletDot", wallets);
   }, [wallets]);
 
   return (
-    <>
-      {account == null ? (
+    <div className="flex flex-col gap-y-4">
+      <SelectAccountMenu>
         <ConnectWalletButton />
-      ) : (
-        <div className="flex flex-col gap-y-4">
-          <SelectAccountMenu>
-            <ConnectWalletButton />
-          </SelectAccountMenu>
-        </div>
-      )}
-    </>
+      </SelectAccountMenu>
+    </div>
   );
 };
 
