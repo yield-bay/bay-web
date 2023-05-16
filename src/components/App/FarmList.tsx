@@ -60,7 +60,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
             <td className="whitespace-nowrap py-8 pl-0 pr-2 text-blueSilver font-bold text-base leading-5 tracking-wide">
               <div className="w-full inline-flex justify-end items-center gap-x-2">
                 <Tooltip
-                  content={
+                  label={
                     <>
                       <p>
                         Base:{" "}
@@ -76,6 +76,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
                       </p>
                     </>
                   }
+                  placement="top"
                 >
                   <p className="cursor-pointer underline underline-offset-4 decoration-dotted	decoration-3 decoration-blueSilver">
                     {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%

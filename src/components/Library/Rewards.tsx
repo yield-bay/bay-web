@@ -14,7 +14,7 @@ export default function Rewards({ rewards }: RewardsProps) {
   return (
     <div className="flex justify-end w-full">
       <Tooltip
-        content={
+        label={
           <div>
             {rewards.map((reward, index) => (
               <div

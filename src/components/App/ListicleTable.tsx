@@ -117,12 +117,13 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
                     >
                       <div className="flex justify-end items-center">
                         <Tooltip
-                          content={
+                          label={
                             <span>
                               Total Value Locked. Amount of money currently
                               invested in the farm, denoted in USD.
                             </span>
                           }
+                          placement="top"
                         >
                           <div>
                             <span>TVL</span>
@@ -147,12 +148,13 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
                       }}
                     >
                       <Tooltip
-                        content={
+                        label={
                           <span>
                             The percentage of returns the farm offers on staking
                             for an year.
                           </span>
                         }
+                        placement="top"
                       >
                         <div>
                           <span>APR</span>
@@ -182,9 +184,10 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
                       }}
                     >
                       <Tooltip
-                        content={
+                        label={
                           <span>Score indicates the reliability of a farm</span>
                         }
+                        placement="top"
                       >
                         <div>
                           <span>Safety Score</span>

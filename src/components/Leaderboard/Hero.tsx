@@ -64,7 +64,7 @@ const Hero: FC<{ userCount: number; userRank: number; ownsNft: boolean }> = ({
                   {/* <CountUp start={0} end={userRank} duration={0.5} /> */}
                   {userRank}
                 </span>
-                <Tooltip content={nftTooltip(userCount, ownsNft)}>
+                <Tooltip label={nftTooltip(userCount, ownsNft)}>
                   <div
                     className={`overflow-hidden h-12 w-full flex justify-center ${
                       ownsNft ? "opacity-100" : "opacity-50"

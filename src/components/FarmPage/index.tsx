@@ -169,9 +169,7 @@ const FarmPage: NextPage = () => {
                     className="rounded-full max-h-max"
                   />
                 </div>
-                <Tooltip
-                  content={<div>{"$" + reward.valueUSD.toFixed(1)}</div>}
-                >
+                <Tooltip label={<div>{"$" + reward.valueUSD.toFixed(1)}</div>}>
                   <p>
                     {parseFloat(reward.amount.toFixed(1)).toLocaleString(
                       "en-US"
