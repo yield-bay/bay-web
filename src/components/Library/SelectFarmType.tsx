@@ -31,7 +31,11 @@ export default function SelectFarmType() {
             <span className="block truncate">{selectedFarmType.name}</span>
             <span className="pointer-events-none flex items-center">
               <ChevronDownIcon
-                className="h-4 w-4 text-white"
+                className={classNames(
+                  "h-4 w-4 text-white",
+                  open ? "rotate-180" : "rotate-0",
+                  "transition-all duration-300"
+                )}
                 aria-hidden="true"
               />
             </span>
@@ -59,16 +63,14 @@ export default function SelectFarmType() {
                   value={farmType}
                 >
                   {({ selected, active }) => (
-                    <>
-                      <span
-                        className={classNames(
-                          selected ? "text-primaryBlue" : "text-white",
-                          "block truncate"
-                        )}
-                      >
-                        {farmType.name}
-                      </span>
-                    </>
+                    <span
+                      className={classNames(
+                        selected ? "text-primaryBlue" : "text-white",
+                        "block truncate"
+                      )}
+                    >
+                      {farmType.name}
+                    </span>
                   )}
                 </Listbox.Option>
               ))}

@@ -21,6 +21,11 @@ export default function useFilteredFarmTypes(
   } else if (id == 4) {
     const filtered = farms.filter((farm) => farm?.farmType == "SingleStaking");
     return filtered;
+  } else if (id == 5) {
+    const filtered = farms.filter(
+      (farm) => farm?.farmType == "ConcentratedLiquidity"
+    );
+    return filtered;
   }
   return farms;
 }
