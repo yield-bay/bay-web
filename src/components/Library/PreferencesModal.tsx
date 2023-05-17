@@ -73,7 +73,7 @@ export default function PreferencesModal({
               <div className="w-full">
                 <Dialog.Title
                   as="h3"
-                  className="text-lg leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-[#181E27]"
+                  className="text-lg text-white leading-6 font-bold pl-9 py-4 border-b-[1.5px] border-[#181E27]"
                 >
                   All Listed Protocols
                 </Dialog.Title>
@@ -99,7 +99,9 @@ const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
       {farmTypes.map((item) => (
         <p
           className={
-            filterFarmType === item.id ? "text-primaryBlue font-bold" : ""
+            filterFarmType === item.id
+              ? "text-primaryBlue font-bold"
+              : "text-white"
           }
           onClick={() => {
             filterFarmTypeSet(item.id);
@@ -119,7 +121,7 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
   return (
     <div>
       {/* Depends on the "Key" of Sorting */}
-      <div className="px-9 py-6 inline-flex gap-x-[15px] w-full border-b-[1.5px] border-[#181E27]">
+      <div className="px-9 py-6 inline-flex gap-x-[15px] text-white w-full border-b-[1.5px] border-[#181E27]">
         <p className="font-bold">Sort By:</p>
         <p
           className={
@@ -155,7 +157,7 @@ const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
         </p>
       </div>
       {/* Depends on "ORDER" of sorting */}
-      <div className="px-9 py-6 inline-flex gap-x-[15px]">
+      <div className="px-9 py-6 text-white inline-flex gap-x-[15px]">
         <p className="font-bold">Order:</p>
         <p
           className={sortStatus.order === 1 ? "text-primaryBlue font-bold" : ""}
