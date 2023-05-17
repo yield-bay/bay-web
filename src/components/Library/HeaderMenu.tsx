@@ -1,28 +1,39 @@
-import { Fragment } from "react";
-import { useRouter } from "next/router";
+import { Fragment, useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import { Transition, Menu } from "@headlessui/react";
+import { useAccount, useDisconnect } from "wagmi";
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  ClipboardCopyIcon,
+} from "@heroicons/react/outline";
 import ClientOnly from "./ClientOnly";
-import { Menu } from "@headlessui/react";
-import { useDisconnect } from "wagmi";
-import { ChevronDownIcon } from "@heroicons/react/outline";
-import { Transition } from "@headlessui/react";
 
-export default function HeaderMenu({
-  address,
-}: {
+interface Props {
   address: `0x${string}` | undefined;
-}) {
-  const router = useRouter();
+}
+
+const HeaderMenu: React.FC<Props> = ({ address }) => {
   const { disconnect } = useDisconnect();
+  const [isCopied, setIsCopied] = useState(false);
+  const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
+
+  useEffect(() => {
+    // Clear timeout when component unmounts
+    return () => {
+      clearTimeout(timerRef.current as ReturnType<typeof setTimeout>);
+    };
+  }, []);
 
   return (
     <ClientOnly>
       <Menu as="div" className="relative inline-block text-left">
-        <Menu.Button className="flex flex-row items-center justify-center ring-1 text-base ring-[#314584] hover:ring-[#455b9c] text-white font-semibold rounded-xl leading-5 transition duration-200 py-[10.5px] px-4 sm:py-3 sm:px-8">
+        <Menu.Button className="inline-flex items-center font-semibold cursor-pointer text-sm leading-[16.94px] bg-[#36364D] text-white rounded-lg transition duration-200 py-[10px] px-4 sm:py-[10px] sm:px-4 focus:outline-none">
           <span>
             {address?.slice(0, 4)}...{address?.slice(-4)}
           </span>
           <ChevronDownIcon
-            className="ml-2 -mr-1 h-5 w-5 text-violet-200 hover:text-violet-100"
+            className="ml-2 -mr-1 h-5 w-5 text-white"
             aria-hidden="true"
           />
         </Menu.Button>
@@ -35,24 +46,60 @@ export default function HeaderMenu({
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="w-[11.5rem] border border-[#314584] absolute right-0 mt-2 origin-top-right divide-y divide-[#314584] divide-opacity-40 rounded-xl bg-[#010C1D] shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="w-[240px] absolute border border-[#EAECF0] right-0 mt-2 origin-top-right rounded-lg bg-white shadow-lg focus:outline-none">
+            <div className="inline-flex border-b border-[#EAECF0] justify-between items-center rounded-t-lg w-full py-3 px-4">
+              <div className="inline-flex items-center gap-x-3">
+                <div className="relative rounded-full h-10 w-10 bg-black bg-opacity-20">
+                  <div className="absolute right-0 bottom-0 h-[13px] w-[13px] bg-[#12B76A] rounded-full border-2 border-white" />
+                </div>
+                <p className="font-bold text-sm leading-5 text-[#475467]">
+                  {address?.slice(0, 4)}......{address?.slice(-4)}
+                </p>
+              </div>
+              <div
+                className="ml-6 cursor-pointer"
+                onClick={() => {
+                  navigator.clipboard.writeText(address as string);
+                  setIsCopied(true);
+                  timerRef.current = setTimeout(() => {
+                    setIsCopied(false);
+                  }, 500);
+                }}
+              >
+                {isCopied ? (
+                  <CheckCircleIcon className="h-6 w-6 text-green-500" />
+                ) : (
+                  <Image
+                    src="/icons/CopyIcon.svg"
+                    alt="Copy address"
+                    width={24}
+                    height={24}
+                  />
+                )}
+              </div>
+            </div>
             <Menu.Item>
-              {({ active }) => (
-                <button
-                  className={`${
-                    active ? "text-gray-200" : "text-white"
-                  } group flex p-5 w-full items-center rounded-t-md font-medium text-base leading-5`}
-                  onClick={() => {
-                    disconnect();
-                  }}
-                >
-                  Disconnect
-                </button>
-              )}
+              <button
+                className="inline-flex rounded-lg w-full items-center p-4 text-[#344054] text-sm leading-5 font-medium text-left rounded-t-xl hover:bg-[#FAFAFD]"
+                onClick={() => {
+                  disconnect();
+                }}
+              >
+                <Image
+                  src="/icons/LogOutIcon.svg"
+                  alt="Disconnect"
+                  height={16}
+                  width={16}
+                  className="mr-2"
+                />
+                Disconnect
+              </button>
             </Menu.Item>
           </Menu.Items>
         </Transition>
       </Menu>
     </ClientOnly>
   );
-}
+};
+
+export default HeaderMenu;

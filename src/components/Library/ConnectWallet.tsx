@@ -1,6 +1,13 @@
 import ClientOnly from "./ClientOnly";
 import { Menu, Transition } from "@headlessui/react";
-import { FC, Fragment, useEffect, useRef, useState } from "react";
+import {
+  FC,
+  Fragment,
+  PropsWithChildren,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import Link from "next/link";
 import { useAccount, useConnect } from "wagmi";
 import Image from "next/image";
@@ -12,6 +19,7 @@ import { APP_NAME } from "@utils/constants";
 import { dotAccountAtom, dotWalletAccountsAtom } from "@store/accountAtoms";
 import ConnectWalletDot from "./ConnectWalletDot";
 import HeaderMenu from "./HeaderMenu";
+import CButton from "./CButton";
 
 interface SelectAccountMenuProps {
   children: React.ReactNode;
@@ -26,7 +34,7 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
   const { connect, connectors } = useConnect();
   const [dotWallets] = useAtom(dotWalletsAtom); // All available wallets
   const [, setWallet] = useAtom(dotWalletAtom); // Selected Wallet
-  const [, setAccount] = useAtom(dotAccountAtom); // Selected Account
+  const [account, setAccount] = useAtom(dotAccountAtom); // Selected Account
   const [walletAccounts, setWalletAccounts] = useAtom(dotWalletAccountsAtom); // All accounts in selected wallet
 
   const formatWalletName = (walletName: string): string => {
@@ -109,7 +117,19 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
     <>
       <div className="inline-flex text-[11px] leading-[14.85px] justify-between pt-3 pb-2 px-4 text-left select-none">
         <span className="font-medium text-[#7E899C]">Connect Account</span>
-        <span className="font-semibold text-[#F19494]">Disconnect</span>
+        {account !== null && (
+          <button
+            onClick={() => {
+              // Clear all states to disconnect wallet
+              setWallet(null);
+              setWalletAccounts(null);
+              setAccount(null);
+            }}
+            className="font-semibold text-[#FE4C4C]"
+          >
+            Disconnect
+          </button>
+        )}
       </div>
       {walletAccounts && walletAccounts.length > 0 ? (
         <>
@@ -169,10 +189,10 @@ const SelectAccountMenu: FC<SelectAccountMenuProps> = ({ children }) => {
   const [account] = useAtom(dotAccountAtom);
 
   useEffect(() => {
-    if (isConnected) {
-      setWalletChoice(1);
-    } else if (account) {
+    if (account) {
       setWalletChoice(0);
+    } else if (isConnected) {
+      setWalletChoice(1);
     }
   }, []);
 
@@ -219,15 +239,80 @@ const SelectAccountMenu: FC<SelectAccountMenuProps> = ({ children }) => {
   );
 };
 
-const ConnectWalletButton = () => {
+const SelectDotAccountsMenu: FC<PropsWithChildren> = ({ children }) => {
+  const [, setWallet] = useAtom(dotWalletAtom); // Selected Wallet
+  const [account, setAccount] = useAtom(dotAccountAtom); // Selected Account
+  const [walletAccounts, setWalletAccounts] = useAtom(dotWalletAccountsAtom);
   return (
-    <ClientOnly>
-      <div className="items-center justify-center">
-        <div className="font-semibold cursor-pointer text-sm leading-[16.94px] bg-[#36364D] text-[#FCFCFF] rounded-lg transition duration-200 py-[10px] px-4 sm:py-[10px] sm:px-4 focus:outline-none">
-          Connect Wallet
-        </div>
-      </div>
-    </ClientOnly>
+    <Menu as="div" className="relative inline-block text-left text-[#344054]">
+      <Menu.Button>{children}</Menu.Button>
+      <Transition
+        as={Fragment}
+        // show={show}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute flex flex-col w-[250px] right-0 top-12 origin-top-right rounded-xl bg-white text-[##344054] border border-[#EAECF0] font-medium text-sm leading-5 focus:outline-none">
+          <div className="inline-flex text-[11px] leading-[14.85px] justify-between pt-3 pb-2 px-4 text-left select-none">
+            <span className="font-medium text-[#7E899C]">Connect Account</span>
+            {account !== null && (
+              <button
+                onClick={() => {
+                  // Clear all states to disconnect wallet
+                  setWallet(null);
+                  setWalletAccounts(null);
+                  setAccount(null);
+                }}
+                className="font-semibold text-[#FE4C4C]"
+              >
+                Disconnect
+              </button>
+            )}
+          </div>
+          {walletAccounts && walletAccounts.length > 0 ? (
+            <>
+              {walletAccounts?.map((account: WalletAccount, index) => (
+                <Menu.Item key={index}>
+                  <button
+                    className={clsx(
+                      "p-4 flex flex-col justify-center items-start border-b border-[#EAECF0] hover:bg-[#fafafd]"
+                    )}
+                    key={account.name}
+                    onClick={() => {
+                      console.log("selected account", account);
+                      setAccount(account);
+                    }}
+                  >
+                    <p>{account.name}</p>
+                    <p className="text-[#7E899C] text-[11px] leading-5">
+                      {account.address.slice(0, 15)}...
+                      {account.address.slice(-5)}
+                    </p>
+                  </button>
+                </Menu.Item>
+              ))}
+            </>
+          ) : (
+            <div className="text-left">
+              <p className="mb-5">No accounts found!</p>
+              <p>Please check if your wallet is connected and try again.</p>
+            </div>
+          )}
+          <div className="py-3 px-[21px] select-none flex flex-col gap-y-2 bg-[#F4F4FF] rounded-b-xl text-[11px] text-[#7E899C] leading-[14.85px] cursor-default">
+            <p>
+              Don’t have a self custodian wallet?{" "}
+              <Link href="#" className="underline underline-offset-2">
+                Start here
+              </Link>
+            </p>
+          </div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
   );
 };
 
@@ -243,7 +328,7 @@ const ConnectWallet = () => {
   }, [account]);
 
   return (
-    <div>
+    <ClientOnly>
       {isConnected || account ? (
         <div className="inline-flex gap-x-3">
           {isConnected && (
@@ -251,21 +336,23 @@ const ConnectWallet = () => {
               <HeaderMenu address={address} />
               {account == null && (
                 <SelectAccountMenu>
-                  <button className="px-[13px] text-xl font-semibold leading-6 bg-[#36364D] text-[#FCFCFF] rounded-lg">
+                  <div className="rounded-lg font-semibold text-xl leading-6 text-[#FCFCFF] bg-[#36364D] py-2 px-[13px]">
                     +
-                  </button>
+                  </div>
                 </SelectAccountMenu>
               )}
             </>
           )}
           {account && (
             <>
-              <ConnectWalletDot />
+              <SelectDotAccountsMenu>
+                <ConnectWalletDot />
+              </SelectDotAccountsMenu>
               {!isConnected && (
                 <SelectAccountMenu>
-                  <button className="px-[13px] text-xl font-semibold leading-6 bg-[#36364D] text-[#FCFCFF] rounded-lg">
+                  <div className="rounded-lg font-semibold text-xl leading-6 text-[#FCFCFF] bg-[#36364D] py-2 px-[13px]">
                     +
-                  </button>
+                  </div>
                 </SelectAccountMenu>
               )}
             </>
@@ -274,10 +361,10 @@ const ConnectWallet = () => {
       ) : (
         // When none of the wallets are connected
         <SelectAccountMenu>
-          <ConnectWalletButton />
+          <CButton variant="secondary">Connect Wallet</CButton>
         </SelectAccountMenu>
       )}
-    </div>
+    </ClientOnly>
   );
 };
 

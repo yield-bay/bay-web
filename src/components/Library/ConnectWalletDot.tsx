@@ -6,10 +6,10 @@ import { Menu, Transition } from "@headlessui/react";
 import { dotAccountAtom, dotWalletAccountsAtom } from "@store/accountAtoms";
 import { dotWalletAtom, dotWalletsAtom } from "@store/walletAtoms";
 import { CheckCircleIcon, ChevronDownIcon } from "@heroicons/react/outline";
-import useDetectOutsideClick from "@hooks/useDetectOutsideClick";
 import Button from "./Button";
 import ModalWrapper from "./ModalWrapper";
 import { walletModalOpenAtom } from "@store/commonAtoms";
+import CButton from "./CButton";
 
 interface SelectAccountMenuProps {
   children: React.ReactNode;
@@ -21,40 +21,6 @@ interface DisconnectModalProps {
 }
 
 const SelectAccountMenu: FC<SelectAccountMenuProps> = ({ children }) => {
-  const dropdownRef = useRef(null);
-  // NOTE: useDetectOutsideClick is not necessary with hover, useState(false) would do here
-  const [openDropdown, setOpenDropdown] = useDetectOutsideClick(
-    dropdownRef, // Element to detect
-    false // Initial state
-  );
-  const [mouseOverButton, setMouseOverButton] = useState(false);
-  const [mouseOverMenu, setMouseOverMenu] = useState(false);
-  const timeoutDuration = 200;
-  let timeoutButton: NodeJS.Timeout;
-  let timeoutMenu: NodeJS.Timeout;
-
-  const onMouseEnterButton = () => {
-    clearTimeout(timeoutButton);
-    setOpenDropdown(true);
-    setMouseOverButton(true);
-  };
-  const onMouseLeaveButton = () => {
-    timeoutButton = setTimeout(
-      () => setMouseOverButton(false),
-      timeoutDuration
-    );
-  };
-
-  const onMouseEnterMenu = () => {
-    clearTimeout(timeoutMenu);
-    setMouseOverMenu(true);
-  };
-  const onMouseLeaveMenu = () => {
-    timeoutMenu = setTimeout(() => setMouseOverMenu(false), timeoutDuration);
-  };
-
-  const show = openDropdown && (mouseOverMenu || mouseOverButton);
-
   const [walletAccounts] = useAtom(dotWalletAccountsAtom); // connected accounts in selected wallet
   const [account, setAccount] = useAtom(dotAccountAtom); // selected account
 
@@ -69,18 +35,10 @@ const SelectAccountMenu: FC<SelectAccountMenuProps> = ({ children }) => {
   }, []);
 
   return (
-    <Menu
-      as="div"
-      className="relative inline-block text-left"
-      onMouseEnter={onMouseEnterButton}
-      onMouseLeave={onMouseLeaveButton}
-      role="button"
-      tabIndex={0}
-    >
+    <Menu as="div" className="relative inline-block text-left">
       <Menu.Button>{children}</Menu.Button>
       <Transition
         as={Fragment}
-        show={show}
         enter="transition ease-out duration-100"
         enterFrom="transform opacity-0 scale-95"
         enterTo="transform opacity-100 scale-100"
@@ -88,13 +46,7 @@ const SelectAccountMenu: FC<SelectAccountMenuProps> = ({ children }) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items
-          className="absolute w-[250px] right-0 top-14 origin-top-right px-4 rounded-b-xl pt-5 pb-2 bg-white text-[#030303] focus:outline-none"
-          ref={dropdownRef}
-          onMouseEnter={onMouseEnterMenu}
-          onMouseLeave={onMouseLeaveMenu}
-          static
-        >
+        <Menu.Items className="absolute w-[250px] right-0 top-14 origin-top-right px-4 rounded-b-xl pt-5 pb-2 bg-white text-[#030303] focus:outline-none">
           {walletAccounts?.map((walletAccount, index) => {
             const active = walletAccount.address === account?.address;
             return (
@@ -166,72 +118,26 @@ const ConnectWalletButton: FC = () => {
   }, []);
 
   return (
-    <div
-      onClick={account == null ? () => setIsOpen(true) : () => {}}
-      className={clsx(
-        "flex flex-row items-center justify-center cursor-pointer ring-1 font-semibold text-sm leading-[16.94px] bg-[#37376A] text-white rounded-lg transition duration-200 py-[10.5px] px-4 sm:py-[10px] sm:px-4"
-        // account == null ? "hover:bg-offWhite" : "cursor-default"
-      )}
-    >
-      {account == null ? (
-        wallet == null ? (
-          <span>Connect Substrate Wallet</span>
-        ) : (
-          <span>Connect Account</span>
-        )
-      ) : (
-        <div className="inline-flex justify-between w-full">
-          <div className="inline-flex gap-x-1 items-center">
-            <span>
-              {account.name && account?.name.length > 10
-                ? `${account.name.slice(0, 10)}...`
-                : account.name}
-            </span>
-            <ChevronDownIcon className="w-6 h-6 text-[#797979]" />
-          </div>
-          <div className="inline-flex gap-x-2">
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                navigator.clipboard.writeText(account?.address);
-                setIsCopied(true);
-                timerRef.current = setTimeout(() => {
-                  setIsCopied(false);
-                }, 500);
-              }}
-            >
-              {isCopied ? (
-                <CheckCircleIcon className="h-6 w-6 text-green-500" />
-              ) : (
-                <Image
-                  src="/icons/Copy.svg"
-                  alt="copy address"
-                  width={24}
-                  height={24}
-                />
-              )}
-            </div>
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                setDisconnectModalOpen(true);
-              }}
-            >
-              <Image
-                src="/icons/XCircle.svg"
-                alt="disconnect wallet"
-                width={24}
-                height={24}
-              />
-            </div>
-          </div>
-        </div>
-      )}
+    <>
+      <CButton
+        variant="primary"
+        onButtonClick={account == null ? () => setIsOpen(true) : () => {}}
+        className="inline-flex items-center gap-x-2"
+      >
+        {account !== null && (
+          <span>
+            {account.name && account?.name.length > 10
+              ? `${account.name.slice(0, 10)}...`
+              : account.name}
+          </span>
+        )}
+        <ChevronDownIcon className="w-5 h-5 text-[#FFFFFF]" />
+      </CButton>
       <DisconnectAccountModal
         open={disconnectModalOpen}
         setOpen={setDisconnectModalOpen}
       />
-    </div>
+    </>
   );
 };
 
@@ -281,11 +187,12 @@ const ConnectWalletDot = () => {
   }, [wallets]);
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <SelectAccountMenu>
-        <ConnectWalletButton />
-      </SelectAccountMenu>
-    </div>
+    <ConnectWalletButton />
+    // <div className="flex flex-col gap-y-4">
+    //   <SelectAccountMenu>
+    //     <ConnectWalletButton />
+    //   </SelectAccountMenu>
+    // </div>
   );
 };
 
