@@ -18,17 +18,7 @@ const FarmStats: FC<FarmStatsProps> = ({
     <div className="flex flex-row items-center justify-center gap-x-5 sm:gap-x-6 font-spaceGrotesk text-white sm:opacity-60">
       <div>
         <p className="text-lg sm:text-2xl leading-6 sm:leading-[30.5px] font-medium">
-          {/* <CountUp
-            start={0}
-            end={tvl}
-            duration={0.75}
-            separator=","
-            decimals={2}
-            decimal="."
-            prefix="$"
-            suffix={suffix}
-          /> */}
-          {`${tvl}${suffix}`}
+          ${`${tvl}${suffix}`}
         </p>
         <p className="text-xs sm:text-sm leading-4 sm:leading-[18px] font-medium opacity-70">
           TVL
