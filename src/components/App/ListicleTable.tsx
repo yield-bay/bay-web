@@ -201,6 +201,9 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
                       </Tooltip>
                     </th>
                     <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
+                      Your Positions
+                    </th>
+                    <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
                       <span className="sr-only">Visit Farm</span>
                     </th>
                   </tr>
