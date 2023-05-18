@@ -94,6 +94,9 @@ const FarmsList: FC<Props> = ({ farms }) => {
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
+              <span>-</span>
+            </td>
+            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
                 <Button
                   size="large"

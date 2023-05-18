@@ -53,3 +53,71 @@ export const fetchListicleFarms = async () => {
     farms,
   };
 };
+
+export const fetchLpTokenPrices = async () => {
+  const lptokenPricesObj = await client
+    .query(
+      gql`
+        query LpTokenPrices($protocols: [Protocol!]!) {
+          lpTokenPrices(protocols: $protocols) {
+            chain
+            protocol
+            symbol
+            address
+            price
+          }
+        }
+      `,
+      {
+        protocols: [
+          { chain: "moonbeam", protocol: "stellaswap" },
+          { chain: "moonbeam", protocol: "curve" },
+          { chain: "moonbeam", protocol: "zenlink" },
+          { chain: "moonriver", protocol: "solarbeam" },
+          { chain: "moonriver", protocol: "zenlink" },
+          { chain: "astar", protocol: "zenlink" },
+        ],
+      }
+    )
+    .toPromise();
+
+  const lpTokenPrices = lptokenPricesObj?.data?.lpTokenPrices;
+
+  return {
+    lpTokenPrices,
+  };
+};
+
+export const fetchTokenPrices = async () => {
+  const tokenPricesObj = await client
+    .query(
+      gql`
+        query TokenPrices($protocols: [Protocol!]!) {
+          tokenPrices(protocols: $protocols) {
+            chain
+            protocol
+            symbol
+            address
+            price
+          }
+        }
+      `,
+      {
+        protocols: [
+          { chain: "moonbeam", protocol: "stellaswap" },
+          { chain: "moonbeam", protocol: "curve" },
+          { chain: "moonriver", protocol: "solarbeam" },
+          { chain: "moonbeam", protocol: "zenlink" },
+          { chain: "moonriver", protocol: "zenlink" },
+          { chain: "astar", protocol: "zenlink" },
+        ],
+      }
+    )
+    .toPromise();
+
+  const tokenPrices = tokenPricesObj?.data?.tokenPrices;
+
+  return {
+    tokenPrices,
+  };
+};
