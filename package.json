@@ -13,6 +13,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": ">=16.8.0"
+  },
   "dependencies": {
     "@amplitude/analytics-browser": "^1.2.0",
     "@headlessui/react": "^1.7.4",
@@ -29,10 +32,9 @@
     "fathom-client": "^3.5.0",
     "graphql": "^16.5.0",
     "jotai": "^1.9.1",
-    "next": "^13.0.1",
+    "next": "^13.4.3",
     "next-themes": "^0.2.0",
     "nextjs-progressbar": "^0.0.16",
-    "node-fetch": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
