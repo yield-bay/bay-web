@@ -36,6 +36,8 @@ export function farmURL(farm: any): string {
 
 export function formatFarmType(farmType: string): string {
   if (farmType === "SingleStaking") return "Single staking";
+  else if (farmType === "ConcentratedLiquidity")
+    return "Concentrated Liquidity";
   else return farmType.slice(0, -3) + " swap";
 }
 
