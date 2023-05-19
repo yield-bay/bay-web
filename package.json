@@ -14,6 +14,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": ">=16.8.0"
+  },
   "dependencies": {
     "@amplitude/analytics-browser": "^1.10.3",
     "@chakra-ui/react": "^2.6.1",
@@ -22,6 +25,8 @@
     "@headlessui/react": "^1.7.4",
     "@heroicons/react": "^1.0.6",
     "@mangata-finance/sdk": "^1.19.8",
+    "@polkadot/api": "^10.7.1",
+    "@polkadot/extension-inject": "^0.46.3",
     "@popperjs/core": "^2.11.6",
     "@tailwindcss/typography": "^0.5.4",
     "@talismn/connect-wallets": "^1.2.3",
@@ -38,9 +43,8 @@
     "framer-motion": "^10.12.11",
     "graphql": "^16.5.0",
     "jotai": "^2.1.0",
-    "next": "^13.0.1",
+    "next": "^13.4.3",
     "nextjs-progressbar": "^0.0.16",
-    "node-fetch": "^3.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-popper": "^2.3.0",
@@ -60,6 +64,6 @@
     "postcss": "^8.4.16",
     "prettier": "^2.7.1",
     "tailwindcss": "^3.1.8",
-    "typescript": "^4.7.4"
+    "typescript": "^5.0.4"
   }
 }
