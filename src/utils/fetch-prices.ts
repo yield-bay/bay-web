@@ -11,8 +11,6 @@ export async function fetchTokenPricesMangata() {
   tokenPrices.set("ksm", 29.08);
 
   for (let token of Tokens) {
-    console.log("------------");
-    console.log("Calculating for", token.symbol);
     const sources = token.priceSource;
     let price = 1;
     for (let i = 0; i < sources.length; i++) {
@@ -55,8 +53,6 @@ export async function fetchTokenPricesMangata() {
     }
     tokenPrices.set(token.symbol.toLowerCase(), price);
   }
-
-  console.log("tokenPrices", tokenPrices);
 
   return tokenPrices;
 }

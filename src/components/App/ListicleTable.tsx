@@ -19,10 +19,16 @@ enum Order {
 interface Props {
   farms: FarmType[];
   isLoading: boolean;
+  positions: any;
   noResult?: boolean;
 }
 
-const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
+const ListicleTable: FC<Props> = ({
+  farms,
+  noResult,
+  isLoading,
+  positions,
+}) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
 
@@ -210,7 +216,7 @@ const ListicleTable: FC<Props> = ({ farms, noResult, isLoading }) => {
                 </thead>
                 <tbody className="divide-y divide-[#445AAD] divide-opacity-50">
                   {!isLoading ? (
-                    <FarmsList farms={sortedFarms} />
+                    <FarmsList farms={sortedFarms} positions={positions} />
                   ) : (
                     <LoadingSkeleton />
                   )}
