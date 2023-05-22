@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo, useEffect } from "react";
 import { useRouter } from "next/router";
 
 // Utility Imports
@@ -21,15 +21,31 @@ import Tooltip from "@components/Library/Tooltip";
 
 interface Props {
   farms: FarmType[];
+  positions: any;
 }
 
-const FarmsList: FC<Props> = ({ farms }) => {
+const FarmsList: FC<Props> = ({ farms, positions }) => {
   const router = useRouter();
+
+  useEffect(() => {
+    console.log("positions in farmlist", positions);
+  }, [positions]);
+
   return (
     <>
       {farms.map((farm: FarmType) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
+        const tokenSymbol =
+          tokenNames.length == 2
+            ? `${tokenNames[0]}-${tokenNames[1]}`
+            : tokenNames[0];
         const safetyScore = (farm?.safetyScore * 10).toFixed(1);
+        const currentPosition = positions[tokenSymbol];
+
+        if (currentPosition !== undefined) {
+          console.log(`position @${tokenSymbol}`, currentPosition);
+        }
+
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
             <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
@@ -94,7 +110,7 @@ const FarmsList: FC<Props> = ({ farms }) => {
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
-              <span>-</span>
+              <span>{currentPosition?.staked.amountUSD}</span>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
