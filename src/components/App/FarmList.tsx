@@ -40,11 +40,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
             ? `${tokenNames[0]}-${tokenNames[1]}`
             : tokenNames[0];
         const safetyScore = (farm?.safetyScore * 10).toFixed(1);
-        const currentPosition = positions[tokenSymbol];
-
-        if (currentPosition !== undefined) {
-          console.log(`position @${tokenSymbol}`, currentPosition);
-        }
+        const currentPosition = positions[tokenSymbol]?.staked.amountUSD;
 
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`} className="group">
@@ -110,7 +106,11 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
               </div>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
-              <span>{currentPosition?.staked.amountUSD}</span>
+              <span>
+                {currentPosition !== undefined && currentPosition > 0
+                  ? "$" + currentPosition.toFixed(2)
+                  : "-"}
+              </span>
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
               <div className="flex flex-row gap-x-3 items-center justify-start lg:justify-end">
