@@ -28,7 +28,7 @@ import ListicleTable from "./ListicleTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/metaTags/MetaTags";
 import Hero from "./Hero";
-import { FarmType } from "@utils/types";
+import { FarmType, TokenPriceType } from "@utils/types";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { useAccount } from "wagmi";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
@@ -55,14 +55,16 @@ const Home: NextPage = () => {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // const [positions, setPositions] = useState({});
-  const [lpTokenPricesMap, setLpTokenPricesMap] = useState<any>({});
-  const [tokenPricesMap, setTokenPricesMap] = useState<any>({});
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useState<{
+    [key: string]: number;
+  }>({});
+  const [tokenPricesMap, setTokenPricesMap] = useState<{
+    [key: string]: number;
+  }>({});
 
   useEffect(() => {
     console.log("-- positions updated --\n", positions);
   }, [positions]);
-
-  // const lpTokenPricesMap: any = {};
 
   // Fetching Lp token prices
   const { isLoading: isLpPricesLoading, data: lpTokenPrices } = useQuery({
@@ -76,21 +78,16 @@ const Home: NextPage = () => {
       }
     },
   });
+
   useEffect(() => {
     if (isLpPricesLoading) {
       console.log("loading lp prices...");
     } else {
       // console.log("LP token prices", lpTokenPrices);
-      const tempLpTokenPrices: any = {};
-      lpTokenPrices.forEach((lptp: any) => {
-        // const tokenNames = formatTokenSymbols(lptp.symbol);
-        // const tokenSymbol =
-        //   tokenNames.length == 2
-        //     ? `${tokenNames[0]}-${tokenNames[1]}`
-        //     : tokenNames[0];
+      const tempLpTokenPrices: { [key: string]: number } = {};
+      console.log("lp token prices", lpTokenPrices);
+      lpTokenPrices?.forEach((lptp: TokenPriceType) => {
         const tokenSymbol = getLpTokenSymbol(lptp.symbol);
-        console.log(lptp.symbol, " ", tokenSymbol);
-
         tempLpTokenPrices[tokenSymbol] = lptp.price;
       });
       console.log("lpTokenPricesMap", tempLpTokenPrices);
@@ -118,7 +115,7 @@ const Home: NextPage = () => {
       console.log("token prices", tokenPrices);
       // Mapped token prices in a variable
       const tokenPricesMap: any = {};
-      tokenPrices.forEach((tp: any) => {
+      tokenPrices?.forEach((tp: any) => {
         tokenPricesMap[tp.symbol] = tp.price;
       });
       console.log("tokenPricesMap", tokenPricesMap);
@@ -144,7 +141,6 @@ const Home: NextPage = () => {
   useEffect(() => {
     const mangataSetup = async () => {
       // Filter Mangata X Farms
-      console.log("before filtering farms", farms);
       const filteredFarms = farms.filter((f: any) => {
         return (
           f.protocol == "Mangata X" &&
@@ -152,7 +148,6 @@ const Home: NextPage = () => {
           f.chef == "xyk"
         );
       });
-      console.log("after filtering farms", farms);
 
       const mangata = Mangata.getInstance([
         process.env.NEXT_PUBLIC_MANGATA_KUSAMA_URL!,
@@ -188,28 +183,23 @@ const Home: NextPage = () => {
             }
           }
 
-          console.log(
-            "--- before filter farms ---\nfilter farms",
-            filteredFarms
-          );
-
           filteredFarms.forEach(
             async (ff: {
-              chain: any;
-              protocol: any;
-              chef: any;
+              chain: string;
+              protocol: string;
+              chef: string;
               id: any;
-              asset: { symbol: any };
-              tvl: any;
+              asset: { symbol: string };
+              tvl: number;
             }) => {
-              // console.log("filtered farms", {
-              //   chain: ff.chain,
-              //   protocol: ff.protocol,
-              //   chef: ff.chef,
-              //   id: ff.id,
-              //   asset: ff.asset.symbol,
-              //   tvl: ff.tvl,
-              // });
+              console.log("filtered farm:\n", {
+                chain: ff.chain,
+                protocol: ff.protocol,
+                chef: ff.chef,
+                id: ff.id,
+                asset: ff.asset.symbol,
+                tvl: ff.tvl,
+              });
 
               // users balancd
               const bal: any = await mangata.getTokenBalance(
@@ -255,8 +245,8 @@ const Home: NextPage = () => {
               //     : tokenNames[0];
               // console.log("symbol", symbol);
               const symbol = getLpTokenSymbol(ff.asset.symbol);
+              w;
 
-              console.log("positions before addition", positions);
               const tempPositions = { ...positions };
               tempPositions[symbol] = {
                 unstaked: {
@@ -290,10 +280,10 @@ const Home: NextPage = () => {
         }
       );
     };
-    if (account !== null && farms.length > 0) {
-      // Run setup when wallet connected
-      mangataSetup();
-    }
+    // if (account !== null && farms.length > 0) {
+    //   // Run setup when wallet connected
+    //   mangataSetup();
+    // }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
@@ -549,6 +539,14 @@ const Home: NextPage = () => {
                   console.log("ucrewsstellaswap", ucrews);
 
                   if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
+                    console.log("before creating temp positions obejct:\n", {
+                      unstakedAmount: unstakedLpAmount,
+                      stakedLpAmount: stakedLpAmount,
+                      lpTokenPricesMap: lpTokenPricesMap,
+                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpSymbol: tokenSymbol,
+                    });
+
                     const tempPositions = { ...positions };
                     tempPositions[name] = {
                       unstaked: {
@@ -668,10 +666,12 @@ const Home: NextPage = () => {
                   let ucrews: any = [];
                   for (let i = 0; i < ucrewAmounts.length; i++) {
                     console.log(
+                      "tokenSymbol",
                       ucrewSymbols[i],
                       // tokenPricesMap[
                       //   `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                       // ]
+                      "\ntokenPrice",
                       tokenPricesMap[ucrewSymbols[i]]
                     );
                     ucrews.push({
@@ -693,8 +693,9 @@ const Home: NextPage = () => {
                     console.log("before creating temp positions obejct:\n", {
                       unstakedAmount: unstakedLpAmount,
                       stakedLpAmount: stakedLpAmount,
+                      lpTokenPricesMap: lpTokenPricesMap,
                       lpTokenPrice: lpTokenPricesMap[tokenSymbol],
-                      symbol: tokenSymbol,
+                      lpSymbol: tokenSymbol,
                     });
 
                     tempPositions[name] = {
@@ -812,7 +813,7 @@ const Home: NextPage = () => {
                       sym,
                       "\ndec:",
                       dec,
-                      "\ntoken amount:",
+                      "\ntoken price:",
                       tokenPricesMap[sym]
                       // tokenPricesMap[
                       //   `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
@@ -856,6 +857,14 @@ const Home: NextPage = () => {
                     console.log(
                       "unstaked and staked amount > 0 -- updating positions..."
                     );
+                    console.log("before creating temp positions obejct:\n", {
+                      unstakedAmount: unstakedLpAmount,
+                      stakedLpAmount: stakedLpAmount,
+                      lpTokenPricesMap: lpTokenPricesMap,
+                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpSymbol: tokenSymbol,
+                    });
+
                     const tempPositions = { ...positions };
                     tempPositions[name] = {
                       unstaked: {
@@ -981,6 +990,15 @@ const Home: NextPage = () => {
 
                   if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
                     const tempPositions = { ...positions };
+
+                    console.log("before creating temp positions obejct:\n", {
+                      unstakedAmount: unstakedLpAmount,
+                      stakedLpAmount: stakedLpAmount,
+                      lpTokenPricesMap: lpTokenPricesMap,
+                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpSymbol: tokenSymbol,
+                    });
+
                     tempPositions[name] = {
                       unstaked: {
                         amount: unstakedLpAmount,
