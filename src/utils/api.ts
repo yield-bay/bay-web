@@ -1,5 +1,6 @@
 import { createClient, defaultExchanges, gql } from "@urql/core";
 import { API_URL } from "./constants";
+import { TokenPriceType } from "./types";
 
 const client = createClient({
   url: API_URL,
@@ -54,7 +55,9 @@ export const fetchListicleFarms = async () => {
   };
 };
 
-export const fetchLpTokenPrices = async () => {
+export const fetchLpTokenPrices = async (): Promise<{
+  lpTokenPrices: TokenPriceType[];
+}> => {
   const lptokenPricesObj = await client
     .query(
       gql`
@@ -88,7 +91,9 @@ export const fetchLpTokenPrices = async () => {
   };
 };
 
-export const fetchTokenPrices = async () => {
+export const fetchTokenPrices = async (): Promise<{
+  tokenPrices: TokenPriceType[];
+}> => {
   const tokenPricesObj = await client
     .query(
       gql`

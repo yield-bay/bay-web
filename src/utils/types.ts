@@ -33,3 +33,11 @@ export interface LeaderboardType {
   created_at: string;
   last_user_brought_at: string;
 }
+
+export interface TokenPriceType {
+  address: string;
+  chain: string;
+  price: number;
+  protocol: string;
+  symbol: string;
+}
