@@ -245,7 +245,6 @@ const Home: NextPage = () => {
               //     : tokenNames[0];
               // console.log("symbol", symbol);
               const symbol = getLpTokenSymbol(ff.asset.symbol);
-              w;
 
               const tempPositions = { ...positions };
               tempPositions[symbol] = {
@@ -280,10 +279,10 @@ const Home: NextPage = () => {
         }
       );
     };
-    // if (account !== null && farms.length > 0) {
-    //   // Run setup when wallet connected
-    //   mangataSetup();
-    // }
+    if (account !== null && farms.length > 0) {
+      // Run setup when wallet connected
+      mangataSetup();
+    }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
