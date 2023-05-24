@@ -1042,11 +1042,20 @@ const Home: NextPage = () => {
       });
       console.log("positionsnow", positions);
     };
-    if (isConnected && farms.length > 0) {
-      console.log("lp token prices inside condition", lpTokenPricesMap);
+    // ------------------------------
+
+    const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
+    const tokenPricesLength = Object.keys(tokenPricesMap).length;
+
+    if (
+      isConnected &&
+      farms.length > 0 &&
+      lpTokensPricesLength > 0 &&
+      tokenPricesLength > 0
+    ) {
       asycFn(); // Run setup when wallet connected
     }
-  }, [isConnected, farms]);
+  }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
 
   // Filtering farms based on FarmType and then search term
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
