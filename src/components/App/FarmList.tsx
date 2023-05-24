@@ -35,12 +35,15 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
     <>
       {farms.map((farm: FarmType) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
-        const tokenSymbol =
-          tokenNames.length == 2
-            ? `${tokenNames[0]}-${tokenNames[1]}`
-            : tokenNames[0];
+        // const tokenSymbol =
+        //   tokenNames.length == 2
+        //     ? `${tokenNames[0]}-${tokenNames[1]}`
+        //     : tokenNames[0];
         const safetyScore = (farm?.safetyScore * 10).toFixed(1);
-        const position = positions[tokenSymbol];
+        const position =
+          positions[
+            `${farm.chain}-${farm.protocol}-${farm.chef}-${farm.id}-${farm.asset.symbol}`
+          ];
         const currentPosition =
           position?.unstaked.amountUSD + position?.staked.amountUSD;
 

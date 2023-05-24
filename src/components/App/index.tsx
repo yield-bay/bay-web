@@ -86,9 +86,11 @@ const Home: NextPage = () => {
       const tempLpTokenPrices: { [key: string]: number } = {};
       console.log("lp token prices", lpTokenPrices);
       lpTokenPrices?.forEach((lptp: TokenPriceType) => {
-        // ${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}
         const tokenSymbol = getLpTokenSymbol(lptp.symbol);
-        tempLpTokenPrices[tokenSymbol] = lptp.price;
+        tempLpTokenPrices[
+          `${lptp.chain}-${lptp.protocol}-${lptp.symbol}-${lptp.address}`
+        ] = lptp.price;
+        // `${lptp.chain}-${lptp.protocol}-${lptp.symbol}-${lptp.address}`p
       });
       console.log("lpTokenPricesMap", tempLpTokenPrices);
       setLpTokenPricesMap(tempLpTokenPrices);
@@ -119,7 +121,6 @@ const Home: NextPage = () => {
         tokenPricesMap[
           `${tp.chain}-${tp.protocol}-${tp.symbol}-${tp.address}`
         ] = tp.price;
-        // `${tp.chain}-${tp.protocol}-${tp.symbol}-${tp.address}`
       });
       console.log("tokenPricesMap", tokenPricesMap);
       setTokenPricesMap(tokenPricesMap);
@@ -240,17 +241,17 @@ const Home: NextPage = () => {
                   10 ** 18
               );
 
-              // const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
+              const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
               // const tokenNames = formatTokenSymbols(ff.asset.symbol);
               // const symbol =
               //   tokenNames.length == 2
               //     ? `${tokenNames[0]}-${tokenNames[1]}`
               //     : tokenNames[0];
               // console.log("symbol", symbol);
-              const symbol = getLpTokenSymbol(ff.asset.symbol);
+              // const symbol = getLpTokenSymbol(ff.asset.symbol);
 
               const tempPositions = { ...positions };
-              tempPositions[symbol] = {
+              tempPositions[name] = {
                 unstaked: {
                   amount: freeBal,
                   amountUSD: (freeBal * ff.tvl) / mangataAsset[ff.id],
@@ -469,8 +470,8 @@ const Home: NextPage = () => {
                     unstakedLpAmount
                   );
 
-                  const name = tokenSymbol;
-                  // const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+                  // const name = tokenSymbol;
+                  const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
                   // const pendingTokens = await chef.pendingTokens(
                   //   ff.id,
@@ -542,7 +543,10 @@ const Home: NextPage = () => {
                       unstakedAmount: unstakedLpAmount,
                       stakedLpAmount: stakedLpAmount,
                       lpTokenPricesMap: lpTokenPricesMap,
-                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpTokenPrice:
+                        lpTokenPricesMap[
+                          `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                        ],
                       lpSymbol: tokenSymbol,
                     });
 
@@ -551,18 +555,18 @@ const Home: NextPage = () => {
                       unstaked: {
                         amount: unstakedLpAmount,
                         amountUSD:
-                          unstakedLpAmount * lpTokenPricesMap[tokenSymbol],
-                        // lpTokenPricesMap[
-                        //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
-                        // ],
+                          unstakedLpAmount *
+                          lpTokenPricesMap[
+                            `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                          ],
                       },
                       staked: {
                         amount: stakedLpAmount,
                         amountUSD:
-                          stakedLpAmount * lpTokenPricesMap[tokenSymbol],
-                        // lpTokenPricesMap[
-                        //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
-                        // ],
+                          stakedLpAmount *
+                          lpTokenPricesMap[
+                            `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                          ],
                       },
                       unclaimedRewards: ucrews,
                     };
@@ -640,8 +644,8 @@ const Home: NextPage = () => {
                     "unstakedLpAmount",
                     unstakedLpAmount
                   );
-                  const name = tokenSymbol;
-                  // const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+                  // const name = tokenSymbol;
+                  const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
                   const pendingTokens = await chef.pendingTokens(
                     ff.id,
                     address
@@ -692,7 +696,10 @@ const Home: NextPage = () => {
                       unstakedAmount: unstakedLpAmount,
                       stakedLpAmount: stakedLpAmount,
                       lpTokenPricesMap: lpTokenPricesMap,
-                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpTokenPrice:
+                        lpTokenPricesMap[
+                          `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                        ],
                       lpSymbol: tokenSymbol,
                     });
 
@@ -700,18 +707,18 @@ const Home: NextPage = () => {
                       unstaked: {
                         amount: unstakedLpAmount,
                         amountUSD:
-                          unstakedLpAmount * lpTokenPricesMap[tokenSymbol],
-                        // lpTokenPricesMap[
-                        //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
-                        // ],
+                          unstakedLpAmount *
+                          lpTokenPricesMap[
+                            `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                          ],
                       },
                       staked: {
                         amount: stakedLpAmount,
                         amountUSD:
-                          stakedLpAmount * lpTokenPricesMap[tokenSymbol],
-                        // lpTokenPricesMap[
-                        //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
-                        // ],
+                          stakedLpAmount *
+                          lpTokenPricesMap[
+                            `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                          ],
                       },
                       unclaimedRewards: ucrews,
                     };
@@ -787,8 +794,8 @@ const Home: NextPage = () => {
                     "unstakedLpAmount",
                     unstakedLpAmount
                   );
-                  const name = tokenSymbol;
-                  // const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+                  // const name = tokenSymbol;
+                  const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
                   const rewardTokens: any = Object.values(poolInfo)[2];
                   console.log("rewardTokens", rewardTokens);
                   const pendingRewards = await chef.pendingRewards(
@@ -825,12 +832,11 @@ const Home: NextPage = () => {
 
                   console.log("ucrewszenlink", ucrews);
 
-                  // let price =
-                  //   lpTokenPricesMap[
-                  //     `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
-                  //   ] *
-                  //   10 ** 18;
-                  let price = lpTokenPricesMap[tokenSymbol] * 10 ** 18;
+                  let price =
+                    lpTokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    ] *
+                    10 ** 18;
                   if (ff.asset.symbol == "ZLK") {
                     //  tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
                     const ts = Object.keys(tokenPricesMap).map((t) =>
@@ -858,7 +864,10 @@ const Home: NextPage = () => {
                       unstakedAmount: unstakedLpAmount,
                       stakedLpAmount: stakedLpAmount,
                       lpTokenPricesMap: lpTokenPricesMap,
-                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpTokenPrice:
+                        lpTokenPricesMap[
+                          `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                        ],
                       lpSymbol: tokenSymbol,
                     });
 
@@ -937,8 +946,8 @@ const Home: NextPage = () => {
                     "unstakedLpAmount",
                     unstakedLpAmount
                   );
-                  const name = tokenSymbol;
-                  // const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+                  // const name = tokenSymbol;
+                  const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
                   const rewardCount: any = await chef.reward_count();
                   let ucrews: any = [];
                   for (let i = 0; i < rewardCount; i++) {
@@ -967,7 +976,9 @@ const Home: NextPage = () => {
                         `${chain.name}-${protocol.name}-${sym}-${reward_token}`
                       ],
                       "\nlpTokenPrice",
-                      lpTokenPricesMap[tokenSymbol], // todo: should be reward token symbol
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ], // todo: should be reward token symbol
                       "\nsymbol",
                       tokenSymbol,
                       "\nreward token",
@@ -991,7 +1002,10 @@ const Home: NextPage = () => {
                       unstakedAmount: unstakedLpAmount,
                       stakedLpAmount: stakedLpAmount,
                       lpTokenPricesMap: lpTokenPricesMap,
-                      lpTokenPrice: lpTokenPricesMap[tokenSymbol],
+                      lpTokenPrice:
+                        lpTokenPricesMap[
+                          `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                        ],
                       lpSymbol: tokenSymbol,
                     });
 
@@ -999,7 +1013,10 @@ const Home: NextPage = () => {
                       unstaked: {
                         amount: unstakedLpAmount,
                         amountUSD:
-                          unstakedLpAmount * lpTokenPricesMap[tokenSymbol],
+                          unstakedLpAmount *
+                          lpTokenPricesMap[
+                            `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                          ],
                         // lpTokenPricesMap[
                         //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                         // ],
@@ -1007,7 +1024,10 @@ const Home: NextPage = () => {
                       staked: {
                         amount: stakedLpAmount,
                         amountUSD:
-                          stakedLpAmount * lpTokenPricesMap[tokenSymbol],
+                          stakedLpAmount *
+                          lpTokenPricesMap[
+                            `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                          ],
                         // lpTokenPricesMap[
                         //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                         // ],
