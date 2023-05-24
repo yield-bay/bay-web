@@ -40,7 +40,6 @@ const Home: NextPage = () => {
   const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
 
   // Store
-  const [positions, setPositions] = useState<any>({});
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
   // const [account] = useAtom(dotAccountAtom);
   // Proxy Account
@@ -54,7 +53,7 @@ const Home: NextPage = () => {
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
-  // const [positions, setPositions] = useState({});
+  const [positions, setPositions] = useState<any>({});
   const [lpTokenPricesMap, setLpTokenPricesMap] = useState<{
     [key: string]: number;
   }>({});
@@ -87,6 +86,7 @@ const Home: NextPage = () => {
       const tempLpTokenPrices: { [key: string]: number } = {};
       console.log("lp token prices", lpTokenPrices);
       lpTokenPrices?.forEach((lptp: TokenPriceType) => {
+        // ${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}
         const tokenSymbol = getLpTokenSymbol(lptp.symbol);
         tempLpTokenPrices[tokenSymbol] = lptp.price;
       });
@@ -116,7 +116,10 @@ const Home: NextPage = () => {
       // Mapped token prices in a variable
       const tokenPricesMap: any = {};
       tokenPrices?.forEach((tp: any) => {
-        tokenPricesMap[tp.symbol] = tp.price;
+        tokenPricesMap[
+          `${tp.chain}-${tp.protocol}-${tp.symbol}-${tp.address}`
+        ] = tp.price;
+        // `${tp.chain}-${tp.protocol}-${tp.symbol}-${tp.address}`
       });
       console.log("tokenPricesMap", tokenPricesMap);
       setTokenPricesMap(tokenPricesMap);
@@ -279,10 +282,10 @@ const Home: NextPage = () => {
         }
       );
     };
-    if (account !== null && farms.length > 0) {
-      // Run setup when wallet connected
-      mangataSetup();
-    }
+    // if (account !== null && farms.length > 0) {
+    //   // Run setup when wallet connected
+    //   mangataSetup();
+    // }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
@@ -427,11 +430,6 @@ const Home: NextPage = () => {
                   id: any;
                   asset: { symbol: any; address: any };
                 }) => {
-                  // const tokenNames = formatTokenSymbols(ff.asset.symbol);
-                  // const tokenSymbol =
-                  //   tokenNames.length == 2
-                  //     ? `${tokenNames[0]}-${tokenNames[1]}`
-                  //     : tokenNames[0];
                   const tokenSymbol = getLpTokenSymbol(ff.asset.symbol);
                   console.log("tokenSymbol", tokenSymbol);
                   // console.log(
@@ -519,7 +517,9 @@ const Home: NextPage = () => {
                   for (let i = 0; i < ucrewAmounts.length; i++) {
                     console.log(
                       ucrewSymbols[i],
-                      tokenPricesMap[ucrewSymbols[i]]
+                      tokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                      ]
                       // tokenPricesMap[
                       //   `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                       // ]
@@ -667,11 +667,10 @@ const Home: NextPage = () => {
                     console.log(
                       "tokenSymbol",
                       ucrewSymbols[i],
-                      // tokenPricesMap[
-                      //   `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                      // ]
                       "\ntokenPrice",
-                      tokenPricesMap[ucrewSymbols[i]]
+                      tokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                      ]
                     );
                     ucrews.push({
                       token: ucrewSymbols[i],
@@ -813,10 +812,9 @@ const Home: NextPage = () => {
                       "\ndec:",
                       dec,
                       "\ntoken price:",
-                      tokenPricesMap[sym]
-                      // tokenPricesMap[
-                      //   `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
-                      // ]
+                      tokenPricesMap[
+                        `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
+                      ]
                     );
                     ucrews.push({
                       token: sym,
@@ -965,16 +963,15 @@ const Home: NextPage = () => {
                       "\ndec",
                       dec,
                       "\ntokenPrice",
-                      tokenPricesMap[sym],
+                      tokenPricesMap[
+                        `${chain.name}-${protocol.name}-${sym}-${reward_token}`
+                      ],
                       "\nlpTokenPrice",
                       lpTokenPricesMap[tokenSymbol], // todo: should be reward token symbol
                       "\nsymbol",
                       tokenSymbol,
                       "\nreward token",
                       reward_token
-                      // tokenPricesMap[
-                      //   `${chain.name}-${protocol.name}-${sym}-${reward_token}`
-                      // ]
                     );
 
                     // ucrewscurve positions
@@ -1033,6 +1030,7 @@ const Home: NextPage = () => {
       console.log("positionsnow", positions);
     };
     if (isConnected && farms.length > 0) {
+      console.log("lp token prices inside condition", lpTokenPricesMap);
       asycFn(); // Run setup when wallet connected
     }
   }, [isConnected, farms]);
