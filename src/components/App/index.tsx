@@ -242,13 +242,6 @@ const Home: NextPage = () => {
               );
 
               const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
-              // const tokenNames = formatTokenSymbols(ff.asset.symbol);
-              // const symbol =
-              //   tokenNames.length == 2
-              //     ? `${tokenNames[0]}-${tokenNames[1]}`
-              //     : tokenNames[0];
-              // console.log("symbol", symbol);
-              // const symbol = getLpTokenSymbol(ff.asset.symbol);
 
               const tempPositions = { ...positions };
               tempPositions[name] = {
@@ -283,10 +276,10 @@ const Home: NextPage = () => {
         }
       );
     };
-    // if (account !== null && farms.length > 0) {
-    //   // Run setup when wallet connected
-    //   mangataSetup();
-    // }
+    if (account !== null && farms.length > 0) {
+      // Run setup when wallet connected
+      mangataSetup();
+    }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
