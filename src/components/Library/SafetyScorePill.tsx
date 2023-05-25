@@ -1,16 +1,23 @@
-export default function SafetyScorePill({ score }: { score: string }) {
+import clsx from "clsx";
+import { FC } from "react";
+
+// export default function SafetyScorePill({ score }: { score: string }) {
+const SafetyScorePill: FC<{ score: string }> = ({ score }) => {
   const scoreNum = parseFloat(score);
-  return scoreNum >= 6 ? (
-    <div className="ml-2 py-[2px] px-[8.5px] bg-[#67C84B] text-black rounded-full w-max text-[10px] leading-3 font-bold">
-      SAFE
-    </div>
-  ) : scoreNum >= 4 ? (
-    <div className="ml-2 py-[2px] px-[8.5px] bg-[#C8BB4B] text-black rounded-full w-max text-[10px] leading-3 font-bold">
-      MODERATE
-    </div>
-  ) : (
-    <div className="ml-2 py-[2px] px-[8.5px] bg-[#C84B4B] text-black rounded-full w-max text-[10px] leading-3 font-bold">
-      RISKY
+  return (
+    <div
+      className={clsx(
+        "py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm",
+        scoreNum >= 6
+          ? "bg-[#ECFDF3] text-[#027A48]"
+          : scoreNum >= 4
+          ? "bg-[#FEF3F2] text-[#B42318]"
+          : "bg-[#FEF3F2] text-[#B42318]"
+      )}
+    >
+      {score}
     </div>
   );
-}
+};
+
+export default SafetyScorePill;
