@@ -40,11 +40,11 @@ export default function Rewards({ rewards }: RewardsProps) {
           </div>
         }
       >
-        <div className="flex flex-row items-center justify-center p-1 -space-x-0.5">
+        <div className="inline-flex -space-x-1">
           {rewards.map((reward, index) => (
             <div
               key={index}
-              className="z-10 flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-neutral-800 transition duration-200"
+              className="z-10 flex overflow-hidden ring-[1.5px] ring-white rounded-full bg-[#EAEAF1]"
             >
               <Image
                 src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}

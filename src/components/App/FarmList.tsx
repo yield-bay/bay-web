@@ -18,6 +18,7 @@ import ShareFarm from "@components/Library/ShareFarm";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
+import Image from "next/image";
 
 interface Props {
   farms: FarmType[];
@@ -40,32 +41,37 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
 
         return (
           <tr key={`${farm.asset.address}-${farm.tvl}`}>
-            <td className="whitespace-nowrap max-w-[288px] py-8 text-sm pl-8 md:pl-14 lg:pl-28">
-              <div className="flex flex-col gap-y-[10px]">
-                <div className="flex flex-row items-center">
-                  <div className="font-bold text-base leading-5">
-                    {tokenNames.map((tokenName, index) => (
-                      <span key={index} className="mr-[3px]">
-                        {tokenName}
-                        {index !== tokenNames.length - 1 && " •"}
-                      </span>
-                    ))}
+            <td className="whitespace-nowrap max-w-[288px] py-4 text-sm pl-8 md:pl-14 lg:pl-12">
+              <div className="flex flex-col gap-y-4">
+                <div className="inline-flex items-center gap-x-4">
+                  <FarmAssets logos={farm?.asset.logos} />
+                  <FarmBadge type={formatFarmType(farm?.farmType)} />
+                  <Image
+                    src="/icons/umbrella.svg"
+                    alt="supported farm"
+                    height={20}
+                    width={20}
+                    className="mr-2"
+                  />
+                </div>
+                <div className="text-[#101828] font-medium text-sm leading-5">
+                  {tokenNames.map((tokenName, index) => (
+                    <span key={index}>
+                      {tokenName}
+                      {index !== tokenNames.length - 1 && "-"}
+                    </span>
+                  ))}
+                  <div className="font-normal text-sm leading-5 text-[#475467]">
+                    {formatFirstLetter(farm?.protocol)} on{" "}
+                    {formatFirstLetter(farm?.chain)}
                   </div>
                 </div>
-                <div className="font-medium text-base leading-5">
-                  {formatFirstLetter(farm?.protocol)} on{" "}
-                  {formatFirstLetter(farm?.chain)}
-                </div>
-                <FarmBadge type={formatFarmType(farm?.farmType)} />
               </div>
             </td>
-            <td className="hidden lg:table-cell whitespace-nowrap">
-              <FarmAssets logos={farm?.asset.logos} />
-            </td>
-            <td className="whitespace-nowrap py-8 text-right sm:pr-3 sm:pl-4 font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-4 text-right sm:pr-3 sm:pl-4 font-medium text-sm leading-5">
               {toDollarUnits(farm?.tvl)}
             </td>
-            <td className="whitespace-nowrap py-8 pl-0 pr-2 font-bold text-base leading-5 tracking-wide">
+            <td className="whitespace-nowrap py-4 pl-0 pr-2 text-base leading-5">
               <div className="w-full inline-flex justify-end items-center gap-x-2">
                 <Tooltip
                   label={
@@ -86,20 +92,19 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                   }
                   placement="top"
                 >
-                  <p className="cursor-pointer underline underline-offset-4 decoration-dotted	decoration-3 decoration-blueSilver">
+                  <p className="cursor-default underline underline-offset-4 decoration-dotted	decoration-3 decoration-[#475467] text-sm font-medium">
                     {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                   </p>
                 </Tooltip>
               </div>
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 font-bold text-base leading-5 tracking-wide">
-              <Rewards rewards={farm?.rewards} />
-            </td>
-            <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 font-bold text-base leading-5 tracking-wide">
+            <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 font-bold text-sm leading-5">
               <div className="flex flex-col items-end gap-2 justify-end">
-                <span>{safetyScore}</span>
                 <SafetyScorePill score={safetyScore} />
               </div>
+            </td>
+            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3">
+              <Rewards rewards={farm?.rewards} />
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
               {currentPosition !== undefined && currentPosition > 0 ? (

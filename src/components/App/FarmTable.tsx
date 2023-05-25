@@ -23,12 +23,7 @@ interface Props {
   noResult?: boolean;
 }
 
-const FarmTable: FC<Props> = ({
-  farms,
-  noResult,
-  isLoading,
-  positions,
-}) => {
+const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
 
@@ -96,23 +91,17 @@ const FarmTable: FC<Props> = ({
         {!noResult ? (
           <div>
             <table className="min-w-full text-[#475467]">
-              <thead className="font-bold text-base leading-5">
+              <thead className="font-medium text-xs leading-[18px] border-y border-[#EAECF0]">
                 <tr>
                   <th
                     scope="col"
-                    className="pt-9 pb-6 pr-3 text-left pl-8 md:pl-14 lg:pl-28"
+                    className="py-[13px] pr-3 text-left pl-8 md:pl-14 lg:pl-12 font-medium"
                   >
                     <span>Farm</span>
                   </th>
                   <th
                     scope="col"
-                    className="hidden lg:table-cell pt-9 pb-6 pl-4 pr-3 sm:pl-6"
-                  >
-                    <span className="sr-only">Farm Assets</span>
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 pt-9 pb-6 cursor-pointer"
+                    className="px-3 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("tvl", true);
                       trackEventWithProperty("table-sorting", {
@@ -144,7 +133,7 @@ const FarmTable: FC<Props> = ({
                   </th>
                   <th
                     scope="col"
-                    className="flex justify-end px-3 pt-9 pb-6 cursor-pointer"
+                    className="flex justify-end px-3 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("yield", true);
                       trackEventWithProperty("table-sorting", {
@@ -174,13 +163,7 @@ const FarmTable: FC<Props> = ({
                   </th>
                   <th
                     scope="col"
-                    className="hidden md:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right"
-                  >
-                    <span>Rewards</span>
-                  </th>
-                  <th
-                    scope="col"
-                    className="hidden lg:table-cell px-3 pt-9 pb-6 pl-2 lg:pl-16 text-right cursor-pointer"
+                    className="hidden lg:table-cell px-3 py-[13px] pl-2 lg:pl-16 text-right cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("safety", true);
                       trackEventWithProperty("table-sorting", {
@@ -205,15 +188,24 @@ const FarmTable: FC<Props> = ({
                       </div>
                     </Tooltip>
                   </th>
-                  <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
+                  <th
+                    scope="col"
+                    className="hidden md:table-cell px-3 py-[13px] pl-2 lg:pl-16 text-right font-medium"
+                  >
+                    <span>Rewards</span>
+                  </th>
+                  <th
+                    scope="col"
+                    className="py-[13px] pl-4 pr-3 sm:pl-6 font-medium"
+                  >
                     Your Positions
                   </th>
-                  <th scope="col" className="pt-9 pb-6 pl-4 pr-3 sm:pl-6">
+                  <th scope="col" className="py-[13px] pl-4 pr-3 sm:pl-6">
                     <span className="sr-only">Visit Farm</span>
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#445AAD] divide-opacity-50">
+              <tbody className="divide-y divide-[#EAECF0]">
                 {!isLoading ? (
                   <FarmsList farms={sortedFarms} positions={positions} />
                 ) : (
