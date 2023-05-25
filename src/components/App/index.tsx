@@ -178,10 +178,12 @@ const Home: NextPage = () => {
                 //   "balhex:",
                 //   element
                 // );
+                // const e =
+                //   BigInt(element).toString(10) /
+                //   10 ** assetsInfo[key]["decimals"];
                 const e =
-                  BigInt(element).toString(10) /
+                  parseFloat(BigInt(element.toString()).toString(10)) /
                   10 ** assetsInfo[key]["decimals"];
-                // console.log("bal:", e, "\n----------");
                 mangataAsset[key] = e;
               }
             }
@@ -212,8 +214,11 @@ const Home: NextPage = () => {
               );
               const freeBal = BigInt(bal.free).toString(10);
               10 ** assetsInfo[`${ff.id}`]["decimals"];
+              // const reservedBal =
+              //   BigInt(bal.reserved).toString(10) /
+              //   10 ** assetsInfo[`${ff.id}`]["decimals"];
               const reservedBal =
-                BigInt(bal.reserved).toString(10) /
+                parseFloat(BigInt(bal.reserved).toString(10)) /
                 10 ** assetsInfo[`${ff.id}`]["decimals"];
 
               // console.log(
@@ -247,7 +252,8 @@ const Home: NextPage = () => {
               tempPositions[name] = {
                 unstaked: {
                   amount: freeBal,
-                  amountUSD: (freeBal * ff.tvl) / mangataAsset[ff.id],
+                  amountUSD:
+                    (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
                 },
                 staked: {
                   amount: reservedBal,
@@ -450,7 +456,7 @@ const Home: NextPage = () => {
                   const rewardLockedUp = Object.values(userInfo)[2];
                   const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
                   const lp = new ethers.Contract(
-                    Object.values(poolInfo)[0],
+                    Object.values(poolInfo)[0] as string,
                     lpAbi,
                     provider
                   );
@@ -625,7 +631,7 @@ const Home: NextPage = () => {
                   const rewardLockedUp = Object.values(userInfo)[2];
                   const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
                   const lp = new ethers.Contract(
-                    Object.values(poolInfo)[0],
+                    Object.values(poolInfo)[0] as string,
                     lpAbi,
                     provider
                   );
@@ -775,7 +781,7 @@ const Home: NextPage = () => {
                   const rewardLockedUp = Object.values(userInfo)[2];
                   const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
                   const lp = new ethers.Contract(
-                    Object.values(poolInfo)[0],
+                    Object.values(poolInfo)[0] as string,
                     lpAbi,
                     provider
                   );

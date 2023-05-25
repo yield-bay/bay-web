@@ -122,7 +122,6 @@ const ConnectWalletButton: FC = () => {
       <CButton
         variant="primary"
         onButtonClick={account == null ? () => setIsOpen(true) : () => {}}
-        className="inline-flex items-center gap-x-2"
       >
         {account !== null && (
           <span>
