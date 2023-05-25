@@ -24,7 +24,7 @@ import {
 } from "@utils/api";
 import { protocolList } from "@utils/statsMethods";
 import { filterFarmTypeAtom } from "@store/atoms";
-import ListicleTable from "./ListicleTable";
+import FarmTable from "./FarmTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/metaTags/MetaTags";
 import Hero from "./Hero";
@@ -281,10 +281,10 @@ const Home: NextPage = () => {
         }
       );
     };
-    if (account !== null && farms.length > 0) {
-      // Run setup when wallet connected
-      mangataSetup();
-    }
+    // if (account !== null && farms.length > 0) {
+    //   // Run setup when wallet connected
+    //   mangataSetup();
+    // }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
@@ -1018,17 +1018,17 @@ const Home: NextPage = () => {
     };
     // ------------------------------
 
-    const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
-    const tokenPricesLength = Object.keys(tokenPricesMap).length;
+    // const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
+    // const tokenPricesLength = Object.keys(tokenPricesMap).length;
 
-    if (
-      isConnected &&
-      farms.length > 0 &&
-      lpTokensPricesLength > 0 &&
-      tokenPricesLength > 0
-    ) {
-      asycFn(); // Run setup when wallet connected
-    }
+    // if (
+    //   isConnected &&
+    //   farms.length > 0 &&
+    //   lpTokensPricesLength > 0 &&
+    //   tokenPricesLength > 0
+    // ) {
+    //   asycFn(); // Run setup when wallet connected
+    // }
   }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
 
   // Filtering farms based on FarmType and then search term
@@ -1111,9 +1111,9 @@ const Home: NextPage = () => {
             </div>
           ) : (
             // DESKTOP VIEW
-            <div className="hidden sm:block bg-[#01050D]">
+            <div className="hidden sm:mx-[72px] sm:block">
               {/* Shows Shared farm if queries are available  */}
-              <ListicleTable
+              <FarmTable
                 farms={filteredFarms}
                 noResult={noFilteredFarms}
                 isLoading={isLoading}
