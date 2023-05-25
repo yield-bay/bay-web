@@ -31,21 +31,22 @@ import Hero from "./Hero";
 import { FarmType, TokenPriceType } from "@utils/types";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { useAccount } from "wagmi";
-import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 
 const Home: NextPage = () => {
   const router = useRouter();
   // const { isConnected, address } = useAccount();
   const { isConnected } = useAccount();
+
+  // Accounts for testing
   const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
+  // const account = {
+  //   address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
+  // };
 
   // Store
   const [filterFarmType] = useAtom(filterFarmTypeAtom);
-  // const [account] = useAtom(dotAccountAtom);
+  const [account] = useAtom(dotAccountAtom);
   // Proxy Account
-  const account = {
-    address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
-  };
 
   // States
   const [searchTerm, setSearchTerm] = useState("");
@@ -86,7 +87,6 @@ const Home: NextPage = () => {
       const tempLpTokenPrices: { [key: string]: number } = {};
       console.log("lp token prices", lpTokenPrices);
       lpTokenPrices?.forEach((lptp: TokenPriceType) => {
-        const tokenSymbol = getLpTokenSymbol(lptp.symbol);
         tempLpTokenPrices[
           `${lptp.chain}-${lptp.protocol}-${lptp.symbol}-${lptp.address}`
         ] = lptp.price;
@@ -275,7 +275,6 @@ const Home: NextPage = () => {
                 ...prevState,
                 ...tempPositions,
               }));
-              // setPositions(tempPositions);
             }
           );
           console.log("--- After filter farms ---\n");
@@ -289,12 +288,12 @@ const Home: NextPage = () => {
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
-
   // Chains -- Moonriver, Moonbeam, Astar
-
+  // Protocols -- Curve, Zenlink, Solarbeam, Stellaswap
   useEffect(() => {
     const asycFn = async () => {
-      // todo: can be exported from utils
+      // todo: can be imported from utils
+      // if (!isConnected) return;
       const chains = [
         {
           name: "moonriver",
@@ -430,8 +429,6 @@ const Home: NextPage = () => {
                   id: any;
                   asset: { symbol: any; address: any };
                 }) => {
-                  const tokenSymbol = getLpTokenSymbol(ff.asset.symbol);
-                  console.log("tokenSymbol", tokenSymbol);
                   // console.log(
                   //   "ff",
                   //   ff.chain,
@@ -469,7 +466,6 @@ const Home: NextPage = () => {
                     unstakedLpAmount
                   );
 
-                  // const name = tokenSymbol;
                   const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
                   // const pendingTokens = await chef.pendingTokens(
@@ -546,7 +542,9 @@ const Home: NextPage = () => {
                         lpTokenPricesMap[
                           `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                         ],
-                      lpSymbol: tokenSymbol,
+                      lpSymbol: ff.asset.symbol,
+                      chain: chain.name,
+                      protocol: protocol.name,
                     });
 
                     const tempPositions = { ...positions };
@@ -569,7 +567,6 @@ const Home: NextPage = () => {
                       },
                       unclaimedRewards: ucrews,
                     };
-                    // setPositions(tempPositions);
                     setPositions((prevState: any) => ({
                       ...prevState,
                       ...tempPositions,
@@ -578,8 +575,8 @@ const Home: NextPage = () => {
                   console.log(
                     "afterstellaswappositions",
                     positions,
-                    "keyy",
-                    tokenSymbol
+                    "key",
+                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                   );
                 }
               );
@@ -599,13 +596,6 @@ const Home: NextPage = () => {
                   id: any;
                   asset: { symbol: any; address: any };
                 }) => {
-                  // const tokenNames = formatTokenSymbols(ff.asset.symbol);
-                  // const tokenSymbol =
-                  //   tokenNames.length == 2
-                  //     ? `${tokenNames[0]}-${tokenNames[1]}`
-                  //     : tokenNames[0];
-                  const tokenSymbol = getLpTokenSymbol(ff.asset.symbol);
-
                   console.log(
                     "ff",
                     ff.chain,
@@ -643,7 +633,6 @@ const Home: NextPage = () => {
                     "unstakedLpAmount",
                     unstakedLpAmount
                   );
-                  // const name = tokenSymbol;
                   const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
                   const pendingTokens = await chef.pendingTokens(
                     ff.id,
@@ -699,7 +688,7 @@ const Home: NextPage = () => {
                         lpTokenPricesMap[
                           `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                         ],
-                      lpSymbol: tokenSymbol,
+                      lpSymbol: ff.asset.symbol,
                     });
 
                     tempPositions[name] = {
@@ -721,7 +710,6 @@ const Home: NextPage = () => {
                       },
                       unclaimedRewards: ucrews,
                     };
-                    // setPositions(tempPositions);
                     setPositions((prevState: any) => ({
                       ...prevState,
                       ...tempPositions,
@@ -749,13 +737,6 @@ const Home: NextPage = () => {
                     address: any;
                   };
                 }) => {
-                  // const tokenNames = formatTokenSymbols(ff.asset.symbol);
-                  // const tokenSymbol =
-                  //   tokenNames.length == 2
-                  //     ? `${tokenNames[0]}-${tokenNames[1]}`
-                  //     : tokenNames[0];
-                  const tokenSymbol = getLpTokenSymbol(ff.asset.symbol);
-
                   console.log(
                     "ff",
                     ff.chain,
@@ -793,7 +774,6 @@ const Home: NextPage = () => {
                     "unstakedLpAmount",
                     unstakedLpAmount
                   );
-                  // const name = tokenSymbol;
                   const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
                   const rewardTokens: any = Object.values(poolInfo)[2];
                   console.log("rewardTokens", rewardTokens);
@@ -867,7 +847,7 @@ const Home: NextPage = () => {
                         lpTokenPricesMap[
                           `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                         ],
-                      lpSymbol: tokenSymbol,
+                      lpSymbol: ff.asset.symbol,
                     });
 
                     const tempPositions = { ...positions };
@@ -883,7 +863,6 @@ const Home: NextPage = () => {
                       unclaimedRewards: ucrews,
                     };
                     console.log("added position", tempPositions[name]);
-                    // setPositions(tempPositions);
                     setPositions((prevState: any) => ({
                       ...prevState,
                       ...tempPositions,
@@ -911,12 +890,6 @@ const Home: NextPage = () => {
                     address: any;
                   };
                 }) => {
-                  // const tokenNames = formatTokenSymbols(ff.asset.symbol);
-                  // const tokenSymbol =
-                  //   tokenNames.length == 2
-                  //     ? `${tokenNames[0]}-${tokenNames[1]}`
-                  //     : tokenNames[0];
-                  const tokenSymbol = getLpTokenSymbol(ff.asset.symbol);
                   console.log(
                     "ff",
                     ff.chain,
@@ -945,7 +918,6 @@ const Home: NextPage = () => {
                     "unstakedLpAmount",
                     unstakedLpAmount
                   );
-                  // const name = tokenSymbol;
                   const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
                   const rewardCount: any = await chef.reward_count();
                   let ucrews: any = [];
@@ -979,7 +951,7 @@ const Home: NextPage = () => {
                         `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                       ], // todo: should be reward token symbol
                       "\nsymbol",
-                      tokenSymbol,
+                      ff.asset.symbol,
                       "\nreward token",
                       reward_token
                     );
@@ -1005,7 +977,7 @@ const Home: NextPage = () => {
                         lpTokenPricesMap[
                           `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                         ],
-                      lpSymbol: tokenSymbol,
+                      lpSymbol: ff.asset.symbol,
                     });
 
                     tempPositions[name] = {
@@ -1027,13 +999,9 @@ const Home: NextPage = () => {
                           lpTokenPricesMap[
                             `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                           ],
-                        // lpTokenPricesMap[
-                        //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
-                        // ],
                       },
                       unclaimedRewards: ucrews,
                     };
-                    // setPositions(tempPositions);
                     setPositions((prevState: any) => ({
                       ...prevState,
                       ...tempPositions,
@@ -1093,9 +1061,10 @@ const Home: NextPage = () => {
     };
   }, []);
 
-  useEffect(() => {
-    trackPageView();
-  }, []);
+  // Tracking OFF in Staging
+  // useEffect(() => {
+  //   trackPageView();
+  // }, []);
 
   useEffect(() => {
     if (router.query.id) {
