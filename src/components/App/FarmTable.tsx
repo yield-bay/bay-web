@@ -86,7 +86,7 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
   };
 
   return (
-    <div className="bg-white border border-[#EAECF0] rounded-xl">
+    <div className="bg-white border-x border-b border-[#EAECF0] rounded-b-xl">
       <div className="inline-block min-w-full align-middle">
         {!noResult ? (
           <div>
