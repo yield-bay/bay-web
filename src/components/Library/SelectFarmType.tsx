@@ -24,7 +24,7 @@ export default function SelectFarmType() {
     >
       {({ open }) => (
         <>
-          <Listbox.Button className="ring-1 ring-[#D0D5DD] text-[#344054] rounded-lg flex items-center gap-x-2 w-full cursor-pointer focus:outline-none focus:ring-0 text-sm py-[10px] px-4 leading-5 font-semibold">
+          <Listbox.Button className="ring-1 ring-[#D0D5DD] text-[#344054] rounded-lg flex items-center gap-x-2 w-full cursor-pointer focus:outline-none text-sm py-[10px] px-4 leading-5 font-semibold">
             <span className="block truncate">{selectedFarmType.name}</span>
             <span className="pointer-events-none flex items-center">
               <ChevronDownIcon

@@ -1,49 +1,50 @@
-import Button from "./Library/Button";
+import CButton from "./Library/CButton";
 
 type LinkProps = {
   title: string;
   link: string;
 };
 
+const ecosystem: LinkProps[] = [
+  {
+    title: "Landing",
+    link: "https://www.yieldbay.io/",
+  },
+  {
+    title: "App",
+    link: "https://list.yieldbay.io/",
+  },
+];
+
+const community: LinkProps[] = [
+  {
+    title: "Twitter",
+    link: "https://twitter.com/yield_bay",
+  },
+  {
+    title: "Discord",
+    link: "https://discord.gg/AKHuvbz7q4",
+  },
+  {
+    title: "Docs",
+    link: "https://docs.yieldbay.io/",
+  },
+  {
+    title: "Github",
+    link: "https://github.com/yield-bay/",
+  },
+];
+
 export default function Footer() {
-  const ecosystem: LinkProps[] = [
-    {
-      title: "Landing",
-      link: "https://www.yieldbay.io/",
-    },
-    {
-      title: "App",
-      link: "https://list.yieldbay.io/",
-    },
-  ];
-
-  const community: LinkProps[] = [
-    {
-      title: "Twitter",
-      link: "https://twitter.com/yield_bay",
-    },
-    {
-      title: "Discord",
-      link: "https://discord.gg/AKHuvbz7q4",
-    },
-    {
-      title: "Docs",
-      link: "https://docs.yieldbay.io/",
-    },
-    {
-      title: "Github",
-      link: "https://github.com/yield-bay/",
-    },
-  ];
-
   return (
     <footer className="text-white" aria-labelledby="footer-heading">
-      <div className="max-w-6xl p-9 sm:py-12 sm:px-6 md:px-20 lg:py-14 lg:px-[121px]">
-        <div className="lg:grid lg:grid-cols-2 lg:gap-16">
+      <div className="p-8 mt-[14px] sm:mt-0 sm:py-12 sm:px-6 md:px-20 lg:py-14 lg:px-[72px]">
+        {/* <div className="lg:grid lg:grid-cols-2 lg:gap-16"> */}
+        <div className="lg:flex flex-row justify-between">
           {/* LEFT SIDE */}
-          <div className="sm:p-[10px] sm:pl-0">
+          <div className="max-w-[312px]">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-white text-2xl sm:text-[32px] leading-[37.12px]">
+              <span className="font-bold font-satoshi text-xl sm:text-2xl leading-7">
                 yieldbay
               </span>
               <a
@@ -51,10 +52,10 @@ export default function Footer() {
                 target="_blank"
                 rel="noreferrer"
               >
-                <Button size="small">List your protocol</Button>
+                <CButton variant="primary">List your protocol</CButton>
               </a>
             </div>
-            <div className="pt-8 pb-6 sm:py-9 font-normal text-xs sm:text-base leading-4 sm:leading-5">
+            <div className="pt-8 pb-6 sm:pt-8 font-bold text-xs sm:text-xs leading-4 sm:leading-4">
               <p>Yield Farming hub for the Polkadot &amp; Kusama Parachains.</p>
               <p className="mt-4">
                 Discover yield farms, deposit liquidity and earn rewards in the
@@ -64,34 +65,14 @@ export default function Footer() {
           </div>
 
           {/* RIGHT SIDE */}
-          <div className="grid grid-cols-2 md:gap-14 py-[15px]">
-            <div className="mt-0 xl:mt-0">
-              <p className="text-base leading-3 font-bold tracking-[0.115em] uppercase font-montserrat">
-                Ecosystem
-              </p>
-              <ul
-                role="list"
-                className="mt-4 space-y-4 text-base leading-4 font-bold"
-              >
-                {ecosystem.map((ele, index) => (
-                  <List key={index} title={ele.title} link={ele.link} />
-                ))}
-              </ul>
-            </div>
-            <div className="md:mt-0">
-              <p className="text-base leading-3 font-bold tracking-[0.115em] uppercase font-montserrat">
-                Community
-              </p>
-              <ul
-                role="list"
-                className="mt-4 space-y-4 text-base leading-4 font-bold"
-              >
-                {community.map((ele, index) => (
-                  <List key={index} title={ele.title} link={ele.link} />
-                ))}
-              </ul>
-            </div>
-          </div>
+          <ul
+            role="list"
+            className="space-y-4 text-right text-base leading-4 font-bold"
+          >
+            {community.map((ele, index) => (
+              <List key={index} title={ele.title} link={ele.link} />
+            ))}
+          </ul>
         </div>
       </div>
     </footer>
