@@ -35,6 +35,7 @@ import SelectFarmType from "@components/Library/SelectFarmType";
 import { AdjustmentsIcon } from "@heroicons/react/outline";
 import Toggle from "@components/Library/Toggle";
 import Image from "next/image";
+import SearchInput from "@components/Library/SearchInput";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -1120,7 +1121,7 @@ const Home: NextPage = () => {
               {/* Shows Shared farm if queries are available  */}
               <div
                 className="flex flex-col-reverse sm:flex-row items-center justify-between
-                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
+                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 border font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
               >
                 <div className="flex items-center py-5 sm:py-0 px-9 sm:px-0 justify-between w-full sm:w-max sm:gap-x-6">
                   <div className="hidden sm:block">
@@ -1139,18 +1140,8 @@ const Home: NextPage = () => {
                       width={16}
                     />
                   </div>
-                  {/* <div
-                    className="sm:hidden"
-                    onClick={() => setPrefModalOpen(true)}
-                  >
-                    <AdjustmentsIcon className="w-4 h-4 rotate-90" />
-                  </div> */}
-                  {/* <div className="sm:hidden min-w-max py-1 px-2">
-                    {filteredFarms.length == 0
-                      ? "Loading..."
-                      : `${filteredFarms.length} Results`}
-                  </div> */}
                 </div>
+                <SearchInput term={searchTerm} setTerm={setSearchTerm} />
               </div>
               <FarmTable
                 farms={filteredFarms}
