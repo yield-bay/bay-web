@@ -1121,7 +1121,7 @@ const Home: NextPage = () => {
               {/* Shows Shared farm if queries are available  */}
               <div
                 className="flex flex-col-reverse sm:flex-row items-center justify-between
-                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 border font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
+                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
               >
                 <div className="flex items-center py-5 sm:py-0 px-9 sm:px-0 justify-between w-full sm:w-max sm:gap-x-6">
                   <div className="hidden sm:block">

@@ -196,7 +196,7 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                   </th>
                   <th
                     scope="col"
-                    className="py-[13px] pl-4 pr-3 sm:pl-6 font-medium"
+                    className="py-[13px] pl-4 pr-3 sm:pl-6 font-medium bg-[#F0F0FF]"
                   >
                     Your Positions
                   </th>

@@ -29,7 +29,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
   const router = useRouter();
   return (
     <>
-      {farms.map((farm: FarmType) => {
+      {farms.map((farm: FarmType, index) => {
         const tokenNames = formatTokenSymbols(farm?.asset.symbol);
         const safetyScore = (farm?.safetyScore * 10).toFixed(1);
         const position =
@@ -40,7 +40,10 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
           position?.unstaked.amountUSD + position?.staked.amountUSD;
 
         return (
-          <tr key={`${farm.asset.address}-${farm.tvl}`}>
+          <tr
+            key={`${farm.asset.address}-${farm.tvl}`}
+            className={index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white"}
+          >
             <td className="whitespace-nowrap max-w-[288px] py-4 text-sm pl-8 md:pl-14 lg:pl-12">
               <div className="flex flex-col gap-y-4">
                 <div className="inline-flex items-center gap-x-4">
@@ -106,12 +109,12 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
             <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3">
               <Rewards rewards={farm?.rewards} />
             </td>
-            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
+            <td className="whitespace-nowrap bg-[#F0F0FF] max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
               {currentPosition !== undefined && currentPosition > 0 ? (
                 <Tooltip
                   label={
                     <>
-                      <p>Unstaked: {position?.unstaked.amountUSD}</p>
+                      <p>Idle: {position?.unstaked.amountUSD}</p>
                       <p>Staked: {position?.staked.amountUSD}</p>
                     </>
                   }
@@ -120,7 +123,23 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                   <span>{"$" + currentPosition.toFixed(2)}</span>
                 </Tooltip>
               ) : (
-                <span>-</span>
+                <Tooltip
+                  label={
+                    <div className="flex flex-col gap-y-2 min-w-[120px]">
+                      <div className="inline-flex justify-between">
+                        <span className="text-[#636A78]">Idle:</span>
+                        <span>$24</span>
+                      </div>
+                      <div className="inline-flex justify-between">
+                        <span className="text-[#636A78]">Staked:</span>
+                        <span>$12</span>
+                      </div>
+                    </div>
+                  }
+                  placement="bottom"
+                >
+                  <span className="text-[#D5D3D3]">-</span>
+                </Tooltip>
               )}
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-12 text-right text-sm font-medium">

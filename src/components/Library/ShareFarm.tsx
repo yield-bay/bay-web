@@ -7,6 +7,8 @@ import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
 import { useAtom } from "jotai";
 import { hashAtom } from "@store/atoms";
+import Image from "next/image";
+import clsx from "clsx";
 
 // Types
 type ShareFarmPropsType = {
@@ -26,10 +28,6 @@ type ShareModalPropsType = {
   tweetUrl: string;
   farm: any;
 };
-
-function classNames(classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const ShareFarm = ({ farm }: ShareFarmPropsType) => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -88,7 +86,7 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
   return (
     <Menu as="div" className="relative hidden sm:inline-block">
       <Menu.Button className="p-3 cursor-pointer transition-all duration-200">
-        <ShareIcon className="w-6 text-[#AFAFAF]" />
+        <Image src="/icons/ShareIcon.svg" alt="share" height={24} width={24} />
       </Menu.Button>
 
       <Transition
@@ -100,62 +98,52 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-20 origin-top-left font-spaceGrotesk absolute right-0 mt-2 min-w-max rounded-lg shadow-lg bg-[#011433] ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
-          <div>
-            <Menu.Item>
-              {({ active }: any) => (
-                <a
-                  href={tweetUrl}
-                  className={classNames([
-                    active ? "bg-baseBlueMid" : "",
-                    "group flex justify-start gap-x-2 px-6 py-4 text-sm w-full rounded-t-lg text-primaryBlue",
-                  ])}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() =>
-                    trackEventWithProperty("farm-share", {
-                      shareVia: "twitter",
-                      farmAddress: farm.asset?.address,
-                      farmId: farm.id,
-                    })
-                  }
-                >
-                  <span className="sr-only">Share on Twitter</span>
-                  <svg
-                    className="h-5 w-5"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                  </svg>
-                  Share on Twitter
-                </a>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }: any) => (
-                <button
-                  onClick={(e) => {
-                    navigator.clipboard.writeText(url);
+        <Menu.Items className="z-20 origin-top-left absolute left-0 mt-2 min-w-[240px] rounded-lg shadow-lg bg-white ring-1 ring-[#EAECF0] divide-y text-sm font-medium leading-5 divide-[#EAECF0] focus:outline-none">
+          <Menu.Item>
+            {({ active }) => (
+              <button
+                onClick={(e) => {
+                  navigator.clipboard.writeText(url);
 
-                    trackEventWithProperty("farm-share", {
-                      shareVia: "copy",
-                      farmAddress: farm.asset?.address,
-                      farmId: farm.id,
-                    });
-                  }}
-                  className={classNames([
-                    active ? "bg-baseBlueMid" : "",
-                    "group flex justify-start gap-x-2 px-6 py-4 rounded-b-lg border-t border-gray-800 text-sm w-full",
-                  ])}
-                >
-                  <ClipboardIcon className="h-5 w-5" aria-hidden="true" />
-                  Copy link
-                </button>
-              )}
-            </Menu.Item>
-          </div>
+                  trackEventWithProperty("farm-share", {
+                    shareVia: "copy",
+                    farmAddress: farm.asset?.address,
+                    farmId: farm.id,
+                  });
+                }}
+                className={clsx([
+                  active && "bg-gray-50",
+                  "group text-left p-4 rounded-t-lg w-full",
+                ])}
+              >
+                <span className="sr-only">Copy link</span>
+                Copy link
+              </button>
+            )}
+          </Menu.Item>
+          <Menu.Item>
+            {({ active }) => (
+              <a
+                href={tweetUrl}
+                className={clsx([
+                  active && "bg-gray-50",
+                  "group flex text-left p-4 rounded-b-lg w-full",
+                ])}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() =>
+                  trackEventWithProperty("farm-share", {
+                    shareVia: "twitter",
+                    farmAddress: farm.asset?.address,
+                    farmId: farm.id,
+                  })
+                }
+              >
+                <span className="sr-only">Share on Twitter</span>
+                Share on Twitter
+              </a>
+            )}
+          </Menu.Item>
         </Menu.Items>
       </Transition>
     </Menu>
@@ -211,7 +199,7 @@ const ShareModal = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="relative font-spaceGrotesk inline-block sm:hidden align-middle bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
+              <div className="relative inline-block sm:hidden align-middle bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
                 {/* Close Button */}
                 <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
                   <div className="flex items-center p-1 group rounded-full active:bg-neutral-700">
@@ -229,7 +217,7 @@ const ShareModal = ({
                 <div className="mt-3 w-full">
                   <Dialog.Title
                     as="h3"
-                    className="text-lg pb-3 text-center leading-6 px-5 font-spaceGrotesk font-medium text-white"
+                    className="text-lg pb-3 text-center leading-6 px-5 font-medium text-white"
                   >
                     Share farm
                   </Dialog.Title>
