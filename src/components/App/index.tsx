@@ -31,6 +31,10 @@ import Hero from "./Hero";
 import { FarmType, TokenPriceType } from "@utils/types";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { useAccount } from "wagmi";
+import SelectFarmType from "@components/Library/SelectFarmType";
+import { AdjustmentsIcon } from "@heroicons/react/outline";
+import Toggle from "@components/Library/Toggle";
+import Image from "next/image";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -50,6 +54,7 @@ const Home: NextPage = () => {
 
   // States
   const [searchTerm, setSearchTerm] = useState("");
+  const [showSupportedFarms, setShowSupportedFarms] = useState(false);
   const [prefModalOpen, setPrefModalOpen] = useState(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
@@ -1113,6 +1118,40 @@ const Home: NextPage = () => {
             // DESKTOP VIEW
             <div className="hidden sm:mx-[72px] sm:block">
               {/* Shows Shared farm if queries are available  */}
+              <div
+                className="flex flex-col-reverse sm:flex-row items-center justify-between
+                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
+              >
+                <div className="flex items-center py-5 sm:py-0 px-9 sm:px-0 justify-between w-full sm:w-max sm:gap-x-6">
+                  <div className="hidden sm:block">
+                    <SelectFarmType />
+                  </div>
+                  <div className="inline-flex gap-x-2 items-center">
+                    <Toggle
+                      enabled={showSupportedFarms}
+                      setEnabled={setShowSupportedFarms}
+                    />
+                    <span>show only supported farms</span>
+                    <Image
+                      src="/icons/umbrella.svg"
+                      alt="supported farms"
+                      height={16}
+                      width={16}
+                    />
+                  </div>
+                  {/* <div
+                    className="sm:hidden"
+                    onClick={() => setPrefModalOpen(true)}
+                  >
+                    <AdjustmentsIcon className="w-4 h-4 rotate-90" />
+                  </div> */}
+                  {/* <div className="sm:hidden min-w-max py-1 px-2">
+                    {filteredFarms.length == 0
+                      ? "Loading..."
+                      : `${filteredFarms.length} Results`}
+                  </div> */}
+                </div>
+              </div>
               <FarmTable
                 farms={filteredFarms}
                 noResult={noFilteredFarms}

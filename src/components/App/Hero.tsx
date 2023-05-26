@@ -26,9 +26,9 @@ const Hero: FC<Props> = ({
   return (
     <div className="bg-hero-gradient-mob sm:bg-hero-gradient">
       {/* Center Container */}
-      <div className="mx-auto max-w-lg md:max-w-2xl py-10">
+      <div className="mx-auto max-w-lg md:max-w-xl mb-10 mt-[13px]">
         <h1
-          className="mb-11 sm:mb-4 font-satoshi font-bold text-2xl px-4 sm:text-3xl md:text-4xl leading-[30.62px] sm:leading-10 md:leading-[46px] text-center text-[#D9D9D9]"
+          className="mb-11 sm:mb-4 font-satoshi font-bold text-2xl px-4 sm:text-3xl md:text-[32px] leading-[30.62px] sm:leading-10 md:leading-[38.4px] text-center text-[#D9D9D9]"
           id="hero-heading"
         >
           discover & earn yield from polkadot and kusama paraverse
@@ -41,7 +41,7 @@ const Hero: FC<Props> = ({
           />
         </div>
       </div>
-      <div
+      {/* <div
         className="flex flex-col-reverse sm:flex-row items-center justify-between border-y sm:border-none border-[#334380] border-opacity-60
                           mt-8 sm:mt-0 py-0 sm:py-10 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-28 bg-hero-gradient-mob
                           font-medium text-base text-blueSilver leading-5"
@@ -54,7 +54,6 @@ const Hero: FC<Props> = ({
             <AdjustmentsIcon className="w-4 h-4 rotate-90" />
           </div>
           <div className="sm:hidden min-w-max py-1 px-2">
-            {/* TODO: While searching, if there're no farms, then too it shows Loading coz no farms */}
             {filteredFarms.length == 0
               ? "Loading..."
               : `${filteredFarms.length} Results`}
@@ -68,7 +67,7 @@ const Hero: FC<Props> = ({
             ? "Loading..."
             : `${filteredFarms.length} Results`}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
