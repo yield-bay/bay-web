@@ -1,13 +1,15 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { Switch } from "@headlessui/react";
 import clsx from "clsx";
+import { showSupportedFarmsAtom } from "@store/atoms";
+import { useAtom } from "jotai";
 
 interface Props {
-  enabled: boolean;
-  setEnabled: (value: boolean) => void;
-};
+  label: string;
+}
 
-const Toggle: FC<Props> = ({ enabled, setEnabled }) => {
+const Toggle: FC<Props> = ({ label }) => {
+  const [enabled, setEnabled] = useAtom(showSupportedFarmsAtom);
   return (
     <Switch
       checked={enabled}
@@ -17,7 +19,7 @@ const Toggle: FC<Props> = ({ enabled, setEnabled }) => {
         "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
       )}
     >
-      <span className="sr-only">Show supported farms</span>
+      <span className="sr-only">{label}</span>
       <span
         aria-hidden="true"
         className={clsx(

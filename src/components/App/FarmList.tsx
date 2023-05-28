@@ -1,5 +1,8 @@
 import { FC, memo, useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { useAtom } from "jotai";
+import clsx from "clsx";
 
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
@@ -9,6 +12,7 @@ import {
   formatFarmType,
 } from "@utils/farmListMethods";
 import { FarmType } from "@utils/types";
+import { showSupportedFarmsAtom } from "@store/atoms";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -18,7 +22,6 @@ import ShareFarm from "@components/Library/ShareFarm";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
-import Image from "next/image";
 
 interface Props {
   farms: FarmType[];
@@ -27,6 +30,10 @@ interface Props {
 
 const FarmsList: FC<Props> = ({ farms, positions }) => {
   const router = useRouter();
+  const [showSupportedFarms, setShowSupportedFarms] = useAtom(
+    showSupportedFarmsAtom
+  );
+
   return (
     <>
       {farms.map((farm: FarmType, index) => {
@@ -42,7 +49,12 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
         return (
           <tr
             key={`${farm.asset.address}-${farm.tvl}`}
-            className={index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white"}
+            className={clsx(
+              index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white",
+              (position == undefined || currentPosition <= 0) &&
+                showSupportedFarms &&
+                "hidden"
+            )}
           >
             <td className="whitespace-nowrap max-w-[288px] py-4 text-sm pl-8 md:pl-14 lg:pl-12">
               <div className="flex flex-col gap-y-4">
@@ -54,7 +66,11 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                     alt="supported farm"
                     height={20}
                     width={20}
-                    className="mr-2"
+                    className={clsx(
+                      "mr-2",
+                      (position == undefined || currentPosition <= 0) &&
+                        "saturate-0"
+                    )}
                   />
                 </div>
                 <div className="text-[#101828] font-medium text-sm leading-5">

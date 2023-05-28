@@ -55,7 +55,6 @@ const Home: NextPage = () => {
 
   // States
   const [searchTerm, setSearchTerm] = useState("");
-  const [showSupportedFarms, setShowSupportedFarms] = useState(false);
   const [prefModalOpen, setPrefModalOpen] = useState(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
@@ -1128,10 +1127,7 @@ const Home: NextPage = () => {
                     <SelectFarmType />
                   </div>
                   <div className="inline-flex gap-x-2 items-center">
-                    <Toggle
-                      enabled={showSupportedFarms}
-                      setEnabled={setShowSupportedFarms}
-                    />
+                    <Toggle label={"show only supported farms"} />
                     <span>show only supported farms</span>
                     <Image
                       src="/icons/umbrella.svg"
