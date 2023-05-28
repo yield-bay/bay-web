@@ -15,7 +15,7 @@ const Button = ({ children, size, style, onButtonClick }: ButtonProps) => {
         "ring-1 bg-[#F9FAFB] ring-[#D0D5DD] text-[#1D2939] font-medium text-sm leading-5 rounded-lg transition duration-200 shadow-farmBtn",
         style,
         size == "large"
-          ? "py-[10px] sm:py-[14.5px] px-4"
+          ? "py-[10px] px-4"
           : size == "base"
           ? "py-[10.5px] px-6 rounded-[8px]"
           : "py-2 px-[18px] sm:py-3 sm:px-6"
