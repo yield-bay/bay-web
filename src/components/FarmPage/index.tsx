@@ -353,7 +353,7 @@ const FarmPage: NextPage = () => {
                         />
                         <span className="ml-3">{reward.asset}</span>
                       </td>
-                      <td className="py-[14px] pl-6 underline underline-offset-4 decoration-dotted	decoration-3 decoration-[#475467] cursor-default">
+                      <td className="py-[14px] pl-6 underline underline-offset-4 decoration-dotted decoration-3 decoration-[#475467] cursor-default">
                         <Tooltip
                           label={<div>{"$" + reward.valueUSD.toFixed(1)}</div>}
                         >
@@ -365,7 +365,13 @@ const FarmPage: NextPage = () => {
                           </>
                         </Tooltip>
                       </td>
-                      <td className="py-[14px] pl-6 ">75.76%</td>
+                      <td className="py-[14px] pl-6">
+                        {calcAssetPercentage(
+                          reward,
+                          calcTotalRewardValue(farm.rewards)
+                        )}
+                        %
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -408,9 +414,7 @@ const FarmPage: NextPage = () => {
               </div>
               <div className="px-6 pt-4 pb-5">
                 <p className="max-w-xs text-sm leading-5">
-                  High impermanent loss risk unless the assets in the LP token
-                  are pegged to the same price. For example, GLMR-ETH LP has
-                  high IL risk, while USDC-BUSD LP has very low IL risk.
+                  {farmTypeDesc(farm?.farmType)}
                 </p>
               </div>
             </div>
@@ -427,185 +431,3 @@ const FarmPage: NextPage = () => {
 };
 
 export default FarmPage;
-
-/* Back Arrow Icon */
-/* <div className="opacity-70 w-max cursor-pointer mt-[6px] mb-11 sm:mb-14">
-        <Link href="/">
-          <div className="flex flex-row gap-x-[14px]">
-            <ArrowLeftIcon className="w-[18px]" />
-            <span className="font-semibold text-lg sm:text-xl leading-5 sm:leading-6 select-none">
-              back
-            </span>
-          </div>
-        </Link>
-      </div> */
-
-//     {/* First Row */}
-//     <div className=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-14 sm:gap-14 xl:flex flex-row justify-between mb-10 sm:mb-[107px] text-base font-bold leading-5">
-//     {/* TVL */}
-//     <div className="flex flex-col justify-start gap-y-6 max-w-max">
-//       <p className="opacity-70">TVL</p>
-//       <div className="flex flex-col gap-y-[19px]">
-//         <p className="text-blueSilver text-2xl leading-7 font-bold">
-//           {toDollarUnits(farm?.tvl)}
-//         </p>
-//       </div>
-//     </div>
-//     {/* APR */}
-//     <div className="flex flex-col gap-y-6 max-w-max">
-//       <p className="opacity-70">APR</p>
-//       <div className="flex flex-col gap-y-[19px]">
-//         <p className="text-blueSilver text-2xl leading-7 font-bold">
-//           {apr.toFixed(2)}%
-//         </p>
-//         <li className="flex">
-//           <p className="opacity-70">Reward APR</p>
-//           <p className="ml-2">{farm?.apr.reward.toFixed(2)}%</p>
-//         </li>
-//         <li className="flex">
-//           <p className="opacity-70">Base APR</p>
-//           <p className="ml-2">{farm?.apr.base.toFixed(2)}%</p>
-//         </li>
-//       </div>
-//     </div>
-//     {/* Rewards */}
-//     <div className="flex flex-col gap-y-6 max-w-max">
-//       <p className="opacity-70">Rewards</p>
-//       {farm?.rewards.map((reward, index) => (
-//         <div
-//           className="flex items-center justify-between gap-x-[61px]"
-//           key={index}
-//         >
-//           <div className="flex items-center">
-//             <div className="flex overflow-hidden ring-[3px] ring-baseBlueMid rounded-full bg-baseBlueMid mr-5">
-//               <Image
-//                 src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
-//                 alt={reward.asset}
-//                 width={48}
-//                 height={48}
-//                 className="rounded-full max-h-max"
-//               />
-//             </div>
-//             <Tooltip
-//               label={<div>{"$" + reward.valueUSD.toFixed(1)}</div>}
-//             >
-//               <p>
-//                 {parseFloat(reward.amount.toFixed(1)).toLocaleString(
-//                   "en-US"
-//                 )}{" "}
-//                 {reward.asset.toUpperCase()}/
-//                 {reward.freq === "Weekly" ? "WEEK" : "DAY"}
-//               </p>
-//             </Tooltip>
-//           </div>
-//           <p>
-//             {calcAssetPercentage(
-//               reward,
-//               calcTotalRewardValue(farm.rewards)
-//             )}
-//             %
-//           </p>
-//         </div>
-//       ))}
-//     </div>
-//     {/* Calculator */}
-//     <div className="hidden md:block border-2 border-[#314584] rounded-lg p-8 h-max min-w-[321px]">
-//       <div className="flex justify-between mb-6">
-//         <p>Time Frame</p>
-//         <p>ROI</p>
-//       </div>
-//       <div className="flex flex-col gap-y-4 font-normal">
-//         <div className="flex justify-between">
-//           <p>1 day</p>
-//           <p>{(apr / 365).toFixed(2)}%</p>
-//         </div>
-//         <div className="flex justify-between">
-//           <p>7 days</p>
-//           <p>{(apr / 52).toFixed(2)}%</p>
-//         </div>
-//         <div className="flex justify-between">
-//           <p>30 days</p>
-//           <p>{(apr / 12).toFixed(2)}%</p>
-//         </div>
-//         <div className="flex justify-between">
-//           <p>365 days</p>
-//           <p>{apr.toFixed(2)}%</p>
-//         </div>
-//       </div>
-//     </div>
-//   </div>
-//   {/* Second Row */}
-//   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-14 sm:gap-16 lg:flex flex-row justify-between text-base font-bold leading-5">
-//     {/* Assets */}
-//     <div>
-//       <p className="opacity-70">Assets</p>
-//       <div className="flex flex-col items-start gap-y-3 mt-6">
-//         {farm?.asset.logos.map((logo, index) => (
-//           <div key={index} className="flex gap-x-5 items-center">
-//             <div className="flex rounded-full overflow-hidden ring-[3px] ring-[#01050D]">
-//               <Image height={48} width={48} src={logo} alt={logo} />
-//             </div>
-//             <p>{logo.trim().slice(61, -4)}</p>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-//     {/* Protocol */}
-//     <div className="flex flex-col gap-y-6">
-//       <p className="opacity-70">Protocol</p>
-//       <a
-//         href={protocolURL(farm?.protocol)}
-//         target="_blank"
-//         rel="noreferrer"
-//         className="sm:flex items-center gap-x-1 hover:underline"
-//       >
-//         <p>{formatFirstLetter(farm?.protocol)}</p>
-//         <ExternalLinkIcon className="w-4" />
-//       </a>
-//     </div>
-//     {/* Chain */}
-//     <div className="flex flex-col gap-y-6">
-//       <p className="opacity-70">Chain</p>
-//       <a
-//         href={chainURL(farm?.chain)}
-//         target="_blank"
-//         rel="noreferrer"
-//         className="sm:flex items-center gap-x-1 hover:underline"
-//       >
-//         <p>{formatFirstLetter(farm?.chain)}</p>
-//         <ExternalLinkIcon className="w-4" />
-//       </a>
-//     </div>
-//     {/* Farm Type */}
-//     <div className="flex flex-col gap-y-6 ">
-//       <p className="opacity-70 font-spaceGrotesk">Type</p>
-//       <p>{formatFarmType(farm?.farmType)}</p>
-//       <p className="font-medium leading-6 opacity-60 max-w-[306px]">
-//         {farmTypeDesc(farm?.farmType)}
-//       </p>
-//     </div>
-//     {/* Safety Score */}
-//     <div className="flex flex-col gap-y-6">
-//       <p className="opacity-70 font-spaceGrotesk">Safety Score</p>
-//       <div className="flex items-center justify-start">
-//         <span>{safetyScore}</span>
-//         <SafetyScorePill score={safetyScore} />
-//       </div>
-//       {/* Safety Score Scale */}
-//       <div className="max-w-[326px]">
-//         <div className="w-full h-4 bg-white rounded-lg bg-safety-scale" />
-//         <div className="flex justify-between mt-[7px]">
-//           <span>0</span>
-//           <span>10</span>
-//         </div>
-//       </div>
-//       <p className="font-medium leading-6 opacity-60 max-w-[306px]">
-//         The score is a relative indicator of the reliability of the farm
-//         compared to the other opportunities listed on YieldBay. The score
-//         is a calculated based on the current TVL, APR, and the rewards
-//         being dished out in the farm.
-//       </p>
-//     </div>
-//   </div>
-//   <CalculatorModal open={calcOpen} setOpen={setCalcOpen} apr={apr} />
-// </div>
