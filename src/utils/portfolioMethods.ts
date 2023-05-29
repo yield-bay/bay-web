@@ -1,3 +1,23 @@
+export function calcTotalUnclaimedRewards(userPositions: any) {
+  let total = 0;
+  for (let i = 0; i < userPositions.length; i++) {
+    let position = userPositions[i];
+    for (let j = 0; j < position.unclaimedRewards.length; j++) {
+      total += position.unclaimedRewards[j].amountUSD;
+    }
+  }
+  return total.toFixed(2);
+}
+
+export function calcNetWorth(userPositions: any) {
+  let total = 0;
+  for (let i = 0; i < userPositions.length; i++) {
+    total +=
+      userPositions[i].unstaked.amountUSD + userPositions[i].staked.amountUSD;
+  }
+  return total.toFixed(2);
+}
+
 export function joinArrayElements(
   arr: string[],
   startIndex: number,
