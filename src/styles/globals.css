@@ -19,3 +19,10 @@
     background: linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #0D0101 100%);
   }
 }
+
+.border-gradient-br-blue-green-gray-900 {
+  background: linear-gradient(to right, #18181B, #18181B),
+    linear-gradient(to bottom right, #60A5FA, #4ADE80);
+  background-clip: padding-box, border-box;
+  background-origin: padding-box, border-box;
+}

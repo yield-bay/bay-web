@@ -52,6 +52,10 @@ module.exports = {
         "linear-gradient(180deg, rgba(3, 14, 33, 0) -21.54%, #01060F 100%)",
       "safety-scale":
         "linear-gradient(270deg, #67C84B 0%, #F5AF46 48.46%, #C8524B 102.25%)",
+      "net-worth-card":
+        "linear-gradient(224.04deg, #36364D -48.59%, rgba(54, 54, 77, 0) 105.16%)",
+      "rewards-card":
+        "linear-gradient(172.15deg, #6DA695 -104.57%, rgba(54, 54, 77, 0) 261.47%);",
     },
   },
   plugins: [require("daisyui")],
