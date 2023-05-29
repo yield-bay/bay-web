@@ -15,8 +15,13 @@ import Tooltip from "@components/Library/Tooltip";
 import Link from "next/link";
 import SelectChain from "@components/Library/SelectChain";
 import { joinArrayElements } from "@utils/portfolioMethods";
+import useFilteredPositions from "@hooks/useFilteredPositions";
 import useFilteredByChain from "@hooks/useFilteredByChain";
+import { useAtom } from "jotai";
+import { filteredChainAtom } from "@store/atoms";
+import useFilteredPositionType from "@hooks/useFilteredPositionType";
 
+// Testing Object of position
 const positions = {
   "moonbeam-stellaswap-0xF3a5454496E26ac57da879bf3285Fa85DEBF0388-38-axlDualPool":
     {
@@ -378,9 +383,13 @@ const PortfolioPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [positionType, setPositionType] = useState(0);
   const [userPositions, setUserPositions] = useState<any[]>([]);
+  const [selectedChain] = useAtom(filteredChainAtom);
 
-  const [filteredPositions, noFilteredPositions] = useFilteredByChain(
-    userPositions,
+  // Filteration layers
+  const filteredByType = useFilteredPositionType(userPositions, positionType);
+  const filteredByChain = useFilteredByChain(filteredByType, selectedChain);
+  const [filteredPositions, noFilteredPositions] = useFilteredPositions(
+    filteredByChain,
     searchTerm
   );
 
@@ -549,7 +558,7 @@ const PortfolioPage = () => {
                           Staked at 65% APY
                         </span>
                         <Link
-                          href="/portfolio"
+                          href={`/farm/${position.id}?addr=${position.address}`}
                           className="font-bold underline underline-offset-2"
                         >
                           View Farm
@@ -566,46 +575,6 @@ const PortfolioPage = () => {
     </div>
   );
 };
-
-const people = [
-  {
-    name: "Jane Cooper",
-    title: "Regional Paradigm Technician",
-    role: "Admin",
-    email: "janecooper@example.com",
-    telephone: "+1-202-555-0170",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  {
-    name: "Sarthak Verma",
-    title: "Product Engineer",
-    role: "Developer",
-    email: "sarthkavdev@gmail.com",
-    telephone: "+91-78693-33883",
-    imageUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  // {
-  //   name: "Jane Cooper",
-  //   title: "Regional Paradigm Technician",
-  //   role: "Admin",
-  //   email: "janecooper@example.com",
-  //   telephone: "+1-202-555-0170",
-  //   imageUrl:
-  //     "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  // },
-  // {
-  //   name: "Jane Cooper",
-  //   title: "Regional Paradigm Technician",
-  //   role: "Admin",
-  //   email: "janecooper@example.com",
-  //   telephone: "+1-202-555-0170",
-  //   imageUrl:
-  //     "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  // },
-  // More people...
-];
 
 export default PortfolioPage;
 
