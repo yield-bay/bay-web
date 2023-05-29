@@ -32,3 +32,4 @@ export const farmTypesAtom = atom<FarmTypesType[]>([
 ]);
 
 export const showSupportedFarmsAtom = atom<boolean>(false);
+export const filteredChainAtom = atom<number>(0);
