@@ -14,7 +14,11 @@ import { formatFirstLetter, formatTokenSymbols } from "@utils/farmListMethods";
 import Tooltip from "@components/Library/Tooltip";
 import Link from "next/link";
 import SelectChain from "@components/Library/SelectChain";
-import { joinArrayElements } from "@utils/portfolioMethods";
+import {
+  calcNetWorth,
+  calcTotalUnclaimedRewards,
+  joinArrayElements,
+} from "@utils/portfolioMethods";
 import useFilteredPositions from "@hooks/useFilteredPositions";
 import useFilteredByChain from "@hooks/useFilteredByChain";
 import { useAtom } from "jotai";
@@ -394,8 +398,8 @@ const PortfolioPage = () => {
   );
 
   useEffect(() => {
+    // Creating a desired array of position objects
     const positionsArray = Object.entries(positions).map(([key, value]) => {
-      // Creating a desired array of position objects
       const farmInfo = key.split("-");
       const lpSymbol = joinArrayElements(farmInfo, 4, farmInfo.length - 1);
       return {
@@ -407,8 +411,14 @@ const PortfolioPage = () => {
         ...value,
       };
     });
-    console.log("user positions", positionsArray);
-    setUserPositions(positionsArray);
+    // Filtering out the positions with null balance values
+    const temp = positionsArray.filter((position) => {
+      return (
+        position.unstaked.amountUSD != null && position.staked.amountUSD != null
+      );
+    });
+    console.log("user positions", temp);
+    setUserPositions(temp);
   }, []);
 
   return (
@@ -416,13 +426,17 @@ const PortfolioPage = () => {
       <div className="mb-[30px] text-white inline-flex gap-x-[17px] w-full">
         <div className="w-1/2 rounded-xl p-6 text-left bg-net-worth-card">
           <p className="font-medium text-base leading-6">Net Worth</p>
-          <p className="mt-3 font-semibold text-4xl leading-[44px]">$2,420</p>
+          <p className="mt-3 font-semibold text-4xl leading-[44px]">
+            ${calcNetWorth(userPositions)}
+          </p>
         </div>
         <div className="w-1/2 rounded-xl p-6 text-left bg-rewards-card">
           <p className="font-medium text-base leading-6">
             Unclaimed rewards worth
           </p>
-          <p className="mt-3 font-semibold text-4xl leading-[44px]">$23.5</p>
+          <p className="mt-3 font-semibold text-4xl leading-[44px]">
+            ${calcTotalUnclaimedRewards(userPositions)}
+          </p>
         </div>
       </div>
       <div className="flex flex-col bg-white rounded-xl">
@@ -504,17 +518,30 @@ const PortfolioPage = () => {
                         </div>
                       </div>
                       <p className="truncate text-xl font-bold leading-6 text-black">
-                        $434
+                        $
+                        {(
+                          position.unstaked.amountUSD +
+                          position.staked.amountUSD
+                        ).toFixed(2)}
                       </p>
                     </div>
                     <div className="flex flex-row justify-between py-6">
                       <div className="flex flex-col gap-y-2">
                         <p className="text-sm leading-5">Total Holdings</p>
                         <p className="text-2xl leading-7 font-semibold text-[#101828]">
-                          $424
+                          $
+                          {(
+                            position.unstaked.amountUSD +
+                            position.staked.amountUSD
+                          ).toFixed(2)}
                         </p>
                         <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5 max-w-fit">
-                          <span className="font-bold">45.7</span> LP
+                          <span className="font-bold">
+                            {(
+                              position.unstaked.amount + position.staked.amount
+                            ).toFixed(2)}
+                          </span>{" "}
+                          LP
                         </p>
                       </div>
                       <div className="flex flex-row gap-x-3">
@@ -526,10 +553,13 @@ const PortfolioPage = () => {
                             Idle
                           </p>
                           <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                            $434
+                            ${position?.unstaked?.amountUSD.toFixed(2)}
                           </p>
                           <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                            <span className="font-bold">45.7</span> LP
+                            <span className="font-bold">
+                              ${position?.unstaked.amount.toFixed(2)}
+                            </span>{" "}
+                            LP
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-y-1">
@@ -540,10 +570,13 @@ const PortfolioPage = () => {
                             Staked
                           </p>
                           <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                            $434
+                            ${position?.staked.amountUSD.toFixed(2)}
                           </p>
                           <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                            <span className="font-bold">45.7</span> LP
+                            <span className="font-bold">
+                              ${position?.staked.amount.toFixed(2)}
+                            </span>{" "}
+                            LP
                           </p>
                         </div>
                       </div>
