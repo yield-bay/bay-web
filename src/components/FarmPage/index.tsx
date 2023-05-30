@@ -430,6 +430,7 @@ const FarmPage: NextPage = () => {
       <RewardsModal
         open={isRewardsModalOpen}
         setOpen={setIsRewardsModalOpen}
+        farm={farm}
         position={{
           unstaked: {
             amount: 0,
