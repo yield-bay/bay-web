@@ -1,8 +1,6 @@
 import { Fragment, ReactNode, FC } from "react";
 import { Transition, Dialog } from "@headlessui/react";
-import { satoshiFont } from "@utils/localFont";
-import clsx from "clsx";
-// import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XIcon } from "@heroicons/react/outline";
 
 interface Props {
   open: boolean;
@@ -36,7 +34,7 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
           <div className="fixed inset-0 bg-opacity-25" />
         </Transition.Child>
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-start mt-10 justify-center p-4 text-center">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -46,24 +44,19 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel
-                className={clsx(
-                  "flex flex-col gap-y-8 w-full max-w-[600px] font-sans font-bold tracking-wide text-xl leading-[27px] border border-baseGray bg-gray-900  text-white transform rounded-lg p-6 sm:p-12 text-left align-middle shadow-xl transition-all",
-                  satoshiFont.variable
-                )}
-              >
-                {/* <div className="absolute top-0 right-0 pt-[60px] pr-12">
-                  <div className="flex items-center group rounded-full p-1 hover:bg-neutral-700">
+              <Dialog.Panel className="flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-3 sm:p-6 align-middle shadow transform transition-all">
+                <div className="absolute top-0 right-0 pt-6 pr-9">
+                  <div className="flex items-center rounded-full p-1 hover:bg-gray-100 transition-all duration-200">
                     <button
                       type="button"
-                      className="text-neutral-400 group-hover:text-white focus:outline-none"
+                      className="text-[#101828] focus:outline-none"
                       onClick={() => setOpen(false)}
                     >
                       <span className="sr-only">Close</span>
-                      <XMarkIcon className="w-4 h-4" aria-hidden="true" />
+                      <XIcon className="w-6 h-6" aria-hidden="true" />
                     </button>
                   </div>
-                </div> */}
+                </div>
                 {children}
               </Dialog.Panel>
             </Transition.Child>
