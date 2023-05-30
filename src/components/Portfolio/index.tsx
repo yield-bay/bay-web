@@ -24,6 +24,9 @@ import useFilteredByChain from "@hooks/useFilteredByChain";
 import { useAtom } from "jotai";
 import { filteredChainAtom } from "@store/atoms";
 import useFilteredPositionType from "@hooks/useFilteredPositionType";
+import { useQuery } from "@tanstack/react-query";
+import { fetchListicleFarms } from "@utils/api";
+import { FarmType } from "@utils/types";
 
 // Testing Object of position
 const positions = {
@@ -384,9 +387,18 @@ const positions = {
 };
 
 const PortfolioPage = () => {
+  // Avaiable chains we are supporting
+  const chains = ["moonriver", "moonbeam", "astar", "mangata"];
+  // Storage
   const [searchTerm, setSearchTerm] = useState("");
   const [positionType, setPositionType] = useState(0);
   const [userPositions, setUserPositions] = useState<any[]>([]);
+  // const [positionsByChain, setPositionsByChain] = useState<{
+  //   [key: string]: any[];
+  // }>({});
+  const [positionsByChain, setPositionsByChain] = useState<any[]>([]);
+
+  // Atoms
   const [selectedChain] = useAtom(filteredChainAtom);
 
   // Filteration layers
@@ -399,27 +411,78 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     // Creating a desired array of position objects
-    const positionsArray = Object.entries(positions).map(([key, value]) => {
-      const farmInfo = key.split("-");
-      const lpSymbol = joinArrayElements(farmInfo, 4, farmInfo.length - 1);
-      return {
-        chain: farmInfo[0],
-        protocol: farmInfo[1],
-        address: farmInfo[2],
-        id: farmInfo[3],
-        lpSymbol,
-        ...value,
-      };
-    });
-    // Filtering out the positions with null balance values
-    const temp = positionsArray.filter((position) => {
-      return (
-        position.unstaked.amountUSD != null && position.staked.amountUSD != null
-      );
-    });
-    console.log("user positions", temp);
-    setUserPositions(temp);
-  }, []);
+    if (Object.keys(positions).length > 0) {
+      const positionsArray = Object.entries(positions).map(([key, value]) => {
+        const farmInfo = key.split("-");
+        const lpSymbol = joinArrayElements(farmInfo, 4, farmInfo.length - 1);
+        return {
+          chain: farmInfo[0],
+          protocol: farmInfo[1],
+          address: farmInfo[2],
+          id: farmInfo[3],
+          lpSymbol,
+          ...value,
+        };
+      });
+      // Filtering out the positions with null balance values
+      const temp = positionsArray.filter((position) => {
+        return (
+          position.unstaked.amountUSD != null &&
+          position.staked.amountUSD != null
+        );
+      });
+      console.log("user positions", temp);
+      setUserPositions(temp);
+    }
+  }, [positions]);
+
+  const catagorisePositionsByChain = (positions: any) => {
+    const categorizedPositions: any[] = [];
+
+    for (let i = 0; i < positions.length; i++) {
+      const obj = positions[i];
+      const chain = obj.chain;
+
+      if (!categorizedPositions[chain]) {
+        categorizedPositions[chain] = [];
+      }
+
+      categorizedPositions[chain].push(obj);
+    }
+
+    console.log(
+      "positions by chain",
+      categorizedPositions,
+      "\nlength",
+      categorizedPositions.length
+    );
+
+    // setPositionsByChain(categorizedPositions);
+  };
+
+  useEffect(() => {
+    catagorisePositionsByChain(filteredPositions);
+  }, [filteredPositions]);
+
+  // Fetching all farms
+  const { isLoading, data: farmsList } = useQuery({
+    queryKey: ["farmsList"],
+    queryFn: async () => {
+      try {
+        const { farms } = await fetchListicleFarms();
+        return farms;
+      } catch (error) {
+        console.error(error);
+      }
+    },
+  });
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+
+  useEffect(() => {
+    if (!isLoading) {
+      console.log("farms", farms);
+    }
+  }, [isLoading]);
 
   return (
     <div className="px-[72px] text-[#475467]">
@@ -476,33 +539,46 @@ const PortfolioPage = () => {
           </div>
           <div className="flex flex-row w-full justify-end gap-x-4">
             <SearchInput term={searchTerm} setTerm={setSearchTerm} />
-            <SelectChain
-              availableChains={["moonriver", "moonbeam", "astar", "mangata"]}
-            />
+            <SelectChain availableChains={chains} />
           </div>
         </div>
         {/* Positions catagorized by Chains */}
-        <div className="py-16 px-12">
-          <div className="flex flex-col gap-y-6">
-            <h1 className="font-semibold text-2xl leading-5 text-[#1D2939]">
-              Stellaswap
-            </h1>
-            <ul
-              role="list"
-              className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-            >
-              {/* Card */}
-              {filteredPositions.map((position, index) => {
+        <div className="flex flex-col gap-y-16 py-16 px-12">
+          {/* {chains.map((chain, index) => {
+            // Check if chain has any positions
+            if (positionsByChain.hasOwnProperty(chain)) {
+              return (
+                <div className="flex flex-col gap-y-6" key={index}>
+                  <h1 className="font-semibold text-2xl leading-5 text-[#1D2939]">
+                    {formatFirstLetter(chain)}
+                  </h1>
+                  <ul
+                    role="list"
+                    className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                  >
+                    Card */}
+          <ul
+            role="list"
+            className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {farms.length > 0 ? (
+              filteredPositions.map((position: any, index: number) => {
                 const tokenNames = formatTokenSymbols(position.lpSymbol);
+                const [thisFarm] = farms.filter(
+                  (farm) =>
+                    farm.id == position.id &&
+                    farm.protocol == position.protocol &&
+                    farm.chain == position.chain
+                );
                 return (
                   <li
                     key={index + 1}
                     className="col-span-1 divide-y divide-[#EAECF0] p-6 border border-[#EAECF0] max-w-sm rounded-xl bg-white shadow"
                   >
                     <div className="flex-1 flex flex-row justify-between truncate mb-6">
-                      <div className="flex items-center space-x-4">
-                        {/* <FarmAssets logos={} /> */}
-                        <div>
+                      <div className="flex flex-col space-y-4 items-start">
+                        <FarmAssets logos={thisFarm?.asset.logos} />
+                        <div className="">
                           <p className="text-[#101828] font-medium text-xl leading-5">
                             {tokenNames.map((tokenName, index) => (
                               <span key={index}>
@@ -591,7 +667,8 @@ const PortfolioPage = () => {
                           Staked at 65% APY
                         </span>
                         <Link
-                          href={`/farm/${position.id}?addr=${position.address}`}
+                          // href={`/farm/${position.id}?addr=${position.address}`}
+                          href={`/farm/${thisFarm?.id}?addr=${thisFarm?.asset.address}`}
                           className="font-bold underline underline-offset-2"
                         >
                           View Farm
@@ -600,9 +677,15 @@ const PortfolioPage = () => {
                     </div>
                   </li>
                 );
-              })}
-            </ul>
-          </div>
+              })
+            ) : (
+              <div className="w-full text-center">loading positions...</div>
+            )}
+          </ul>
+          {/*      </div>
+              );
+            }
+          })} */}
         </div>
       </div>
     </div>
