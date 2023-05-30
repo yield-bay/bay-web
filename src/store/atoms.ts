@@ -31,5 +31,7 @@ export const farmTypesAtom = atom<FarmTypesType[]>([
   { id: 4, name: "Single Staking" },
 ]);
 
+export const positionsAtom = atom<any>({});
+
 export const showSupportedFarmsAtom = atom<boolean>(false);
 export const filteredChainAtom = atom<number>(0);
