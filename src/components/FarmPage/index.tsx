@@ -24,7 +24,6 @@ import {
   formatFirstLetter,
   formatTokenSymbols,
 } from "@utils/farmListMethods";
-import SafetyScorePill from "@components/Library/SafetyScorePill";
 import toDollarUnits from "@utils/toDollarUnits";
 import {
   calcAssetPercentage,
@@ -74,11 +73,11 @@ const FarmPage: NextPage = () => {
     addrQuerySet(router.query.addr);
   }, [router]);
 
-  useEffect(() => {
-    if (farm?.id) {
-      trackEventWithProperty("farm-page-view", farm?.asset.symbol);
-    }
-  }, [farm]);
+  // useEffect(() => {
+  //   if (farm?.id) {
+  //     trackEventWithProperty("farm-page-view", farm?.asset.symbol);
+  //   }
+  // }, [farm]);
 
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
@@ -386,7 +385,7 @@ const FarmPage: NextPage = () => {
                   rel="noreferrer"
                   className="sm:flex items-center gap-x-1 hover:underline"
                 >
-                  <p>{formatFirstLetter(farm?.protocol)}</p>
+                  <span>{formatFirstLetter(farm?.protocol)}</span>
                   <ExternalLinkIcon className="w-4" />
                 </a>
               </p>
@@ -400,7 +399,7 @@ const FarmPage: NextPage = () => {
                   rel="noreferrer"
                   className="sm:flex items-center gap-x-1 hover:underline"
                 >
-                  <p>{formatFirstLetter(farm?.chain)}</p>
+                  <span>{formatFirstLetter(farm?.chain)}</span>
                   <ExternalLinkIcon className="w-4" />
                 </a>
               </p>
@@ -409,7 +408,7 @@ const FarmPage: NextPage = () => {
               <div className="pt-5 pb-4 px-6 border-b border-[#EAECF0]">
                 <p className="text-sm leading-5">Type</p>
                 <p className="text-2xl mt-1 leading-7 font-semibold text-[#101828]">
-                  <p>{formatFarmType(farm?.farmType)}</p>
+                  {formatFarmType(farm?.farmType)}
                 </p>
               </div>
               <div className="px-6 pt-4 pb-5">
