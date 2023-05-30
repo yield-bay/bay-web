@@ -1,15 +1,18 @@
 import Image from "next/image";
 import ModalWrapper from "./ModalWrapper";
+import { FarmType } from "@utils/types";
+import { formatFirstLetter, formatTokenSymbols } from "@utils/farmListMethods";
 
 interface Props {
   open: boolean;
   setOpen: (value: boolean) => void;
+  farm: FarmType;
   position: any;
 }
 
-const RewardsModal = ({ open, setOpen, position }: Props) => {
+const RewardsModal = ({ open, setOpen, farm, position }: Props) => {
   const unclaimedRewards = position?.unclaimedRewards;
-
+  const tokenNames = formatTokenSymbols(farm?.asset.symbol);
   return (
     <ModalWrapper open={open} setOpen={setOpen}>
       <div className="flex flex-col items-center gap-y-4 mx-auto">
@@ -24,9 +27,17 @@ const RewardsModal = ({ open, setOpen, position }: Props) => {
       <div className="flex flex-row justify-between rounded-xl w-full border border-[#EAECF0] p-6 shadow">
         <div className="flex flex-col gap-y-6 justify-between">
           <div className="text-left">
-            <p className="mb-1">MOVR-USDC</p>
+            <p className="mb-1">
+              {tokenNames.map((tokenName, index) => (
+                <span key={index}>
+                  {tokenName}
+                  {index !== tokenNames.length - 1 && "-"}
+                </span>
+              ))}
+            </p>
             <p className="font-normal text-base leading-5 text-[#475467]">
-              Solarbeam on Moonriver
+              {formatFirstLetter(farm?.protocol)} on{" "}
+              {formatFirstLetter(farm?.chain)}
             </p>
           </div>
           <div className="flex flex-col gap-y-2 max-w-fit">

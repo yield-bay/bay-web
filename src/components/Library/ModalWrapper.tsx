@@ -31,36 +31,35 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-opacity-25" />
+          <div className="fixed inset-0 bg-[#11121D]/80 backdrop-blur-[8px]" />
         </Transition.Child>
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Transition.Child
-              as={Fragment}
-              enter="ease-out duration-300"
-              enterFrom="opacity-0 scale-95"
-              enterTo="opacity-100 scale-100"
-              leave="ease-in duration-200"
-              leaveFrom="opacity-100 scale-100"
-              leaveTo="opacity-0 scale-95"
-            >
-              <Dialog.Panel className="flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-3 sm:p-6 align-middle shadow transform transition-all">
-                <div className="absolute top-0 right-0 pt-6 pr-9">
-                  <div className="flex items-center rounded-full p-1 hover:bg-gray-100 transition-all duration-200">
-                    <button
-                      type="button"
-                      className="text-[#101828] focus:outline-none"
-                      onClick={() => setOpen(false)}
-                    >
-                      <span className="sr-only">Close</span>
-                      <XIcon className="w-6 h-6" aria-hidden="true" />
-                    </button>
-                  </div>
+
+        <div className="fixed inset-0 overflow-y-auto flex min-h-full items-center justify-center p-4 text-center">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            <Dialog.Panel className="flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-3 sm:p-6 align-middle shadow transform transition-all">
+              <div className="absolute top-0 right-0 pt-6 pr-9">
+                <div className="flex items-center rounded-full p-1 hover:bg-gray-100 transition-all duration-200">
+                  <button
+                    type="button"
+                    className="text-[#101828] focus:outline-none"
+                    onClick={() => setOpen(false)}
+                  >
+                    <span className="sr-only">Close</span>
+                    <XIcon className="w-6 h-6" aria-hidden="true" />
+                  </button>
                 </div>
-                {children}
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
+              </div>
+              {children}
+            </Dialog.Panel>
+          </Transition.Child>
         </div>
       </Dialog>
     </Transition>
