@@ -449,33 +449,14 @@ const FarmPage: NextPage = () => {
           </div>
         </div>
       </div>
-      <RewardsModal
-        open={isRewardsModalOpen}
-        setOpen={setIsRewardsModalOpen}
-        farm={farm}
-        position={{
-          unstaked: {
-            amount: 0,
-            amountUSD: 0,
-          },
-          staked: {
-            amount: 510.6994730234621,
-            amountUSD: 512.5126463600104,
-          },
-          unclaimedRewards: [
-            {
-              token: "STELLA",
-              amount: 20.164450219501695,
-              amountUSD: 20.164450219501695,
-            },
-            {
-              token: "WGLMR",
-              amount: 15.52313716327595,
-              amountUSD: 15.52313716327595,
-            },
-          ],
-        }}
-      />
+      {hasPosition && (
+        <RewardsModal
+          open={isRewardsModalOpen}
+          setOpen={setIsRewardsModalOpen}
+          farm={farm}
+          position={farmPosition}
+        />
+      )}
     </div>
   ) : (
     <div className="flex-col gap-y-3 page-center font-spaceGrotesk bg-hero-gradient">
