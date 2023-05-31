@@ -65,11 +65,13 @@ const PortfolioPage = () => {
           ...(value as any),
         };
       });
-      // Filtering out the positions with null balance values
+      // Filtering out the positions with null or NaN balance values
       const temp = positionsArray.filter((position) => {
+        console.log("position.unstaked", position.unstaked.amountUSD);
+        console.log("position.staked", position.staked.amountUSD);
         return (
-          position.unstaked.amountUSD != null &&
-          position.staked.amountUSD != null
+          !isNaN(position.unstaked.amountUSD) ||
+          !isNaN(position.staked.amountUSD)
         );
       });
       console.log("user positions", temp);
