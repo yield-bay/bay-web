@@ -1,7 +1,12 @@
 import Image from "next/image";
 import ModalWrapper from "./ModalWrapper";
 import { FarmType } from "@utils/types";
-import { formatFirstLetter, formatTokenSymbols } from "@utils/farmListMethods";
+import {
+  farmURL,
+  formatFirstLetter,
+  formatTokenSymbols,
+} from "@utils/farmListMethods";
+import Link from "next/link";
 
 interface Props {
   open: boolean;
@@ -60,9 +65,14 @@ const RewardsModal = ({ open, setOpen, farm, position }: Props) => {
             ))}
           </div>
         </div>
-        <button className="shadow py-[10px] h-fit px-4 rounded-lg font-medium text-sm leading-5 hover:bg-gray-50 border border-[#D0D5DD]">
-          Claim Rewards
-        </button>
+        <Link href={farmURL(farm)} rel="noreferrer" target="_blank">
+          <button
+            onClick={() => setOpen(false)}
+            className="shadow py-[10px] h-fit px-4 rounded-lg font-medium text-sm leading-5 hover:bg-gray-50 border border-[#D0D5DD]"
+          >
+            Claim Rewards
+          </button>
+        </Link>
       </div>
     </ModalWrapper>
   );
