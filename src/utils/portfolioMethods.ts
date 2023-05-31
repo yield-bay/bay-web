@@ -9,6 +9,14 @@ export function calcTotalUnclaimedRewards(userPositions: any) {
   return total.toFixed(2);
 }
 
+export function calcUnclaimedReward(position: any) {
+  let total = 0;
+  for (let i = 0; i < position.unclaimedRewards.length; i++) {
+    total += position.unclaimedRewards[i].amountUSD;
+  }
+  return total.toFixed(2);
+}
+
 export function calcNetWorth(userPositions: any) {
   let total = 0;
   for (let i = 0; i < userPositions.length; i++) {

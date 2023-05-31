@@ -31,7 +31,7 @@ import {
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
-import { addrQueryAtom, idQueryAtom } from "@store/atoms";
+import { addrQueryAtom, idQueryAtom, positionsAtom } from "@store/atoms";
 import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
@@ -40,6 +40,8 @@ import Breadcrumb from "@components/Library/Breadcrumb";
 import InfoContainer from "@components/Library/InfoContainer";
 import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
+import useSpecificPosition from "@hooks/useSpecificPosition";
+import { calcUnclaimedReward } from "@utils/portfolioMethods";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -57,15 +59,19 @@ const FarmPage: NextPage = () => {
     },
   });
   const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
+  const [positions] = useAtom(positionsAtom);
+
   const [calcOpen, setCalcOpen] = useState<boolean>(false);
-  const [hasPosition, setHasPosition] = useState<boolean>(true);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);
 
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState<boolean>(false);
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
+  const [farmPosition, hasPosition] = useSpecificPosition(positions, farm);
+
   const tokenNames: string[] = farm
     ? formatTokenSymbols(farm?.asset.symbol)
     : [""];
@@ -130,10 +136,20 @@ const FarmPage: NextPage = () => {
                 <div className="flex flex-col gap-y-2">
                   <p className="text-sm leading-5">You hold</p>
                   <p className="text-2xl leading-7 font-bold text-[#101828]">
-                    $424
+                    $
+                    {(
+                      farmPosition.unstaked.amountUSD +
+                      farmPosition.staked.amountUSD
+                    ).toFixed(2)}
                   </p>
                   <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                    <span className="font-bold">45.7</span> LP
+                    <span className="font-bold">
+                      {(
+                        farmPosition.unstaked.amount +
+                        farmPosition.staked.amount
+                      ).toFixed(2)}
+                    </span>{" "}
+                    LP
                   </p>
                 </div>
                 <div className="flex flex-row gap-x-3">
@@ -145,10 +161,13 @@ const FarmPage: NextPage = () => {
                       Idle
                     </p>
                     <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                      $434
+                      ${farmPosition?.unstaked?.amountUSD.toFixed(2)}
                     </p>
                     <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                      <span className="font-bold">45.7</span> LP
+                      <span className="font-bold">
+                        ${farmPosition?.unstaked?.amount.toFixed(2)}
+                      </span>{" "}
+                      LP
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-y-1">
@@ -159,10 +178,13 @@ const FarmPage: NextPage = () => {
                       Staked
                     </p>
                     <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                      $434
+                      ${farmPosition?.staked?.amount.toFixed(2)}
                     </p>
                     <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                      <span className="font-bold">45.7</span> LP
+                      <span className="font-bold">
+                        {farmPosition?.staked?.amount.toFixed(2)}
+                      </span>{" "}
+                      LP
                     </p>
                   </div>
                 </div>
@@ -177,7 +199,7 @@ const FarmPage: NextPage = () => {
                   <p>Unclaimed</p>
                   <p>Rewards Worth</p>
                   <p className="mt-2 font-semibold text-2xl leading-7 text-[#101828]">
-                    $43
+                    ${calcUnclaimedReward(farmPosition)}
                   </p>
                 </div>
                 <Button

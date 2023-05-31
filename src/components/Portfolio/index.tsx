@@ -27,11 +27,6 @@ import { fetchListicleFarms } from "@utils/api";
 import { FarmType } from "@utils/types";
 
 const PortfolioPage = () => {
-  const [positions] = useAtom(positionsAtom);
-  useEffect(() => {
-    console.log("positions in portfolio", positions);
-  }, [positions]);
-
   // Avaiable chains we are supporting
   const chains = ["moonriver", "moonbeam", "astar", "mangata"];
   // Storage
@@ -40,6 +35,7 @@ const PortfolioPage = () => {
   const [userPositions, setUserPositions] = useState<any[]>([]);
 
   // Atoms
+  const [positions] = useAtom(positionsAtom);
   const [selectedChain] = useAtom(filteredChainAtom);
 
   // Filteration layers
@@ -67,14 +63,12 @@ const PortfolioPage = () => {
       });
       // Filtering out the positions with null or NaN balance values
       const temp = positionsArray.filter((position) => {
-        console.log("position.unstaked", position.unstaked.amountUSD);
-        console.log("position.staked", position.staked.amountUSD);
         return (
           !isNaN(position.unstaked.amountUSD) ||
           !isNaN(position.staked.amountUSD)
         );
       });
-      console.log("user positions", temp);
+      // console.log("user positions", temp);
       setUserPositions(temp);
     }
   }, [positions]);
@@ -85,7 +79,6 @@ const PortfolioPage = () => {
     queryFn: async () => {
       try {
         const { farms } = await fetchListicleFarms();
-        console.log("farms", farms);
         return farms;
       } catch (error) {
         console.error(error);
@@ -285,7 +278,11 @@ const PortfolioPage = () => {
                               </button>
                               <div className="inline-flex items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
                                 <span className="font-medium mr-2">
-                                  Staked at 65% APY
+                                  Staked at{" "}
+                                  {(
+                                    thisFarm?.apr.base + thisFarm?.apr.reward
+                                  ).toFixed(2)}
+                                  % APY
                                 </span>
                                 <Link
                                   // href={`/farm/${position.id}?addr=${position.address}`}
