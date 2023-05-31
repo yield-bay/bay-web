@@ -33,6 +33,8 @@ const PortfolioPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [positionType, setPositionType] = useState(0);
   const [userPositions, setUserPositions] = useState<any[]>([]);
+  const [netWorth, setNetWorth] = useState(0);
+  const [totalUnclaimedRewards, setTotalUnclaimedRewards] = useState(0);
 
   // Atoms
   const [positions] = useAtom(positionsAtom);
@@ -87,24 +89,40 @@ const PortfolioPage = () => {
   });
   const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
 
+  useEffect(() => {
+    const netWorth = parseFloat(calcNetWorth(userPositions));
+    const unclaimedRewards = parseFloat(
+      calcTotalUnclaimedRewards(userPositions)
+    );
+    setNetWorth(netWorth);
+    setTotalUnclaimedRewards(unclaimedRewards);
+  }, [userPositions]);
+
   return (
     <div className="px-[72px] text-[#475467]">
       <MetaTags title={`Portfolio • ${APP_NAME}`} />
       <div className="mb-[30px] text-white inline-flex gap-x-[17px] w-full">
-        <div className="w-1/2 rounded-xl p-6 text-left bg-net-worth-card">
+        <div
+          className={clsx(
+            "w-1/2 rounded-xl p-6 text-left bg-net-worth-card",
+            userPositions.length == 0 && "max-w-[364px]"
+          )}
+        >
           <p className="font-medium text-base leading-6">Net Worth</p>
           <p className="mt-3 font-semibold text-4xl leading-[44px]">
-            ${calcNetWorth(userPositions)}
+            ${netWorth}
           </p>
         </div>
-        <div className="w-1/2 rounded-xl p-6 text-left bg-rewards-card">
-          <p className="font-medium text-base leading-6">
-            Unclaimed rewards worth
-          </p>
-          <p className="mt-3 font-semibold text-4xl leading-[44px]">
-            ${calcTotalUnclaimedRewards(userPositions)}
-          </p>
-        </div>
+        {userPositions.length > 0 && (
+          <div className="w-1/2 rounded-xl p-6 text-left bg-rewards-card">
+            <p className="font-medium text-base leading-6">
+              Unclaimed rewards worth
+            </p>
+            <p className="mt-3 font-semibold text-4xl leading-[44px]">
+              ${totalUnclaimedRewards}
+            </p>
+          </div>
+        )}
       </div>
       <div className="flex flex-col bg-white rounded-xl">
         {/* Container Header */}
@@ -147,166 +165,183 @@ const PortfolioPage = () => {
           </div>
         </div>
         {/* Positions catagorized by Chains */}
-        <div className="flex flex-col gap-y-16 py-16 px-12">
-          {chains.map((chain, index) => {
-            // Check if chain has any positions
-            const positionsByChain = filteredPositions.filter(
-              (position) => chain === position.chain
-            );
-            if (positionsByChain.length > 0) {
-              return (
-                <div className="flex flex-col gap-y-6" key={index}>
-                  <h1 className="font-semibold text-2xl leading-5 text-[#1D2939]">
-                    {formatFirstLetter(chain)}
-                  </h1>
-                  {/* Card */}
-                  <ul
-                    role="list"
-                    className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                  >
-                    {farms.length > 0 ? (
-                      positionsByChain.map((position: any, index: number) => {
-                        const tokenNames = formatTokenSymbols(
-                          position.lpSymbol
-                        );
-                        const [thisFarm] = farms.filter(
-                          (farm) =>
-                            farm.id == position.id &&
-                            farm.protocol == position.protocol &&
-                            farm.chain == position.chain
-                        );
-                        return (
-                          <li
-                            key={index + 1}
-                            className="col-span-1 divide-y divide-[#EAECF0] p-6 border border-[#EAECF0] max-w-sm rounded-xl bg-white shadow"
-                          >
-                            <div className="flex-1 flex flex-row justify-between truncate mb-6">
-                              <div className="flex flex-col space-y-4 items-start">
-                                <FarmAssets logos={thisFarm?.asset.logos} />
-                                <div className="">
-                                  <p className="text-[#101828] font-medium text-xl leading-5">
-                                    {tokenNames.map((tokenName, index) => (
-                                      <span key={index}>
-                                        {tokenName}
-                                        {index !== tokenNames.length - 1 && "-"}
-                                      </span>
-                                    ))}
-                                  </p>
-                                  <p className="mt-1 leading-5">
-                                    {formatFirstLetter(position.protocol)} on{" "}
-                                    {formatFirstLetter(position.chain)}
-                                  </p>
+        {userPositions.length == 0 || netWorth == 0 ? (
+          <div className="flex justify-center h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)">
+            <div className="flex flex-col mt-[125px] h-fit gap-y-[46px] items-center text-center">
+              <p className="font-bold text-xl leading-6">
+                No Liquidity Positions Yet
+              </p>
+              <Link href="/">
+                <button className="p-6 border border-[#D0D5DD] bg-[#F9FAFB] text-2xl font-semibold leading-7 rounded-lg shadow hover:shadow-md">
+                  Explore Opportunities to earn on Yieldbay
+                </button>
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-y-16 py-16 px-12">
+            {chains.map((chain, index) => {
+              // Check if chain has any positions
+              const positionsByChain = filteredPositions.filter(
+                (position) => chain === position.chain
+              );
+              if (positionsByChain.length > 0) {
+                return (
+                  <div className="flex flex-col gap-y-6" key={index}>
+                    <h1 className="font-semibold text-2xl leading-5 text-[#1D2939]">
+                      {formatFirstLetter(chain)}
+                    </h1>
+                    {/* Card */}
+                    <ul
+                      role="list"
+                      className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                    >
+                      {farms.length > 0 ? (
+                        positionsByChain.map((position: any, index: number) => {
+                          const tokenNames = formatTokenSymbols(
+                            position.lpSymbol
+                          );
+                          const [thisFarm] = farms.filter(
+                            (farm) =>
+                              farm.id == position.id &&
+                              farm.protocol == position.protocol &&
+                              farm.chain == position.chain
+                          );
+                          return (
+                            <li
+                              key={index + 1}
+                              className="col-span-1 divide-y divide-[#EAECF0] p-6 border border-[#EAECF0] max-w-sm rounded-xl bg-white shadow"
+                            >
+                              <div className="flex-1 flex flex-row justify-between truncate mb-6">
+                                <div className="flex flex-col space-y-4 items-start">
+                                  <FarmAssets logos={thisFarm?.asset.logos} />
+                                  <div className="">
+                                    <p className="text-[#101828] font-medium text-xl leading-5">
+                                      {tokenNames.map((tokenName, index) => (
+                                        <span key={index}>
+                                          {tokenName}
+                                          {index !== tokenNames.length - 1 &&
+                                            "-"}
+                                        </span>
+                                      ))}
+                                    </p>
+                                    <p className="mt-1 leading-5">
+                                      {formatFirstLetter(position.protocol)} on{" "}
+                                      {formatFirstLetter(position.chain)}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                              <p className="truncate text-xl font-bold leading-6 text-black">
-                                $
-                                {(
-                                  position.unstaked.amountUSD +
-                                  position.staked.amountUSD
-                                ).toFixed(2)}
-                              </p>
-                            </div>
-                            <div className="flex flex-row justify-between py-6">
-                              <div className="flex flex-col gap-y-2">
-                                <p className="text-sm leading-5">
-                                  Total Holdings
-                                </p>
-                                <p className="text-2xl leading-7 font-semibold text-[#101828]">
+                                <p className="truncate text-xl font-bold leading-6 text-black">
                                   $
                                   {(
                                     position.unstaked.amountUSD +
                                     position.staked.amountUSD
                                   ).toFixed(2)}
                                 </p>
-                                <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5 max-w-fit">
-                                  <span className="font-bold">
+                              </div>
+                              <div className="flex flex-row justify-between py-6">
+                                <div className="flex flex-col gap-y-2">
+                                  <p className="text-sm leading-5">
+                                    Total Holdings
+                                  </p>
+                                  <p className="text-2xl leading-7 font-semibold text-[#101828]">
+                                    $
                                     {(
-                                      position.unstaked.amount +
-                                      position.staked.amount
+                                      position.unstaked.amountUSD +
+                                      position.staked.amountUSD
                                     ).toFixed(2)}
-                                  </span>{" "}
-                                  LP
-                                </p>
-                              </div>
-                              <div className="flex flex-row gap-x-3">
-                                <div className="flex flex-col items-end gap-y-1">
-                                  <p className="inline-flex items-center text-sm leading-5">
-                                    <Tooltip
-                                      label="Idle balance"
-                                      placement="top"
-                                    >
-                                      <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
-                                    </Tooltip>
-                                    Idle
                                   </p>
-                                  <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                                    ${position?.unstaked?.amountUSD.toFixed(2)}
-                                  </p>
-                                  <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                  <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5 max-w-fit">
                                     <span className="font-bold">
-                                      ${position?.unstaked.amount.toFixed(2)}
+                                      {(
+                                        position.unstaked.amount +
+                                        position.staked.amount
+                                      ).toFixed(2)}
                                     </span>{" "}
                                     LP
                                   </p>
                                 </div>
-                                <div className="flex flex-col items-end gap-y-1">
-                                  <p className="inline-flex items-center text-sm leading-5">
-                                    <Tooltip
-                                      label="Idel balance"
-                                      placement="top"
-                                    >
-                                      <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
-                                    </Tooltip>
-                                    Staked
-                                  </p>
-                                  <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                                    ${position?.staked.amountUSD.toFixed(2)}
-                                  </p>
-                                  <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                                    <span className="font-bold">
-                                      ${position?.staked.amount.toFixed(2)}
-                                    </span>{" "}
-                                    LP
-                                  </p>
+                                <div className="flex flex-row gap-x-3">
+                                  <div className="flex flex-col items-end gap-y-1">
+                                    <p className="inline-flex items-center text-sm leading-5">
+                                      <Tooltip
+                                        label="Idle balance"
+                                        placement="top"
+                                      >
+                                        <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
+                                      </Tooltip>
+                                      Idle
+                                    </p>
+                                    <p className="text-[#4D6089] font-semibold text-xl leading-7">
+                                      $
+                                      {position?.unstaked?.amountUSD.toFixed(2)}
+                                    </p>
+                                    <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                      <span className="font-bold">
+                                        ${position?.unstaked.amount.toFixed(2)}
+                                      </span>{" "}
+                                      LP
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-col items-end gap-y-1">
+                                    <p className="inline-flex items-center text-sm leading-5">
+                                      <Tooltip
+                                        label="Idel balance"
+                                        placement="top"
+                                      >
+                                        <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
+                                      </Tooltip>
+                                      Staked
+                                    </p>
+                                    <p className="text-[#4D6089] font-semibold text-xl leading-7">
+                                      ${position?.staked.amountUSD.toFixed(2)}
+                                    </p>
+                                    <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                      <span className="font-bold">
+                                        ${position?.staked.amount.toFixed(2)}
+                                      </span>{" "}
+                                      LP
+                                    </p>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                            <div className="flex flex-col gap-y-4 pt-6">
-                              <button className="w-full inline-flex justify-between items-center bg-[#EDEDED] rounded-lg py-2 px-3">
-                                <p>Breakdown</p>
-                                <ChevronDownIcon className="h-[19px]" />
-                              </button>
-                              <div className="inline-flex items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
-                                <span className="font-medium mr-2">
-                                  Staked at{" "}
-                                  {(
-                                    thisFarm?.apr.base + thisFarm?.apr.reward
-                                  ).toFixed(2)}
-                                  % APY
-                                </span>
-                                <Link
-                                  // href={`/farm/${position.id}?addr=${position.address}`}
-                                  href={`/farm/${thisFarm?.id}?addr=${thisFarm?.asset.address}`}
-                                  className="font-bold underline underline-offset-2"
-                                >
-                                  View Farm
-                                </Link>
+                              <div className="flex flex-col gap-y-4 pt-6">
+                                <button className="w-full inline-flex justify-between items-center bg-[#EDEDED] rounded-lg py-2 px-3">
+                                  <p>Breakdown</p>
+                                  <ChevronDownIcon className="h-[19px]" />
+                                </button>
+                                <div className="inline-flex items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
+                                  <span className="font-medium mr-2">
+                                    Staked at{" "}
+                                    {(
+                                      thisFarm?.apr.base + thisFarm?.apr.reward
+                                    ).toFixed(2)}
+                                    % APY
+                                  </span>
+                                  <Link
+                                    // href={`/farm/${position.id}?addr=${position.address}`}
+                                    href={`/farm/${thisFarm?.id}?addr=${thisFarm?.asset.address}`}
+                                    className="font-bold underline underline-offset-2"
+                                  >
+                                    View Farm
+                                  </Link>
+                                </div>
                               </div>
-                            </div>
-                          </li>
-                        );
-                      })
-                    ) : (
-                      <div className="w-full text-center">
-                        loading positions...
-                      </div>
-                    )}
-                  </ul>
-                </div>
-              );
-            }
-          })}
-        </div>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        <div className="w-full text-center">
+                          loading positions...
+                        </div>
+                      )}
+                    </ul>
+                  </div>
+                );
+              }
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
