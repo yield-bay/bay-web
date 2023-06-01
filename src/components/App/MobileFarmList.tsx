@@ -1,5 +1,5 @@
 // Library  Imports
-import { useEffect, memo } from "react";
+import { useEffect, memo, useState } from "react";
 import { useAtom } from "jotai";
 
 // Component Imports
@@ -17,15 +17,25 @@ import {
   formatTokenSymbols,
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
-import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import {
+  showSupportedFarmsAtom,
+  sortedFarmsAtom,
+  sortStatusAtom,
+} from "@store/atoms";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import SearchInput from "@components/Library/SearchInput";
+import clsx from "clsx";
+import SafetyScorePill from "@components/Library/SafetyScorePill";
+import PositionModal from "@components/Library/PositionModal";
 
 type FarmListType = {
   farms: any;
   noResult: boolean;
   isLoading: boolean;
-  prefOpen: boolean;
-  setPrefOpen: (value: boolean) => void;
+  positions: any;
+  searchTerm: string;
+  setSearchTerm: (value: string) => void;
 };
 
 enum Order {
@@ -37,11 +47,19 @@ const MobileFarmList = ({
   farms,
   noResult,
   isLoading,
-  prefOpen,
-  setPrefOpen,
+  positions,
+  searchTerm,
+  setSearchTerm,
 }: FarmListType) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
+  const [prefModalOpen, setPrefModalOpen] = useState(false);
+  const [positionModalOpen, setPositionModalOpen] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState<any>(undefined);
+
+  const [showSupportedFarms, setShowSupportedFarms] = useAtom(
+    showSupportedFarmsAtom
+  );
 
   const router = useRouter();
 
@@ -102,57 +120,89 @@ const MobileFarmList = ({
   };
 
   return (
-    <div className="text-blueSilver">
+    <div>
+      <div
+        className="flex flex-row gap-x-3 p-4 items-center justify-between
+                bg-white font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
+      >
+        <SearchInput term={searchTerm} setTerm={setSearchTerm} />
+        <div
+          className="py-3 px-4 rounded-lg border border-[#D0D5DD]"
+          onClick={() => setPrefModalOpen(true)}
+        >
+          <Image
+            src="/icons/MenuIcon.svg"
+            alt="Preferences"
+            width={20}
+            height={20}
+          />
+        </div>
+      </div>
       {!noResult ? (
         !isLoading ? (
           sortedFarms.map((farm: any, index: number) => {
             const tokenNames = formatTokenSymbols(farm?.asset.symbol);
+            const safetyScore = (farm?.safetyScore * 10).toFixed(1);
+            const position =
+              positions[
+                `${farm.chain}-${farm.protocol}-${farm.chef}-${farm.id}-${farm.asset.symbol}`
+              ];
+            const currentPosition =
+              position?.unstaked.amountUSD + position?.staked.amountUSD;
+
             return (
               <div
                 key={index}
-                className="w-full p-9 border-b border-[#222A39] transition-all duration-200"
+                className={clsx(
+                  "w-full py-6 px-8 border-b border-[#EAECF0] text-[#101828]",
+                  index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white",
+                  index == sortedFarms.length - 1 && "rounded-b-xl",
+                  (position == undefined || currentPosition <= 0) &&
+                    showSupportedFarms &&
+                    "hidden"
+                )}
               >
                 {/* Upper Container for left and right */}
-                <div className="flex flex-row justify-between">
+                <div className="flex flex-col gap-y-4">
                   {/* LEFT */}
-                  <div className="flex flex-col gap-y-[6px]">
-                    <div className="mb-[18px]">
-                      <FarmAssets logos={farm?.asset.logos} />
-                    </div>
-                    <div className="flex flex-row items-center">
-                      <div className="font-bold text-sm leading-[17px]">
-                        {tokenNames.map((tokenName, index) => (
-                          <span key={index} className="mr-[3px]">
-                            {tokenName}
-                            {index !== tokenNames.length - 1 && " •"}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="text-[#9397A6] font-medium text-xs leading-[15px]">
+                  <div className="flex flex-row items-center gap-x-4">
+                    <FarmAssets logos={farm?.asset.logos} />
+                    <FarmBadge type={formatFarmType(farm?.farmType)} />
+                    <Image
+                      src="/icons/umbrella.svg"
+                      alt="supported farm"
+                      height={20}
+                      width={20}
+                      className={clsx(
+                        "ml-2",
+                        (position == undefined || currentPosition <= 0) &&
+                          "saturate-0"
+                      )}
+                    />
+                  </div>
+                  <div className="text-[#101828] font-medium text-sm leading-5">
+                    {tokenNames.map((tokenName, index) => (
+                      <span key={index}>
+                        {tokenName}
+                        {index !== tokenNames.length - 1 && "-"}
+                      </span>
+                    ))}
+                    <div className="font-normal text-sm leading-5 text-[#475467]">
                       {formatFirstLetter(farm?.protocol)} on{" "}
                       {formatFirstLetter(farm?.chain)}
                     </div>
-                    <FarmBadge type={formatFarmType(farm?.farmType)} />
                   </div>
-                  {/* RIGHT */}
-                  <div className="flex flex-col gap-y-[18px] text-primaryWhite font-medium font-spaceGrotesk text-right">
-                    <div>
-                      <p className="text-base leading-5 opacity-70">TVL</p>
-                      <p className="text-2xl leading-[30px]">
-                        {toDollarUnits(farm?.tvl)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-base leading-5 opacity-70">APR</p>
-                      <p className="text-2xl leading-[30px]">
-                        {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
-                      </p>
-                    </div>
+                  <div className="inline-flex items-center gap-x-3">
+                    <SafetyScorePill score={safetyScore} />
+                    <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-[#F4F4F4] text-[#475467]">
+                      {toDollarUnits(farm?.tvl)} TVL
+                    </span>
+                    <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-[#F4F4F4] text-[#475467]">
+                      {(farm?.apr.base + farm?.apr.reward).toFixed(2)}% APR
+                    </span>
                   </div>
                 </div>
-                <div className="flex flex-row gap-x-3 items-center justify-between mt-9">
-                  <ShareFarm farm={farm} />
+                <div className="flex flex-row gap-x-3 items-center justify-between mt-[42px]">
                   <Button
                     size="large"
                     onButtonClick={() => {
@@ -163,6 +213,16 @@ const MobileFarmList = ({
                   >
                     View Farm
                   </Button>
+                  <button
+                    className="bg-[#EDEDFF] text-[#1D2939] font-medium text-sm leading-5 rounded-lg shadow py-[10px] px-4"
+                    onClick={() => {
+                      setPositionModalOpen(true);
+                      setSelectedPosition(position);
+                    }}
+                  >
+                    My Position
+                  </button>
+                  <ShareFarm farm={farm} />
                 </div>
               </div>
             );
@@ -171,14 +231,19 @@ const MobileFarmList = ({
           <MobileLoadingSkeleton />
         )
       ) : (
-        <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 text-base font-bold text-bodyGray leading-5">
+        <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 text-base font-bold text-black leading-5">
           <p>No Results. Try searching for something else.</p>
         </div>
       )}
       <PreferencesModal
-        open={prefOpen}
-        setOpen={setPrefOpen}
+        open={prefModalOpen}
+        setOpen={setPrefModalOpen}
         handleSort={handleSort}
+      />
+      <PositionModal
+        open={positionModalOpen}
+        setOpen={setPositionModalOpen}
+        position={selectedPosition}
       />
     </div>
   );

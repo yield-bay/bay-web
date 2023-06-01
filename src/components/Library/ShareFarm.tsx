@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState, memo } from "react";
 import { Menu, Dialog, Transition } from "@headlessui/react";
 import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
-import { ShareIcon } from "@heroicons/react/solid";
+// import { ShareIcon } from "@heroicons/react/solid";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";
@@ -160,11 +160,8 @@ const ShareModal = ({
 }: ShareModalPropsType) => {
   return (
     <div className="sm:hidden">
-      <div
-        className="py-4 transition-all duration-200"
-        onClick={() => setOpen(true)}
-      >
-        <ShareIcon className="w-5 text-white" />
+      <div onClick={() => setOpen(true)}>
+        <Image src="/icons/ShareIcon.svg" alt="share" height={24} width={24} />
       </div>
       <Transition.Root show={open} as={Fragment}>
         <Dialog
@@ -172,7 +169,7 @@ const ShareModal = ({
           className="fixed z-10 inset-0 overflow-y-auto"
           onClose={setOpen}
         >
-          <div className="flex flex-col items-center justify-center min-h-screen px-8 text-center">
+          <div className="flex flex-col items-center justify-center min-h-screen px-8 text-left">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -182,7 +179,7 @@ const ShareModal = ({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Dialog.Overlay className="fixed inset-0 bg-slate-500 bg-opacity-70 transition-opacity" />
+              <Dialog.Overlay className="fixed inset-0 bg-[#11121D]/80 backdrop-blur-[8px]" />
             </Transition.Child>
             <span
               className="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -199,77 +196,54 @@ const ShareModal = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <div className="relative inline-block sm:hidden align-middle bg-baseBlue rounded-lg overflow-hidden transform transition-all w-full max-w-sm">
+              <div className="relative inline-block bg-white rounded-lg text-left shadow-xl py-8 px-6 align-bottom w-full transform transition-all">
                 {/* Close Button */}
-                <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                  <div className="flex items-center p-1 group rounded-full active:bg-neutral-700">
+                <div className="absolute top-0 right-0 p-5">
+                  <div className="flex items-center rounded-full p-1 hover:bg-gray-100">
                     <button
                       type="button"
-                      className="text-slate-600 active:text-slate-200 focus:outline-none"
+                      className="text-[#101828] focus:outline-none"
                       onClick={() => setOpen(false)}
                     >
                       <span className="sr-only">Close</span>
-                      <XIcon className="w-5 h-5" aria-hidden="true" />
+                      <XIcon className="w-6 h-6" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
                 {/* Modal content */}
-                <div className="mt-3 w-full">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-lg pb-3 text-center leading-6 px-5 font-medium text-white"
+                <div className="flex flex-col gap-y-6 w-full text-[#344054]">
+                  {/* Share on Twitter button */}
+                  <a
+                    href={tweetUrl}
+                    className="w-full text-sm font-semibold leading-5"
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => {
+                      trackEventWithProperty("farm-share", {
+                        shareVia: "twitter",
+                        farmAddress: farm?.asset.address,
+                        farmId: farm?.id,
+                      });
+                      setOpen(false);
+                    }}
                   >
-                    Share farm
-                  </Dialog.Title>
-                  <div className="w-full pt-0">
-                    <div className="flex flex-col w-full text-white">
-                      {/* Share on Twitter button */}
-                      <a
-                        href={tweetUrl}
-                        className="group flex justify-center gap-x-2 w-full text-sm font-medium border-y border-slate-800 py-4 px-6 active:text-neutral-100 active:bg-baseBlueMid cursor-pointer"
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={() => {
-                          trackEventWithProperty("farm-share", {
-                            shareVia: "twitter",
-                            farmAddress: farm?.asset.address,
-                            farmId: farm?.id,
-                          });
-                          setOpen(false);
-                        }}
-                      >
-                        <span className="sr-only">Share on Twitter</span>
-                        <svg
-                          className="h-5 w-5 mr-3 text-primaryBlue"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                        >
-                          <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84" />
-                        </svg>
-                        Share on Twitter
-                      </a>
-                      {/* Copy Link Button */}
-                      <button
-                        onClick={(e) => {
-                          navigator.clipboard.writeText(url);
-                          setOpen(false);
-                          trackEventWithProperty("farm-share", {
-                            shareVia: "copy",
-                            farmAddress: farm?.asset.address,
-                            farmId: farm?.id,
-                          });
-                        }}
-                        className="text-sm inline-flex justify-center font-medium border-b border-neutral-700 py-4 px-6 active:text-neutral-100 active:bg-neutral-700 cursor-pointer"
-                      >
-                        <ClipboardIcon
-                          className="mr-3 h-5 w-5"
-                          aria-hidden="true"
-                        />
-                        Copy link
-                      </button>
-                    </div>
-                  </div>
+                    Share on Twitter
+                  </a>
+                  {/* Copy Link Button */}
+                  <button
+                    onClick={(e) => {
+                      navigator.clipboard.writeText(url);
+                      setOpen(false);
+                      trackEventWithProperty("farm-share", {
+                        shareVia: "copy",
+                        farmAddress: farm?.asset.address,
+                        farmId: farm?.id,
+                      });
+                    }}
+                    className="w-full text-left text-sm font-semibold leading-5"
+                  >
+                    Copy link
+                  </button>
                 </div>
               </div>
             </Transition.Child>

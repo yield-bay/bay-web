@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import clsx from "clsx";
 import ConnectWallet from "./Library/ConnectWallet";
+import { MenuIcon } from "@heroicons/react/outline";
 
 export default function Header() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function Header() {
   }, [router]);
 
   return (
-    <div className="w-full px-9 sm:px-11 lg:px-[72px] py-[38px] sm:py-6 z-10 font-bold text-base leading-6 sm:leading-8 text-white">
+    <div className="w-full px-9 sm:px-11 lg:px-[72px] py-6 z-10 font-bold text-base leading-6 sm:leading-8 text-white">
       <div className="w-full flex justify-between items-center">
         {/* Logo */}
         <Link href="/">
@@ -24,7 +25,7 @@ export default function Header() {
             </span>
           </div>
         </Link>
-        <div className="flex gap-x-6">
+        <div className="hidden sm:flex gap-x-6">
           <Link
             href="/"
             className={clsx(
@@ -64,9 +65,12 @@ export default function Header() {
             <span>my portfolio</span>
           </Link>
         </div>
-        <div className="inline-flex items-center gap-x-4">
+        <div className="hidden sm:inline-flex items-center gap-x-4">
           <ConnectWallet />
         </div>
+        <button onClick={() => {}}>
+          <MenuIcon className="w-6 h-6 text-white sm:hidden" />
+        </button>
       </div>
     </div>
   );

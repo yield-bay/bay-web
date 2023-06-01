@@ -22,11 +22,6 @@ import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/metaTags/MetaTags";
 import Hero from "./Hero";
 import { FarmType } from "@utils/types";
-import SelectFarmType from "@components/Library/SelectFarmType";
-import { AdjustmentsIcon } from "@heroicons/react/outline";
-import Toggle from "@components/Library/Toggle";
-import Image from "next/image";
-import SearchInput from "@components/Library/SearchInput";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -35,8 +30,7 @@ const Home: NextPage = () => {
 
   // States
   const [searchTerm, setSearchTerm] = useState("");
-  const [prefModalOpen, setPrefModalOpen] = useState(false);
-  const [protocolModalOpen, setProtocolModalOpen] = useState(false);
+  // const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
 
   // Fetching all farms
@@ -107,30 +101,26 @@ const Home: NextPage = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">
           {/* HERO SECTION */}
-          <Hero
-            setProtocolModalOpen={setProtocolModalOpen}
-            farms={farms}
-            setPrefModalOpen={setPrefModalOpen}
-            filteredFarms={filteredFarms}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
+          <Hero farms={farms} />
           {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
-            <div className="sm:hidden bg-[#01050D]">
-              {/* Shows Shared farm if queries are available  */}
-              <MobileFarmList
-                farms={filteredFarms}
-                noResult={noFilteredFarms}
-                isLoading={isLoading}
-                prefOpen={prefModalOpen}
-                setPrefOpen={setPrefModalOpen}
-              />
-              {/* {filteredFarms.length < farmsList.length && (
+            <>
+              <div className="sm:hidden px-6">
+                {/* Shows Shared farm if queries are available  */}
+                <MobileFarmList
+                  farms={filteredFarms}
+                  noResult={noFilteredFarms}
+                  isLoading={isLoading}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  positions={positions}
+                />
+                {/* {filteredFarms.length < farmsList.length && (
                 <GoToHome router={router} />
               )} */}
-            </div>
+              </div>
+            </>
           ) : (
             // DESKTOP VIEW
             <div className="hidden sm:block px-6 base:px-10 lg:px-[72px]">
@@ -149,11 +139,11 @@ const Home: NextPage = () => {
           )}
         </div>
         {showScrollBtn && <ScrollToTopBtn />}
-        <AllProtocolsModal
+        {/* <AllProtocolsModal
           open={protocolModalOpen}
           setOpen={setProtocolModalOpen}
           protocols={protocolList(farms)}
-        />
+        /> */}
       </main>
     </div>
   );
@@ -163,7 +153,7 @@ const Home: NextPage = () => {
 const GoToHome = ({ router }: { router: NextRouter }) => (
   <div className="border-t border-[#222A39] w-full pt-8 pb-9">
     <div
-      className="py-2 sm:py-4 text-bodyGray font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-pointer"
+      className="py-2 sm:py-4 text-black font-bold text-sm sm:text-base leading-3 sm:leading-5 text-center cursor-pointer"
       onClick={() => {
         router.reload();
       }}
