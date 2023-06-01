@@ -22,6 +22,8 @@ import ShareFarm from "@components/Library/ShareFarm";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
+import { useAccount } from "wagmi";
+import { dotAccountAtom } from "@store/accountAtoms";
 
 interface Props {
   farms: FarmType[];
@@ -33,6 +35,10 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
   const [showSupportedFarms, setShowSupportedFarms] = useAtom(
     showSupportedFarmsAtom
   );
+
+  // Users wallet
+  const { isConnected } = useAccount();
+  const [account] = useAtom(dotAccountAtom);
 
   return (
     <>
@@ -56,7 +62,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                 "hidden"
             )}
           >
-            <td className="whitespace-nowrap max-w-[288px] py-4 text-sm pl-8 md:pl-14 lg:pl-12">
+            <td className="whitespace-nowrap max-w-[288px] py-4 text-sm pl-8 md:pl-14 lg:pl-12 rounded-bl-xl">
               <div className="flex flex-col gap-y-4">
                 <div className="inline-flex items-center gap-x-4">
                   <FarmAssets logos={farm?.asset.logos} />
@@ -87,11 +93,11 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                 </div>
               </div>
             </td>
-            <td className="whitespace-nowrap py-4 text-right sm:pr-3 sm:pl-4 font-medium text-sm leading-5">
+            <td className="whitespace-nowrap py-4 text-left sm:pr-3 sm:pl-6 font-medium text-sm leading-5">
               {toDollarUnits(farm?.tvl)}
             </td>
-            <td className="whitespace-nowrap py-4 pl-0 pr-2 text-base leading-5">
-              <div className="w-full inline-flex justify-end items-center gap-x-2">
+            <td className="hidden base:table-cell whitespace-nowrap py-4 pl-6 pr-3 text-base leading-5">
+              <div className="w-full inline-flex justify-start items-center gap-x-2">
                 <Tooltip
                   label={
                     <>
@@ -117,15 +123,18 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                 </Tooltip>
               </div>
             </td>
-            <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3 font-bold text-sm leading-5">
-              <div className="flex flex-col items-end gap-2 justify-end">
-                <SafetyScorePill score={safetyScore} />
-              </div>
+            <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-6 pr-3 font-bold text-sm leading-5">
+              <SafetyScorePill score={safetyScore} />
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-16 pr-3">
+            <td className="hidden md:table-cell whitespace-nowrap h-full py-0 pl-0 lg:pl-6 pr-3">
               <Rewards rewards={farm?.rewards} />
             </td>
-            <td className="whitespace-nowrap bg-[#F0F0FF] max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-14 text-right text-sm font-medium">
+            <td
+              className={clsx(
+                "whitespace-nowrap py-4 px-0 md:px-6 text-center text-sm font-medium",
+                (isConnected || account !== null) && "bg-[#F0F0FF]"
+              )}
+            >
               {currentPosition !== undefined && currentPosition > 0 ? (
                 <Tooltip
                   label={
@@ -139,26 +148,10 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                   <span>{"$" + currentPosition.toFixed(2)}</span>
                 </Tooltip>
               ) : (
-                <Tooltip
-                  label={
-                    <div className="flex flex-col gap-y-2 min-w-[120px]">
-                      <div className="inline-flex justify-between">
-                        <span className="text-[#636A78]">Idle:</span>
-                        <span>$24</span>
-                      </div>
-                      <div className="inline-flex justify-between">
-                        <span className="text-[#636A78]">Staked:</span>
-                        <span>$12</span>
-                      </div>
-                    </div>
-                  }
-                  placement="bottom"
-                >
-                  <span className="text-[#D5D3D3]">-</span>
-                </Tooltip>
+                <span className="text-[#D5D3D3]">-</span>
               )}
             </td>
-            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-12 text-right text-sm font-medium">
+            <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-12 text-right text-sm font-medium rounded-br-xl">
               <div className="flex flex-row gap-x-6 items-center justify-start lg:justify-end">
                 <ShareFarm farm={farm} />
                 <Button

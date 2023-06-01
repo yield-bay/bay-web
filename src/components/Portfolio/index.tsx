@@ -118,7 +118,7 @@ const PortfolioPage = () => {
         >
           <p className="font-medium text-base leading-6">Net Worth</p>
           <p className="mt-3 font-semibold text-4xl leading-[44px]">
-            ${netWorth}
+            ${isConnected || account !== null ? netWorth : "???"}
           </p>
         </div>
         {userPositions.length > 0 ? (

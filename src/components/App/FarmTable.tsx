@@ -1,7 +1,7 @@
 // Library Imports
 import { useEffect, useState, memo, FC } from "react";
 import { useAtom } from "jotai";
-import { ChevronUpIcon, ChevronDownIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, ArrowSmDownIcon } from "@heroicons/react/outline";
 
 // Utility and Component Imports
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
@@ -10,6 +10,13 @@ import Tooltip from "@components/Library/Tooltip";
 import { trackEventWithProperty } from "@utils/analytics";
 import LoadingSkeleton from "@components/Library/LoadingSkeleton";
 import { FarmType } from "@utils/types";
+import Image from "next/image";
+import Toggle from "@components/Library/Toggle";
+import SelectFarmType from "@components/Library/SelectFarmType";
+import SearchInput from "@components/Library/SearchInput";
+import clsx from "clsx";
+import { useAccount } from "wagmi";
+import { dotAccountAtom } from "@store/accountAtoms";
 
 enum Order {
   ASC,
@@ -20,12 +27,24 @@ interface Props {
   farms: FarmType[];
   isLoading: boolean;
   positions: any;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
   noResult?: boolean;
 }
 
-const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
+const FarmTable: FC<Props> = ({
+  farms,
+  noResult,
+  isLoading,
+  searchTerm,
+  setSearchTerm,
+  positions,
+}) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
+  // Users wallet
+  const { isConnected } = useAccount();
+  const [account] = useAtom(dotAccountAtom);
 
   useEffect(() => {
     if (farms.length > 0) handleSort(sortStatus.key, false);
@@ -86,10 +105,32 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
   };
 
   return (
-    <div className="bg-white border-x border-b border-[#EAECF0] rounded-b-xl">
-      <div className="inline-block min-w-full align-middle">
-        {!noResult ? (
-          <div>
+    <>
+      {/* Shows Shared farm if queries are available  */}
+      <div
+        className="flex flex-col-reverse sm:flex-row items-center justify-between
+                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
+      >
+        <div className="flex items-center py-5 sm:py-0 px-9 sm:px-0 justify-between w-full sm:w-max sm:gap-x-6">
+          <div className="hidden sm:block">
+            <SelectFarmType />
+          </div>
+          <div className="inline-flex gap-x-2 items-center">
+            <Toggle label={"show only supported farms"} />
+            <span className="hidden lg:block">show only supported farms</span>
+            <Image
+              src="/icons/umbrella.svg"
+              alt="supported farms"
+              height={16}
+              width={16}
+            />
+          </div>
+        </div>
+        <SearchInput term={searchTerm} setTerm={setSearchTerm} />
+      </div>
+      <div className="bg-white border-x border-b border-[#EAECF0] rounded-b-xl">
+        <div className="inline-block min-w-full align-middle">
+          {!noResult ? (
             <table className="min-w-full text-[#475467]">
               <thead className="font-medium text-xs leading-[18px] border-y border-[#EAECF0]">
                 <tr>
@@ -101,7 +142,7 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                   </th>
                   <th
                     scope="col"
-                    className="px-3 py-[13px] cursor-pointer font-medium"
+                    className="pl-6 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("tvl", true);
                       trackEventWithProperty("table-sorting", {
@@ -109,7 +150,7 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                       });
                     }}
                   >
-                    <div className="flex justify-end items-center">
+                    <div className="flex justify-start items-center">
                       <Tooltip
                         label={
                           <span>
@@ -121,19 +162,23 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                       >
                         <div>
                           <span>TVL</span>
-                          {sortStatus.key == "tvl" &&
-                            (sortStatus.order == Order.DESC ? (
-                              <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
-                            ) : (
-                              <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
-                            ))}
+                          {sortStatus.key == "tvl" && (
+                            <ArrowSmDownIcon
+                              className={clsx(
+                                "w-4 h-4 inline -mt-0.5 ml-2 transform origin-center transition-all duration-300",
+                                sortStatus.order == Order.DESC
+                                  ? "rotate-0"
+                                  : "rotate-180"
+                              )}
+                            />
+                          )}
                         </div>
                       </Tooltip>
                     </div>
                   </th>
                   <th
                     scope="col"
-                    className="flex justify-end px-3 py-[13px] cursor-pointer font-medium"
+                    className="flex justify-start items-center pl-6 pr-3 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("yield", true);
                       trackEventWithProperty("table-sorting", {
@@ -152,18 +197,22 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                     >
                       <div>
                         <span>APR</span>
-                        {sortStatus.key == "yield" &&
-                          (sortStatus.order == Order.DESC ? (
-                            <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
-                          ) : (
-                            <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
-                          ))}
+                        {sortStatus.key == "yield" && (
+                          <ArrowSmDownIcon
+                            className={clsx(
+                              "w-4 h-4 inline -mt-0.5 ml-2 transform origin-center transition-all duration-300",
+                              sortStatus.order == Order.DESC
+                                ? "rotate-0"
+                                : "rotate-180"
+                            )}
+                          />
+                        )}
                       </div>
                     </Tooltip>
                   </th>
                   <th
                     scope="col"
-                    className="hidden lg:table-cell px-3 py-[13px] pl-2 lg:pl-16 text-right cursor-pointer font-medium"
+                    className="hidden lg:table-cell px-3 py-[13px] pl-3 lg:pl-6 text-left cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("safety", true);
                       trackEventWithProperty("table-sorting", {
@@ -179,24 +228,31 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                     >
                       <div>
                         <span>Safety Score</span>
-                        {sortStatus.key == "safety" &&
-                          (sortStatus.order == Order.DESC ? (
-                            <ChevronDownIcon className="w-3 h-3 inline -mt-0.5 ml-2" />
-                          ) : (
-                            <ChevronUpIcon className="w-3 h-3 inline mb-0.5 ml-2" />
-                          ))}
+                        {sortStatus.key == "safety" && (
+                          <ArrowSmDownIcon
+                            className={clsx(
+                              "w-4 h-4 inline -mt-0.5 ml-2 transform origin-center transition-all duration-300",
+                              sortStatus.order == Order.DESC
+                                ? "rotate-0"
+                                : "rotate-180"
+                            )}
+                          />
+                        )}
                       </div>
                     </Tooltip>
                   </th>
                   <th
                     scope="col"
-                    className="hidden md:table-cell px-3 py-[13px] pl-2 lg:pl-16 text-right font-medium"
+                    className="hidden base:table-cell px-3 py-[13px] pl-2 lg:pl-6 text-left font-medium"
                   >
                     <span>Rewards</span>
                   </th>
                   <th
                     scope="col"
-                    className="py-[13px] pl-4 pr-3 sm:pl-6 font-medium bg-[#F0F0FF]"
+                    className={clsx(
+                      "py-[13px] pr-3 pl-4 sm:px-6 text-center font-medium",
+                      (isConnected || account !== null) && "bg-[#F0F0FF]"
+                    )}
                   >
                     Your Positions
                   </th>
@@ -213,14 +269,14 @@ const FarmTable: FC<Props> = ({ farms, noResult, isLoading, positions }) => {
                 )}
               </tbody>
             </table>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 text-base font-bold leading-5 text-[#101828]">
-            <p>No Results. Try searching for something else.</p>
-          </div>
-        )}
+          ) : (
+            <div className="flex items-center justify-center px-4 py-10 sm:px-6 md:px-28 text-base font-bold leading-5 text-[#101828]">
+              <p>No Results. Try searching for something else.</p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
