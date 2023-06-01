@@ -71,6 +71,7 @@ const FarmPage: NextPage = () => {
 
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
   const [farmPosition, hasPosition] = useSpecificPosition(positions, farm);
+  const [unclaimedReward, setUnclaimedReward] = useState(0);
 
   const tokenNames: string[] = farm
     ? formatTokenSymbols(farm?.asset.symbol)
@@ -81,6 +82,13 @@ const FarmPage: NextPage = () => {
     idQuerySet(router.query.id);
     addrQuerySet(router.query.addr);
   }, [router]);
+
+  useEffect(() => {
+    if (farmPosition) {
+      const unclaimedRewards = parseFloat(calcUnclaimedReward(farmPosition));
+      setUnclaimedReward(unclaimedRewards);
+    }
+  }, [farmPosition]);
 
   // useEffect(() => {
   //   if (farm?.id) {
@@ -192,23 +200,25 @@ const FarmPage: NextPage = () => {
             </InfoContainer>
             <div className="w-1/2">
               <InfoContainer
-                variant="tirtiary"
+                variant={unclaimedReward > 0 ? "tirtiary" : "secondary"}
                 className="flex flex-row justify-between"
               >
                 <div className="flex flex-col text-sm leading-5">
                   <p>Unclaimed</p>
                   <p>Rewards Worth</p>
                   <p className="mt-2 font-semibold text-2xl leading-7 text-[#101828]">
-                    ${calcUnclaimedReward(farmPosition)}
+                    ${unclaimedReward}
                   </p>
                 </div>
-                <Button
-                  size="large"
-                  style="h-max"
-                  onButtonClick={() => setIsRewardsModalOpen(true)}
-                >
-                  Claim
-                </Button>
+                {unclaimedReward >= 0.01 && (
+                  <Button
+                    size="large"
+                    style="h-max"
+                    onButtonClick={() => setIsRewardsModalOpen(true)}
+                  >
+                    Claim
+                  </Button>
+                )}
               </InfoContainer>
             </div>
           </div>
