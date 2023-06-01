@@ -99,10 +99,10 @@ const FarmPage: NextPage = () => {
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
   return !isLoading && idQuery ? (
-    <div className="px-[72px] text-[#475467]">
+    <div className="px-6 sm:px-[72px] text-[#475467]">
       <MetaTags title={`Farm • ${APP_NAME}`} />
       <Breadcrumb tokenNames={tokenNames} />
-      <div className="flex flex-col pb-20 border border-red-500 bg-white rounded-lg sm:pb-24 pt-[69px] md:pb-24 px-9 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
+      <div className="flex flex-col border border-red-500 bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
         {/* Heading */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-8 sm:gap-x-9">
           <p className="text-2xl text-[#454545] font-semibold leading-[29px]">
@@ -127,20 +127,13 @@ const FarmPage: NextPage = () => {
                 Visit Farm
               </Button>
             </a>
-            <Button
-              size="base"
-              style="md:hidden"
-              onButtonClick={() => setCalcOpen(true)}
-            >
-              ROI
-            </Button>
           </div>
         </div>
         {/* Positions Row */}
         {hasPosition && (
-          <div className="w-full inline-flex gap-x-3">
-            <InfoContainer variant="default" className="w-1/2">
-              <div className="flex flex-row justify-between">
+          <div className="w-full flex flex-col sm:flex-row gap-y-6 rounded-xl sm:rounded-none shadow-md sm:shadow-none sm:gap-x-3">
+            <InfoContainer variant="default" className="w-full sm:w-1/2">
+              <div className="flex flex-col gap-y-6 sm:flex-row justify-between">
                 <div className="flex flex-col gap-y-2">
                   <p className="text-sm leading-5">You hold</p>
                   <p className="text-2xl leading-7 font-bold text-[#101828]">
@@ -150,7 +143,7 @@ const FarmPage: NextPage = () => {
                       farmPosition.staked.amountUSD
                     ).toFixed(2)}
                   </p>
-                  <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                  <p className="p-2 bg-[#F5F5F5] rounded-lg max-w-fit text-base leading-5">
                     <span className="font-bold">
                       {(
                         farmPosition.unstaked.amount +
@@ -160,7 +153,7 @@ const FarmPage: NextPage = () => {
                     LP
                   </p>
                 </div>
-                <div className="flex flex-row gap-x-3">
+                <div className="flex flex-row max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
                   <div className="flex flex-col items-end gap-y-1">
                     <p className="inline-flex items-center text-sm leading-5">
                       <Tooltip label="Idle balance" placement="top">
@@ -198,7 +191,7 @@ const FarmPage: NextPage = () => {
                 </div>
               </div>
             </InfoContainer>
-            <div className="w-1/2">
+            <div className="w-full sm:w-1/2 ">
               <InfoContainer
                 variant={unclaimedReward > 0 ? "tirtiary" : "secondary"}
                 className="flex flex-row justify-between"
@@ -225,9 +218,9 @@ const FarmPage: NextPage = () => {
         )}
 
         {/* Main Section */}
-        <div className="w-full flex flex-row gap-x-3 mt-4">
+        <div className="w-full flex flex-col sm:flex-row gap-x-3 mt-4">
           {/* TVL -- APR -- Safety Score */}
-          <div className="w-1/2 flex flex-col gap-y-3">
+          <div className="w-full sm:w-1/2 flex flex-col gap-y-3">
             <InfoContainer variant="primary" className="flex flex-col gap-y-1">
               <p className="text-sm leading-5">TVL (Total Value Locked)</p>
               <p className="text-2xl leading-7 font-bold text-[#101828]">
@@ -341,7 +334,7 @@ const FarmPage: NextPage = () => {
                   This farm is moderately safe.
                 </p>
               </div>
-              <div className="mx-auto p-6 border-b border-[#EAECF0]">
+              <div className="relative mx-auto p-6 border-b border-[#EAECF0]">
                 <Image
                   src="/ProgressCircle.png"
                   alt="Safety Score Meter"
@@ -349,6 +342,7 @@ const FarmPage: NextPage = () => {
                   width={200}
                   className="mx-auto"
                 />
+                <p className="absolute">8</p>
               </div>
               <div className="py-4 px-6 text-sm leading-5">
                 The score is a relative indicator of the reliability of the farm
@@ -359,8 +353,8 @@ const FarmPage: NextPage = () => {
             </div>
           </div>
           {/* Rewared Breakdown -- Protocol -- Chain -- Farm Type */}
-          <div className="w-1/2 flex flex-col gap-y-3">
-            <div className="rounded-xl border border-[#EAECF0]">
+          <div className="flex flex-col gap-y-3 mt-3 sm:mt-0 w-full sm:w-1/2">
+            <div className="hidden base:block rounded-xl border border-[#EAECF0]">
               <div className="pt-5 pb-4 px-6 bg-[#FAFAFF] rounded-t-xl border-b border-[#EAECF0]">
                 <span>Reward Breakdown</span>
               </div>
@@ -422,7 +416,7 @@ const FarmPage: NextPage = () => {
                   href={protocolURL(farm?.protocol)}
                   target="_blank"
                   rel="noreferrer"
-                  className="sm:flex items-center gap-x-1 hover:underline"
+                  className="flex items-center gap-x-1 hover:underline"
                 >
                   <span>{formatFirstLetter(farm?.protocol)}</span>
                   <ExternalLinkIcon className="w-4" />
@@ -436,7 +430,7 @@ const FarmPage: NextPage = () => {
                   href={chainURL(farm?.chain)}
                   target="_blank"
                   rel="noreferrer"
-                  className="sm:flex items-center gap-x-1 hover:underline"
+                  className="flex items-center gap-x-1 hover:underline"
                 >
                   <span>{formatFirstLetter(farm?.chain)}</span>
                   <ExternalLinkIcon className="w-4" />
