@@ -12,7 +12,7 @@ type RewardsProps = {
 
 export default function Rewards({ rewards }: RewardsProps) {
   return (
-    <div className="flex justify-end w-full">
+    <div className="flex justify-start w-full">
       <Tooltip
         label={
           <div>

@@ -133,33 +133,13 @@ const Home: NextPage = () => {
             </div>
           ) : (
             // DESKTOP VIEW
-            <div className="hidden sm:mx-[72px] sm:block">
-              {/* Shows Shared farm if queries are available  */}
-              <div
-                className="flex flex-col-reverse sm:flex-row items-center justify-between
-                bg-white mt-8 sm:mt-0 py-0 sm:py-4 px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
-              >
-                <div className="flex items-center py-5 sm:py-0 px-9 sm:px-0 justify-between w-full sm:w-max sm:gap-x-6">
-                  <div className="hidden sm:block">
-                    <SelectFarmType />
-                  </div>
-                  <div className="inline-flex gap-x-2 items-center">
-                    <Toggle label={"show only supported farms"} />
-                    <span>show only supported farms</span>
-                    <Image
-                      src="/icons/umbrella.svg"
-                      alt="supported farms"
-                      height={16}
-                      width={16}
-                    />
-                  </div>
-                </div>
-                <SearchInput term={searchTerm} setTerm={setSearchTerm} />
-              </div>
+            <div className="hidden sm:block px-6 base:px-10 lg:px-[72px]">
               <FarmTable
                 farms={filteredFarms}
                 noResult={noFilteredFarms}
                 isLoading={isLoading}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
                 positions={positions}
               />
               {/* {filteredFarms.length < farms.length && (
