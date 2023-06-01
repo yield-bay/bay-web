@@ -5,10 +5,12 @@ import { useRouter } from "next/router";
 import clsx from "clsx";
 import ConnectWallet from "./Library/ConnectWallet";
 import { MenuIcon } from "@heroicons/react/outline";
+import useScreenSize from "@hooks/useScreenSize";
 
 export default function Header() {
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState("");
+  const screenSize = useScreenSize();
 
   useEffect(() => {
     setCurrentPath(router.asPath);
@@ -68,9 +70,11 @@ export default function Header() {
         <div className="hidden sm:inline-flex items-center gap-x-4">
           <ConnectWallet />
         </div>
-        <button onClick={() => {}}>
-          <MenuIcon className="w-6 h-6 text-white sm:hidden" />
-        </button>
+        {screenSize == "xs" && (
+          <button onClick={() => {}}>
+            <MenuIcon className="sm:hidden w-6 h-6 text-white" />
+          </button>
+        )}
       </div>
     </div>
   );

@@ -29,7 +29,7 @@ const RewardsModal = ({ open, setOpen, farm, position }: Props) => {
         />
         <p>Unclaimed Rewards</p>
       </div>
-      <div className="flex flex-row justify-between rounded-xl w-full border border-[#EAECF0] p-6 shadow">
+      <div className="flex flex-col gap-y-3 items-start sm:gap-y-0 sm:flex-row justify-between rounded-xl w-full border border-[#EAECF0] p-6 shadow">
         <div className="flex flex-col gap-y-6 justify-between">
           <div className="text-left">
             <p className="mb-1">
