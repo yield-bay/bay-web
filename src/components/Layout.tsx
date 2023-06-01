@@ -47,9 +47,9 @@ const Layout: FC<Props> = ({ children }) => {
     queryKey: ["farmsList"],
     queryFn: async () => {
       try {
-        console.log("loading farms...\n");
+        // console.log("loading farms...\n");
         const { farms } = await fetchListicleFarms();
-        console.log("farms in layout", farms);
+        // console.log("farms in layout", farms);
         return farms;
       } catch (error) {
         console.error(error);
