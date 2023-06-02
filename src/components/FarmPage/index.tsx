@@ -342,6 +342,16 @@ const FarmPage: NextPage = () => {
                   width={200}
                   className="mx-auto"
                 />
+                <div
+                  className="radial-progress"
+                  style={{
+                    "--value": "70",
+                    "--size": "12rem",
+                    "--thickness": "2px",
+                  }}
+                >
+                  70%
+                </div>
                 <p className="absolute">8</p>
               </div>
               <div className="py-4 px-6 text-sm leading-5">
