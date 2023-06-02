@@ -99,7 +99,7 @@ const FarmPage: NextPage = () => {
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
   return !isLoading && idQuery ? (
-    <div className="px-6 sm:px-[72px] text-[#475467]">
+    <div className="px-6 sm:px-[72px] text-[#475467] z-10">
       <MetaTags title={`Farm • ${APP_NAME}`} />
       <Breadcrumb tokenNames={tokenNames} />
       <div className="flex flex-col border border-red-500 bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
@@ -473,7 +473,7 @@ const FarmPage: NextPage = () => {
       )}
     </div>
   ) : (
-    <div className="flex-col gap-y-3 page-center font-spaceGrotesk bg-hero-gradient">
+    <div className="flex-col gap-y-3 page-center">
       <span className="animate-bounce opacity-70 text-4xl select-none">🌾</span>
       <span>loading farm...</span>
     </div>

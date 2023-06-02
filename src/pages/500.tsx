@@ -5,7 +5,7 @@ import { APP_NAME } from "@utils/constants";
 
 const Custom500: NextPage = () => {
   return (
-    <div className="flex-col page-center bg-hero-gradient">
+    <div className="flex-col page-center z-10">
       <MetaTags title={`500 • ${APP_NAME}`} />
       <div className="flex flex-col gap-y-6 md:gap-y-8 items-center font-spaceGrotesk font-bold text-[#D9D9D9]">
         <p className="text-7xl sm:text-8xl md:text-[154px] leading-10 sm:leading-[56px] md:leading-[196px]">
