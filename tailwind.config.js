@@ -47,15 +47,11 @@ module.exports = {
       },
     },
     backgroundImage: {
-      "bg-pattern": "url('/Pattern.png')",
-      "hero-gradient":
-        "linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #01050D 100%)",
-      "hero-gradient-new":
-        "linear-gradient(180.12deg, #070813 22.59%, rgba(139, 105, 235, 0.47) 414.39%)",
-      "hero-gradient-mob":
-        "linear-gradient(180deg, rgba(3, 14, 33, 0) -21.54%, #01060F 100%)",
-      "safety-scale":
-        "linear-gradient(270deg, #67C84B 0%, #F5AF46 48.46%, #C8524B 102.25%)",
+      // "bg-pattern": "url('/Pattern.png')",
+      "main-gradient":
+        "linear-gradient(180deg, #070813 22.59%, rgba(139, 105, 235, 0.47) 414.39%)",
+      "main-flare":
+        "linear-gradient(90deg, #ADADFF 1.14%, rgba(65, 65, 96, 0.375) 55%, rgba(0, 0, 0, 0) 87.3%)",
       "net-worth-card":
         "linear-gradient(224.04deg, #36364D -48.59%, rgba(54, 54, 77, 0) 105.16%)",
       "rewards-card":

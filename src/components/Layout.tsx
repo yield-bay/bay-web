@@ -976,26 +976,27 @@ const Layout: FC<Props> = ({ children }) => {
     };
     // ------------------------------
 
-    // const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
-    // const tokenPricesLength = Object.keys(tokenPricesMap).length;
+    const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
+    const tokenPricesLength = Object.keys(tokenPricesMap).length;
 
-    // if (
-    //   isConnected &&
-    //   farms.length > 0 &&
-    //   lpTokensPricesLength > 0 &&
-    //   tokenPricesLength > 0
-    // ) {
-    //   asycFn(); // Run setup when wallet connected
-    // }
+    if (
+      isConnected &&
+      farms.length > 0 &&
+      lpTokensPricesLength > 0 &&
+      tokenPricesLength > 0
+    ) {
+      asycFn(); // Run setup when wallet connected
+    }
   }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
 
   return (
     <div
       className={clsx(
-        "flex flex-col min-h-screen font-inter bg-baseBlue text-white",
+        "relative flex flex-col min-h-screen font-inter bg-main-gradient text-white overflow-hidden",
         satoshiFont.variable
       )}
     >
+      <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
       <ConnectModal />
       <Header />
       {children}
