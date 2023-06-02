@@ -206,35 +206,50 @@ const SelectAccountMenu: FC<SelectAccountMenuProps> = ({ children }) => {
   }, []);
 
   return (
-    <Menu as="div" className="relative inline-block text-left text-[#344054]">
-      <Menu.Button>{children}</Menu.Button>
-      <Transition
-        as={Fragment}
-        // show={show}
-        enter="transition ease-out duration-100"
-        enterFrom="transform opacity-0 scale-95"
-        enterTo="transform opacity-100 scale-100"
-        leave="transition ease-in duration-75"
-        leaveFrom="transform opacity-100 scale-100"
-        leaveTo="transform opacity-0 scale-95"
-      >
-        <Menu.Items className="absolute flex flex-col w-[250px] right-0 top-12 origin-top-right rounded-xl bg-white text-[##344054] border border-[#EAECF0] font-medium text-sm leading-5 focus:outline-none">
-          <MenuItems choice={walletChoice} setChoice={setWalletChoice} />
-          <div className="py-3 px-[21px] select-none flex flex-col gap-y-2 bg-[#F4F4FF] rounded-b-xl text-[11px] text-[#7E899C] leading-[14.85px] cursor-default">
-            {walletChoice == null && (
-              <p>
-                You can only connect one EVM and one substrate wallet at a time.
-              </p>
+    <Menu
+      as="div"
+      className="relative w-full sm:w-fit inline-block text-left text-[#344054]"
+    >
+      {({ open }) => (
+        <>
+          <Menu.Button
+            className={clsx(
+              "min-w-full transition-all duration-200",
+              open && "opacity-50"
             )}
-            <p>
-              Don’t have a self custodian wallet?{" "}
-              <Link href="#" className="underline underline-offset-2">
-                Start here
-              </Link>
-            </p>
-          </div>
-        </Menu.Items>
-      </Transition>
+          >
+            {children}
+          </Menu.Button>
+          <Transition
+            as={Fragment}
+            // show={show}
+            enter="transition ease-out duration-100"
+            enterFrom="transform opacity-0 scale-95"
+            enterTo="transform opacity-100 scale-100"
+            leave="transition ease-in duration-75"
+            leaveFrom="transform opacity-100 scale-100"
+            leaveTo="transform opacity-0 scale-95"
+          >
+            <Menu.Items className="absolute z-20 flex flex-col w-full sm:w-[250px] right-0 top-14 sm:top-12 origin-top-right rounded-xl bg-white text-[##344054] border border-[#EAECF0] font-medium text-sm leading-5 focus:outline-none">
+              <MenuItems choice={walletChoice} setChoice={setWalletChoice} />
+              <div className="py-3 px-[21px] select-none flex flex-col gap-y-2 bg-[#F4F4FF] rounded-b-xl text-[11px] text-[#7E899C] leading-[14.85px] cursor-default">
+                {walletChoice == null && (
+                  <p>
+                    You can only connect one EVM and one substrate wallet at a
+                    time.
+                  </p>
+                )}
+                <p>
+                  Don’t have a self custodian wallet?{" "}
+                  <Link href="#" className="underline underline-offset-2">
+                    Start here
+                  </Link>
+                </p>
+              </div>
+            </Menu.Items>
+          </Transition>
+        </>
+      )}
     </Menu>
   );
 };
@@ -330,7 +345,7 @@ const ConnectWallet = () => {
   return (
     <ClientOnly>
       {isConnected || account ? (
-        <div className="inline-flex gap-x-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           {isConnected && (
             <>
               <HeaderMenu address={address} />

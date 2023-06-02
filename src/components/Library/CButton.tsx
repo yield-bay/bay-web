@@ -9,7 +9,7 @@ interface Props {
 const CButton: React.FC<Props> = ({ children, variant }) => (
   <div
     className={clsx(
-      "inline-flex items-center gap-x-2 cursor-pointer text-sm leading-[17px] font-semibold bg-[#36364D] rounded-lg py-[10px] px-4 sm:py-[10px] sm:px-4 focus:outline-none",
+      "flex flex-row justify-center sm:justify-start items-center gap-x-2 cursor-pointer text-sm leading-5 font-semibold bg-[#36364D] rounded-lg p-3 px-4 sm:py-[10px] sm:px-4 focus:outline-none",
       variant == "primary"
         ? "text-[#FFFFFF]"
         : variant == "secondary"
