@@ -107,12 +107,12 @@ const PortfolioPage = () => {
   }, [userPositions]);
 
   return (
-    <div className="px-[72px] text-[#475467]">
+    <div className="px-6 sm:px-[72px] text-[#475467]">
       <MetaTags title={`Portfolio • ${APP_NAME}`} />
-      <div className="mb-[30px] text-white inline-flex gap-x-[17px] w-full">
+      <div className="mb-[30px] text-white flex flex-col gap-y-6 sm:flex-row gap-x-[17px] w-full">
         <div
           className={clsx(
-            "w-1/2 rounded-xl p-6 text-left bg-net-worth-card",
+            "w-full sm:w-1/2 rounded-xl p-6 text-left bg-net-worth-card",
             userPositions.length == 0 && "max-w-[364px]"
           )}
         >
@@ -121,9 +121,9 @@ const PortfolioPage = () => {
             ${isConnected || account !== null ? netWorth : "???"}
           </p>
         </div>
-        {userPositions.length > 0 ? (
+        {(isConnected || account !== null) && userPositions.length > 0 ? (
           totalUnclaimedRewards >= 0 ? (
-            <div className="w-1/2 rounded-xl p-6 text-left bg-rewards-card">
+            <div className="w-full sm:w-1/2 rounded-xl p-6 text-left bg-rewards-card">
               <p className="font-medium text-base leading-6">
                 Unclaimed rewards worth
               </p>
@@ -143,9 +143,9 @@ const PortfolioPage = () => {
         {/* Container Header */}
         <div
           className="flex flex-col-reverse sm:flex-row items-center justify-between
-                bg-white mt-8 sm:mt-0 py-0 sm:py-4 border-b border-[#EAECF0] px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
+                bg-white py-0 sm:py-4 border-b border-[#EAECF0] px-0 sm:px-6 md:pl-16 md:pr-8 lg:px-12 font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
         >
-          <div className="inline-flex items-center font-semibold text-[#1D2939] gap-x-8">
+          <div className="inline-flex pb-4 sm:py-0 w-full sm:w-fit justify-center sm:justify-start items-center font-semibold text-[#1D2939] gap-x-8">
             <button
               onClick={() => setPositionType(0)}
               className={clsx(
@@ -174,7 +174,7 @@ const PortfolioPage = () => {
               Staked
             </button>
           </div>
-          <div className="flex flex-row w-full justify-end gap-x-4">
+          <div className="flex flex-row items-center w-full justify-between sm:justify-end p-4 sm:p-0 gap-x-3 sm:gap-x-4">
             <SearchInput term={searchTerm} setTerm={setSearchTerm} />
             <SelectChain availableChains={chains} />
           </div>
@@ -184,18 +184,18 @@ const PortfolioPage = () => {
           userPositions.length == 0 || netWorth == 0 ? (
             <div className="flex justify-center text-[#1D2939] h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)">
               <div className="flex flex-col mt-[125px] h-fit gap-y-[46px] items-center text-center">
-                <p className="font-bold text-xl leading-6">
+                <p className="font-semibold px-20 sm:px-0 text-center sm:font-bold text-xl leading-6">
                   No Liquidity Positions Yet
                 </p>
                 <Link href="/">
-                  <button className="p-6 border border-[#D0D5DD] bg-[#F9FAFB] text-2xl font-semibold leading-7 rounded-lg shadow hover:shadow-md">
+                  <button className=" max-w-[217px] sm:max-w-full px-6 py-3 sm:p-6 border border-[#D0D5DD] bg-[#F9FAFB] text-sm sm:text-2xl font-semibold leading-4 sm:leading-7 rounded-lg shadow hover:shadow-md">
                     Explore Opportunities to earn on Yieldbay
                   </button>
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-y-16 py-16 px-12">
+            <div className="flex flex-col gap-y-8 sm:gap-y-16 py-8 sm:py-16 px-[18px] sm:px-12">
               {chains.map((chain, index) => {
                 // Check if chain has any positions
                 const positionsByChain = filteredPositions.filter(
@@ -203,14 +203,17 @@ const PortfolioPage = () => {
                 );
                 if (positionsByChain.length > 0) {
                   return (
-                    <div className="flex flex-col gap-y-6" key={index}>
-                      <h1 className="font-semibold text-2xl leading-5 text-[#1D2939]">
+                    <div
+                      className="flex flex-col gap-y-2 sm:gap-y-6"
+                      key={index}
+                    >
+                      <h1 className="font-semibold text-base sm:text-2xl leading-5 text-[#1D2939]">
                         {formatFirstLetter(chain)}
                       </h1>
                       {/* Card */}
                       <ul
                         role="list"
-                        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
+                        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
                       >
                         {farms.length > 0 ? (
                           positionsByChain.map(
@@ -230,10 +233,19 @@ const PortfolioPage = () => {
                                   className="col-span-1 divide-y divide-[#EAECF0] p-6 border border-[#EAECF0] max-w-sm rounded-xl bg-white shadow"
                                 >
                                   <div className="flex-1 flex flex-row justify-between truncate mb-6">
-                                    <div className="flex flex-col space-y-4 items-start">
-                                      <FarmAssets
-                                        logos={thisFarm?.asset.logos}
-                                      />
+                                    <div className="flex w-full flex-col space-y-4 items-start truncate">
+                                      <div className="w-full inline-flex items-center justify-between">
+                                        <FarmAssets
+                                          logos={thisFarm?.asset.logos}
+                                        />
+                                        <p className="truncate text-xl font-bold leading-6 text-black">
+                                          $
+                                          {(
+                                            position.unstaked.amountUSD +
+                                            position.staked.amountUSD
+                                          ).toFixed(2)}
+                                        </p>
+                                      </div>
                                       <div className="">
                                         <p className="text-[#101828] font-medium text-xl leading-5">
                                           {tokenNames.map(
@@ -252,17 +264,10 @@ const PortfolioPage = () => {
                                         </p>
                                       </div>
                                     </div>
-                                    <p className="truncate text-xl font-bold leading-6 text-black">
-                                      $
-                                      {(
-                                        position.unstaked.amountUSD +
-                                        position.staked.amountUSD
-                                      ).toFixed(2)}
-                                    </p>
                                   </div>
                                   <div className="flex flex-row justify-between py-6">
                                     <div className="flex flex-col gap-y-2">
-                                      <p className="text-sm leading-5">
+                                      <p className="truncate text-sm leading-5">
                                         Total Holdings
                                       </p>
                                       <p className="text-2xl leading-7 font-semibold text-[#101828]">
@@ -272,7 +277,7 @@ const PortfolioPage = () => {
                                           position.staked.amountUSD
                                         ).toFixed(2)}
                                       </p>
-                                      <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5 max-w-fit">
+                                      <p className="inilne-flex p-2 bg-[#F5F5F5] rounded-lg text-base leading-5 max-w-fit">
                                         <span className="font-bold">
                                           {(
                                             position.unstaked.amount +
@@ -289,7 +294,7 @@ const PortfolioPage = () => {
                                             label="Idle balance"
                                             placement="top"
                                           >
-                                            <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
+                                            <QuestionMarkCircleIcon className="hidden sm:block w-4 h-4 text-[#C0CBDC] mr-1" />
                                           </Tooltip>
                                           Idle
                                         </p>
@@ -299,7 +304,7 @@ const PortfolioPage = () => {
                                             2
                                           )}
                                         </p>
-                                        <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                        <p className="inline-flex p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                                           <span className="font-bold">
                                             $
                                             {position?.unstaked.amount.toFixed(
@@ -312,10 +317,10 @@ const PortfolioPage = () => {
                                       <div className="flex flex-col items-end gap-y-1">
                                         <p className="inline-flex items-center text-sm leading-5">
                                           <Tooltip
-                                            label="Idel balance"
+                                            label="Idles balance"
                                             placement="top"
                                           >
-                                            <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
+                                            <QuestionMarkCircleIcon className="hidden sm:block w-4 h-4 text-[#C0CBDC] mr-1" />
                                           </Tooltip>
                                           Staked
                                         </p>
@@ -325,7 +330,7 @@ const PortfolioPage = () => {
                                             2
                                           )}
                                         </p>
-                                        <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                        <p className="inline-flexp-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                                           <span className="font-bold">
                                             $
                                             {position?.staked.amount.toFixed(2)}
@@ -340,8 +345,8 @@ const PortfolioPage = () => {
                                       <p>Breakdown</p>
                                       <ChevronDownIcon className="h-[19px]" />
                                     </button>
-                                    <div className="inline-flex items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
-                                      <span className="font-medium mr-2">
+                                    <div className="flex flex-col gap-2 sm:flex-row items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
+                                      <span className="font-medium">
                                         Staked at{" "}
                                         {(
                                           thisFarm?.apr.base +
@@ -381,13 +386,13 @@ const PortfolioPage = () => {
                 Connect wallet To View Positions
               </p>
             </div>
-            <div className="w-full px-12 py-8 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              <div className="h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
-              <div className="h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
-              <div className="h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
-              <div className="h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
-              <div className="h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
-              <div className="h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
+            <div className="w-full p-0 sm:px-12 sm:py-8 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+              <div className=" h-96 sm:h-[340px] bg-[#FFFFFF] sm:bg-[#FBFBFB] border border-[#EAECF0] rounded-b-xl sm:rounded-xl shadow-none sm:shadow" />
+              <div className="hidden sm:block h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
+              <div className="hidden sm:block h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
+              <div className="hidden sm:block h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
+              <div className="hidden sm:block h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
+              <div className="hidden sm:block h-[340px] bg-[#FBFBFB] border border-[#EAECF0] rounded-xl shadow" />
             </div>
           </div>
         )}
