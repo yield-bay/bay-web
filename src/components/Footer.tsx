@@ -39,7 +39,6 @@ export default function Footer() {
   return (
     <footer className="text-white" aria-labelledby="footer-heading">
       <div className="p-8 mt-[14px] sm:mt-0 sm:py-12 sm:px-6 md:px-20 lg:py-14 lg:px-[72px]">
-        {/* <div className="lg:grid lg:grid-cols-2 lg:gap-16"> */}
         <div className="lg:flex flex-row justify-between">
           {/* LEFT SIDE */}
           <div className="max-w-[312px]">
@@ -67,7 +66,7 @@ export default function Footer() {
           {/* RIGHT SIDE */}
           <ul
             role="list"
-            className="space-y-4 text-right text-base leading-4 font-bold"
+            className="flex flex-row sm:flex-col items-center justify-between sm:space-y-4 text-right text-base leading-4 font-bold pb-20 sm:pb-0"
           >
             {community.map((ele, index) => (
               <List key={index} title={ele.title} link={ele.link} />
