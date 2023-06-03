@@ -1,9 +1,3 @@
-/**
- *  This hook uses "resize" event handler to return the responsive domain of the screensize
-    based on the predefined values in tailwindcss.
-    It uses a debounce func. to not fire screensize continuously.
- */
-
 import { useState, useEffect } from "react";
 import debounce from "@utils/debounce";
 
@@ -28,6 +22,10 @@ const calculateScreenWidth = (windowWidth: number): string => {
   }
 };
 
+/**
+ *
+ * @returns Range of width in Tailwind responsive notions
+ */
 const useScreenSize = () => {
   const [windowWidth, setWindowWidth] = useState(0);
   const [responsiveWidth, setResponsiveWidth] = useState("xs");

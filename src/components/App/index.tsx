@@ -8,14 +8,12 @@ import { useAtom } from "jotai";
 import { useQuery } from "@tanstack/react-query";
 
 // Misc Imports
-import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import MobileFarmList from "./MobileFarmList";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
 import { trackPageView } from "@utils/analytics";
 import { fetchListicleFarms } from "@utils/api";
-import { protocolList } from "@utils/statsMethods";
 import { filterFarmTypeAtom, positionsAtom } from "@store/atoms";
 import FarmTable from "./FarmTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";

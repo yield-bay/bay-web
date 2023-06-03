@@ -334,7 +334,7 @@ const FarmPage: NextPage = () => {
                   This farm is moderately safe.
                 </p>
               </div>
-              <div className="relative mx-auto p-6 border-b border-[#EAECF0]">
+              {/* <div className="relative mx-auto p-6 border-b border-[#EAECF0]">
                 <Image
                   src="/ProgressCircle.png"
                   alt="Safety Score Meter"
@@ -353,7 +353,7 @@ const FarmPage: NextPage = () => {
                   70%
                 </div>
                 <p className="absolute">8</p>
-              </div>
+              </div> */}
               <div className="py-4 px-6 text-sm leading-5">
                 The score is a relative indicator of the reliability of the farm
                 compared to the other opportunities listed on YieldBay. The
