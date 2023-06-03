@@ -57,9 +57,37 @@ const Providers = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let unmounted = false;
     const walletsOrder = ["talisman", "polkadot-js", "subwallet-js"];
-    let supportedWallets = getWallets().filter((wallet) =>
-      walletsOrder.includes(wallet.extensionName)
+    let supportedWallets = getWallets()
+      .filter((wallet) => walletsOrder.includes(wallet.extensionName))
+      .sort((a, b) => {
+        return (
+          walletsOrder.indexOf(a.extensionName) -
+          walletsOrder.indexOf(b.extensionName)
+        );
+      });
+
+    // Nova Wallet for Mobile devices
+    const polkadotJsWallet = supportedWallets.find(
+      (wallet) => wallet.extensionName === "polkadot-js"
     );
+    if (
+      polkadotJsWallet != null &&
+      (window as { walletExtension?: { isNovaWallet?: boolean } })
+        .walletExtension?.isNovaWallet === true
+    ) {
+      console.log("found nova wallet!");
+      polkadotJsWallet.title = "Nova Wallet";
+      polkadotJsWallet.logo = { src: "/nova_logo.png", alt: "Nova Wallet" };
+      supportedWallets = [polkadotJsWallet];
+    } else {
+      console.log("don't find nova wallet");
+      console.log(
+        "window",
+        window as { walletExtension?: { isNovaWallet?: boolean } }
+      );
+    }
+
+    console.log("supported wallets substrate", supportedWallets);
     if (!unmounted) {
       setWallets(supportedWallets);
     }
