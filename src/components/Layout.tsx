@@ -238,11 +238,11 @@ const Layout: FC<Props> = ({ children }) => {
       );
     };
 
-    // if (account !== null && farms.length > 0) {
-    //   // Run setup when wallet connected
-    //   console.log("runing mangata setup");
-    //   mangataSetup();
-    // }
+    if (account !== null && farms.length > 0) {
+      // Run setup when wallet connected
+      console.log("runing mangata setup");
+      mangataSetup();
+    }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
@@ -976,17 +976,17 @@ const Layout: FC<Props> = ({ children }) => {
     };
     // ------------------------------
 
-    // const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
-    // const tokenPricesLength = Object.keys(tokenPricesMap).length;
+    const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
+    const tokenPricesLength = Object.keys(tokenPricesMap).length;
 
-    // if (
-    //   isConnected &&
-    //   farms.length > 0 &&
-    //   lpTokensPricesLength > 0 &&
-    //   tokenPricesLength > 0
-    // ) {
-    //   asycFn(); // Run setup when wallet connected
-    // }
+    if (
+      isConnected &&
+      farms.length > 0 &&
+      lpTokensPricesLength > 0 &&
+      tokenPricesLength > 0
+    ) {
+      asycFn(); // Run setup when wallet connected
+    }
   }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
 
   return (
