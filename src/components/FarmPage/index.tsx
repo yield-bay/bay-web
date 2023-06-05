@@ -36,6 +36,7 @@ import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
 import { FarmType } from "@utils/types";
+import clsx from "clsx";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -156,7 +157,10 @@ const FarmPage: NextPage = () => {
           <p className="opacity-70">Rewards</p>
           {farm?.rewards.map((reward, index) => (
             <div
-              className="flex items-center justify-between gap-x-[61px]"
+              className={clsx(
+                "flex items-center justify-between gap-x-[61px]",
+                reward.amount == 0 && "hidden"
+              )}
               key={index}
             >
               <div className="flex items-center">

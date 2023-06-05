@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Tooltip from "./Tooltip";
+import clsx from "clsx";
 
 type RewardsProps = {
   rewards: {
@@ -11,7 +12,12 @@ type RewardsProps = {
 };
 
 export default function Rewards({ rewards }: RewardsProps) {
-  return (
+  const totalRewardsAmount = rewards.reduce(
+    (acc, reward) => acc + reward.amount,
+    0
+  );
+
+  return totalRewardsAmount > 0 ? (
     <div className="flex justify-end w-full">
       <Tooltip
         content={
@@ -19,7 +25,10 @@ export default function Rewards({ rewards }: RewardsProps) {
             {rewards.map((reward, index) => (
               <div
                 key={index}
-                className="flex justify-start items-center gap-x-2"
+                className={clsx(
+                  "flex justify-start items-center gap-x-2",
+                  reward.amount == 0 && "hidden"
+                )}
               >
                 <div>
                   <Image
@@ -57,5 +66,7 @@ export default function Rewards({ rewards }: RewardsProps) {
         </div>
       </Tooltip>
     </div>
+  ) : (
+    <></>
   );
 }
