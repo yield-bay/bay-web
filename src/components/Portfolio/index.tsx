@@ -118,10 +118,10 @@ const PortfolioPage = () => {
         >
           <p className="font-medium text-base leading-6">Net Worth</p>
           <p className="mt-3 font-semibold text-4xl leading-[44px]">
-            ${isConnected || account !== null ? netWorth : "???"}
+            ${isConnected || account ? netWorth : "???"}
           </p>
         </div>
-        {(isConnected || account !== null) && userPositions.length > 0 ? (
+        {(isConnected || account) && userPositions.length > 0 ? (
           totalUnclaimedRewards >= 0 ? (
             <div className="w-full sm:w-1/2 rounded-xl p-6 text-left bg-rewards-card">
               <p className="font-medium text-base leading-6">
@@ -213,7 +213,7 @@ const PortfolioPage = () => {
                       {/* Card */}
                       <ul
                         role="list"
-                        className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4"
+                        className="grid grid-cols-1 base:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6"
                       >
                         {farms.length > 0 ? (
                           positionsByChain.map(
@@ -234,18 +234,9 @@ const PortfolioPage = () => {
                                 >
                                   <div className="flex-1 flex flex-row justify-between truncate mb-6">
                                     <div className="flex w-full flex-col space-y-4 items-start truncate">
-                                      <div className="w-full inline-flex items-center justify-between">
-                                        <FarmAssets
-                                          logos={thisFarm?.asset.logos}
-                                        />
-                                        <p className="truncate text-xl font-bold leading-6 text-black">
-                                          $
-                                          {(
-                                            position.unstaked.amountUSD +
-                                            position.staked.amountUSD
-                                          ).toFixed(2)}
-                                        </p>
-                                      </div>
+                                      <FarmAssets
+                                        logos={thisFarm?.asset.logos}
+                                      />
                                       <div className="">
                                         <p className="text-[#101828] font-medium text-xl leading-5">
                                           {tokenNames.map(
