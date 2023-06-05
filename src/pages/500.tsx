@@ -7,17 +7,15 @@ const Custom500: NextPage = () => {
   return (
     <div className="flex-col page-center z-10">
       <MetaTags title={`500 • ${APP_NAME}`} />
-      <div className="flex flex-col gap-y-6 md:gap-y-8 items-center font-spaceGrotesk font-bold text-[#D9D9D9]">
-        <p className="text-7xl sm:text-8xl md:text-[154px] leading-10 sm:leading-[56px] md:leading-[196px]">
-          whoops
-        </p>
-        <p className="px-6 text-center text-lg sm:text-xl md:text-2xl max-w-sm">
-          there seems to be an internal server error. please reload, or:
-        </p>
+      <div className="flex flex-col gap-y-8 md:gap-y-8 mt-[72px] items-center font-bold text-[#DADADA]">
+        <div className="font-satoshi px-6 text-center text-[32px] leading-[38.4px]">
+          <p>something went wrong.</p>
+          <p>apologies for the inconvienience</p>
+        </div>
         <Link href="/">
-          <p className="underline cursor-pointer text-white opacity-70 font-semibold text-lg sm:text-xl md:text-2xl">
-            go to homepage
-          </p>
+          <button className="px-4 py-[10px] bg-[#D0D5DD] text-[#1D2939] rounded-lg text-base font-semibold leading-5">
+            Explore yield farms on yieldbay
+          </button>
         </Link>
       </div>
     </div>
