@@ -17,7 +17,7 @@ import { fetchListicleFarms } from "@utils/api";
 import { filterFarmTypeAtom, positionsAtom } from "@store/atoms";
 import FarmTable from "./FarmTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
-import MetaTags from "@components/metaTags/MetaTags";
+import MetaTags from "@components/Common/metaTags/MetaTags";
 import Hero from "./Hero";
 import { FarmType } from "@utils/types";
 

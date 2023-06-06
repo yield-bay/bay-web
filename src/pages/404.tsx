@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import Link from "next/link";
-import MetaTags from "@components/metaTags/MetaTags";
+import MetaTags from "@components/Common/metaTags/MetaTags";
 import { APP_NAME } from "@utils/constants";
 
 const Custom404: NextPage = () => {
