@@ -1,5 +1,5 @@
 import SearchInput from "@components/Library/SearchInput";
-import MetaTags from "@components/metaTags/MetaTags";
+import MetaTags from "@components/Common/metaTags/MetaTags";
 import { APP_NAME } from "@utils/constants";
 import clsx from "clsx";
 import { useEffect, useState } from "react";

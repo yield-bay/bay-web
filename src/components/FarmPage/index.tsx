@@ -15,7 +15,7 @@ import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
 import CalculatorModal from "@components/Library/CalculatorModal";
 import { APP_NAME } from "@utils/constants";
-import MetaTags from "@components/metaTags/MetaTags";
+import MetaTags from "@components/Common/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
 import {

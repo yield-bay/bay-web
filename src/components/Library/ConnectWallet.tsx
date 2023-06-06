@@ -338,10 +338,6 @@ const ConnectWallet = () => {
   const { isConnected } = useAccount();
   const [account] = useAtom(dotAccountAtom);
 
-  useEffect(() => {
-    console.log("dot account", account);
-  }, [account]);
-
   return (
     <ClientOnly>
       {isConnected || account ? (
@@ -349,7 +345,7 @@ const ConnectWallet = () => {
           {isConnected && (
             <>
               <HeaderMenu address={address} />
-              {account == null && (
+              {!account && (
                 <SelectAccountMenu>
                   <div className="rounded-lg font-semibold text-xl leading-6 text-[#FCFCFF] bg-[#36364D] py-2 px-[13px]">
                     +

@@ -1,41 +1,7 @@
-import CButton from "./Library/CButton";
+import CButton from "@components/Library/CButton";
+import List, { community } from "./List";
 
-type LinkProps = {
-  title: string;
-  link: string;
-};
-
-const ecosystem: LinkProps[] = [
-  {
-    title: "Landing",
-    link: "https://www.yieldbay.io/",
-  },
-  {
-    title: "App",
-    link: "https://list.yieldbay.io/",
-  },
-];
-
-const community: LinkProps[] = [
-  {
-    title: "Twitter",
-    link: "https://twitter.com/yield_bay",
-  },
-  {
-    title: "Discord",
-    link: "https://discord.gg/AKHuvbz7q4",
-  },
-  {
-    title: "Docs",
-    link: "https://docs.yieldbay.io/",
-  },
-  {
-    title: "Github",
-    link: "https://github.com/yield-bay/",
-  },
-];
-
-export default function Footer() {
+const Footer = () => {
   return (
     <footer className="text-white" aria-labelledby="footer-heading">
       <div className="p-8 mt-[14px] sm:mt-0 sm:py-12 sm:px-6 md:px-20 lg:py-14 lg:px-[72px]">
@@ -76,19 +42,6 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
-
-const List = ({ title, link }: LinkProps): any => {
-  return (
-    <li>
-      <a
-        href={link}
-        className="inline-flex hover:opacity-80"
-        target="_blank"
-        rel="noreferrer"
-      >
-        {title}
-      </a>
-    </li>
-  );
 };
+
+export default Footer;
