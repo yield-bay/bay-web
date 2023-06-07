@@ -12,7 +12,6 @@ import ClientOnly from "@components/Common/ClientOnly";
 import { dotWalletAtom } from "@store/walletAtoms";
 import clsx from "clsx";
 import { WalletAccount } from "@talismn/connect-wallets";
-import { formatWalletName } from "@utils/farmListMethods";
 
 const ConnectBtnDot: FC = () => {
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
