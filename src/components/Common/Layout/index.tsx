@@ -42,14 +42,14 @@ const Layout: FC<Props> = ({ children }) => {
     [key: string]: number;
   }>({});
 
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+  const [account] = useAtom(dotAccountAtom);
 
   // Accounts for testing
-  const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
-  const account = {
-    address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
-  };
-  // const [account] = useAtom(dotAccountAtom);
+  // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
+  // const account = {
+  //   address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
+  // };
 
   // Fetching all farms
   const { isLoading, data: farmsList } = useQuery({
@@ -247,11 +247,11 @@ const Layout: FC<Props> = ({ children }) => {
       );
     };
 
-    // if (account !== null && farms.length > 0) {
-    //   // Run setup when wallet connected
-    //   console.log("runing mangata setup");
-    //   mangataSetup();
-    // }
+    if (account && farms.length > 0) {
+      // Run setup when wallet connected
+      console.log("runing mangata setup");
+      mangataSetup();
+    }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
