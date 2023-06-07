@@ -1,8 +1,9 @@
-import { FC, memo, useEffect } from "react";
+import { FC, memo } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAtom } from "jotai";
 import clsx from "clsx";
+import { useAccount } from "wagmi";
 
 // Utility Imports
 import toDollarUnits from "@utils/toDollarUnits";
@@ -13,6 +14,8 @@ import {
 } from "@utils/farmListMethods";
 import { FarmType } from "@utils/types";
 import { showSupportedFarmsAtom } from "@store/atoms";
+import { dotAccountAtom } from "@store/accountAtoms";
+import { supportedPools } from "@components/Common/Layout/evmUtils";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -22,19 +25,23 @@ import ShareFarm from "@components/Library/ShareFarm";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
-import { useAccount } from "wagmi";
-import { dotAccountAtom } from "@store/accountAtoms";
 
 interface Props {
   farms: FarmType[];
   positions: any;
 }
 
+const checkIfPoolSupported = (farm: FarmType) => {
+  const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
+  if (protocols && farm.farmType !== "SingleStaking") {
+    return protocols.includes(farm.protocol.toLowerCase());
+  }
+  return false;
+};
+
 const FarmsList: FC<Props> = ({ farms, positions }) => {
   const router = useRouter();
-  const [showSupportedFarms, setShowSupportedFarms] = useAtom(
-    showSupportedFarmsAtom
-  );
+  const [showSupportedFarms] = useAtom(showSupportedFarmsAtom);
 
   // Users wallet
   const { isConnected } = useAccount();
@@ -51,15 +58,14 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
           ];
         const currentPosition =
           position?.unstaked.amountUSD + position?.staked.amountUSD;
+        const isSupported = checkIfPoolSupported(farm);
 
         return (
           <tr
             key={`${farm.asset.address}-${farm.tvl}`}
             className={clsx(
               index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white",
-              (position == undefined || currentPosition <= 0) &&
-                showSupportedFarms &&
-                "hidden"
+              !isSupported && showSupportedFarms && "hidden"
             )}
           >
             <td className="whitespace-nowrap max-w-[288px] py-4 text-sm pl-8 md:pl-14 lg:pl-12 rounded-bl-xl">
@@ -72,11 +78,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                     alt="supported farm"
                     height={20}
                     width={20}
-                    className={clsx(
-                      "mr-2",
-                      (position == undefined || currentPosition <= 0) &&
-                        "saturate-0"
-                    )}
+                    className={clsx("mr-2", !isSupported && "saturate-0")}
                   />
                 </div>
                 <div className="text-[#101828] font-medium text-sm leading-5">

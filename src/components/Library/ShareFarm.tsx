@@ -1,7 +1,6 @@
 import { Fragment, useEffect, useState, memo } from "react";
 import { Menu, Dialog, Transition } from "@headlessui/react";
-import { ClipboardIcon, XIcon } from "@heroicons/react/outline";
-// import { ShareIcon } from "@heroicons/react/solid";
+import { XIcon } from "@heroicons/react/outline";
 import { trackEventWithProperty } from "@utils/analytics";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import useScreenSize from "@hooks/useScreenSize";

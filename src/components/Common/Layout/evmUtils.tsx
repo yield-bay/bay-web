@@ -1,3 +1,14 @@
+interface SupportedPoolsType {
+  [pool: string]: string[];
+}
+
+export const supportedPools: SupportedPoolsType = {
+  moonriver: ["zenlink", "solarbeam"],
+  moonbeam: ["curve", "zenlink", "stellaswap"],
+  astar: ["zenlink"],
+  "mangata kusama": ["mangata x"],
+};
+
 export const chains = [
   {
     name: "moonriver",
