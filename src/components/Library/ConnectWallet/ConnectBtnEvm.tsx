@@ -2,24 +2,21 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Transition, Menu } from "@headlessui/react";
 import { useAccount, useDisconnect } from "wagmi";
-import {
-  CheckCircleIcon,
-  ChevronDownIcon,
-  ClipboardCopyIcon,
-} from "@heroicons/react/outline";
-import ClientOnly from "./ClientOnly";
+import { CheckCircleIcon, ChevronDownIcon } from "@heroicons/react/outline";
+import ClientOnly from "../../Common/ClientOnly";
 
 interface Props {
   address: `0x${string}` | undefined;
 }
 
-const HeaderMenu: React.FC<Props> = ({ address }) => {
+const ConnectBtnEvm: React.FC<Props> = ({ address }) => {
+  const { connector } = useAccount();
   const { disconnect } = useDisconnect();
   const [isCopied, setIsCopied] = useState(false);
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
-    // Clear timeout when component unmounts
+    // Clear timeout when component unmounts;
     return () => {
       clearTimeout(timerRef.current as ReturnType<typeof setTimeout>);
     };
@@ -49,7 +46,15 @@ const HeaderMenu: React.FC<Props> = ({ address }) => {
           <Menu.Items className="w-[240px] absolute border border-[#EAECF0] right-0 mt-2 origin-top-right rounded-lg bg-white shadow-lg focus:outline-none">
             <div className="inline-flex border-b border-[#EAECF0] justify-between items-center rounded-t-lg w-full py-3 px-4">
               <div className="inline-flex items-center gap-x-3">
-                <div className="relative rounded-full h-10 w-10 bg-black bg-opacity-20">
+                <div className="relative">
+                  <div className="rounded-full overflow-hidden">
+                    <Image
+                      src={`/icons/${connector?.name.toLowerCase()}.svg`}
+                      alt="Wallet icon"
+                      width={40}
+                      height={40}
+                    />
+                  </div>
                   <div className="absolute right-0 bottom-0 h-[13px] w-[13px] bg-[#12B76A] rounded-full border-2 border-white" />
                 </div>
                 <p className="font-bold text-sm leading-5 text-[#475467]">
@@ -102,4 +107,4 @@ const HeaderMenu: React.FC<Props> = ({ address }) => {
   );
 };
 
-export default HeaderMenu;
+export default ConnectBtnEvm;
