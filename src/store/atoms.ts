@@ -35,3 +35,5 @@ export const positionsAtom = atom<{ [key: string]: any }>({});
 
 export const showSupportedFarmsAtom = atom<boolean>(false);
 export const filteredChainAtom = atom<number>(0);
+
+export const selectedFarmAtom = atom<FarmType | null>(null);

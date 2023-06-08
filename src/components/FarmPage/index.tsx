@@ -31,7 +31,12 @@ import {
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
-import { addrQueryAtom, idQueryAtom, positionsAtom } from "@store/atoms";
+import {
+  addrQueryAtom,
+  idQueryAtom,
+  positionsAtom,
+  selectedFarmAtom,
+} from "@store/atoms";
 import { farmTypeDesc } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
@@ -42,6 +47,7 @@ import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { calcUnclaimedReward } from "@utils/portfolioMethods";
+import { addLiqModalOpenAtom } from "@store/commonAtoms";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -63,6 +69,8 @@ const FarmPage: NextPage = () => {
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
   const [positions] = useAtom(positionsAtom);
+  const [, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
+  const [, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   const [calcOpen, setCalcOpen] = useState<boolean>(false);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);
@@ -102,7 +110,7 @@ const FarmPage: NextPage = () => {
     <div className="px-6 sm:px-[72px] text-[#475467] z-10">
       <MetaTags title={`Farm • ${APP_NAME}`} />
       <Breadcrumb tokenNames={tokenNames} />
-      <div className="flex flex-col border border-red-500 bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
+      <div className="flex flex-col bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
         {/* Heading */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-8 sm:gap-x-9">
           <p className="text-2xl text-[#454545] font-semibold leading-[29px]">
@@ -128,6 +136,36 @@ const FarmPage: NextPage = () => {
               </Button>
             </a>
           </div>
+        </div>
+        <div className="inline-flex gap-x-3">
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setAddLiqModalOpen(true);
+              setSelectedFarm(farm);
+            }}
+          >
+            Add Liquidity
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+          >
+            Remove Liquidity
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+          >
+            Stack
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+          >
+            Unstake
+          </Button>
         </div>
         {/* Positions Row */}
         {hasPosition && (

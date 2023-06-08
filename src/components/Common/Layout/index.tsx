@@ -3,7 +3,6 @@ import clsx from "clsx";
 import Footer from "@components/Common/Footer";
 import Header from "@components/Common/Header";
 import { satoshiFont } from "@utils/localFont";
-import ConnectModal from "@components/Library/ConnectModal";
 import { useAtom } from "jotai";
 import { positionsAtom } from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";
@@ -27,6 +26,7 @@ import {
   stellaswapChefAbi,
   stellaswapV1ChefAbi,
 } from "./evmUtils";
+import AddLiquidityModal from "@components/Library/AddLiquidityModal.tsx";
 
 interface Props {
   children: ReactNode;
@@ -247,11 +247,11 @@ const Layout: FC<Props> = ({ children }) => {
       );
     };
 
-    if (account && farms.length > 0) {
-      // Run setup when wallet connected
-      console.log("runing mangata setup");
-      mangataSetup();
-    }
+    // if (account && farms.length > 0) {
+    //   // Run setup when wallet connected
+    //   console.log("runing mangata setup");
+    //   mangataSetup();
+    // }
   }, [account, farms]);
 
   // Polkadot EVM Chains Setup
@@ -893,17 +893,17 @@ const Layout: FC<Props> = ({ children }) => {
     };
     // ------------------------------
 
-    const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
-    const tokenPricesLength = Object.keys(tokenPricesMap).length;
+    // const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
+    // const tokenPricesLength = Object.keys(tokenPricesMap).length;
 
-    if (
-      isConnected &&
-      farms.length > 0 &&
-      lpTokensPricesLength > 0 &&
-      tokenPricesLength > 0
-    ) {
-      asycFn(); // Run setup when wallet connected
-    }
+    // if (
+    //   isConnected &&
+    //   farms.length > 0 &&
+    //   lpTokensPricesLength > 0 &&
+    //   tokenPricesLength > 0
+    // ) {
+    //   asycFn(); // Run setup when wallet connected
+    // }
   }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
 
   return (
@@ -914,7 +914,7 @@ const Layout: FC<Props> = ({ children }) => {
       )}
     >
       <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
-      <ConnectModal />
+      <AddLiquidityModal />
       <Header />
       {children}
       <Footer />
