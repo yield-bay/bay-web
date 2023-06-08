@@ -17,10 +17,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isToken0Approved, setIsToken0Approved] = useState(false);
   const [isToken1Approved, setIsToken1Approved] = useState(false);
 
-  useEffect(() => {
-    console.log("selectedFarm", selectedFarm);
-  }, [selectedFarm]);
-
   // Method to update token values and fetch fees based on firstToken Input
   const handleChangeFirstTokenAmount = async (e: any) => {
     setFirstTokenAmount(e.target.value);

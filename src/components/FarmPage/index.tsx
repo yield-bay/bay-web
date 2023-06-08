@@ -47,7 +47,10 @@ import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { calcUnclaimedReward } from "@utils/portfolioMethods";
-import { addLiqModalOpenAtom } from "@store/commonAtoms";
+import {
+  addLiqModalOpenAtom,
+  removeLiqModalOpenAtom,
+} from "@store/commonAtoms";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -70,6 +73,7 @@ const FarmPage: NextPage = () => {
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
   const [positions] = useAtom(positionsAtom);
   const [, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
+  const [, setRemoveLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
   const [, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   const [calcOpen, setCalcOpen] = useState<boolean>(false);
@@ -151,6 +155,10 @@ const FarmPage: NextPage = () => {
           <Button
             size="large"
             style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setRemoveLiqModalOpen(true);
+              setSelectedFarm(farm);
+            }}
           >
             Remove Liquidity
           </Button>
