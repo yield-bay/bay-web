@@ -104,6 +104,7 @@ export const fetchTokenPrices = async (): Promise<{
             symbol
             address
             price
+            underlyingAssets
           }
         }
       `,

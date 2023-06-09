@@ -5,6 +5,14 @@ const moonbeamRpcUrl = RPC_URL.moonbeam;
 const moonriverRpcUrl = RPC_URL.moonriver;
 const astarRpcUrl = RPC_URL.astar;
 
+export const getChainId = (network: string): ChainId | undefined => {
+  const chains = getSupportedChains();
+  const chainId = chains.find(
+    (chain) => chain.name.toLowerCase() == network.toLowerCase()
+  )?.id;
+  return chainId;
+};
+
 export const getChainIdForNetwork = (network: Network): ChainId => {
   let chainId = ChainId.MOONBEAM;
   switch (network) {
