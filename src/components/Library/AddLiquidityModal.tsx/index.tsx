@@ -6,6 +6,7 @@ import MButton from "../MButton";
 import clsx from "clsx";
 import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
+import { formatTokenSymbols } from "@utils/farmListMethods";
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -42,6 +43,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     // await handleFees(secondTokenAmount, expectedFirstTokenAmount);
   };
 
+  const [token0, token1] = formatTokenSymbols(selectedFarm?.asset.symbol ?? "");
+
   return (
     <ModalWrapper open={isOpen} setOpen={setIsOpen}>
       <p className="font-semibold text-lg text-left">Add Liquidity</p>
@@ -55,7 +58,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
           >
             <div className="flex flex-row gap-x-5 items-center">
               <div className="bg-gray-300 w-8 h-8 rounded-full" />
-              <span>{"KSM"}</span>
+              <span>{token0}</span>
             </div>
             <div className="flex flex-col gap-y-3">
               <div className="flex flex-row justify-end items-center gap-x-3">
@@ -91,7 +94,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
           >
             <div className="flex flex-row gap-x-5 items-center">
               <div className="bg-gray-300 w-8 h-8 rounded-full" />
-              <span>{"MGX"}</span>
+              <span>{token1}</span>
             </div>
             <div className="flex flex-col gap-y-3">
               <div className="flex flex-row justify-end items-center gap-x-3">

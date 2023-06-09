@@ -41,3 +41,20 @@ export interface TokenPriceType {
   protocol: string;
   symbol: string;
 }
+
+export enum Network {
+  MOONBEAM = "moonbeam",
+  MOONRIVER = "moonriver",
+  ASTAR = "astar",
+}
+
+export enum ChainId {
+  MOONBEAM = 1284,
+  MOONRIVER = 1285,
+  ASTAR = 592,
+}
+
+export interface Chain {
+  id: ChainId;
+  name: Network;
+}
