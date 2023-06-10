@@ -1,3 +1,4 @@
+import { Chain } from "wagmi";
 import { RPC_URL } from "./constants";
 import { ChainId, Network } from "./types";
 
@@ -49,7 +50,8 @@ export const getRpcUrlForNetwork = (network: string) => {
   return rpcUrl;
 };
 
-export const astar = {
+// Astar Chain
+export const astar: Chain = {
   id: ChainId.ASTAR,
   name: "Astar",
   network: "astar",

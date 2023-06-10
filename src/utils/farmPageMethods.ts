@@ -34,23 +34,42 @@ export function calcAssetPercentage(reward: RewardType, totalValue: number) {
  * @returns Protocol URL
  */
 export function protocolURL(protocolName: string): string {
-  const protocol = protocolName.toLowerCase();
-  if (protocol == "stellaswap") return "https://stellaswap.com/";
-  else if (protocol == "solarbeam") return "https://solarbeam.io/";
-  else if (protocol == "beamswap") return "https://beamswap.io/";
-  else if (protocol == "sushi") return "https://sushi.com/";
-  else if (protocol == "taiga") return "https://www.taigaprotocol.io/";
-  else if (protocol == "curve") return "https://moonbeam.curve.fi/";
-  else if (protocol == "zenlink") return "https://zenlink.pro/en/";
-  else if (protocol == "solarflare") return "https://solarflare.io";
-  else if (protocol == "arthswap") return "https://app.arthswap.org/";
-  else if (protocol == "tapio") return "https://www.tapioprotocol.io/";
-  else if (protocol == "karura dex") return "https://apps.karura.network/";
-  else if (protocol == "mangata x") return "https://x.mangata.finance/";
-  else if (protocol == "sirius") return "https://www.sirius.finance/";
-  else if (protocol == "demeter")
-    return "https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Ceres%2BToken%2B-%2BDemeter%2BLitepaper%2B09.12.2021.pdf";
-  return "";
+  switch (protocolName.toLowerCase()) {
+    case "stellaswap":
+      return "https://stellaswap.com/";
+    case "stellaswap pulsar":
+      return "https://stellaswap.com/";
+    case "solarbeam":
+      return "https://solarbeam.io/";
+    case "beamswap":
+      return "https://beamswap.io/";
+    case "sushi":
+      return "https://sushi.com/";
+    case "taiga":
+      return "https://www.taigaprotocol.io/";
+    case "curve":
+      return "https://moonbeam.curve.fi/";
+    case "zenlink":
+      return "https://zenlink.pro/en/";
+    case "solarflare":
+      return "https://solarflare.io";
+    case "arthswap":
+      return "https://app.arthswap.org/";
+    case "tapio":
+      return "https://www.tapioprotocol.io/";
+    case "karura dex":
+      return "https://apps.karura.network/";
+    case "mangata x":
+      return "https://x.mangata.finance/";
+    case "sirius":
+      return "https://www.sirius.finance/";
+    case "demeter":
+      return "https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Ceres%2BToken%2B-%2BDemeter%2BLitepaper%2B09.12.2021.pdf";
+    case "kintsugi":
+      return "https://www.interlay.io/kintsugi";
+    default:
+      return "";
+  }
 }
 
 /**
@@ -58,17 +77,27 @@ export function protocolURL(protocolName: string): string {
  * @param chainName - Chain whose URL is needed
  * @returns Chain URL
  */
-export function chainURL(chainName: any): string {
-  const chain = chainName.toLowerCase();
-  if (chain == "moonbeam") return "https://moonbeam.network/";
-  else if (chain == "moonriver")
-    return "https://moonbeam.network/networks/moonriver/";
-  else if (chain == "astar") return "https://astar.network/";
-  else if (chain == "acala") return "https://acala.network/";
-  else if (chain == "karura") return "https://acala.network/karura";
-  else if (chain == "mangata kusama") return "https://www.mangata.finance/";
-  else if (chain == "sora") return "https://sora.org/";
-  return "";
+export function chainURL(chainName: string): string {
+  switch (chainName.toLowerCase()) {
+    case "moonbeam":
+      return "https://moonbeam.network/";
+    case "moonriver":
+      return "https://moonbeam.network/networks/moonriver/";
+    case "astar":
+      return "https://astar.network/";
+    case "acala":
+      return "https://acala.network/";
+    case "karura":
+      return "https://acala.network/karura";
+    case "mangata kusama":
+      return "https://www.mangata.finance/";
+    case "sora":
+      return "https://sora.org/";
+    case "kintsugi kusama":
+      return "https://www.interlay.io/kintsugi";
+    default:
+      return "";
+  }
 }
 
 /**
@@ -77,12 +106,14 @@ export function chainURL(chainName: any): string {
  * @returns Copy content of that farm type
  */
 export function farmTypeDesc(farmType: string): string {
-  if (farmType.toLowerCase() == "stableamm") {
-    return "Minimum to no impermanent loss thanks to the design of Stable AMMs.";
-  } else if (farmType.toLowerCase() == "standardamm") {
-    return "High impermanent loss risk unless the assets in the LP token are pegged to the same price. For example, GLMR-ETH LP has high IL risk, while USDC-BUSD LP has very low IL risk.";
-  } else if (farmType.toLowerCase() == "singlestaking") {
-    return "Impermanent loss is not a factor as an individual token is staked.";
+  switch (farmType.toLowerCase()) {
+    case "stableamm":
+      return "Minimum to no impermanent loss thanks to the design of Stable AMMs.";
+    case "standardamm":
+      return "High impermanent loss risk unless the assets in the LP token are pegged to the same price. For example, GLMR-ETH LP has high IL risk, while USDC-BUSD LP has very low IL risk.";
+    case "singlestaking":
+      return "Impermanent loss is not a factor as an individual token is staked.";
+    default:
+      return "";
   }
-  return "";
 }
