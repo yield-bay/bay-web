@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useEffect, useState } from "react";
-import { useBalance } from "wagmi";
+import { useBalance, useWalletClient } from "wagmi";
 import ModalWrapper from "../ModalWrapper";
 import { addLiqModalOpenAtom } from "@store/commonAtoms";
 import { useAtom } from "jotai";
@@ -8,23 +8,42 @@ import clsx from "clsx";
 import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols } from "@utils/farmListMethods";
-import { useAccount, useNetwork } from "wagmi";
+import {
+  useAccount,
+  useNetwork,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
 import getTimestamp from "@utils/getTimestamp";
+import { STELLASWAP_ROUTER } from "@utils/constants"; // Moonbeam
+const routerAbi = require("@utils/abis/stellaswap-router.json");
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const { data: walletClient } = useWalletClient();
+
+  // Balance
   const {
     data: balanceData,
-    isLoading,
-    isError,
+    isLoading: balanceLoading,
+    isError: balanceError,
   } = useBalance({
     address,
     chainId: chain?.id,
     // token: tokenAddress
   });
+
+  // Write contract
+  const { config } = usePrepareContractWrite({
+    address: STELLASWAP_ROUTER,
+    abi: routerAbi,
+    functionName: "addLiquidity",
+    chainId: chain?.id,
+  });
+  const { data, isLoading, isSuccess, write } = useContractWrite(config);
 
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
@@ -66,9 +85,9 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     <ModalWrapper open={isOpen} setOpen={setIsOpen}>
       <p className="font-semibold text-lg text-left">Add Liquidity</p>
       <div className="text-left text-base">
-        {isLoading ? (
+        {balanceLoading ? (
           <p>loading...</p>
-        ) : !!balanceData && !isError ? (
+        ) : !!balanceData && !balanceError ? (
           <p>
             Balance: {balanceData?.formatted} {balanceData?.symbol}
           </p>
@@ -190,7 +209,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                 firstTokenAmount == "" ||
                 secondTokenAmount == "" ||
                 (parseFloat(firstTokenAmount) <= 0 &&
-                  parseFloat(secondTokenAmount) <= 0)
+                  parseFloat(secondTokenAmount) <= 0 &&
+                  !write)
               }
               text="Confirm"
               onClick={() => {
@@ -204,12 +224,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                   msg_sender: address,
                   block_timestamp: getTimestamp(),
                 });
-                // console.log(
-                //   "balance",
-                //   publicClient.getBalance({
-                //     address,
-                //   })
-                // );
+                // Pass required params to the write function
+                write?.();
               }}
             />
           )}

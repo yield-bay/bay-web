@@ -49,43 +49,45 @@ export const getRpcUrlForNetwork = (network: string) => {
   return rpcUrl;
 };
 
-// Astar Network Configuration
 export const astar = {
   id: ChainId.ASTAR,
   name: "Astar",
-  network: Network.ASTAR,
+  network: "astar",
   nativeCurrency: {
+    name: "Astar",
+    symbol: "ASTR",
     decimals: 18,
-    name: "MOVR",
-    symbol: "MOVR",
   },
   rpcUrls: {
-    public: {
-      http: [RPC_URL.astar],
-      webSocket: ["wss://moonriver.public.blastapi.io"],
-    },
     default: {
-      http: [RPC_URL.astar],
-      webSocket: ["wss://moonriver.public.blastapi.io"],
+      http: [
+        "https://astar.public.blastapi.io",
+        "https://astar.api.onfinality.io/public",
+      ],
+    },
+    public: {
+      http: [
+        "https://astar.public.blastapi.io",
+        "https://astar.api.onfinality.io/public",
+      ],
     },
   },
   blockExplorers: {
-    default: {
-      name: "Moonscan",
-      url: "https://moonriver.moonscan.io",
-    },
     etherscan: {
-      name: "Moonscan",
-      url: "https://moonriver.moonscan.io",
+      name: "Astarscan",
+      url: "https://blockscout.com/astar",
+    },
+    default: {
+      name: "Astarscan",
+      url: "https://blockscout.com/astar",
     },
   },
   contracts: {
     multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11" as `0x${string}`,
-      blockCreated: 1597904,
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+      blockCreated: 761794,
     },
   },
-  testnet: false,
 };
 
 export const getSupportedChains = () => {
