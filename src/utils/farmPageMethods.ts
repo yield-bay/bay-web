@@ -34,10 +34,10 @@ export function calcAssetPercentage(reward: RewardType, totalValue: number) {
  * @returns Protocol URL
  */
 export function protocolURL(protocolName: string): string {
-  const protocol = protocolName.toLowerCase();
-
-  switch (protocol) {
+  switch (protocolName.toLowerCase()) {
     case "stellaswap":
+      return "https://stellaswap.com/";
+    case "stellaswap pulsar":
       return "https://stellaswap.com/";
     case "solarbeam":
       return "https://solarbeam.io/";

@@ -13,6 +13,8 @@ export function farmURL(farm: FarmType): string {
   switch (farm.protocol.toLowerCase()) {
     case "stellaswap":
       return "https://app.stellaswap.com/farm";
+    case "stellaswap pulsar":
+      return "https://app.stellaswap.com/pulsar";
     case "solarbeam":
       return "https://app.solarbeam.io/farm";
     case "beamswap":
@@ -20,6 +22,8 @@ export function farmURL(farm: FarmType): string {
     case "sushi":
       return "https://app.sushi.com/farm";
     case "taiga":
+      return `https://apps.karura.network/swap/liquidity?lp=sa://${farm.id}`;
+    case "karura dex":
       return `https://apps.karura.network/swap/liquidity?lp=sa://${farm.id}`;
     case "curve":
       return `https://moonbeam.curve.fi/factory/${farm.id}/deposit`;
