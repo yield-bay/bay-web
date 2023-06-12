@@ -24,7 +24,7 @@ const MButton: FC<MButtonProps> = ({
         type === "primary" && "bg-white hover:bg-gray-100 text-black",
         type === "secondary" &&
           "text-white bg-[#1E1E1E] hover:bg-[#252525] active:bg-[#1E1E1E]",
-        type === "warning" && "bg-warningRed hover:bg-[#E53C3C]",
+        type === "warning" && "bg-[#de6262] hover:bg-[#E53C3C] text-white",
         type === "transparent" && "",
         disabled && "opacity-50 pointer-events-none",
         className ?? ""
