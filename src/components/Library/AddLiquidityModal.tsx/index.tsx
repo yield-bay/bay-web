@@ -15,7 +15,6 @@ import {
   usePrepareContractWrite,
 } from "wagmi";
 import getTimestamp from "@utils/getTimestamp";
-import { STELLASWAP_ROUTER } from "@utils/constants"; // Moonbeam
 const routerAbi = require("@utils/abis/stellaswap-router.json");
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
@@ -23,7 +22,22 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const { address } = useAccount();
   const { chain } = useNetwork();
-  const { data: walletClient } = useWalletClient();
+  // const { data: walletClient } = useWalletClient();
+
+  // Amount States
+  const [firstTokenAmount, setFirstTokenAmount] = useState("");
+  const [secondTokenAmount, setSecondTokenAmount] = useState("");
+
+  const [isToken0Approved, setIsToken0Approved] = useState(false);
+  const [isToken1Approved, setIsToken1Approved] = useState(false);
+  const [isUnsupported, setIsUnsupported] = useState(true);
+
+  // States
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isApproving, setIsApproving] = useState(false);
+
+  const SLIPPAGE = 0.5; // In percentage
 
   // Balance
   const {
@@ -38,19 +52,51 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
   // Write contract
   const { config } = usePrepareContractWrite({
-    address: STELLASWAP_ROUTER,
+    address: selectedFarm?.router,
     abi: routerAbi,
     functionName: "addLiquidity",
     chainId: chain?.id,
+    onError: (error) => {
+      console.log("Error @preparing add-liquidity:\n", error);
+    },
+    args: [
+      selectedFarm?.asset.underlyingAssets[0].address,
+      selectedFarm?.asset.underlyingAssets[1].address,
+      parseFloat(firstTokenAmount),
+      parseFloat(secondTokenAmount),
+      !isNaN(parseFloat(firstTokenAmount))
+        ? Math.floor((parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100)
+        : 0,
+      !isNaN(parseFloat(secondTokenAmount))
+        ? Math.floor((parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100)
+        : 0,
+      address,
+      getTimestamp(),
+    ],
   });
-  const { data, isLoading, isSuccess, write } = useContractWrite(config);
+  const {
+    data,
+    isLoading: addLiquidityLoading,
+    isSuccess: addLiquiditySuccess,
+    writeAsync: addLiquidityAsync,
+  } = useContractWrite(config);
 
-  // Amount States
-  const [firstTokenAmount, setFirstTokenAmount] = useState("");
-  const [secondTokenAmount, setSecondTokenAmount] = useState("");
+  const handleAddLiquidity = async () => {
+    try {
+      const txnRes = await addLiquidityAsync?.();
+      console.log("txnResult", txnRes);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
-  const [isToken0Approved, setIsToken0Approved] = useState(false);
-  const [isToken1Approved, setIsToken1Approved] = useState(false);
+  useEffect(() => {
+    if (isToken0Approved && isToken1Approved) {
+      setIsUnsupported(false);
+    }
+  }, [isToken0Approved, isToken1Approved]);
 
   useEffect(() => console.log("farm", selectedFarm), [selectedFarm]);
 
@@ -182,12 +228,14 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
         {/* Buttons */}
         <div className="flex flex-col gap-y-2">
-          {!isToken0Approved || !isToken1Approved ? (
+          {isUnsupported ? (
             <>
               <MButton
                 type="secondary"
                 text="Approve First Token"
-                disabled={isToken0Approved}
+                disabled={
+                  isToken0Approved || isNaN(parseFloat(firstTokenAmount))
+                }
                 onClick={() => {
                   setIsToken0Approved(true);
                 }}
@@ -195,7 +243,9 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
               <MButton
                 type="secondary"
                 text="Approve Second Token"
-                disabled={isToken1Approved}
+                disabled={
+                  isToken1Approved || isNaN(parseFloat(secondTokenAmount))
+                }
                 onClick={() => {
                   setIsToken1Approved(true);
                 }}
@@ -210,22 +260,33 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                 secondTokenAmount == "" ||
                 (parseFloat(firstTokenAmount) <= 0 &&
                   parseFloat(secondTokenAmount) <= 0 &&
-                  !write)
+                  !addLiquidityAsync)
               }
-              text="Confirm"
+              text={addLiquidityLoading ? "processing..." : "Confirm"}
               onClick={() => {
-                console.log("router.addLiquidity @params", {
-                  address_token0: selectedFarm?.chef,
-                  address_token1: selectedFarm?.chef,
-                  token0Amount: parseFloat(firstTokenAmount) ?? 0,
-                  token1Amount: parseFloat(secondTokenAmount) ?? 0,
-                  minToken0Amount: 1,
-                  minToken1Amount: 1,
-                  msg_sender: address,
-                  block_timestamp: getTimestamp(),
-                });
-                // Pass required params to the write function
-                write?.();
+                if (
+                  parseFloat(firstTokenAmount) <= 0 &&
+                  parseFloat(secondTokenAmount) <= 0
+                ) {
+                  console.log("Both token amount can't be zero");
+                } else {
+                  console.log("router.addLiquidity @params", {
+                    address_token0:
+                      selectedFarm?.asset.underlyingAssets[0].address,
+                    address_token1:
+                      selectedFarm?.asset.underlyingAssets[1].address,
+                    token0Amount: parseFloat(firstTokenAmount),
+                    token1Amount: parseFloat(secondTokenAmount),
+                    minToken0Amount:
+                      (parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100, // TODO: Need to multiply it with token amount?
+                    minToken1Amount:
+                      (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100,
+                    msg_sender: address,
+                    block_timestamp: getTimestamp(),
+                  });
+                  // Handler of Add Liquidity
+                  handleAddLiquidity();
+                }
               }}
             />
           )}
@@ -237,6 +298,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
             }}
           />
         </div>
+        {addLiquiditySuccess && <div>Liquidity Added successfully</div>}
       </div>
     </ModalWrapper>
   );
