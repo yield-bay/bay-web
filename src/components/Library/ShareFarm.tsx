@@ -104,11 +104,11 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
                 onClick={(e) => {
                   navigator.clipboard.writeText(url);
 
-                  trackEventWithProperty("farm-share", {
-                    shareVia: "copy",
-                    farmAddress: farm.asset?.address,
-                    farmId: farm.id,
-                  });
+                  // trackEventWithProperty("farm-share", {
+                  //   shareVia: "copy",
+                  //   farmAddress: farm.asset?.address,
+                  //   farmId: farm.id,
+                  // });
                 }}
                 className={clsx([
                   active && "bg-gray-50",
@@ -130,13 +130,13 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
                 ])}
                 target="_blank"
                 rel="noreferrer"
-                onClick={() =>
-                  trackEventWithProperty("farm-share", {
-                    shareVia: "twitter",
-                    farmAddress: farm.asset?.address,
-                    farmId: farm.id,
-                  })
-                }
+                // onClick={() =>
+                //   trackEventWithProperty("farm-share", {
+                //     shareVia: "twitter",
+                //     farmAddress: farm.asset?.address,
+                //     farmId: farm.id,
+                //   })
+                // }
               >
                 <span className="sr-only">Share on Twitter</span>
                 Share on Twitter
@@ -218,11 +218,11 @@ const ShareModal = ({
                     target="_blank"
                     rel="noreferrer"
                     onClick={() => {
-                      trackEventWithProperty("farm-share", {
-                        shareVia: "twitter",
-                        farmAddress: farm?.asset.address,
-                        farmId: farm?.id,
-                      });
+                      // trackEventWithProperty("farm-share", {
+                      //   shareVia: "twitter",
+                      //   farmAddress: farm?.asset.address,
+                      //   farmId: farm?.id,
+                      // });
                       setOpen(false);
                     }}
                   >
@@ -233,11 +233,11 @@ const ShareModal = ({
                     onClick={(e) => {
                       navigator.clipboard.writeText(url);
                       setOpen(false);
-                      trackEventWithProperty("farm-share", {
-                        shareVia: "copy",
-                        farmAddress: farm?.asset.address,
-                        farmId: farm?.id,
-                      });
+                      // trackEventWithProperty("farm-share", {
+                      //   shareVia: "copy",
+                      //   farmAddress: farm?.asset.address,
+                      //   farmId: farm?.id,
+                      // });
                     }}
                     className="w-full text-left text-sm font-semibold leading-5"
                   >

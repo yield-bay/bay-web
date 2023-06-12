@@ -26,6 +26,3 @@ export const RPC_URL = {
   moonriver: "https://rpc.api.moonriver.moonbeam.network",
   astar: "https://evm.astar.network",
 };
-
-// Contract Addresses
-export const STELLASWAP_ROUTER = "0xd0A01ec574D1fC6652eDF79cb2F880fd47D34Ab1";

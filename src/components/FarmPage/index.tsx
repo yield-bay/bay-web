@@ -144,9 +144,9 @@ const FarmPage: NextPage = () => {
                   <Button
                     size="large"
                     onButtonClick={() => {
-                      trackEventWithProperty("go-to-farm", {
-                        protocol: farm?.protocol,
-                      });
+                      // trackEventWithProperty("go-to-farm", {
+                      //   protocol: farm?.protocol,
+                      // });
                     }}
                   >
                     Visit Farm
@@ -304,7 +304,7 @@ const FarmPage: NextPage = () => {
                   </p>
                 </InfoContainer>
                 {/* APR */}
-                <div className="border border-[#EAECF0] shadow-sm rounded-xl">
+                <div className="border border-[#EAECF0] shadow-sm rounded-xl overflow-hidden">
                   <div className="flex flex-col gap-y-1 pt-5 px-6 pb-4 bg-[#FAFAFF] border-b border-[#EAECF0]">
                     <p className="text-sm leading-5">
                       APR (Average Percentage Yield)

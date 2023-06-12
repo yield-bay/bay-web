@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { trackEventWithProperty } from "@utils/analytics";
+// import { trackEventWithProperty } from "@utils/analytics";
 import useKeyPress from "@hooks/useKeyPress";
 import Image from "next/image";
 
@@ -40,7 +40,7 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
         value={term}
         onChange={(event) => {
           setTerm(event.target.value == "/" ? "" : event.target.value);
-          trackEventWithProperty("farm-search"); // No proprty as none required
+          // trackEventWithProperty("farm-search"); // No proprty as none required
         }}
         ref={ref}
         onFocus={() => setInputFocus(true)}

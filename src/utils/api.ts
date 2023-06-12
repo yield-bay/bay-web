@@ -20,6 +20,7 @@ export const fetchListicleFarms = async () => {
             chef
             chain
             protocol
+            router
             farmType
             farmImpl
             asset {
@@ -27,6 +28,11 @@ export const fetchListicleFarms = async () => {
               address
               price
               logos
+              underlyingAssets {
+                symbol
+                address
+                decimals
+              }
             }
             tvl
             rewards {
@@ -68,6 +74,11 @@ export const fetchLpTokenPrices = async (): Promise<{
             symbol
             address
             price
+            underlyingAssets {
+              symbol
+              address
+              decimals
+            }
           }
         }
       `,
@@ -104,7 +115,11 @@ export const fetchTokenPrices = async (): Promise<{
             symbol
             address
             price
-            underlyingAssets
+            underlyingAssets {
+              symbol
+              address
+              decimals
+            }
           }
         }
       `,
