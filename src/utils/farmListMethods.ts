@@ -66,3 +66,16 @@ export function getLpTokenSymbol(symbol: string): string {
   }
   return tokenSymbol;
 }
+
+export function getWalletInstallUrl(walletName: string): string {
+  switch (walletName.toLowerCase()) {
+    case "metamask":
+      return "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
+    case "talisman":
+      return "https://talisman.xyz/download";
+    case "subwallet":
+      return "https://chrome.google.com/webstore/detail/subwallet-polkadot-extens/onhogfjeacnfoofkfgppdlbmlmnplgbn";
+    default:
+      return "";
+  }
+}

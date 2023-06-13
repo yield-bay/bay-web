@@ -11,6 +11,7 @@ import { APP_NAME } from "@utils/constants";
 import { dotAccountAtom, dotWalletAccountsAtom } from "@store/accountAtoms";
 import { ArrowDownIcon, ArrowLeftIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
+import { getWalletInstallUrl } from "@utils/farmListMethods";
 
 interface SelectAccountMenuProps {
   children: React.ReactNode;
@@ -57,18 +58,33 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
         <Menu.Item key={c.id}>
           <button
             className={clsx(
-              "p-4 inline-flex items-center text-left border-b border-[#EAECF0] hover:bg-[#fafafd]"
+              "p-4 inline-flex items-center gap-x-2 text-left border-b border-[#EAECF0] hover:bg-[#fafafd]"
             )}
-            onClick={() => connect({ connector: c })}
+            onClick={() => {
+              if (c.ready) {
+                connect({ connector: c });
+              } else {
+                router.push(getWalletInstallUrl(c.name));
+              }
+            }}
           >
             <Image
               src={`/icons/${c.name.toLowerCase()}.svg`}
               width={24}
               height={24}
               alt="wallet"
-              className="mr-4"
+              className={clsx(!c.ready && "opacity-40")}
             />
-            {formatWalletName(c.name)}
+            <span
+              className={clsx(
+                !c.ready && "underline underline-offset-4 opacity-40"
+              )}
+            >
+              {formatWalletName(c.name)}
+            </span>
+            {!c.ready && (
+              <ArrowDownIcon className="text-[#344054] w-4 h-4 ml-2 opacity-40" />
+            )}
           </button>
         </Menu.Item>
       ))}
@@ -95,10 +111,7 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
       </div>
       {dotWallets.map((wallet: Wallet) => (
         <button
-          className={clsx(
-            "p-4 inline-flex items-center text-left border-b border-[#EAECF0] hover:bg-[#fafafd]",
-            !wallet.installed && "opacity-40"
-          )}
+          className="p-4 inline-flex items-center gap-x-2 text-left border-b border-[#EAECF0] hover:bg-[#fafafd]"
           key={wallet.extensionName}
           onClick={async () => {
             try {
@@ -126,17 +139,17 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
             src={wallet.logo.src}
             width={24}
             height={24}
-            className="mr-2"
+            className={clsx(!wallet.installed && "opacity-40")}
           />
           <span
             className={clsx(
-              !wallet.installed && "underline underline-offset-4"
+              !wallet.installed && "underline underline-offset-4 opacity-40"
             )}
           >
             {wallet.title}
           </span>
           {!wallet.installed && (
-            <ArrowDownIcon className="text-[#344054] w-4 h-4 ml-2" />
+            <ArrowDownIcon className="text-[#344054] w-4 h-4 opacity-40" />
           )}
         </button>
       ))}

@@ -102,7 +102,7 @@ const FarmPage: NextPage = () => {
     <div className="px-6 sm:px-[72px] text-[#475467] z-10">
       <MetaTags title={`Farm • ${APP_NAME}`} />
       <Breadcrumb tokenNames={tokenNames} />
-      <div className="flex flex-col border border-red-500 bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
+      <div className="flex flex-col bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
         {/* Heading */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-8 sm:gap-x-9">
           <p className="text-2xl text-[#454545] font-semibold leading-[29px]">
@@ -228,7 +228,7 @@ const FarmPage: NextPage = () => {
               </p>
             </InfoContainer>
             {/* APR */}
-            <div className="border border-[#EAECF0] shadow-sm rounded-xl">
+            <div className="border border-[#EAECF0] shadow-sm rounded-xl overflow-hidden">
               <div className="flex flex-col gap-y-1 pt-5 px-6 pb-4 bg-[#FAFAFF] border-b border-[#EAECF0]">
                 <p className="text-sm leading-5">
                   APR (Average Percentage Yield)

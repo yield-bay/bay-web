@@ -64,7 +64,9 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
           <tr
             key={`${farm.asset.address}-${farm.tvl}`}
             className={clsx(
-              index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white",
+              index % 2 == 0 && !showSupportedFarms
+                ? "bg-[#FAFAFF]"
+                : "bg-white",
               !isSupported && showSupportedFarms && "hidden"
             )}
           >
