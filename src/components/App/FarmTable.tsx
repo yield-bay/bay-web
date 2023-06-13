@@ -73,7 +73,7 @@ const FarmTable: FC<Props> = ({
 
     let sortFn; // to be used to sort the pools
     if (newSortStatus.key == "tvl") {
-      sortFn = (a: any, b: any) =>
+      sortFn = (a: FarmType, b: FarmType) =>
         newSortStatus.order == Order.ASC
           ? a.tvl >= b.tvl
             ? 1
@@ -82,7 +82,7 @@ const FarmTable: FC<Props> = ({
           ? 1
           : -1;
     } else if (newSortStatus.key == "yield") {
-      sortFn = (a: any, b: any) =>
+      sortFn = (a: FarmType, b: FarmType) =>
         newSortStatus.order == Order.ASC
           ? a.apr.reward + a.apr.base >= b.apr.reward + b.apr.base
             ? 1
@@ -91,7 +91,7 @@ const FarmTable: FC<Props> = ({
           ? 1
           : -1;
     } else if (newSortStatus.key == "safety") {
-      sortFn = (a: any, b: any) =>
+      sortFn = (a: FarmType, b: FarmType) =>
         newSortStatus.order == Order.ASC
           ? a.safetyScore >= b.safetyScore
             ? 1
@@ -99,6 +99,33 @@ const FarmTable: FC<Props> = ({
           : a.safetyScore < b.safetyScore
           ? 1
           : -1;
+    } else if (newSortStatus.key == "pos") {
+      sortFn = (a: FarmType, b: FarmType) => {
+        const positionA =
+          positions[
+            `${a.chain}-${a.protocol}-${a.chef}-${a.id}-${a.asset.symbol}`
+          ];
+        const positionB =
+          positions[
+            `${b.chain}-${b.protocol}-${b.chef}-${b.id}-${b.asset.symbol}`
+          ];
+
+        const currentA =
+          positionA?.unstaked.amountUSD + positionA?.staked.amountUSD;
+        const currentB =
+          positionB?.unstaked.amountUSD + positionB?.staked.amountUSD;
+        console.log("currentA", currentA, "\ncurrentB", currentB);
+
+        return isNaN(currentA) // If position of A is NaN, push it back in both cases
+          ? 1
+          : newSortStatus.order == Order.ASC
+          ? currentA >= currentB
+            ? 1
+            : -1
+          : currentA < currentB
+          ? 1
+          : -1;
+      };
     }
 
     sortedFarmsSet([...farms].sort(sortFn));
@@ -250,11 +277,29 @@ const FarmTable: FC<Props> = ({
                   <th
                     scope="col"
                     className={clsx(
-                      "py-[13px] pr-3 pl-4 sm:px-6 text-center font-medium",
+                      "py-[13px] pr-3 pl-4 sm:px-6 text-center font-medium cursor-pointer",
                       (isConnected || account !== null) && "bg-[#F0F0FF]"
                     )}
+                    onClick={() => {
+                      handleSort("pos", true);
+                      trackEventWithProperty("table-sorting", {
+                        sortingType: "safety-score",
+                      });
+                    }}
                   >
-                    Your Positions
+                    <div>
+                      <span>Your Positions</span>
+                      {sortStatus.key == "pos" && (
+                        <ArrowSmDownIcon
+                          className={clsx(
+                            "w-4 h-4 inline -mt-0.5 ml-2 transform origin-center transition-all duration-300",
+                            sortStatus.order == Order.DESC
+                              ? "rotate-0"
+                              : "rotate-180"
+                          )}
+                        />
+                      )}
+                    </div>
                   </th>
                   <th scope="col" className="py-[13px] pl-4 pr-3 sm:pl-6">
                     <span className="sr-only">Visit Farm</span>
