@@ -11,7 +11,7 @@ const SafetyScorePill: FC<{ score: string }> = ({ score }) => {
         scoreNum >= 6
           ? "bg-[#ECFDF3] text-[#027A48]"
           : scoreNum >= 4
-          ? "bg-[#FEF3F2] text-[#B42318]"
+          ? "bg-[#FDF8EB] text-[#FFBD14]"
           : "bg-[#FEF3F2] text-[#B42318]"
       )}
     >

@@ -5,6 +5,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { useQuery } from "@tanstack/react-query";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 // Components, Hooks, Utils Imports
 import {
@@ -42,6 +44,7 @@ import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { calcUnclaimedReward } from "@utils/portfolioMethods";
+import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -96,7 +99,8 @@ const FarmPage: NextPage = () => {
   //   }
   // }, [farm]);
 
-  const safetyScore = (farm?.safetyScore * 10).toFixed(1);
+  const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
+  const safetyScoreColor = useSafetyscoreColor(safetyScore);
 
   return !isLoading && idQuery ? (
     <div className="px-6 sm:px-[72px] text-[#475467] z-10">
@@ -331,30 +335,36 @@ const FarmPage: NextPage = () => {
                   Safety Score
                 </p>
                 <p className="text-sm leading-5">
-                  This farm is moderately safe.
+                  This farm is{" "}
+                  {safetyScore >= 6
+                    ? "highly safe"
+                    : safetyScore >= 4
+                    ? "moderately safe"
+                    : "risky"}
+                  .
                 </p>
               </div>
-              {/* <div className="relative mx-auto p-6 border-b border-[#EAECF0]">
-                <Image
-                  src="/ProgressCircle.png"
-                  alt="Safety Score Meter"
-                  height={110}
-                  width={200}
-                  className="mx-auto"
-                />
-                <div
-                  className="radial-progress"
-                  style={{
-                    "--value": "70",
-                    "--size": "12rem",
-                    "--thickness": "2px",
-                  }}
-                >
-                  70%
+              <div className="relative w-full p-6">
+                <div className="w-[200px] mx-auto h-[100px]">
+                  <CircularProgressbar
+                    value={safetyScore}
+                    className="relative"
+                    minValue={0}
+                    maxValue={10}
+                    circleRatio={0.5}
+                    styles={buildStyles({
+                      rotation: 0.75,
+                      textSize: "30px",
+                      pathColor: safetyScoreColor,
+                      trailColor: "#EAECF0",
+                    })}
+                  />
                 </div>
-                <p className="absolute">8</p>
-              </div> */}
-              <div className="py-4 px-6 text-sm leading-5">
+                <div className="absolute left-0 right-0 bottom-8 mx-auto max-w-fit text-3xl font-semibold leading-[38px] text-[#101828]">
+                  {safetyScore}
+                </div>
+              </div>
+              <div className="py-4 px-6 text-sm leading-5 border-t border-[#EAECF0]">
                 The score is a relative indicator of the reliability of the farm
                 compared to the other opportunities listed on YieldBay. The
                 score is a calculated based on the current TVL, APR, and the
