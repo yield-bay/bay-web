@@ -1,17 +1,17 @@
-import { FC, Fragment, useEffect, useRef, useState } from "react";
+import { type FC, Fragment, useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { useAtom } from "jotai";
-import { dotAccountAtom, dotWalletAccountsAtom } from "@store/accountAtoms";
 import {
   ArrowLeftIcon,
   CheckCircleIcon,
   ChevronDownIcon,
 } from "@heroicons/react/outline";
-import Image from "next/image";
-import { Menu, Transition } from "@headlessui/react";
-import ClientOnly from "@components/Common/ClientOnly";
-import { dotWalletAtom } from "@store/walletAtoms";
 import clsx from "clsx";
 import { WalletAccount } from "@talismn/connect-wallets";
+import { Menu, Transition } from "@headlessui/react";
+import { dotAccountAtom, dotWalletAccountsAtom } from "@store/accountAtoms";
+import ClientOnly from "@components/Common/ClientOnly";
+import { dotWalletAtom } from "@store/walletAtoms";
 
 const ConnectBtnDot: FC = () => {
   const timerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
@@ -23,7 +23,7 @@ const ConnectBtnDot: FC = () => {
 
   useEffect(() => {
     // Clear timeout when component unmounts
-    console.log("accoint", account);
+    console.log("Connected substrate Account", account);
     return () => {
       clearTimeout(timerRef.current as ReturnType<typeof setTimeout>);
     };

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { type FC, Fragment, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Transition, Menu } from "@headlessui/react";
 import { useAccount, useDisconnect } from "wagmi";
@@ -9,7 +9,7 @@ interface Props {
   address: `0x${string}` | undefined;
 }
 
-const ConnectBtnEvm: React.FC<Props> = ({ address }) => {
+const ConnectBtnEvm: FC<Props> = ({ address }) => {
   const { connector } = useAccount();
   const { disconnect } = useDisconnect();
   const [isCopied, setIsCopied] = useState(false);

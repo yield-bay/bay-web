@@ -9,7 +9,8 @@ import { dotWalletAtom, dotWalletsAtom } from "@store/walletAtoms";
 import { Wallet, WalletAccount } from "@talismn/connect-wallets";
 import { APP_NAME } from "@utils/constants";
 import { dotAccountAtom, dotWalletAccountsAtom } from "@store/accountAtoms";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { ArrowDownIcon, ArrowLeftIcon } from "@heroicons/react/outline";
+import { useRouter } from "next/router";
 
 interface SelectAccountMenuProps {
   children: React.ReactNode;
@@ -28,6 +29,8 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
   const [, setWallet] = useAtom(dotWalletAtom); // Selected Wallet
   const [account, setAccount] = useAtom(dotAccountAtom); // Selected Account
   const [walletAccounts, setWalletAccounts] = useAtom(dotWalletAccountsAtom); // All accounts in selected wallet
+
+  const router = useRouter();
 
   const formatWalletName = (walletName: string): string => {
     switch (walletName.toLowerCase()) {
@@ -92,23 +95,27 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
       </div>
       {dotWallets.map((wallet: Wallet) => (
         <button
-          className="p-4 inline-flex items-center text-left border-b border-[#EAECF0] hover:bg-[#fafafd]"
+          className={clsx(
+            "p-4 inline-flex items-center text-left border-b border-[#EAECF0] hover:bg-[#fafafd]",
+            !wallet.installed && "opacity-40"
+          )}
           key={wallet.extensionName}
           onClick={async () => {
             try {
-              await wallet.enable(APP_NAME);
-              await wallet.subscribeAccounts(
-                (accounts: WalletAccount[] | undefined) => {
-                  // jotai:: setting accounts in selected wallet
-                  setWalletAccounts(accounts as WalletAccount[]);
-                  // if (accounts?.length == 1) {
-                  //   setAccount(accounts[0]);
-                  //   setIsOpen(false);
-                  // }
-                  setWallet(wallet);
-                  setChoice(2);
-                }
-              );
+              if (wallet.installed) {
+                await wallet.enable(APP_NAME);
+                await wallet.subscribeAccounts(
+                  (accounts: WalletAccount[] | undefined) => {
+                    // jotai:: setting accounts in selected wallet
+                    setWalletAccounts(accounts as WalletAccount[]);
+                    setWallet(wallet);
+                    setChoice(2);
+                  }
+                );
+              } else {
+                console.log(`${wallet.extensionName} not installed!`);
+                router.push(wallet.installUrl);
+              }
             } catch (err) {
               console.log("Error in subscribing accounts: ", err);
             }
@@ -119,9 +126,18 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
             src={wallet.logo.src}
             width={24}
             height={24}
-            className="mr-4"
+            className="mr-2"
           />
-          <span>{wallet.title}</span>
+          <span
+            className={clsx(
+              !wallet.installed && "underline underline-offset-4"
+            )}
+          >
+            {wallet.title}
+          </span>
+          {!wallet.installed && (
+            <ArrowDownIcon className="text-[#344054] w-4 h-4 ml-2" />
+          )}
         </button>
       ))}
     </>
