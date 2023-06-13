@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -16,13 +16,13 @@
   }
 
   .dark-hero-bg {
-    background: linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #0D0101 100%);
+    background: linear-gradient(180deg, rgba(0, 14, 35, 0) 8.54%, #0d0101 100%);
   }
 }
 
 .border-gradient-br-blue-green-gray-900 {
-  background: linear-gradient(to right, #18181B, #18181B),
-    linear-gradient(to bottom right, #60A5FA, #4ADE80);
+  background: linear-gradient(to right, #18181b, #18181b),
+    linear-gradient(to bottom right, #60a5fa, #4ade80);
   background-clip: padding-box, border-box;
   background-origin: padding-box, border-box;
 }

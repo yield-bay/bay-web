@@ -20,6 +20,8 @@ import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/Common/metaTags/MetaTags";
 import Hero from "./Hero";
 import { FarmType } from "@utils/types";
+import AllProtocolsModal from "@components/Library/AllProtocolsModal";
+import { protocolList } from "@utils/statsMethods";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -30,6 +32,7 @@ const Home: NextPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   // const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [protocolModalOpen, setProtocolModalOpen] = useState(false);
 
   // Fetching all farms
   const { isLoading, data: farmsList } = useQuery({
@@ -99,7 +102,7 @@ const Home: NextPage = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">
           {/* HERO SECTION */}
-          <Hero farms={farms} />
+          <Hero farms={farms} setOpen={setProtocolModalOpen} />
           {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
@@ -137,11 +140,11 @@ const Home: NextPage = () => {
           )}
         </div>
         {showScrollBtn && <ScrollToTopBtn />}
-        {/* <AllProtocolsModal
+        <AllProtocolsModal
           open={protocolModalOpen}
           setOpen={setProtocolModalOpen}
           protocols={protocolList(farms)}
-        /> */}
+        />
       </main>
     </div>
   );

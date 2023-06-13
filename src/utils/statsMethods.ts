@@ -5,18 +5,24 @@ export function protocolCount(farms: FarmType[]): number {
   return new Set(farms.map((farm: any) => farm?.protocol)).size;
 }
 
+/**
+ *
+ * @param farms - List of Farms
+ * @returns An array containing all the protocols
+ */
 export function protocolList(farms: FarmType[]): string[] {
   return Array.from(
     new Set(farms.map((farm) => formatFirstLetter(farm?.protocol)))
   );
 }
 
+/**
+ *
+ * @param farms - List of Farms
+ * @returns Total TVL of all listed Farms
+ */
 export function tvlCount(farms: FarmType[]): number {
-  let totalTVL = 0;
-  farms.forEach((farm: any) => {
-    totalTVL += farm?.tvl;
-  });
-  return totalTVL;
+  return farms.reduce((acc, currFarm) => acc + currFarm.tvl, 0);
 }
 
 /**

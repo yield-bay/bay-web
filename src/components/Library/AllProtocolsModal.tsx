@@ -47,12 +47,12 @@ export default function AllProtocolsModal({
             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
           >
-            <div className="relative inline-block font-spaceGrotesk bg-[#01050D] text-white rounded-t-lg sm:rounded-2xl text-left max-h-[600px] overflow-y-auto shadow-xl px-4 py-5 align-bottom sm:align-middle w-full sm:max-w-[640px] sm:w-full sm:px-0 sm:pt-6 sm:pb-0 transform transition-all">
-              <div className="absolute top-0 right-0 pt-2 pr-2 sm:block">
-                <div className="flex items-center p-2 group rounded-full hover:bg-neutral-800 cursor-pointer">
+            <div className="relative inline-block font-inter bg-white text-[#101828] rounded-t-lg sm:rounded-2xl text-left overflow-y-auto max-h-[600px] scroll-bar shadow-xl p-4 sm:p-6 align-bottom sm:align-middle w-full sm:max-w-[600px] sm:w-full transform transition-all">
+              <div className="absolute top-0 right-0 pt-5 pr-8 sm:block">
+                <div className="flex items-center cursor-pointer">
                   <button
                     type="button"
-                    className="text-neutral-400 group-hover:text-white focus:outline-none"
+                    className="focus:outline-none"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -60,24 +60,23 @@ export default function AllProtocolsModal({
                   </button>
                 </div>
               </div>
-              <div className="sm:flex sm:items-start">
-                <div className="mt-3 text-center sm:mt-0 w-full">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-2xl leading-8 px-4 sm:px-8 my-[10px] text-left font-bold"
-                  >
-                    All Listed Protocols
-                  </Dialog.Title>
-                  <div>
-                    {protocols.map((protocol, index) => (
-                      <p
-                        key={index}
-                        className="font-normal text-2xl px-4 sm:px-8 leading-[70.28px] text-left py-4 border-b border-gray-800"
-                      >
-                        {index + 1}. {protocol}
-                      </p>
-                    ))}
-                  </div>
+
+              <div className="text-center p-0 w-full">
+                <Dialog.Title
+                  as="h3"
+                  className="text-xl leading-5 text-center font-medium mb-6"
+                >
+                  All Listed Protocols
+                </Dialog.Title>
+                <div className="flex flex-col text-left gap-y-6 text-base font-medium leading-5">
+                  {protocols.map((protocol, index) => (
+                    <div
+                      className="bg-[#FBFBFB] p-6 border border-[#EAECF0] w-full rounded-xl"
+                      key={index}
+                    >
+                      {index + 1}. {protocol}
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
