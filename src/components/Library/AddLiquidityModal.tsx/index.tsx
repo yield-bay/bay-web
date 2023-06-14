@@ -13,7 +13,9 @@ import {
   useNetwork,
   useContractWrite,
   usePrepareContractWrite,
+  useWaitForTransaction,
 } from "wagmi";
+import { useDebounce } from "usehooks-ts";
 import getTimestamp from "@utils/getTimestamp";
 const routerAbi = require("@utils/abis/stellaswap-router.json");
 
@@ -28,14 +30,18 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
 
+  // Debounced values
+  const debouncedFirstTokenAmount = useDebounce(firstTokenAmount, 500);
+  const debouncedSecondTokenAmount = useDebounce(secondTokenAmount, 500);
+
   const [isToken0Approved, setIsToken0Approved] = useState(false);
   const [isToken1Approved, setIsToken1Approved] = useState(false);
   const [isUnsupported, setIsUnsupported] = useState(true);
 
   // States
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [isApproving, setIsApproving] = useState(false);
+  // const [isProcessing, setIsProcessing] = useState(false);
+  // const [isSuccess, setIsSuccess] = useState(false);
+  // const [isApproving, setIsApproving] = useState(false);
 
   const SLIPPAGE = 0.5; // In percentage
 
@@ -56,39 +62,40 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     abi: routerAbi,
     functionName: "addLiquidity",
     chainId: chain?.id,
-    onError: (error) => {
-      console.log("Error @preparing add-liquidity:\n", error);
-    },
     args: [
-      selectedFarm?.asset.underlyingAssets[0].address,
-      selectedFarm?.asset.underlyingAssets[1].address,
-      parseFloat(firstTokenAmount),
-      parseFloat(secondTokenAmount),
-      !isNaN(parseFloat(firstTokenAmount))
-        ? Math.floor((parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100)
-        : 0,
-      !isNaN(parseFloat(secondTokenAmount))
-        ? Math.floor((parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100)
-        : 0,
-      address,
-      getTimestamp(),
+      selectedFarm?.asset.underlyingAssets[0].address, // TokenA Address
+      selectedFarm?.asset.underlyingAssets[1].address, // TokenB Address
+      parseFloat(debouncedFirstTokenAmount), // amountADesired
+      parseFloat(debouncedSecondTokenAmount), // amountBDesired
+      Math.floor(
+        (parseFloat(debouncedFirstTokenAmount) * (100 - SLIPPAGE)) / 100
+      ), // amountAMin
+      Math.floor(
+        (parseFloat(debouncedSecondTokenAmount) * (100 - SLIPPAGE)) / 100
+      ), // amountBMin
+      address, // To
+      20, // deadline (uint256)
     ],
+    enabled: Boolean(debouncedFirstTokenAmount && debouncedSecondTokenAmount),
   });
+
   const {
     data,
     isLoading: addLiquidityLoading,
     isSuccess: addLiquiditySuccess,
-    writeAsync: addLiquidityAsync,
+    writeAsync: addLiquidity,
   } = useContractWrite(config);
+
+  const { isLoading, isSuccess } = useWaitForTransaction({
+    hash: data?.hash,
+  });
 
   const handleAddLiquidity = async () => {
     try {
-      const txnRes = await addLiquidityAsync?.();
+      const txnRes = await addLiquidity?.();
       console.log("txnResult", txnRes);
     } catch (error) {
       console.error(error);
-    } finally {
-      setIsProcessing(false);
     }
   };
 
@@ -260,9 +267,9 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                 secondTokenAmount == "" ||
                 (parseFloat(firstTokenAmount) <= 0 &&
                   parseFloat(secondTokenAmount) <= 0 &&
-                  !addLiquidityAsync)
+                  (!addLiquidity || isLoading))
               }
-              text={addLiquidityLoading ? "processing..." : "Confirm"}
+              text={isLoading ? "Processing..." : "Confirm"}
               onClick={() => {
                 if (
                   parseFloat(firstTokenAmount) <= 0 &&
@@ -298,7 +305,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
             }}
           />
         </div>
-        {addLiquiditySuccess && <div>Liquidity Added successfully</div>}
+        {isSuccess && <div>Liquidity Added successfully</div>}
       </div>
     </ModalWrapper>
   );
