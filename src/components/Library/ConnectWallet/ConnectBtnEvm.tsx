@@ -25,15 +25,20 @@ const ConnectBtnEvm: FC<Props> = ({ address }) => {
   return (
     <ClientOnly>
       <Menu as="div" className="relative inline-block text-left">
-        <Menu.Button className="inline-flex items-center font-semibold cursor-pointer text-sm leading-[16.94px] bg-[#36364D] text-white rounded-lg transition duration-200 py-[10px] px-4 sm:py-[10px] sm:px-4 focus:outline-none">
-          <span>
-            {address?.slice(0, 4)}...{address?.slice(-4)}
-          </span>
-          <ChevronDownIcon
-            className="ml-2 -mr-1 h-5 w-5 text-white"
-            aria-hidden="true"
-          />
-        </Menu.Button>
+        <div className="relative group">
+          <Menu.Button className="inline-flex items-center font-semibold cursor-pointer text-sm leading-[16.94px] bg-[#36364D] text-white rounded-lg transition duration-200 py-[10px] px-4 sm:py-[10px] sm:px-4 focus:outline-none">
+            <span>
+              {address?.slice(0, 4)}...{address?.slice(-4)}
+            </span>
+            <ChevronDownIcon
+              className="ml-2 -mr-1 h-5 w-5 text-white"
+              aria-hidden="true"
+            />
+          </Menu.Button>
+          <div className="absolute bottom-0 group-hover:translate-y-[18px] transition-all w-full rounded-b-lg bg-[#707088] text-white text-center pt-2 pb-1 text-[10px] leading-3 font-semibold -z-10">
+            EVM
+          </div>
+        </div>
         <Transition
           as={Fragment}
           enter="transition ease-out duration-100"

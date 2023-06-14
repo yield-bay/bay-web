@@ -1,9 +1,14 @@
 import { ArrowUpIcon } from "@heroicons/react/solid";
+import clsx from "clsx";
 
 export default function ScrollToTopBtn() {
   return (
     <button
-      className="fixed bottom-20 sm:bottom-[80px] right-12 sm:right-20 z-20 p-[10px] rounded-full hover:scale-105 active:scale-100 bg-primaryBlue transition-all ease-in-out duration-200"
+      className={clsx(
+        "fixed bottom-20 sm:bottom-[80px] right-12 sm:right-20 z-20 p-[10px] rounded-full",
+        "hover:scale-105 hover:shadow-lg active:scale-100",
+        "bg-primaryBlue transition-all ease-in-out duration-200"
+      )}
       onClick={() => {
         if (typeof window !== undefined) {
           window.scrollTo({
