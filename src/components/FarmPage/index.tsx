@@ -103,7 +103,7 @@ const FarmPage: NextPage = () => {
   const safetyScoreColor = useSafetyscoreColor(safetyScore);
 
   return !isLoading && idQuery ? (
-    <div className="px-6 sm:px-[72px] text-[#475467] z-10">
+    <div className="px-6 sm:px-[72px] text-[#475467] z-0">
       <MetaTags title={`Farm • ${APP_NAME}`} />
       <Breadcrumb tokenNames={tokenNames} />
       <div className="flex flex-col bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
@@ -160,7 +160,10 @@ const FarmPage: NextPage = () => {
                 <div className="flex flex-row max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
                   <div className="flex flex-col items-end gap-y-1">
                     <p className="inline-flex items-center text-sm leading-5">
-                      <Tooltip label="Idle balance" placement="top">
+                      <Tooltip
+                        label={<span>Not Staked in a Farm</span>}
+                        placement="top"
+                      >
                         <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
                       </Tooltip>
                       Idle
@@ -170,14 +173,17 @@ const FarmPage: NextPage = () => {
                     </p>
                     <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                       <span className="font-bold">
-                        ${farmPosition?.unstaked?.amount.toFixed(2)}
+                        {farmPosition?.unstaked?.amount.toFixed(2)}
                       </span>{" "}
                       LP
                     </p>
                   </div>
                   <div className="flex flex-col items-end gap-y-1">
                     <p className="inline-flex items-center text-sm leading-5">
-                      <Tooltip label="Idel balance" placement="top">
+                      <Tooltip
+                        label={<span>Staked in a Farm</span>}
+                        placement="top"
+                      >
                         <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
                       </Tooltip>
                       Staked
@@ -238,7 +244,7 @@ const FarmPage: NextPage = () => {
                   APR (Average Percentage Yield)
                 </p>
                 <p className="text-2xl leading-7 font-semibold text-[#101828]">
-                  {apr.toFixed(2)}%
+                  {apr.toFixed(3)}%
                 </p>
               </div>
               <div className="flex flex-col gap-y-2 py-4 px-6 bg-[#FAFAFF] shadow-sm shadow-gray-200 rounded-b-xl">

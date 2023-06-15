@@ -11,11 +11,7 @@ type RewardType = {
  * @returns - Total amount of Rewards
  */
 export function calcTotalRewardValue(rewards: RewardType[]) {
-  let totalValueUSD = 0;
-  rewards.forEach((reward: any) => {
-    totalValueUSD += reward.valueUSD;
-  });
-  return totalValueUSD;
+  return rewards.reduce((acc, current) => acc + current.valueUSD, 0);
 }
 
 /**

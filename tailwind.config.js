@@ -47,7 +47,6 @@ module.exports = {
       },
     },
     backgroundImage: {
-      // "bg-pattern": "url('/Pattern.png')",
       "main-gradient":
         "linear-gradient(180deg, #070813 22.59%, rgba(139, 105, 235, 0.47) 414.39%)",
       "main-flare":

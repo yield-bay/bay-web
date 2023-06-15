@@ -107,7 +107,7 @@ const PortfolioPage = () => {
   }, [userPositions]);
 
   return (
-    <div className="px-6 sm:px-[72px] text-[#475467] z-10">
+    <div className="px-6 sm:px-[72px] text-[#475467] z-0">
       <MetaTags title={`Portfolio • ${APP_NAME}`} />
       <div className="mb-[30px] text-white flex flex-col gap-y-6 sm:flex-row gap-x-[17px] w-full">
         <div
