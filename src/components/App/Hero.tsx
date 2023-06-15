@@ -35,7 +35,7 @@ const FarmStats: FC<FarmStatsProps> = ({
         <span>across {totalFarms} Farms and </span>
         <span
           className="underline cursor-pointer underline-offset-2"
-          onClick={() => setOpen(true)}
+          onClick={!!totalProtocols ? () => setOpen(true) : () => {}}
         >
           {totalProtocols} Protocols
         </span>

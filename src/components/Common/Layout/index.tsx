@@ -42,6 +42,10 @@ const Layout: FC<Props> = ({ children }) => {
     [key: string]: number;
   }>({});
 
+  useEffect(() => {
+    console.log("---- Updated Positions ----\n", positions);
+  }, [positions]);
+
   const { isConnected, address } = useAccount();
   const [account] = useAtom(dotAccountAtom);
 
@@ -217,7 +221,7 @@ const Layout: FC<Props> = ({ children }) => {
               const tempPositions = { ...positions };
               tempPositions[name] = {
                 unstaked: {
-                  amount: freeBal,
+                  amount: parseFloat(freeBal),
                   amountUSD:
                     (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
                 },
@@ -271,7 +275,6 @@ const Layout: FC<Props> = ({ children }) => {
               f.chef == protocol.chef
             );
           });
-          console.log("filteredFarms", filteredFarms, filteredFarms.length);
           console.log(
             "protocol:",
             protocol.name,
