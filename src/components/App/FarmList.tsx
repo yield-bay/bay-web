@@ -104,24 +104,24 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
               <div className="w-full inline-flex justify-start items-center gap-x-2">
                 <Tooltip
                   label={
-                    <>
-                      <p>
-                        Base:{" "}
-                        <span className="font-bold">
+                    <div className="max-w-[120px]">
+                      <p className="mb-2 inline-flex justify-between w-full">
+                        <span className="text-[#636A78]">Base:</span>
+                        <span className="text-[#101828]">
                           {farm?.apr.base.toFixed(2)}%
                         </span>
                       </p>
-                      <p>
-                        Reward:{" "}
-                        <span className="font-bold">
+                      <p className="inline-flex justify-between w-full">
+                        <span className="text-[#636A78]">Reward:</span>
+                        <span className="text-[#101828]">
                           {farm?.apr.reward.toFixed(2)}%
                         </span>
                       </p>
-                    </>
+                    </div>
                   }
-                  placement="top"
+                  placement="bottom"
                 >
-                  <p className="cursor-default underline underline-offset-4 decoration-dotted	decoration-3 decoration-[#475467] text-sm font-medium">
+                  <p className="cursor-default underline underline-offset-4 decoration-dashed	decoration-3 decoration-[#475467] text-sm font-medium">
                     {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
                   </p>
                 </Tooltip>
@@ -139,20 +139,46 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                 (isConnected || account !== null) && "bg-[#F0F0FF]"
               )}
             >
-              {currentPosition !== undefined && currentPosition > 0 ? (
+              {!!currentPosition && currentPosition > 0 ? (
                 <Tooltip
                   label={
-                    <>
-                      <p>Idle: {position?.unstaked.amountUSD}</p>
-                      <p>Staked: {position?.staked.amountUSD}</p>
-                    </>
+                    <div className="max-w-[143px]">
+                      <p className="mb-2 inline-flex justify-between w-full">
+                        <span className="text-[#636A78]">Idle:</span>
+                        <span className="text-[#101828]">
+                          $
+                          {position?.unstaked.amountUSD < 0.001
+                            ? "0"
+                            : position?.unstaked.amountUSD.toFixed(2)}
+                        </span>
+                      </p>
+                      <p className="inline-flex justify-between w-full">
+                        <span className="text-[#636A78]">Staked:</span>
+                        <span className="text-[#101828]">
+                          $
+                          {position?.staked.amountUSD < 0.001
+                            ? "0"
+                            : position?.staked.amountUSD.toFixed(2)}
+                        </span>
+                      </p>
+                    </div>
                   }
                   placement="bottom"
                 >
-                  <span>{"$" + currentPosition.toFixed(2)}</span>
+                  <span className="cursor-default underline underline-offset-4 decoration-dashed">
+                    {"$" + currentPosition.toFixed(2)}
+                  </span>
                 </Tooltip>
               ) : (
-                <span className="text-[#D5D3D3]">-</span>
+                <Tooltip
+                  label={
+                    !isConnected &&
+                    !account && <p>Connect Wallet to View Positions</p>
+                  }
+                  placement="bottom"
+                >
+                  <span className="text-[#D5D3D3]">-</span>
+                </Tooltip>
               )}
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-12 text-right text-sm font-medium rounded-br-xl">
