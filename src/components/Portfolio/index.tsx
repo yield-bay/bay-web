@@ -31,7 +31,7 @@ import ClientOnly from "@components/Common/ClientOnly";
 
 const PortfolioPage = () => {
   // Avaiable chains we are supporting
-  const chains = ["moonriver", "moonbeam", "astar", "mangata"];
+  const chains = ["moonriver", "moonbeam", "astar", "mangata kusama"];
   // Storage
   const [searchTerm, setSearchTerm] = useState("");
   const [positionType, setPositionType] = useState(0);
@@ -184,7 +184,7 @@ const PortfolioPage = () => {
             </div>
           </div>
           {/* Positions catagorized by Chains */}
-          {isConnected || account !== null ? (
+          {isConnected || !!account ? (
             userPositions.length == 0 || netWorth == 0 ? (
               <div className="flex justify-center text-[#1D2939] h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)">
                 <div className="flex flex-col mt-[125px] h-fit gap-y-[46px] items-center text-center">
@@ -203,7 +203,7 @@ const PortfolioPage = () => {
                 {chains.map((chain, index) => {
                   // Check if chain has any positions
                   const positionsByChain = filteredPositions.filter(
-                    (position) => chain === position.chain
+                    (position) => chain === position.chain.toLowerCase()
                   );
                   if (positionsByChain.length > 0) {
                     return (

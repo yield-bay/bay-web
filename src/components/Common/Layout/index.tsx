@@ -143,7 +143,6 @@ const Layout: FC<Props> = ({ children }) => {
           f.chef == "xyk"
         );
       });
-      console.log("filtered farms", filteredFarms);
 
       const mangata = Mangata.getInstance([
         process.env.NEXT_PUBLIC_MANGATA_KUSAMA_URL!,
@@ -179,14 +178,14 @@ const Layout: FC<Props> = ({ children }) => {
               asset: { symbol: string };
               tvl: number;
             }) => {
-              console.log("filtered farm:\n", {
-                chain: ff.chain,
-                protocol: ff.protocol,
-                chef: ff.chef,
-                id: ff.id,
-                asset: ff.asset.symbol,
-                tvl: ff.tvl,
-              });
+              // console.log("filtered farm:\n", {
+              //   chain: ff.chain,
+              //   protocol: ff.protocol,
+              //   chef: ff.chef,
+              //   id: ff.id,
+              //   asset: ff.asset.symbol,
+              //   tvl: ff.tvl,
+              // });
 
               // users balancd
               const bal: any = await mangata.getTokenBalance(
@@ -218,33 +217,35 @@ const Layout: FC<Props> = ({ children }) => {
 
               const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
 
-              const tempPositions = { ...positions };
-              tempPositions[name] = {
-                unstaked: {
-                  amount: parseFloat(freeBal),
-                  amountUSD:
-                    (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
-                },
-                staked: {
-                  amount: reservedBal,
-                  amountUSD: (reservedBal * ff.tvl) / mangataAsset[ff.id],
-                },
-                unclaimedRewards: [
-                  {
-                    token: "MGX",
-                    amount: Number(rewardsAmount.toString()) / 10 ** 18,
+              if (parseFloat(freeBal) > 0 || reservedBal > 0) {
+                const tempPositions = { ...positions };
+                tempPositions[name] = {
+                  unstaked: {
+                    amount: parseFloat(freeBal),
                     amountUSD:
-                      (tokenPrices.get("mgx")! *
-                        Number(rewardsAmount.toString())) /
-                      10 ** 18,
+                      (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
                   },
-                ],
-              };
-              console.log(`positions now ---\n`, tempPositions);
-              setPositions((prevState: any) => ({
-                ...prevState,
-                ...tempPositions,
-              }));
+                  staked: {
+                    amount: reservedBal,
+                    amountUSD: (reservedBal * ff.tvl) / mangataAsset[ff.id],
+                  },
+                  unclaimedRewards: [
+                    {
+                      token: "MGX",
+                      amount: Number(rewardsAmount.toString()) / 10 ** 18,
+                      amountUSD:
+                        (tokenPrices.get("mgx")! *
+                          Number(rewardsAmount.toString())) /
+                        10 ** 18,
+                    },
+                  ],
+                };
+                console.log(`positions now ---\n`, tempPositions);
+                setPositions((prevState: any) => ({
+                  ...prevState,
+                  ...tempPositions,
+                }));
+              }
             }
           );
         }

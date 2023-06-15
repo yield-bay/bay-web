@@ -12,20 +12,22 @@ export default function useFilteredByChain(
   else if (id == 0) return positions; // All
   else if (id == 1) {
     const filtered = positions.filter(
-      (position) => position?.chain == "moonriver"
+      (position) => position?.chain.toLowerCase() == "moonriver"
     );
     return filtered;
   } else if (id == 2) {
     const filtered = positions.filter(
-      (position) => position?.chain == "moonbeam"
+      (position) => position?.chain.toLowerCase() == "moonbeam"
     );
     return filtered;
   } else if (id == 3) {
-    const filtered = positions.filter((position) => position?.chain == "astar");
+    const filtered = positions.filter(
+      (position) => position?.chain.toLowerCase() == "astar"
+    );
     return filtered;
   } else if (id == 4) {
     const filtered = positions.filter(
-      (position) => position?.chain == "mangata"
+      (position) => position?.chain.toLowerCase() == "mangata kusama"
     );
 
     return filtered;
