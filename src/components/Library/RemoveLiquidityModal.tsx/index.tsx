@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { removeLiqModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom } from "@store/atoms";
 import MButton from "../MButton";
 import ModalWrapper from "../ModalWrapper";
-import { formatTokenSymbols } from "@utils/farmListMethods";
+import { formatTokenSymbols, getTokenSymbol } from "@utils/farmListMethods";
 import clsx from "clsx";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import {
@@ -12,23 +12,36 @@ import {
   usePrepareContractWrite,
   useNetwork,
   useContractWrite,
+  usePublicClient,
 } from "wagmi";
 import getTimestamp from "@utils/getTimestamp";
-const routerAbi = require("@utils/abis/stellaswap-router.json");
+import {
+  getAbi,
+  getContractAddress,
+  getAddLiqFunctionName,
+  getRemoveLiquidFunctionName,
+} from "@utils/abis/contract-helper-methods";
+import { useDebounce } from "usehooks-ts";
+import { Block } from "viem";
 
 const RemoveLiquidityModal = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const publicClient = usePublicClient();
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   // Amount States
   const [lpTokenAmount, setLpTokenAmount] = useState("");
+  // Debounced value
+  const debouncedLpTokenAmount = useDebounce(lpTokenAmount, 500);
+
   const [isTokenApproved, setIsTokenApproved] = useState(false);
+  const [minUnderlyingToken, setMinUnderlyingToken] = useState([0, 0]);
 
-  const [token0, token1] = formatTokenSymbols(selectedFarm?.asset.symbol ?? "");
+  const [block, setBlock] = useState<Block | null>(null);
 
-  const [minUnderlyingToken0, minUnderlyingToken1] =
-    useMinimumUnderlyingTokens();
+  const tokenNames = formatTokenSymbols(selectedFarm?.asset.symbol ?? "");
+  const [token0, token1] = tokenNames;
 
   // States
   const [isProcessing, setIsProcessing] = useState(false);
@@ -42,25 +55,45 @@ const RemoveLiquidityModal = () => {
     setLpTokenAmount(event.target.value);
   };
 
+  useEffect(() => {
+    publicClient
+      .getBlock()
+      .then((x) => {
+        setBlock(x);
+        console.log("block", x.timestamp, typeof x.timestamp);
+        console.log("block.timestamp in integer", Number(x.timestamp));
+      })
+      .catch((error) => console.log("getBlock error", error));
+  }, [publicClient]);
+
   // Write contract
   const { config } = usePrepareContractWrite({
-    address: selectedFarm?.router,
-    abi: routerAbi,
-    functionName: "removeLiquidity",
+    address:
+      selectedFarm?.protocol.toLowerCase() != "zenlink"
+        ? selectedFarm?.router
+        : getContractAddress(
+            selectedFarm?.protocol as string,
+            getTokenSymbol(tokenNames)
+          ),
+    abi: getAbi(
+      selectedFarm?.protocol as string,
+      selectedFarm?.chain as string,
+      getTokenSymbol(tokenNames)
+    ),
+    functionName: getRemoveLiquidFunctionName(selectedFarm?.protocol as string),
     chainId: chain?.id,
-    onError: (error) => {
-      console.log("Error @preparing remove-liquidity:\n", error);
-    },
     args: [
       selectedFarm?.asset.underlyingAssets[0].address,
       selectedFarm?.asset.underlyingAssets[1].address,
-      parseFloat(lpTokenAmount),
-      minUnderlyingToken0,
-      minUnderlyingToken1,
+      parseFloat(debouncedLpTokenAmount),
+      1,
+      1,
       address,
-      getTimestamp(),
+      Number(block?.timestamp),
     ],
+    enabled: Boolean(debouncedLpTokenAmount),
   });
+
   const {
     data: removeLiquidityData,
     isLoading: removeLiquidityLoading,
@@ -101,10 +134,10 @@ const RemoveLiquidityModal = () => {
             <p>You receive:</p>
             <div className="flex flex-row gap-x-3">
               <p className="p-2 bg-gray-100 rounded-xl py-3 px-6">
-                {minUnderlyingToken0} {token0}
+                {minUnderlyingToken[0]} {token0}
               </p>
               <p className="p-2 bg-gray-100 rounded-xl py-3 px-6">
-                {minUnderlyingToken1} {token1}
+                {minUnderlyingToken[1]} {token1}
               </p>
             </div>
             <p className="inline-flex w-full justify-between">
@@ -160,10 +193,10 @@ const RemoveLiquidityModal = () => {
                   address_token1:
                     selectedFarm?.asset.underlyingAssets[1].address,
                   lpAmount: parseFloat(lpTokenAmount),
-                  minToken0Amount: minUnderlyingToken0,
-                  minToken1Amount: minUnderlyingToken1,
+                  minToken0Amount: minUnderlyingToken[0],
+                  minToken1Amount: minUnderlyingToken[1],
                   msg_sender: address,
-                  block_timestamp: getTimestamp(),
+                  block_timestamp: Number(block?.timestamp),
                 });
                 // Handler of Add Liquidity
                 // handleRemoveLiquidity();

@@ -1,3 +1,5 @@
+import { useContractRead } from "wagmi";
+
 /**
  *
  * @param pair - Pair Contract
@@ -5,10 +7,13 @@
  * @param slippage - Slippage Amount
  * @returns Minimum amount of underlying tokens to be removed
  */
-export default function useMinimumUnderlyingTokens() {
-  // pair,
-  // lpAmount,
-  // slippage
+export default function useMinimumUnderlyingTokens(
+  pair: any,
+  lpAmount: number,
+  slippage: number
+) {
+  // const { data } = useContractRead({});
+
   // const { reserve0, reserve1 } = await pair.getReserves();
   // const totalSupply = await pair.totalSupply();
   // const lpAmountAdjusted = (lpAmount * (100 - slippage)) / 100;
