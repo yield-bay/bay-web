@@ -1,4 +1,4 @@
-type UnderlyingAssets = {
+export type UnderlyingAssets = {
   symbol: string;
   address: string;
   decimals: number;

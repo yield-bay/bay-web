@@ -71,3 +71,10 @@ export function formatTokenSymbols(farmName: string): string[] {
   }
   return [farmName];
 }
+
+export function getTokenSymbol(tokenNames: string[]): string {
+  if (tokenNames.length === 1) {
+    return tokenNames[0];
+  }
+  return tokenNames.join("-");
+}

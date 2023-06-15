@@ -113,11 +113,12 @@ const FarmPage: NextPage = () => {
     }
   }, [farmPosition]);
 
-  // useEffect(() => {
-  //   if (farm?.id) {
-  //     trackEventWithProperty("farm-page-view", farm?.asset.symbol);
-  //   }
-  // }, [farm]);
+  useEffect(() => {
+    // if (farm?.id) {
+    //   trackEventWithProperty("farm-page-view", farm?.asset.symbol);
+    // }
+    console.log("open farm", farm);
+  }, [farm]);
 
   const safetyScore = (farm?.safetyScore * 10).toFixed(1);
 
