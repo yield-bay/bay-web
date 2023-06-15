@@ -28,7 +28,7 @@ const calculateScreenWidth = (windowWidth: number): string => {
  */
 const useScreenSize = () => {
   const [windowWidth, setWindowWidth] = useState(0);
-  const [responsiveWidth, setResponsiveWidth] = useState("xs");
+  const [responsiveWidth, setResponsiveWidth] = useState("xl");
 
   useEffect(() => {
     const handleResize = debounce(() => {
