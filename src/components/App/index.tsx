@@ -21,7 +21,7 @@ import MetaTags from "@components/Common/metaTags/MetaTags";
 import Hero from "./Hero";
 import { FarmType } from "@utils/types";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
-import { protocolList } from "@utils/statsMethods";
+import { getTotalProtocols } from "@utils/statsMethods";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -47,6 +47,7 @@ const Home: NextPage = () => {
     },
   });
   const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const totalProtocols = getTotalProtocols(farms);
 
   // Filtering farms based on FarmType and then search term
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
@@ -102,7 +103,11 @@ const Home: NextPage = () => {
         {/* THIS IS MAIN CONTAINER -- THIS WILL CONTAIN HERO AND TABLE SECTIONS */}
         <div className="relative flex flex-col flex-1">
           {/* HERO SECTION */}
-          <Hero farms={farms} setOpen={setProtocolModalOpen} />
+          <Hero
+            farms={farms}
+            totalProtocols={totalProtocols.length}
+            setOpen={setProtocolModalOpen}
+          />
           {/* Rendering Farms here */}
           {screenSize === "xs" ? (
             // MOBILE VIEW
@@ -143,7 +148,7 @@ const Home: NextPage = () => {
         <AllProtocolsModal
           open={protocolModalOpen}
           setOpen={setProtocolModalOpen}
-          protocols={protocolList(farms)}
+          protocols={totalProtocols}
         />
       </main>
     </div>

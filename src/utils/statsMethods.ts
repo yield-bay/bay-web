@@ -1,16 +1,12 @@
 import { FarmType } from "./types";
 import { formatFirstLetter } from "./farmListMethods";
 
-export function protocolCount(farms: FarmType[]): number {
-  return new Set(farms.map((farm: any) => farm?.protocol)).size;
-}
-
 /**
  *
  * @param farms - List of Farms
  * @returns An array containing all the protocols
  */
-export function protocolList(farms: FarmType[]): string[] {
+export function getTotalProtocols(farms: FarmType[]): string[] {
   return Array.from(
     new Set(farms.map((farm) => formatFirstLetter(farm?.protocol)))
   );

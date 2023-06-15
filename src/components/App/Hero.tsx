@@ -1,9 +1,10 @@
 import { FC, memo } from "react";
-import { protocolCount, tvlCount, tvlFormatter } from "@utils/statsMethods";
+import { tvlCount, tvlFormatter } from "@utils/statsMethods";
 import { FarmType } from "@utils/types";
 
 interface Props {
   farms: FarmType[];
+  totalProtocols: number;
   setOpen: (open: boolean) => void;
 }
 
@@ -43,7 +44,7 @@ const FarmStats: FC<FarmStatsProps> = ({
   );
 };
 
-const Hero: FC<Props> = ({ farms, setOpen }) => {
+const Hero: FC<Props> = ({ farms, totalProtocols, setOpen }) => {
   return (
     <div className="px-6 sm:px-0">
       {/* Center Container */}
@@ -58,7 +59,7 @@ const Hero: FC<Props> = ({ farms, setOpen }) => {
           <FarmStats
             totalTVL={tvlCount(farms)}
             totalFarms={farms.length}
-            totalProtocols={protocolCount(farms)}
+            totalProtocols={totalProtocols}
             setOpen={setOpen}
           />
         </div>
