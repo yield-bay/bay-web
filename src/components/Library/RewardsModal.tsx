@@ -46,13 +46,13 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
                     key={index}
                     className="inline-flex items-center gap-x-2 text-base leading-5"
                   >
-                    <Image
+                    {/* <Image
                       src="/moonbeam.svg"
                       alt="reward token"
                       width={24}
                       height={24}
                       className="rounded-full"
-                    />
+                    /> */}
                     <p>
                       {reward.amount.toFixed(2)} {reward.token}
                     </p>
