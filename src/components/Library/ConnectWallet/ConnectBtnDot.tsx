@@ -48,8 +48,10 @@ const ConnectBtnDot: FC = () => {
               </Menu.Button>
               <div
                 className={clsx(
-                  "absolute bottom-0 group-hover:translate-y-[18px] transition-all w-full rounded-b-lg bg-[#707088] text-white text-center pt-2 pb-1 text-[10px] leading-3 font-semibold -z-10",
-                  open && "group-hover:-translate-y-[0px]"
+                  "absolute bottom-0 transition-all w-full rounded-b-lg bg-[#707088] text-white text-center pt-2 pb-1 text-[10px] leading-3 font-semibold -z-10",
+                  open
+                    ? "-translate-y-0 group-hover:-translate-y-0"
+                    : "group-hover:translate-y-[18px]"
                 )}
               >
                 Substrate
