@@ -287,7 +287,7 @@ const FarmPage: NextPage = () => {
                         : selectedROIBtn == 30
                         ? 12
                         : 1)
-                    ).toFixed(2)}
+                    ).toFixed(3)}
                     %
                   </p>
                 </div>
@@ -463,7 +463,7 @@ const FarmPage: NextPage = () => {
                 </a>
               </p>
             </InfoContainer>
-            <div className="rounded-lg border-[#EAECF0] bg-[#FAFAFF]">
+            <div className="rounded-lg border border-[#EAECF0] bg-[#FAFAFF] overflow-hidden">
               <div className="pt-5 pb-4 px-6 border-b border-[#EAECF0]">
                 <p className="text-sm leading-5">Type</p>
                 <p className="text-2xl mt-1 leading-7 font-semibold text-[#101828]">
@@ -471,7 +471,7 @@ const FarmPage: NextPage = () => {
                 </p>
               </div>
               <div className="px-6 pt-4 pb-5">
-                <p className="max-w-xs text-sm leading-5">
+                <p className="text-sm leading-5">
                   {farmTypeDesc(farm?.farmType)}
                 </p>
               </div>

@@ -1,9 +1,7 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { QuestionMarkCircleIcon, XIcon } from "@heroicons/react/outline";
+import { XIcon } from "@heroicons/react/outline";
 import { useAtom } from "jotai";
-import Toggle from "./Toggle";
-import Image from "next/image";
 import { useAccount } from "wagmi";
 import { dotAccountAtom } from "@store/accountAtoms";
 

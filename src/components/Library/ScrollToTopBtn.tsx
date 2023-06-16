@@ -7,7 +7,7 @@ export default function ScrollToTopBtn() {
       className={clsx(
         "fixed bottom-20 sm:bottom-[80px] right-12 sm:right-20 z-20 p-[10px] rounded-full",
         "hover:scale-105 hover:shadow-lg active:scale-100",
-        "bg-primaryBlue transition-all ease-in-out duration-200"
+        "bg-[#9C9CFF] active:bg-[#9090f1] transition-all ease-in-out duration-200"
       )}
       onClick={() => {
         if (typeof window !== undefined) {

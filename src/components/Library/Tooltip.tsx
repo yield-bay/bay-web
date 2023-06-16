@@ -20,15 +20,16 @@ const Tooltip: FC<Props> = ({ label, children, placement = "bottom" }) => {
       aria-label={`${label} Info`}
       paddingY="12px"
       paddingX="12px"
-      fontSize="12px"
-      fontWeight="600"
+      fontSize="14px"
+      fontWeight="500"
       rounded="8px"
-      lineHeight="18px"
+      lineHeight="20px"
       maxWidth="320px"
       hasArrow={true}
       placement={placement}
       bg="#FFFFFF"
       color="#344054"
+      boxShadow="0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)"
     >
       {children}
     </TooltipChakra>

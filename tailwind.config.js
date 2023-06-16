@@ -31,10 +31,7 @@ module.exports = {
         satoshi: ["var(--font-satoshi)", ...fontFamily.sans],
       },
       boxShadow: {
-        tooltipLight: "0px 0px 5px #A2C4FF",
-        tooltipDark: "0px 0px 5px #3780FF",
         farmBtn: "0px 1px 2px rgba(16, 24, 40, 0.05)",
-        groupBtn: "0px 1px 2px rgba(16, 24, 40, 0.05)",
       },
       animation: {
         shiny: "shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",

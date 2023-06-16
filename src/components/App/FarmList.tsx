@@ -177,7 +177,9 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                   }
                   placement="bottom"
                 >
-                  <span className="text-[#D5D3D3]">-</span>
+                  <span className="cursor-default font-normal text-2xl leading-5 text-[#3A3A5F]">
+                    -
+                  </span>
                 </Tooltip>
               )}
             </td>

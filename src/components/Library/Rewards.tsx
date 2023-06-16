@@ -43,7 +43,7 @@ export default function Rewards({ rewards }: RewardsProps) {
           {rewards.map((reward, index) => (
             <div
               key={index}
-              className="z-10 flex overflow-hidden ring-[1.5px] ring-white rounded-full bg-[#EAEAF1]"
+              className="flex overflow-hidden ring-[1.5px] ring-white rounded-full bg-[#EAEAF1]"
             >
               <Image
                 src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
