@@ -1,3 +1,6 @@
+import { supportedPools } from "@components/Common/Layout/evmUtils";
+import { FarmType } from "./types";
+
 export function formatFirstLetter(name: string): string {
   return name.slice(0, 1).toUpperCase() + name.slice(1);
 }
@@ -78,4 +81,12 @@ export function getWalletInstallUrl(walletName: string): string {
     default:
       return "";
   }
+}
+
+export function checkIfPoolSupported(farm: FarmType) {
+  const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
+  if (protocols && farm.farmType !== "SingleStaking") {
+    return protocols.includes(farm.protocol.toLowerCase());
+  }
+  return false;
 }

@@ -1,7 +1,7 @@
 // Library Imports
-import { useEffect, useState, memo, FC } from "react";
+import { useEffect, memo, type FC } from "react";
 import { useAtom } from "jotai";
-import { ChevronDownIcon, ArrowSmDownIcon } from "@heroicons/react/outline";
+import { ArrowSmDownIcon } from "@heroicons/react/outline";
 
 // Utility and Component Imports
 import {
@@ -46,7 +46,10 @@ const FarmTable: FC<Props> = ({
 }) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
-  const [enabled, setEnabled] = useAtom(showSupportedFarmsAtom);
+  const [showSupportedFarms, setShowSupportedFarms] = useAtom(
+    showSupportedFarmsAtom
+  );
+
   // Users wallet
   const { isConnected } = useAccount();
   const [account] = useAtom(dotAccountAtom);
@@ -148,7 +151,10 @@ const FarmTable: FC<Props> = ({
             <SelectFarmType />
           </div>
           <div className="inline-flex gap-x-2 items-center">
-            <SupportedFarmsToggle enabled={enabled} setEnabled={setEnabled} />
+            <SupportedFarmsToggle
+              enabled={showSupportedFarms}
+              setEnabled={setShowSupportedFarms}
+            />
             <Tooltip
               label={
                 <p className="max-w-[183px] text-center">
@@ -157,14 +163,14 @@ const FarmTable: FC<Props> = ({
               }
             >
               <p className="inline-flex gap-x-2">
-                <span className="hidden lg:block">
-                  {enabled
+                <span className="hidden lg:block cursor-default underline underline-offset-4 decoration-dashed">
+                  {showSupportedFarms
                     ? "show untracked farms"
                     : "show only supported farms"}
                 </span>
                 <Image
                   src="/icons/umbrella.svg"
-                  className={clsx(enabled && "saturate-0")}
+                  className={clsx(showSupportedFarms && "saturate-0")}
                   alt="supported farms"
                   height={16}
                   width={16}

@@ -14,7 +14,11 @@ import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
 import { trackPageView } from "@utils/analytics";
 import { fetchListicleFarms } from "@utils/api";
-import { filterFarmTypeAtom, positionsAtom } from "@store/atoms";
+import {
+  filterFarmTypeAtom,
+  positionsAtom,
+  showSupportedFarmsAtom,
+} from "@store/atoms";
 import FarmTable from "./FarmTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/Common/metaTags/MetaTags";
@@ -22,6 +26,7 @@ import Hero from "./Hero";
 import { FarmType } from "@utils/types";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import { getTotalProtocols } from "@utils/statsMethods";
+import useFilteredSupported from "@hooks/useFilteredSupported";
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -33,6 +38,7 @@ const Home: NextPage = () => {
   // const [protocolModalOpen, setProtocolModalOpen] = useState(false);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [protocolModalOpen, setProtocolModalOpen] = useState(false);
+  const [showSupportedFarms] = useAtom(showSupportedFarmsAtom);
 
   // Fetching all farms
   const { isLoading, data: farmsList } = useQuery({
@@ -51,8 +57,12 @@ const Home: NextPage = () => {
 
   // Filtering farms based on FarmType and then search term
   const filteredByFarmTypes = useFilteredFarmTypes(farms, filterFarmType);
-  const [filteredFarms, noFilteredFarms] = useFilteredFarms(
+  const filteredSupported = useFilteredSupported(
     filteredByFarmTypes,
+    showSupportedFarms
+  );
+  const [filteredFarms, noFilteredFarms] = useFilteredFarms(
+    filteredSupported,
     searchTerm
   );
   const screenSize = useScreenSize();

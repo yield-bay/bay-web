@@ -1,6 +1,9 @@
 // Library  Imports
-import { useEffect, memo, useState } from "react";
+import { useState, useEffect, memo, type FC } from "react";
 import { useAtom } from "jotai";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import clsx from "clsx";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -9,57 +12,48 @@ import FarmBadge from "@components/Library/FarmBadge";
 import MobileLoadingSkeleton from "@components/Library/MobileLoadingSkeleton";
 import ShareFarm from "@components/Library/ShareFarm";
 import PreferencesModal from "@components/Library/PreferencesModal";
+import SearchInput from "@components/Library/SearchInput";
+import SafetyScorePill from "@components/Library/SafetyScorePill";
+import PositionModal from "@components/Library/PositionModal";
 
 // Misc Imports
 import {
   formatFarmType,
   formatFirstLetter,
   formatTokenSymbols,
+  checkIfPoolSupported,
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
-import {
-  showSupportedFarmsAtom,
-  sortedFarmsAtom,
-  sortStatusAtom,
-} from "@store/atoms";
-import { useRouter } from "next/router";
-import Image from "next/image";
-import SearchInput from "@components/Library/SearchInput";
-import clsx from "clsx";
-import SafetyScorePill from "@components/Library/SafetyScorePill";
-import PositionModal from "@components/Library/PositionModal";
+import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
 import { FarmType } from "@utils/types";
-import { supportedPools } from "@components/Common/Layout/evmUtils";
 
-type FarmListType = {
-  farms: any;
+interface Props {
+  farms: FarmType[];
   noResult: boolean;
   isLoading: boolean;
   positions: any;
   searchTerm: string;
   setSearchTerm: (value: string) => void;
-};
+}
 
 enum Order {
   ASC,
   DESC,
 }
 
-const MobileFarmList = ({
+const MobileFarmList: FC<Props> = ({
   farms,
   noResult,
   isLoading,
   positions,
   searchTerm,
   setSearchTerm,
-}: FarmListType) => {
+}) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
   const [prefModalOpen, setPrefModalOpen] = useState(false);
   const [positionModalOpen, setPositionModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<any>(undefined);
-
-  const [showSupportedFarms] = useAtom(showSupportedFarmsAtom);
 
   const router = useRouter();
 
@@ -119,16 +113,8 @@ const MobileFarmList = ({
     sortedFarmsSet([...farms].sort(sortFn));
   };
 
-  const checkIfPoolSupported = (farm: FarmType) => {
-    const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
-    if (protocols && farm.farmType !== "SingleStaking") {
-      return protocols.includes(farm.protocol.toLowerCase());
-    }
-    return false;
-  };
-
   return (
-    <div>
+    <>
       <div
         className="flex flex-row gap-x-3 p-4 items-center justify-between
                 bg-white font-medium text-[#66686B] text-sm leading-5 rounded-t-xl"
@@ -148,28 +134,21 @@ const MobileFarmList = ({
       </div>
       {!noResult ? (
         !isLoading ? (
-          sortedFarms.map((farm: any, index: number) => {
+          sortedFarms.map((farm: FarmType, index: number) => {
             const tokenNames = formatTokenSymbols(farm?.asset.symbol);
             const safetyScore = (farm?.safetyScore * 10).toFixed(1);
             const position =
               positions[
                 `${farm.chain}-${farm.protocol}-${farm.chef}-${farm.id}-${farm.asset.symbol}`
               ];
-            const currentPosition =
-              position?.unstaked.amountUSD + position?.staked.amountUSD;
-
-            const isSupported = checkIfPoolSupported(farm);
 
             return (
               <div
                 key={index}
                 className={clsx(
                   "w-full py-6 px-8 border-b border-[#EAECF0] text-[#101828]",
-                  index % 2 == 0 && !showSupportedFarms
-                    ? "bg-[#FAFAFF]"
-                    : "bg-white",
-                  index == sortedFarms.length - 1 && "rounded-b-xl",
-                  !isSupported && showSupportedFarms && "hidden"
+                  index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white",
+                  index == sortedFarms.length - 1 && "rounded-b-xl"
                 )}
               >
                 {/* Upper Container for left and right */}
@@ -183,7 +162,10 @@ const MobileFarmList = ({
                       alt="supported farm"
                       height={20}
                       width={20}
-                      className={clsx("ml-2", !isSupported && "saturate-0")}
+                      className={clsx(
+                        "ml-2",
+                        !checkIfPoolSupported(farm) && "saturate-0"
+                      )}
                     />
                   </div>
                   <div className="text-[#101828] font-medium text-sm leading-5">
@@ -251,7 +233,7 @@ const MobileFarmList = ({
         setOpen={setPositionModalOpen}
         position={selectedPosition}
       />
-    </div>
+    </>
   );
 };
 
