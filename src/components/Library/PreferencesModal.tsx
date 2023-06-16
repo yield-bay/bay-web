@@ -5,10 +5,9 @@ import { useAtom } from "jotai";
 import {
   filterFarmTypeAtom,
   farmTypesAtom,
-  sortStatusAtom,
+  showSupportedFarmsAtom,
 } from "@store/atoms";
-import { trackEventWithProperty } from "@utils/analytics";
-import Toggle from "./Toggle";
+import SupportedFarmsToggle from "./SupportedFarmsToggle";
 import Image from "next/image";
 
 type PreferencesModalProps = {
@@ -21,16 +20,11 @@ type FarmTypeFilterProps = {
   setOpen: (value: boolean) => void;
 };
 
-type SortingFilterProps = {
-  setOpen: (value: boolean) => void;
-  handleSort: (toggleKey: boolean, toggleOrder: boolean) => void;
-};
-
 export default function PreferencesModal({
   open,
   setOpen,
-  handleSort,
 }: PreferencesModalProps) {
+  const [enabled, setEnabled] = useAtom(showSupportedFarmsAtom);
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -75,7 +69,10 @@ export default function PreferencesModal({
               <div className="w-full font-medium text-base leading-5">
                 <FarmTypeFilter setOpen={setOpen} />
                 <div className="mt-6 flex flex-row items-center gap-x-3 rounded-lg p-3 shadow-md">
-                  <Toggle label="show supported farms" />
+                  <SupportedFarmsToggle
+                    enabled={enabled}
+                    setEnabled={setEnabled}
+                  />
                   <p className="font-medium text-xs leading-5 text-[#66686B]">
                     Show only supported farms
                   </p>
@@ -117,6 +114,10 @@ const FarmTypeFilter = ({ setOpen }: FarmTypeFilterProps) => {
   );
 };
 
+// type SortingFilterProps = {
+//   setOpen: (value: boolean) => void;
+//   handleSort: (toggleKey: boolean, toggleOrder: boolean) => void;
+// };
 // const SortingFilter = ({ setOpen, handleSort }: SortingFilterProps) => {
 //   const [sortStatus] = useAtom(sortStatusAtom);
 //   return (

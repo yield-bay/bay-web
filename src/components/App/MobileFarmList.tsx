@@ -28,6 +28,8 @@ import SearchInput from "@components/Library/SearchInput";
 import clsx from "clsx";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import PositionModal from "@components/Library/PositionModal";
+import { FarmType } from "@utils/types";
+import { supportedPools } from "@components/Common/Layout/evmUtils";
 
 type FarmListType = {
   farms: any;
@@ -57,9 +59,7 @@ const MobileFarmList = ({
   const [positionModalOpen, setPositionModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<any>(undefined);
 
-  const [showSupportedFarms, setShowSupportedFarms] = useAtom(
-    showSupportedFarmsAtom
-  );
+  const [showSupportedFarms] = useAtom(showSupportedFarmsAtom);
 
   const router = useRouter();
 
@@ -119,6 +119,14 @@ const MobileFarmList = ({
     sortedFarmsSet([...farms].sort(sortFn));
   };
 
+  const checkIfPoolSupported = (farm: FarmType) => {
+    const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
+    if (protocols && farm.farmType !== "SingleStaking") {
+      return protocols.includes(farm.protocol.toLowerCase());
+    }
+    return false;
+  };
+
   return (
     <div>
       <div
@@ -150,16 +158,18 @@ const MobileFarmList = ({
             const currentPosition =
               position?.unstaked.amountUSD + position?.staked.amountUSD;
 
+            const isSupported = checkIfPoolSupported(farm);
+
             return (
               <div
                 key={index}
                 className={clsx(
                   "w-full py-6 px-8 border-b border-[#EAECF0] text-[#101828]",
-                  index % 2 == 0 ? "bg-[#FAFAFF]" : "bg-white",
+                  index % 2 == 0 && !showSupportedFarms
+                    ? "bg-[#FAFAFF]"
+                    : "bg-white",
                   index == sortedFarms.length - 1 && "rounded-b-xl",
-                  (position == undefined || currentPosition <= 0) &&
-                    showSupportedFarms &&
-                    "hidden"
+                  !isSupported && showSupportedFarms && "hidden"
                 )}
               >
                 {/* Upper Container for left and right */}
@@ -173,11 +183,7 @@ const MobileFarmList = ({
                       alt="supported farm"
                       height={20}
                       width={20}
-                      className={clsx(
-                        "ml-2",
-                        (position == undefined || currentPosition <= 0) &&
-                          "saturate-0"
-                      )}
+                      className={clsx("ml-2", !isSupported && "saturate-0")}
                     />
                   </div>
                   <div className="text-[#101828] font-medium text-sm leading-5">

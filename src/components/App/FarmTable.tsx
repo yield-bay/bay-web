@@ -4,14 +4,18 @@ import { useAtom } from "jotai";
 import { ChevronDownIcon, ArrowSmDownIcon } from "@heroicons/react/outline";
 
 // Utility and Component Imports
-import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
+import {
+  showSupportedFarmsAtom,
+  sortedFarmsAtom,
+  sortStatusAtom,
+} from "@store/atoms";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
 import { trackEventWithProperty } from "@utils/analytics";
 import LoadingSkeleton from "@components/Library/LoadingSkeleton";
 import { FarmType } from "@utils/types";
 import Image from "next/image";
-import Toggle from "@components/Library/Toggle";
+import SupportedFarmsToggle from "@components/Library/SupportedFarmsToggle";
 import SelectFarmType from "@components/Library/SelectFarmType";
 import SearchInput from "@components/Library/SearchInput";
 import clsx from "clsx";
@@ -42,6 +46,7 @@ const FarmTable: FC<Props> = ({
 }) => {
   const [sortStatus, sortStatusSet] = useAtom(sortStatusAtom);
   const [sortedFarms, sortedFarmsSet] = useAtom(sortedFarmsAtom);
+  const [enabled, setEnabled] = useAtom(showSupportedFarmsAtom);
   // Users wallet
   const { isConnected } = useAccount();
   const [account] = useAtom(dotAccountAtom);
@@ -143,14 +148,29 @@ const FarmTable: FC<Props> = ({
             <SelectFarmType />
           </div>
           <div className="inline-flex gap-x-2 items-center">
-            <Toggle label={"show only supported farms"} />
-            <span className="hidden lg:block">show only supported farms</span>
-            <Image
-              src="/icons/umbrella.svg"
-              alt="supported farms"
-              height={16}
-              width={16}
-            />
+            <SupportedFarmsToggle enabled={enabled} setEnabled={setEnabled} />
+            <Tooltip
+              label={
+                <p className="max-w-[183px] text-center">
+                  We only track selected farms right now
+                </p>
+              }
+            >
+              <p className="inline-flex gap-x-2">
+                <span className="hidden lg:block">
+                  {enabled
+                    ? "show untracked farms"
+                    : "show only supported farms"}
+                </span>
+                <Image
+                  src="/icons/umbrella.svg"
+                  className={clsx(enabled && "saturate-0")}
+                  alt="supported farms"
+                  height={16}
+                  width={16}
+                />
+              </p>
+            </Tooltip>
           </div>
         </div>
         <SearchInput term={searchTerm} setTerm={setSearchTerm} />
