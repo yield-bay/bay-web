@@ -38,7 +38,7 @@ export function farmURL(farm: any): string {
 }
 
 export function formatFarmType(farmType: string): string {
-  if (farmType === "SingleStaking") return "Single staking";
+  if (farmType === "SingleStaking") return "Single Staking";
   else return farmType.slice(0, -3) + " swap";
 }
 

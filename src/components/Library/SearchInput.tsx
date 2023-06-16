@@ -25,7 +25,7 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
   });
 
   return (
-    <div className="relative border flex w-full max-w-xs xl:max-w-[437px] text-[#667085] rounded-lg ring-transparent">
+    <div className="relative border flex w-full max-w-xs xl:min-w-[437px] text-[#667085] rounded-lg ring-transparent">
       <div className="absolute pl-[12px] sm:pl-2 lg:pl-[10px] left-0 inset-y-0 flex items-center pointer-events-none">
         <Image
           src="/icons/SearchIcon.svg"

@@ -179,7 +179,10 @@ const FarmTable: FC<Props> = ({
             </Tooltip>
           </div>
         </div>
-        <SearchInput term={searchTerm} setTerm={setSearchTerm} />
+        <div className="inline-flex items-center gap-x-4 max-w-fit">
+          <p className="min-w-fit">{sortedFarms.length} Results</p>
+          <SearchInput term={searchTerm} setTerm={setSearchTerm} />
+        </div>
       </div>
       <div className="bg-white border-x border-b border-[#EAECF0] rounded-b-xl">
         <div className="inline-block min-w-full align-middle">

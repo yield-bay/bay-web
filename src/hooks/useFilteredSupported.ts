@@ -4,7 +4,7 @@ import { FarmType } from "@utils/types";
 /**
  *
  * @param farms - Farms
- * @param enabled - Search term
+ * @param enabled - Supported Farms toggle state
  * @returns Supported Farms
  */
 export default function useFilteredSupported(
