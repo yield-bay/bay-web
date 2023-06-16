@@ -7,6 +7,7 @@ import {
   ChevronDownIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/outline";
+import { ChevronRightIcon } from "@heroicons/react/solid";
 import FarmAssets from "@components/Library/FarmAssets";
 import { formatFirstLetter, formatTokenSymbols } from "@utils/farmListMethods";
 import Tooltip from "@components/Library/Tooltip";
@@ -28,6 +29,7 @@ import { FarmType } from "@utils/types";
 import { useAccount } from "wagmi";
 import { dotAccountAtom } from "@store/accountAtoms";
 import ClientOnly from "@components/Common/ClientOnly";
+import RewardsModal from "@components/Library/RewardsModal";
 
 const PortfolioPage = () => {
   // Avaiable chains we are supporting
@@ -38,6 +40,7 @@ const PortfolioPage = () => {
   const [userPositions, setUserPositions] = useState<any[]>([]);
   const [netWorth, setNetWorth] = useState(0);
   const [totalUnclaimedRewards, setTotalUnclaimedRewards] = useState(0);
+  const [isRewardsModalOpen, setIsRewardsModalOpen] = useState<boolean>(false);
 
   // Users wallet
   const { isConnected } = useAccount();
@@ -125,13 +128,19 @@ const PortfolioPage = () => {
           </div>
           {(isConnected || account) && userPositions.length > 0 ? (
             totalUnclaimedRewards >= 0 ? (
-              <div className="w-full sm:w-1/2 rounded-xl p-6 text-left bg-rewards-card">
-                <p className="font-medium text-base leading-6">
-                  Unclaimed rewards worth
-                </p>
-                <p className="mt-3 font-semibold text-4xl leading-[44px]">
-                  ${totalUnclaimedRewards}
-                </p>
+              <div
+                className="w-full sm:w-1/2 flex hover:ring-[1px] ring-[#6DA695] transition-all cursor-pointer ring-opacity-70 flex-row justify-between rounded-xl py-6 px-8 text-left bg-rewards-card"
+                onClick={() => setIsRewardsModalOpen(true)}
+              >
+                <div>
+                  <p className="font-medium text-base leading-6">
+                    Unclaimed rewards worth
+                  </p>
+                  <p className="mt-3 font-semibold text-4xl leading-[44px]">
+                    ${totalUnclaimedRewards}
+                  </p>
+                </div>
+                <ChevronRightIcon className="w-6 mr-4 text-white" />
               </div>
             ) : (
               <div className="w-1/2 rounded-xl p-6 text-left border border-[#D6D6D6]">
@@ -290,7 +299,7 @@ const PortfolioPage = () => {
                                         <div className="flex flex-col items-end gap-y-1">
                                           <p className="inline-flex items-center text-sm leading-5">
                                             <Tooltip
-                                              label="Idle balance"
+                                              label="Not staked in a Farm"
                                               placement="top"
                                             >
                                               <QuestionMarkCircleIcon className="hidden sm:block w-4 h-4 text-[#C0CBDC] mr-1" />
@@ -303,20 +312,19 @@ const PortfolioPage = () => {
                                               2
                                             )}
                                           </p>
-                                          <p className="inline-flex p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                          <p className="inline-flex gap-x-1 p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                                             <span className="font-bold">
-                                              $
                                               {position?.unstaked.amount.toFixed(
                                                 2
                                               )}
                                             </span>{" "}
-                                            LP
+                                            <span>LP</span>
                                           </p>
                                         </div>
                                         <div className="flex flex-col items-end gap-y-1">
                                           <p className="inline-flex items-center text-sm leading-5">
                                             <Tooltip
-                                              label="Idles balance"
+                                              label="Staked in a Farm"
                                               placement="top"
                                             >
                                               <QuestionMarkCircleIcon className="hidden sm:block w-4 h-4 text-[#C0CBDC] mr-1" />
@@ -329,14 +337,13 @@ const PortfolioPage = () => {
                                               2
                                             )}
                                           </p>
-                                          <p className="inline-flexp-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                                          <p className="inline-flex gap-x-1 p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                                             <span className="font-bold">
-                                              $
                                               {position?.staked.amount.toFixed(
                                                 2
                                               )}
-                                            </span>{" "}
-                                            LP
+                                            </span>
+                                            <span>LP</span>
                                           </p>
                                         </div>
                                       </div>
@@ -399,6 +406,11 @@ const PortfolioPage = () => {
           )}
         </div>
       </div>
+      <RewardsModal
+        open={isRewardsModalOpen}
+        setOpen={setIsRewardsModalOpen}
+        positions={userPositions}
+      />
     </ClientOnly>
   );
 };

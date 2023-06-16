@@ -57,17 +57,11 @@ export function formatTokenSymbols(farmName: string): string[] {
 
 export function getLpTokenSymbol(symbol: string): string {
   const tokenNames = formatTokenSymbols(symbol);
-  let tokenSymbol =
-    tokenNames.length == 2
-      ? `${tokenNames[0]}-${tokenNames[1]}`.trim()
-      : tokenNames[0].trim();
-  if (
-    tokenSymbol.charAt(0) == "-" ||
-    tokenSymbol.charAt(tokenSymbol.length - 1) == "-"
-  ) {
-    tokenSymbol = tokenSymbol.replace("-", "");
+  if (tokenNames.length == 1) {
+    return tokenNames[0].trim();
+  } else {
+    return tokenNames.join("-").trim();
   }
-  return tokenSymbol;
 }
 
 export function getWalletInstallUrl(walletName: string): string {

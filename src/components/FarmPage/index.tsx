@@ -483,8 +483,16 @@ const FarmPage: NextPage = () => {
         <RewardsModal
           open={isRewardsModalOpen}
           setOpen={setIsRewardsModalOpen}
-          farm={farm}
-          position={farmPosition}
+          positions={[
+            {
+              chain: farm?.chain,
+              protocol: farm?.protocol,
+              address: farm?.asset.address,
+              id: farm?.id,
+              lpSymbol: farm?.asset.symbol,
+              ...farmPosition,
+            },
+          ]}
         />
       )}
     </div>
