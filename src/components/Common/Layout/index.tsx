@@ -149,107 +149,107 @@ const Layout: FC<Props> = ({ children }) => {
       ]);
       const mangataApi = await mangata.getApi();
 
-      const unsubscribe = await mangataApi.rpc.chain.subscribeNewHeads(
-        async (header: any) => {
-          console.log(`Chain is at block: #${header.number}`);
+      // const unsubscribe = await mangataApi.rpc.chain.subscribeNewHeads(
+      // async (header: any) => {
+      // console.log(`Chain is at block: #${header.number}`);
 
-          let assetsInfo = await mangata.getAssetsInfo();
-          // console.log("assetsInfo", assetsInfo);
-          let mangataAsset: any = {};
-          const balances = await mangata.getBalances();
-          for (const key in balances) {
-            if (Object.hasOwnProperty.call(balances, key)) {
-              const element = balances[key];
-              if (assetsInfo[key] !== undefined) {
-                const e = // todo: try parseBigInt here instead of parseFloat
-                  parseFloat(BigInt(element.toString()).toString(10)) /
-                  10 ** assetsInfo[key]["decimals"];
-                mangataAsset[key] = e;
-              }
-            }
+      let assetsInfo = await mangata.getAssetsInfo();
+      console.log("assetsInfo", assetsInfo);
+      let mangataAsset: any = {};
+      const balances = await mangata.getBalances();
+      for (const key in balances) {
+        if (Object.hasOwnProperty.call(balances, key)) {
+          const element = balances[key];
+          if (assetsInfo[key] !== undefined) {
+            const e = // todo: try parseBigInt here instead of parseFloat
+              parseFloat(BigInt(element.toString()).toString(10)) /
+              10 ** assetsInfo[key]["decimals"];
+            mangataAsset[key] = e;
+            console.log("mgeee", e);
           }
+        }
+      }
 
-          filteredFarms.forEach(
-            async (ff: {
-              chain: string;
-              protocol: string;
-              chef: string;
-              id: any;
-              asset: { symbol: string };
-              tvl: number;
-            }) => {
-              // console.log("filtered farm:\n", {
-              //   chain: ff.chain,
-              //   protocol: ff.protocol,
-              //   chef: ff.chef,
-              //   id: ff.id,
-              //   asset: ff.asset.symbol,
-              //   tvl: ff.tvl,
-              // });
+      filteredFarms.forEach(
+        async (ff: {
+          chain: string;
+          protocol: string;
+          chef: string;
+          id: any;
+          asset: { symbol: string };
+          tvl: number;
+        }) => {
+          // console.log("filtered farm:\n", {
+          //   chain: ff.chain,
+          //   protocol: ff.protocol,
+          //   chef: ff.chef,
+          //   id: ff.id,
+          //   asset: ff.asset.symbol,
+          //   tvl: ff.tvl,
+          // });
 
-              // users balancd
-              const bal: any = await mangata.getTokenBalance(
-                ff.id, // token id
-                account?.address as string // user's address
-              );
-              const freeBal = BigInt(bal.free).toString(10);
-              10 ** assetsInfo[`${ff.id}`]["decimals"];
-              // const reservedBal =
-              //   BigInt(bal.reserved).toString(10) /
-              //   10 ** assetsInfo[`${ff.id}`]["decimals"];
-              const reservedBal =
-                parseFloat(BigInt(bal.reserved).toString(10)) /
-                10 ** assetsInfo[`${ff.id}`]["decimals"];
-
-              const rewardsAmount = await mangata.calculateRewardsAmount(
-                account?.address as string,
-                ff.id
-              );
-              const tokenPrices = await fetchTokenPricesMangata();
-              // console.log("MGX price", tokenPrices.get("mgx"));
-
-              console.log(
-                "Reward Amount ---",
-                Number(rewardsAmount.toString()) / 10 ** 18,
-                (tokenPrices.get("mgx")! * Number(rewardsAmount.toString())) /
-                  10 ** 18
-              );
-
-              const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
-
-              if (parseFloat(freeBal) > 0 || reservedBal > 0) {
-                const tempPositions = { ...positions };
-                tempPositions[name] = {
-                  unstaked: {
-                    amount: parseFloat(freeBal),
-                    amountUSD:
-                      (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
-                  },
-                  staked: {
-                    amount: reservedBal,
-                    amountUSD: (reservedBal * ff.tvl) / mangataAsset[ff.id],
-                  },
-                  unclaimedRewards: [
-                    {
-                      token: "MGX",
-                      amount: Number(rewardsAmount.toString()) / 10 ** 18,
-                      amountUSD:
-                        (tokenPrices.get("mgx")! *
-                          Number(rewardsAmount.toString())) /
-                        10 ** 18,
-                    },
-                  ],
-                };
-                console.log(`positions now ---\n`, tempPositions);
-                setPositions((prevState: any) => ({
-                  ...prevState,
-                  ...tempPositions,
-                }));
-              }
-            }
+          // users balancd
+          const bal: any = await mangata.getTokenBalance(
+            ff.id, // token id
+            account?.address as string // user's address
           );
+          const freeBal = BigInt(bal.free).toString(10);
+          10 ** assetsInfo[`${ff.id}`]["decimals"];
+          // const reservedBal =
+          //   BigInt(bal.reserved).toString(10) /
+          //   10 ** assetsInfo[`${ff.id}`]["decimals"];
+          const reservedBal =
+            parseFloat(BigInt(bal.reserved).toString(10)) /
+            10 ** assetsInfo[`${ff.id}`]["decimals"];
+
+          const rewardsAmount = await mangata.calculateRewardsAmount(
+            account?.address as string,
+            ff.id
+          );
+          const tokenPrices = await fetchTokenPricesMangata();
+          // console.log("MGX price", tokenPrices.get("mgx"));
+
+          console.log(
+            "Reward Amount ---",
+            Number(rewardsAmount.toString()) / 10 ** 18,
+            (tokenPrices.get("mgx")! * Number(rewardsAmount.toString())) /
+              10 ** 18
+          );
+
+          const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
+
+          if (parseFloat(freeBal) > 0 || reservedBal > 0) {
+            const tempPositions = { ...positions };
+            tempPositions[name] = {
+              unstaked: {
+                amount: parseFloat(freeBal),
+                amountUSD: (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
+              },
+              staked: {
+                amount: reservedBal,
+                amountUSD: (reservedBal * ff.tvl) / mangataAsset[ff.id],
+              },
+              unclaimedRewards: [
+                {
+                  token: "MGX",
+                  amount: Number(rewardsAmount.toString()) / 10 ** 18,
+                  amountUSD:
+                    (tokenPrices.get("mgx")! *
+                      Number(rewardsAmount.toString())) /
+                    10 ** 18,
+                },
+              ],
+            };
+            console.log(`positions now ---\n`, tempPositions);
+            setPositions((prevState: any) => ({
+              ...prevState,
+              ...tempPositions,
+            }));
+          }
         }
       );
+      // }
+      // );
     };
 
     if (account && farms.length > 0) {
@@ -476,7 +476,7 @@ const Layout: FC<Props> = ({ children }) => {
                   asset: { symbol: any; address: any };
                 }) => {
                   console.log(
-                    "ff",
+                    "solarbeamff",
                     ff.chain,
                     ff.protocol,
                     ff.chef,
@@ -488,12 +488,12 @@ const Layout: FC<Props> = ({ children }) => {
                   const poolInfo = await chef.poolInfo(ff.id);
                   const userInfo = await chef.userInfo(ff.id, address);
                   console.log(
-                    "poolInfo0",
+                    "solarbeampoolInfo0",
                     Object.keys(poolInfo),
                     Object.values(poolInfo)[0]
                   );
-                  console.log("poolInfo", poolInfo);
-                  console.log("userInfo", userInfo);
+                  console.log("solarbeampoolInfo", poolInfo);
+                  console.log("solarbeamuserInfo", userInfo);
                   const stakedLpAmount =
                     Number(Object.values(userInfo)[0] as number) / 10 ** 18;
                   const rewardDebt = Object.values(userInfo)[1];
@@ -507,9 +507,9 @@ const Layout: FC<Props> = ({ children }) => {
                   const unstakedLpAmount =
                     Number(await lp.balanceOf(address)) / 10 ** 18;
                   console.log(
-                    "stakedLpAmount",
+                    "solarbeamstakedLpAmount",
                     stakedLpAmount,
-                    "unstakedLpAmount",
+                    "solarbeamunstakedLpAmount",
                     unstakedLpAmount
                   );
                   const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
@@ -906,7 +906,7 @@ const Layout: FC<Props> = ({ children }) => {
       lpTokensPricesLength > 0 &&
       tokenPricesLength > 0
     ) {
-      asycFn(); // Run setup when wallet connected
+      // asycFn(); // Run setup when wallet connected
     }
   }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
 
