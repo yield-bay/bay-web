@@ -1,4 +1,5 @@
 import { supportedPools } from "@components/Common/Layout/evmUtils";
+import { checkIfPoolSupported } from "@utils/farmListMethods";
 import { FarmType } from "@utils/types";
 
 /**
@@ -13,12 +14,6 @@ export default function useFilteredSupported(
 ): FarmType[] {
   if (!farms) return [];
   else if (!enabled) return farms;
-  const filtered = farms.filter((farm) => {
-    const protocols = supportedPools[farm.chain.toLowerCase()];
-    if (protocols && farm.farmType !== "SingleStaking") {
-      return protocols.includes(farm.protocol.toLowerCase());
-    }
-    return false;
-  });
+  const filtered = farms.filter((farm) => checkIfPoolSupported(farm));
   return filtered;
 }
