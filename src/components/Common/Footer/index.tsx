@@ -32,7 +32,7 @@ const Footer = () => {
           {/* RIGHT SIDE */}
           <ul
             role="list"
-            className="flex flex-row sm:flex-col items-center justify-between sm:space-y-4 text-right text-base leading-4 font-bold pb-20 sm:pb-0"
+            className="flex flex-row sm:flex-col items-end justify-between sm:space-y-4 text-base leading-4 font-bold pb-20 sm:pb-0"
           >
             {community.map((ele, index) => (
               <List key={index} title={ele.title} link={ele.link} />

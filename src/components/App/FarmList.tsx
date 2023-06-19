@@ -14,7 +14,6 @@ import {
   checkIfPoolSupported,
 } from "@utils/farmListMethods";
 import { FarmType } from "@utils/types";
-import { showSupportedFarmsAtom } from "@store/atoms";
 import { dotAccountAtom } from "@store/accountAtoms";
 
 // Component Imports
@@ -48,7 +47,8 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
             `${farm.chain}-${farm.protocol}-${farm.chef}-${farm.id}-${farm.asset.symbol}`
           ];
         const currentPosition =
-          position?.unstaked.amountUSD + position?.staked.amountUSD;
+          position?.unstaked.amountUSD + position?.staked.amountUSD ??
+          undefined;
 
         return (
           <tr

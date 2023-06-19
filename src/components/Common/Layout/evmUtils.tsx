@@ -2,6 +2,7 @@ interface SupportedPoolsType {
   [pool: string]: string[];
 }
 
+// Pools which are supported for interacting in current version
 export const supportedPools: SupportedPoolsType = {
   moonriver: ["zenlink", "solarbeam"],
   moonbeam: ["curve", "zenlink", "stellaswap"],
@@ -9,6 +10,7 @@ export const supportedPools: SupportedPoolsType = {
   "mangata kusama": ["mangata x"],
 };
 
+// Chains metadata -- name, url, protocols
 export const chains = [
   {
     name: "moonriver",
@@ -61,8 +63,6 @@ export const chains = [
     ],
   },
 ];
-
-// ABIs
 
 // ABIs
 export const solarbeamChefAbi = [

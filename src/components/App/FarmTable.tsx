@@ -122,7 +122,6 @@ const FarmTable: FC<Props> = ({
           positionA?.unstaked.amountUSD + positionA?.staked.amountUSD;
         const currentB =
           positionB?.unstaked.amountUSD + positionB?.staked.amountUSD;
-        console.log("currentA", currentA, "\ncurrentB", currentB);
 
         return isNaN(currentA) // If position of A is NaN, push it back in both cases
           ? 1
