@@ -259,8 +259,9 @@ const Layout: FC<Props> = ({ children }) => {
         tvl: number;
       }) => {
         const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
+        // Making an empty object and them overwriting the original object to empty
+        const tempPositions: any = {};
         if (positions[name] !== undefined) {
-          const tempPositions = { ...positions };
           tempPositions[name] = {
             unstaked: {
               amount: 0,
@@ -945,7 +946,7 @@ const Layout: FC<Props> = ({ children }) => {
   // Side-effect for Substrate Chains
   useEffect(() => {
     if (!!account && farms.length > 0) {
-      console.log("runing mangata setup");
+      console.log("running mangata setup");
       fetchSubstratePositions();
     } else if (!account && farms.length > 0) {
       console.log("emptying mangata positions");
