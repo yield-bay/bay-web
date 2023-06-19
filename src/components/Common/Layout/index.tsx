@@ -14,7 +14,7 @@ import {
   fetchTokenPrices,
 } from "@utils/api";
 import { useAccount } from "wagmi";
-import { dotAccountAtom } from "@store/accountAtoms";
+import { dotAccountAtom, isConnectedDotAtom } from "@store/accountAtoms";
 import { Mangata } from "@mangata-finance/sdk";
 import { ethers } from "ethers";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";
@@ -47,6 +47,8 @@ const Layout: FC<Props> = ({ children }) => {
   }, [positions]);
 
   const { isConnected, address } = useAccount();
+  const [isConnectedDot] = useAtom(isConnectedDotAtom);
+
   const [account] = useAtom(dotAccountAtom);
 
   // Accounts for testing
@@ -240,53 +242,27 @@ const Layout: FC<Props> = ({ children }) => {
     // );
   };
 
-  const emptySubstratePositions = async () => {
-    const filteredFarms = farms.filter((f: any) => {
-      return (
-        f.protocol == "Mangata X" &&
-        f.chain == "Mangata Kusama" &&
-        f.chef == "xyk"
-      );
-    });
-
-    filteredFarms.forEach(
-      async (ff: {
-        chain: string;
-        protocol: string;
-        chef: string;
-        id: any;
-        asset: { symbol: string };
-        tvl: number;
-      }) => {
+  // method to empty substrate positions when wallet disconnected
+  const emptySubstratePositions = () => {
+    let positionKeysToRemove = new Array<string>();
+    farms.forEach((ff) => {
+      if (
+        ff.protocol == "Mangata X" &&
+        ff.chain == "Mangata Kusama" &&
+        ff.chef == "xyk"
+      ) {
         const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
-        // Making an empty object and them overwriting the original object to empty
-        const tempPositions: any = {};
         if (positions[name] !== undefined) {
-          tempPositions[name] = {
-            unstaked: {
-              amount: 0,
-              amountUSD: 0,
-            },
-            staked: {
-              amount: 0,
-              amountUSD: 0,
-            },
-            unclaimedRewards: [
-              {
-                token: "MGX",
-                amount: 0,
-                amountUSD: 0,
-              },
-            ],
-          };
-          console.log(`positions now ---\n`, tempPositions);
-          setPositions((prevState) => ({
-            ...prevState,
-            ...tempPositions,
-          }));
+          positionKeysToRemove.push(name);
         }
       }
+    });
+    const tempPositions = Object.fromEntries(
+      Object.entries(positions).filter(
+        ([key]) => !positionKeysToRemove.includes(key)
+      )
     );
+    setPositions(tempPositions);
   };
 
   /**
@@ -897,62 +873,41 @@ const Layout: FC<Props> = ({ children }) => {
 
   // method to empty evm positions when wallet disconnected
   const emptyEvmPositions = () => {
+    let positionKeysToRemove = new Array<string>();
     chains.forEach((chain) => {
       chain.protocols.forEach((protocol) => {
-        const filteredFarms = farms.filter((f: FarmType) => {
-          return (
+        farms.forEach((f) => {
+          if (
             f.protocol == protocol.name &&
             f.chain == chain.name &&
             f.chef == protocol.chef
-          );
-        });
-        filteredFarms.forEach(
-          async (ff: {
-            chain: string;
-            protocol: string;
-            chef: string;
-            id: number;
-            asset: { symbol: string; address: string };
-          }) => {
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
-            const tempPositions: any = {};
-
+          ) {
+            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${f.id}-${f.asset.symbol}`;
             if (positions[name] !== undefined) {
-              tempPositions[name] = {
-                unstaked: {
-                  amount: 0,
-                  amountUSD: 0,
-                },
-                staked: {
-                  amount: 0,
-                  amountUSD: 0,
-                },
-                unclaimedRewards: [],
-              };
+              positionKeysToRemove.push(name);
             }
-
-            setPositions((prevState) => {
-              return {
-                ...prevState,
-                ...tempPositions,
-              };
-            });
           }
-        );
+        });
       });
     });
+    const tempPositions = Object.fromEntries(
+      Object.entries(positions).filter(
+        ([key]) => !positionKeysToRemove.includes(key)
+      )
+    );
+    setPositions(tempPositions);
   };
 
   // Side-effect for Substrate Chains
   useEffect(() => {
-    if (!!account && farms.length > 0) {
+    if (isConnectedDot && farms.length > 0) {
       console.log("running mangata setup");
       fetchSubstratePositions();
-    } else if (!account && farms.length > 0) {
+    } else if (!isConnectedDot && farms.length > 0) {
       console.log("emptying mangata positions");
       emptySubstratePositions();
     }
-  }, [account, farms]);
+  }, [isConnectedDot, farms]);
 
   // Side-effect for EVM Chains
   useEffect(() => {

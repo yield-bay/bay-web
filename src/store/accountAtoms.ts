@@ -32,5 +32,8 @@ export const dotAccountAtom = atom(
     );
   }
 );
-
 dotAccountAtom.debugLabel = "polkadotAccount";
+
+export const isConnectedDotAtom = atom((get) => {
+  return !!get(dotAccountAtom);
+});
