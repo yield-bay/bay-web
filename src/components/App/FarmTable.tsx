@@ -58,6 +58,24 @@ const FarmTable: FC<Props> = ({
     if (farms.length > 0) handleSort(sortStatus.key, false);
   }, [farms]);
 
+  useEffect(() => {
+    // Sorts the table based on positions if there are any
+    if (sortStatus.key !== "pos") {
+      if (Object.keys(positions).length > 0) {
+        setShowSupportedFarms(true);
+        sortStatusSet({
+          key: "pos",
+          order: Order.DESC,
+        });
+      }
+    }
+  }, [positions]);
+
+  /**
+   * Method to handle farms table sorting
+   * @param key Key of the main sorting sorting column ("tvl" by default)
+   * @param toggle Sorting order
+   */
   const handleSort = (key: string, toggle: boolean) => {
     let newSortStatus: {
       key: string;
