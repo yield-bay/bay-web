@@ -1,10 +1,15 @@
 const solarbeamMoonriver = require("./solarbeam-moonriver-router.json");
 const stellaswapMoonbeam = require("./stellaswap-moonbeam-router.json");
-const zenlinkAster = require("./zenlink-aster-router.json");
+const zenlinkAstar = require("./zenlink-astar-router.json");
 const zenlinkMoonriver = require("./zenlink-moonriver-router.json");
 const zenlinkMoonbeam = require("./zenlink-moonbeam-router.json");
 const curveMoonbeamD2oUsdt = require("./curve-moonbeam-d2o-usdt.json");
 const curveMoonbeamStdot = require("./curve-moonbeam-stdot.json");
+const beamswapMoonbeam = require("./beamswap-moonbeam-router.json");
+const solarflareMoonbeam = require("./solarflare-moonbeam-router.json");
+const sushiswapMoonriver = require("./sushiswap-moonriver-router.json");
+const arthswapAstar = require("./arthswap-astar-router.json");
+const siriusAstar = require("./sirius-astar-router.json");
 
 export function getAbi(protocol: string, chain: string, lpToken: string) {
   if (protocol !== undefined && chain !== undefined && lpToken !== undefined) {
@@ -18,8 +23,8 @@ export function getAbi(protocol: string, chain: string, lpToken: string) {
           return stellaswapMoonbeam;
         }
       case "zenlink":
-        if (chain.toLowerCase() == "aster") {
-          return zenlinkAster;
+        if (chain.toLowerCase() == "astar") {
+          return zenlinkAstar;
         } else if (chain.toLowerCase() == "moonriver") {
           return zenlinkMoonriver;
         } else if (chain.toLowerCase() == "moonbeam") {
@@ -32,6 +37,26 @@ export function getAbi(protocol: string, chain: string, lpToken: string) {
           } else if (lpToken.toLowerCase() == "stdot") {
             return curveMoonbeamStdot;
           }
+        }
+      case "beamswap":
+        if (chain.toLowerCase() == "moonbeam") {
+          return beamswapMoonbeam;
+        }
+      case "solarflare":
+        if (chain.toLowerCase() == "moonbeam") {
+          return solarflareMoonbeam;
+        }
+      case "sushiswap":
+        if (chain.toLowerCase() == "moonriver") {
+          return sushiswapMoonriver;
+        }
+      case "arthswap":
+        if (chain.toLowerCase() == "astar") {
+          return arthswapAstar;
+        }
+      case "Sirius":
+        if (chain.toLowerCase() == "astar") {
+          return siriusAstar;
         }
       default:
         return [];
@@ -63,6 +88,11 @@ export function getAddLiqFunctionName(protocol: string) {
     case "solarbeam":
     case "stellaswap":
     case "zenlink":
+    case "beamswap":
+    case "solarflare":
+    case "sushiswap":
+    case "arthswap":
+    case "Sirius":
       return "addLiquidity";
     default:
       return "";
@@ -77,6 +107,11 @@ export function getRemoveLiquidFunctionName(protocol: string) {
     case "solarbeam":
     case "stellaswap":
     case "zenlink":
+    case "beamswap":
+    case "solarflare":
+    case "sushiswap":
+    case "arthswap":
+    case "Sirius":
       return "removeLiquidity";
     default:
       return "";
