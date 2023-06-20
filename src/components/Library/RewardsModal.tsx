@@ -6,6 +6,8 @@ import {
   getLpTokenSymbol,
 } from "@utils/farmListMethods";
 import Link from "next/link";
+import { UnclaimedRewardType } from "@utils/types";
+import clsx from "clsx";
 
 interface Props {
   open: boolean;
@@ -26,11 +28,20 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
         <p>Unclaimed Rewards</p>
       </div>
       {positions.map((position, index) => {
-        const unclaimedRewards = position?.unclaimedRewards;
+        const unclaimedRewards: UnclaimedRewardType[] =
+          position?.unclaimedRewards;
+        const totalUnclaimedAmount = unclaimedRewards.reduce(
+          (acc, reward) => acc + reward.amount,
+          0
+        );
+
         return (
           <div
             key={index}
-            className="flex flex-col gap-y-3 items-start sm:gap-y-0 sm:flex-row justify-between rounded-xl w-full border border-[#EAECF0] p-6 shadow"
+            className={clsx(
+              "flex flex-col gap-y-3 items-start sm:gap-y-0 sm:flex-row justify-between rounded-xl w-full border border-[#EAECF0] p-6 shadow",
+              totalUnclaimedAmount == 0 && "hidden"
+            )}
           >
             <div className="flex flex-col gap-y-6 justify-between">
               <div className="text-left">
@@ -41,23 +52,23 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
                 </p>
               </div>
               <div className="flex flex-col gap-y-2 max-w-fit">
-                {unclaimedRewards.map((reward: any, index: number) => (
-                  <div
-                    key={index}
-                    className="inline-flex items-center gap-x-2 text-base leading-5"
-                  >
-                    {/* <Image
-                      src="/moonbeam.svg"
-                      alt="reward token"
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    /> */}
-                    <p>
-                      {reward.amount.toFixed(2)} {reward.token}
-                    </p>
-                  </div>
-                ))}
+                {unclaimedRewards.map(
+                  (reward: UnclaimedRewardType, index: number) => {
+                    return (
+                      <div
+                        key={index}
+                        className="inline-flex items-center gap-x-2 text-base leading-5"
+                      >
+                        <span>
+                          {reward.amount >= 0.01
+                            ? reward.amount.toFixed(2)
+                            : "<0.01"}{" "}
+                          {reward.token}
+                        </span>
+                      </div>
+                    );
+                  }
+                )}
               </div>
             </div>
             <Link

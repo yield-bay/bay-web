@@ -1,28 +1,25 @@
-export function calcTotalUnclaimedRewards(userPositions: any) {
-  let total = 0;
-  for (let i = 0; i < userPositions.length; i++) {
-    let position = userPositions[i];
-    for (let j = 0; j < position.unclaimedRewards.length; j++) {
-      total += position.unclaimedRewards[j].amountUSD;
-    }
-  }
-  return total.toFixed(2);
+import { PortfolioPositionType } from "./types";
+
+export function calcTotalUnclaimedRewards(
+  userPositions: PortfolioPositionType[]
+) {
+  const totalRewards = userPositions.reduce((accumulator: number, position) => {
+    return (
+      accumulator +
+      position.unclaimedRewards.reduce((sum: number, reward) => {
+        return sum + reward.amountUSD;
+      }, 0)
+    );
+  }, 0);
+  return totalRewards.toFixed(2);
 }
 
-export function calcUnclaimedReward(position: any) {
-  let total = 0;
-  for (let i = 0; i < position.unclaimedRewards.length; i++) {
-    total += position.unclaimedRewards[i].amountUSD;
-  }
-  return total.toFixed(2);
-}
-
-export function calcNetWorth(userPositions: any) {
-  let total = 0;
-  for (let i = 0; i < userPositions.length; i++) {
-    total +=
-      userPositions[i].unstaked.amountUSD + userPositions[i].staked.amountUSD;
-  }
+export function calcNetWorth(userPositions: PortfolioPositionType[]) {
+  const total = userPositions.reduce(
+    (acc, currPosition) =>
+      acc + currPosition.unstaked.amountUSD + currPosition.staked.amountUSD,
+    0
+  );
   return total.toFixed(2);
 }
 

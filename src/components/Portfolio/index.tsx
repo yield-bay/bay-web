@@ -19,7 +19,7 @@ import { filteredChainAtom, positionsAtom } from "@store/atoms";
 import useFilteredPositionType from "@hooks/useFilteredPositionType";
 import { useQuery } from "@tanstack/react-query";
 import { fetchListicleFarms } from "@utils/api";
-import { FarmType } from "@utils/types";
+import { FarmType, PortfolioPositionType } from "@utils/types";
 import { useAccount } from "wagmi";
 import { dotAccountAtom } from "@store/accountAtoms";
 import ClientOnly from "@components/Common/ClientOnly";
@@ -32,9 +32,11 @@ const PortfolioPage = () => {
   // Storage
   const [searchTerm, setSearchTerm] = useState("");
   const [positionType, setPositionType] = useState(0);
-  const [userPositions, setUserPositions] = useState<any[]>([]);
+  const [userPositions, setUserPositions] = useState<PortfolioPositionType[]>(
+    []
+  );
   const [netWorth, setNetWorth] = useState(0);
-  const [totalUnclaimedRewards, setTotalUnclaimedRewards] = useState(0);
+  const [totalUnclaimedRewardsUSD, setTotalUnclaimedRewardsUSD] = useState(0);
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState<boolean>(false);
 
   // Users wallet
@@ -95,13 +97,13 @@ const PortfolioPage = () => {
   const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
 
   useEffect(() => {
-    if (userPositions) {
+    if (!!userPositions) {
       const netWorth = parseFloat(calcNetWorth(userPositions));
-      const unclaimedRewards = parseFloat(
+      const unclaimedRewardsUSD = parseFloat(
         calcTotalUnclaimedRewards(userPositions)
       );
       setNetWorth(netWorth);
-      setTotalUnclaimedRewards(unclaimedRewards);
+      setTotalUnclaimedRewardsUSD(unclaimedRewardsUSD);
     }
   }, [userPositions]);
 
@@ -122,7 +124,7 @@ const PortfolioPage = () => {
             </p>
           </div>
           {(isConnected || account) && userPositions.length > 0 ? (
-            totalUnclaimedRewards >= 0 ? (
+            totalUnclaimedRewardsUSD > 0 ? (
               <div
                 className="w-full sm:w-1/2 flex hover:ring-[1px] ring-[#6DA695] transition-all cursor-pointer ring-opacity-70 flex-row justify-between rounded-xl py-6 px-8 text-left bg-rewards-card"
                 onClick={() => setIsRewardsModalOpen(true)}
@@ -132,17 +134,18 @@ const PortfolioPage = () => {
                     Unclaimed rewards worth
                   </p>
                   <p className="mt-3 font-semibold text-4xl leading-[44px]">
-                    ${totalUnclaimedRewards}
+                    {totalUnclaimedRewardsUSD >= 0.01
+                      ? `$${totalUnclaimedRewardsUSD}`
+                      : "<$0.01"}
                   </p>
                 </div>
                 <ChevronRightIcon className="w-6 mr-4 text-white" />
               </div>
             ) : (
               <div className="w-1/2 rounded-xl p-6 text-left border border-[#D6D6D6]">
-                <p className="font-medium text-base leading-6">
+                <span className="font-medium text-base leading-6">
                   No Rewards Yet
-                </p>
-                <p className="mt-3 font-semibold text-4xl leading-[44px]"></p>
+                </span>
               </div>
             )
           ) : null}

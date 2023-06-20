@@ -1,4 +1,5 @@
 import { formatTokenSymbols } from "@utils/farmListMethods";
+import { PortfolioPositionType } from "@utils/types";
 
 /**
  *
@@ -7,9 +8,9 @@ import { formatTokenSymbols } from "@utils/farmListMethods";
  * @returns Filtered farms list according to search term
  */
 export default function useFilteredPositions(
-  positions: any[],
+  positions: PortfolioPositionType[],
   search: string
-): [any[], boolean] {
+): [PortfolioPositionType[], boolean] {
   if (!positions) return [[], true];
   if (search === "") return [positions, false];
   const searchTerm = search.trim().toUpperCase();

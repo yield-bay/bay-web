@@ -34,7 +34,7 @@ import {
   protocolURL,
 } from "@utils/farmPageMethods";
 import { addrQueryAtom, idQueryAtom, positionsAtom } from "@store/atoms";
-import { farmTypeDesc } from "@utils/farmPageMethods";
+import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
 import { FarmType } from "@utils/types";
@@ -43,7 +43,6 @@ import InfoContainer from "@components/Library/InfoContainer";
 import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
-import { calcUnclaimedReward } from "@utils/portfolioMethods";
 import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
 
 const FarmPage: NextPage = () => {
@@ -67,7 +66,7 @@ const FarmPage: NextPage = () => {
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
   const [positions] = useAtom(positionsAtom);
 
-  const [calcOpen, setCalcOpen] = useState<boolean>(false);
+  // const [calcOpen, setCalcOpen] = useState<boolean>(false);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);
 
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState<boolean>(false);
@@ -87,8 +86,10 @@ const FarmPage: NextPage = () => {
   }, [router]);
 
   useEffect(() => {
-    if (farmPosition) {
-      const unclaimedRewards = parseFloat(calcUnclaimedReward(farmPosition));
+    if (!!farmPosition) {
+      const unclaimedRewards = parseFloat(
+        calcUnclaimedReward(farmPosition.unclaimedRewards)
+      );
       setUnclaimedReward(unclaimedRewards);
     }
   }, [farmPosition]);

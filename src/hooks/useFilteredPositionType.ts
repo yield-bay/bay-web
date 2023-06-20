@@ -1,3 +1,5 @@
+import { PortfolioPositionType } from "@utils/types";
+
 /**
  *
  * @param positions - List of positions
@@ -5,9 +7,9 @@
  * @returns - Filtered list of positions according to option select
  */
 export default function useFilteredPositionType(
-  positions: any[],
+  positions: PortfolioPositionType[],
   id: number
-): any[] {
+): PortfolioPositionType[] {
   if (!positions) return [];
   else if (id == 0) return positions; // All
   else if (id == 1) {

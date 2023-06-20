@@ -1,3 +1,5 @@
+import { UnclaimedRewardType } from "./types";
+
 type RewardType = {
   amount: number;
   asset: string;
@@ -12,6 +14,14 @@ type RewardType = {
  */
 export function calcTotalRewardValue(rewards: RewardType[]) {
   return rewards.reduce((acc, current) => acc + current.valueUSD, 0);
+}
+
+export function calcUnclaimedReward(unclaimedRewards: UnclaimedRewardType[]) {
+  const totalRewards = unclaimedRewards.reduce(
+    (acc, current) => acc + current.amountUSD,
+    0
+  );
+  return totalRewards.toFixed(2);
 }
 
 /**

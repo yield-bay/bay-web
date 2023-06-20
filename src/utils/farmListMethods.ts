@@ -10,7 +10,7 @@ export function formatFirstLetter(name: string): string {
  * @param farm - Farm whose protocol URL is required
  * @returns - Protocol URL of the farm
  */
-export function farmURL(farm: FarmType): string {
+export function farmURL(farm: any): string {
   switch (farm.protocol.toLowerCase()) {
     case "stellaswap":
       return "https://app.stellaswap.com/farm";

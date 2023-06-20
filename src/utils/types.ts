@@ -41,3 +41,38 @@ export interface TokenPriceType {
   protocol: string;
   symbol: string;
 }
+
+export interface UnclaimedRewardType {
+  token: string;
+  amount: number;
+  amountUSD: number;
+}
+
+export interface PositionType {
+  unstaked: {
+    amount: number;
+    amountUSD: number;
+  };
+  staked: {
+    amount: number;
+    amountUSD: number;
+  };
+  unclaimedRewards: UnclaimedRewardType[];
+}
+
+export interface PortfolioPositionType {
+  unstaked: {
+    amount: number;
+    amountUSD: number;
+  };
+  staked: {
+    amount: number;
+    amountUSD: number;
+  };
+  unclaimedRewards: UnclaimedRewardType[];
+  chain: string;
+  protocol: string;
+  address: string;
+  id: number;
+  lpSymbol: string;
+}
