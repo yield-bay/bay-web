@@ -1,4 +1,4 @@
-import { FC, Fragment } from "react";
+import { FC, Fragment, memo } from "react";
 import clsx from "clsx";
 import Image from "next/image";
 import Link from "next/link";
@@ -83,4 +83,4 @@ const MobileMenu: FC<MenuProps> = ({ currentPath, children }) => {
     </Popover>
   );
 };
-export default MobileMenu;
+export default memo(MobileMenu);

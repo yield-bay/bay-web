@@ -1,11 +1,6 @@
 import { useState, useEffect } from "react";
 import debounce from "@utils/debounce";
 
-/**
- *
- * @param windowWidth - Width of the window
- * @returns - Range of width in Tailwind responsive notions
- */
 const calculateScreenWidth = (windowWidth: number): string => {
   if (windowWidth >= 1536) {
     return "2xl";

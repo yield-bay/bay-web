@@ -400,7 +400,13 @@ const FarmPage: NextPage = () => {
                 </thead>
                 <tbody className="divide-y divide-[#EAECF0]">
                   {farm?.rewards.map((reward, index) => (
-                    <tr className="font-medium text-sm leading-5" key={index}>
+                    <tr
+                      className={clsx(
+                        "font-medium text-sm leading-5",
+                        reward.amount == 0 && "hidden"
+                      )}
+                      key={index}
+                    >
                       <td className="py-[14px] pl-6 inline-flex items-center">
                         <Image
                           src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}

@@ -29,6 +29,7 @@ export const farmTypesAtom = atom<FarmTypesType[]>([
   { id: 2, name: "Standard Swap" },
   { id: 3, name: "Stable Swap" },
   { id: 4, name: "Single Staking" },
+  { id: 5, name: "Concentrated liquidity" },
 ]);
 
 export const positionsAtom = atom<{ [key: string]: any }>({});
