@@ -21,6 +21,7 @@ import SearchInput from "@components/Library/SearchInput";
 import clsx from "clsx";
 import { useAccount } from "wagmi";
 import { dotAccountAtom } from "@store/accountAtoms";
+import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 
 enum Order {
   ASC,
@@ -49,6 +50,8 @@ const FarmTable: FC<Props> = ({
   const [showSupportedFarms, setShowSupportedFarms] = useAtom(
     showSupportedFarmsAtom
   );
+  const [isEvmPosLoading] = useAtom(evmPosLoadingAtom);
+  const [isSubPosLoading] = useAtom(subPosLoadingAtom);
 
   // Users wallet
   const { isConnected } = useAccount();
@@ -60,7 +63,7 @@ const FarmTable: FC<Props> = ({
 
   useEffect(() => {
     // Sorts the table based on positions if there are any
-    if (sortStatus.key !== "pos") {
+    if (sortStatus.key !== "pos" && !isEvmPosLoading && !isSubPosLoading) {
       if (Object.keys(positions).length > 0) {
         setShowSupportedFarms(true);
         sortStatusSet({
@@ -69,7 +72,7 @@ const FarmTable: FC<Props> = ({
         });
       }
     }
-  }, [positions]);
+  }, [positions, isEvmPosLoading, isSubPosLoading]);
 
   /**
    * Method to handle farms table sorting

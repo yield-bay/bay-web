@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAtom } from "jotai";
@@ -14,7 +14,7 @@ import {
   checkIfPoolSupported,
 } from "@utils/farmListMethods";
 import { FarmType } from "@utils/types";
-import { dotAccountAtom } from "@store/accountAtoms";
+import { dotAccountAtom, isConnectedDotAtom } from "@store/accountAtoms";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -24,6 +24,7 @@ import ShareFarm from "@components/Library/ShareFarm";
 import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
+import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 
 interface Props {
   farms: FarmType[];
@@ -32,10 +33,12 @@ interface Props {
 
 const FarmsList: FC<Props> = ({ farms, positions }) => {
   const router = useRouter();
+  const [isEvmPosLoading] = useAtom(evmPosLoadingAtom);
+  const [isSubPosLoading] = useAtom(subPosLoadingAtom);
 
   // Users wallet
   const { isConnected } = useAccount();
-  const [account] = useAtom(dotAccountAtom);
+  const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   return (
     <>
@@ -124,10 +127,14 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
             <td
               className={clsx(
                 "whitespace-nowrap py-4 px-0 md:px-6 text-center text-sm font-medium",
-                (isConnected || account !== null) && "bg-[#F0F0FF]"
+                (isConnected || isConnectedDot) && "bg-[#F0F0FF]"
               )}
             >
-              {!!currentPosition && currentPosition > 0 ? (
+              {isEvmPosLoading || isSubPosLoading ? (
+                <div className="w-full">
+                  <div className="bg-[#d1d1f1] mx-auto animate-shiny rounded-full h-5 w-10" />
+                </div>
+              ) : !!currentPosition && currentPosition > 0 ? (
                 <Tooltip
                   label={
                     <div className="max-w-[143px]">
@@ -154,14 +161,17 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                   placement="bottom"
                 >
                   <span className="cursor-default underline underline-offset-4 decoration-dashed">
-                    {"$" + currentPosition.toFixed(2)}
+                    {"$" +
+                      parseFloat(currentPosition.toFixed(2)).toLocaleString(
+                        "en-US"
+                      )}
                   </span>
                 </Tooltip>
               ) : (
                 <Tooltip
                   label={
                     !isConnected &&
-                    !account && <p>Connect Wallet to View Positions</p>
+                    !isConnectedDot && <p>Connect Wallet to View Positions</p>
                   }
                   placement="bottom"
                 >

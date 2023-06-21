@@ -27,6 +27,7 @@ import {
   stellaswapChefAbi,
   stellaswapV1ChefAbi,
 } from "./evmUtils";
+import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 
 interface Props {
   children: ReactNode;
@@ -50,6 +51,9 @@ const Layout: FC<Props> = ({ children }) => {
   const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   const [account] = useAtom(dotAccountAtom);
+
+  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
+  const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
 
   // Accounts for testing
   // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
@@ -137,6 +141,7 @@ const Layout: FC<Props> = ({ children }) => {
    */
   const fetchSubstratePositions = async () => {
     console.log("substrate setup initialised");
+    setIsSubPosLoading(true);
     // Filter Mangata X Farms
     const filteredFarms = farms.filter((f: any) => {
       return (
@@ -172,15 +177,18 @@ const Layout: FC<Props> = ({ children }) => {
       }
     }
 
-    filteredFarms.forEach(
-      async (ff: {
-        chain: string;
-        protocol: string;
-        chef: string;
-        id: any;
-        asset: { symbol: string };
-        tvl: number;
-      }) => {
+    const promises = filteredFarms.map(
+      async (
+        ff: {
+          chain: string;
+          protocol: string;
+          chef: string;
+          id: any;
+          asset: { symbol: string };
+          tvl: number;
+        },
+        index
+      ) => {
         // users balance
         const bal: any = await mangata.getTokenBalance(
           ff.id, // token id
@@ -238,6 +246,12 @@ const Layout: FC<Props> = ({ children }) => {
         }
       }
     );
+
+    // await to check if all promises are resolved
+    console.log("...fetching substrate positions 🚧");
+    await Promise.allSettled(promises);
+    console.log("fetched substrate positions! ✅");
+    setIsSubPosLoading(false);
     // }
     // );
   };
@@ -271,11 +285,13 @@ const Layout: FC<Props> = ({ children }) => {
    * Protocols -- Curve, Zenlink, Solarbeam, Stellaswap
    */
   const fetchEvmPositions = async () => {
-    // console.log("farms", farms, " =>", farms.length);
+    // Fetching EVM positions...
+    setIsEvmPosLoading(true);
+    let allPromises = new Array<Promise<void>>();
+
     chains.forEach((chain) => {
       const provider = ethers.getDefaultProvider(chain.url!);
       chain.protocols.forEach((protocol) => {
-        // [...new Set(array)]
         const filteredFarms = farms.filter((f: FarmType) => {
           return (
             f.protocol == protocol.name &&
@@ -307,7 +323,7 @@ const Layout: FC<Props> = ({ children }) => {
             );
           }
           // provider.on("block", async () => {
-          filteredFarms.forEach(
+          const stella = filteredFarms.map(
             async (ff: {
               chain: string;
               protocol: string;
@@ -446,6 +462,7 @@ const Layout: FC<Props> = ({ children }) => {
               );
             }
           );
+          allPromises.push(...stella);
           // });
         } else if (protocol.name == "solarbeam") {
           const chef = new ethers.Contract(
@@ -454,7 +471,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          filteredFarms.forEach(
+          const solar = filteredFarms.map(
             async (ff: {
               chain: any;
               protocol: any;
@@ -579,6 +596,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after solarbeam positions", positions);
             }
           );
+          allPromises.push(...solar);
           // });
         } else if (protocol.name == "zenlink") {
           const chef = new ethers.Contract(
@@ -587,7 +605,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          filteredFarms.forEach(
+          const zen = filteredFarms.map(
             async (ff: {
               chain: string;
               protocol: string;
@@ -729,6 +747,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after zenlink positions", positions);
             }
           );
+          allPromises.push(...zen);
           // });
         } else if (protocol.name == "curve") {
           const chef = new ethers.Contract(
@@ -737,7 +756,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          filteredFarms.forEach(
+          const cur = filteredFarms.map(
             async (ff: {
               chain: any;
               protocol: any;
@@ -864,10 +883,16 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after curve positions", positions);
             }
           );
+          allPromises.push(...cur);
           // });
         }
       });
     });
+
+    console.log("...fetching evm positions 🚧");
+    await Promise.allSettled(allPromises);
+    setIsEvmPosLoading(false);
+    console.log("fetched evm positions! ✅");
     console.log("positionsnow", positions);
   };
 

@@ -21,12 +21,12 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchListicleFarms } from "@utils/api";
 import { FarmType, PortfolioPositionType } from "@utils/types";
 import { useAccount } from "wagmi";
-import { dotAccountAtom } from "@store/accountAtoms";
+import { isConnectedDotAtom } from "@store/accountAtoms";
 import ClientOnly from "@components/Common/ClientOnly";
 import RewardsModal from "@components/Library/RewardsModal";
 import PositionCard from "./PositionCard";
 import toDollarUnits from "@utils/toDollarUnits";
-import { useHover } from "usehooks-ts";
+import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 
 const PortfolioPage = () => {
   // Avaiable chains we are supporting
@@ -43,15 +43,13 @@ const PortfolioPage = () => {
 
   // Users wallet
   const { isConnected } = useAccount();
-  const [account] = useAtom(dotAccountAtom);
+  const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   // Atoms
   const [positions] = useAtom(positionsAtom);
   const [selectedChain] = useAtom(filteredChainAtom);
-
-  // Ref
-  const networthRef = useRef(null);
-  const isNetworthHovered = useHover(networthRef);
+  const [isEvmPosLoading] = useAtom(evmPosLoadingAtom);
+  const [isSubPosLoading] = useAtom(subPosLoadingAtom);
 
   // Filteration layers
   const filteredByType = useFilteredPositionType(userPositions, positionType);
@@ -115,22 +113,28 @@ const PortfolioPage = () => {
         <MetaTags title={`Portfolio • ${APP_NAME}`} />
         <div className="mb-[30px] text-white flex flex-col gap-y-6 sm:flex-row gap-x-[17px] w-full">
           <div
-            ref={networthRef}
             className={clsx(
-              "w-full sm:w-1/2 rounded-xl p-6 text-left bg-net-worth-card",
+              "w-full sm:w-1/2 rounded-xl p-6 group text-left bg-net-worth-card",
               userPositions.length == 0 && "max-w-[364px]"
             )}
           >
             <p className="font-medium text-base leading-6">Net Worth</p>
             <p className="mt-3 font-semibold text-4xl leading-[44px]">
-              {isConnected || account
-                ? isNetworthHovered
-                  ? `$${netWorth.toLocaleString("en-US")}`
-                  : toDollarUnits(netWorth, 2)
-                : "???"}
+              {isConnected || isConnectedDot ? (
+                <>
+                  <span className="hidden group-hover:block">
+                    ${netWorth.toLocaleString("en-US")}
+                  </span>
+                  <span className="group-hover:hidden">
+                    {toDollarUnits(netWorth, 2)}
+                  </span>
+                </>
+              ) : (
+                "???"
+              )}
             </p>
           </div>
-          {(isConnected || account) && userPositions.length > 0 ? (
+          {(isConnected || isConnectedDot) && userPositions.length > 0 ? (
             totalUnclaimedRewardsUSD > 0 ? (
               <div
                 className="w-full sm:w-1/2 flex hover:ring-[1px] ring-[#6DA695] transition-all cursor-pointer ring-opacity-70 flex-row justify-between rounded-xl py-6 px-8 text-left bg-rewards-card"
@@ -200,7 +204,9 @@ const PortfolioPage = () => {
             </div>
           </div>
           {/* Positions catagorized by Chains */}
-          {isConnected || !!account ? (
+          {(isConnected || isConnectedDot) &&
+          !isEvmPosLoading &&
+          !isSubPosLoading ? (
             userPositions.length == 0 || netWorth == 0 ? (
               <div className="flex justify-center text-[#1D2939] h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)">
                 <div className="flex flex-col mt-[125px] h-fit gap-y-[46px] items-center text-center">
@@ -274,7 +280,9 @@ const PortfolioPage = () => {
             <div className="relative flex justify-center text-[#1D2939]">
               <div className="absolute flex flex-col mt-[151px] h-fit items-center">
                 <p className="max-w-[183px] text-center font-bold text-xl leading-6">
-                  Connect wallet To View Positions
+                  {isEvmPosLoading || isSubPosLoading
+                    ? "Loading Positions..."
+                    : "Connect wallet To View Positions"}
                 </p>
               </div>
               <div className="w-full p-0 sm:px-12 sm:py-8 grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
