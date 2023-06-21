@@ -55,7 +55,7 @@ const SelectChain: FC<Props> = ({ availableChains }) => {
             leaveFrom="transform scale-100 opacity-100"
             leaveTo="transform scale-95 opacity-0"
           >
-            <Listbox.Options className="absolute z-20 right-10 mt-[270px] bg-white border border-[#EAECF0] overflow-auto rounded-lg py-2 px-1 text-[#344054] text-sm font-semibold leading-5 shadow-lg focus:outline-none">
+            <Listbox.Options className="absolute z-20 mt-[270px] bg-white border border-[#EAECF0] overflow-auto rounded-lg py-2 px-1 text-[#344054] text-sm font-semibold leading-5 shadow-lg focus:outline-none">
               {chains.map((chain, index) => {
                 return (
                   <Listbox.Option

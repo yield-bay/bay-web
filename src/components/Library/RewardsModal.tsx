@@ -59,9 +59,18 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
                         key={index}
                         className="inline-flex items-center gap-x-2 text-base leading-5"
                       >
+                        <Image
+                          src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.token.toUpperCase()}.png`}
+                          alt={reward.token + "_logo"}
+                          width={24}
+                          height={24}
+                          className="rounded-full"
+                        />
                         <span>
                           {reward.amount >= 0.01
-                            ? reward.amount.toFixed(2)
+                            ? parseFloat(
+                                reward.amount.toFixed(2)
+                              ).toLocaleString("en-US")
                             : "<0.01"}{" "}
                           {reward.token}
                         </span>
