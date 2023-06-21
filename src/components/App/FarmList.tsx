@@ -86,7 +86,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
               </div>
             </td>
             <td className="whitespace-nowrap py-4 text-left sm:pr-3 sm:pl-6 font-medium text-sm leading-5">
-              {toDollarUnits(farm?.tvl)}
+              {toDollarUnits(farm?.tvl, 1)}
             </td>
             <td className="hidden base:table-cell whitespace-nowrap py-4 pl-6 pr-3 text-base leading-5">
               <div className="w-full inline-flex justify-start items-center gap-x-2">
@@ -110,7 +110,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                   placement="bottom"
                 >
                   <p className="cursor-default underline underline-offset-4 decoration-dashed text-sm font-medium">
-                    {(farm?.apr.base + farm?.apr.reward).toFixed(2)}%
+                    {`${(farm?.apr.base + farm?.apr.reward).toFixed(2)}%`}
                   </p>
                 </Tooltip>
               </div>

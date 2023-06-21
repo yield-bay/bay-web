@@ -2,7 +2,7 @@ import SearchInput from "@components/Library/SearchInput";
 import MetaTags from "@components/Common/metaTags/MetaTags";
 import { APP_NAME } from "@utils/constants";
 import clsx from "clsx";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronRightIcon } from "@heroicons/react/solid";
 import { formatFirstLetter, formatTokenSymbols } from "@utils/farmListMethods";
 import Link from "next/link";
@@ -25,6 +25,8 @@ import { dotAccountAtom } from "@store/accountAtoms";
 import ClientOnly from "@components/Common/ClientOnly";
 import RewardsModal from "@components/Library/RewardsModal";
 import PositionCard from "./PositionCard";
+import toDollarUnits from "@utils/toDollarUnits";
+import { useHover } from "usehooks-ts";
 
 const PortfolioPage = () => {
   // Avaiable chains we are supporting
@@ -46,6 +48,10 @@ const PortfolioPage = () => {
   // Atoms
   const [positions] = useAtom(positionsAtom);
   const [selectedChain] = useAtom(filteredChainAtom);
+
+  // Ref
+  const networthRef = useRef(null);
+  const isNetworthHovered = useHover(networthRef);
 
   // Filteration layers
   const filteredByType = useFilteredPositionType(userPositions, positionType);
@@ -98,12 +104,8 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     if (!!userPositions) {
-      const netWorth = parseFloat(calcNetWorth(userPositions));
-      const unclaimedRewardsUSD = parseFloat(
-        calcTotalUnclaimedRewards(userPositions)
-      );
-      setNetWorth(netWorth);
-      setTotalUnclaimedRewardsUSD(unclaimedRewardsUSD);
+      setNetWorth(calcNetWorth(userPositions));
+      setTotalUnclaimedRewardsUSD(calcTotalUnclaimedRewards(userPositions));
     }
   }, [userPositions]);
 
@@ -113,6 +115,7 @@ const PortfolioPage = () => {
         <MetaTags title={`Portfolio • ${APP_NAME}`} />
         <div className="mb-[30px] text-white flex flex-col gap-y-6 sm:flex-row gap-x-[17px] w-full">
           <div
+            ref={networthRef}
             className={clsx(
               "w-full sm:w-1/2 rounded-xl p-6 text-left bg-net-worth-card",
               userPositions.length == 0 && "max-w-[364px]"
@@ -120,7 +123,11 @@ const PortfolioPage = () => {
           >
             <p className="font-medium text-base leading-6">Net Worth</p>
             <p className="mt-3 font-semibold text-4xl leading-[44px]">
-              ${isConnected || account ? netWorth : "???"}
+              {isConnected || account
+                ? isNetworthHovered
+                  ? `$${netWorth.toLocaleString("en-US")}`
+                  : toDollarUnits(netWorth, 2)
+                : "???"}
             </p>
           </div>
           {(isConnected || account) && userPositions.length > 0 ? (
@@ -135,7 +142,9 @@ const PortfolioPage = () => {
                   </p>
                   <p className="mt-3 font-semibold text-4xl leading-[44px]">
                     {totalUnclaimedRewardsUSD >= 0.01
-                      ? `$${totalUnclaimedRewardsUSD}`
+                      ? `$${parseFloat(
+                          totalUnclaimedRewardsUSD.toFixed(2)
+                        ).toLocaleString("en-US")}`
                       : "<$0.01"}
                   </p>
                 </div>

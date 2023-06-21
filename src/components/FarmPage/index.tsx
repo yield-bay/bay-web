@@ -159,7 +159,7 @@ const FarmPage: NextPage = () => {
                   </p>
                 </div>
                 <div className="flex flex-row max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
-                  <div className="flex flex-col items-end gap-y-1">
+                  <div className="flex flex-col justify-between items-end">
                     <p className="inline-flex items-center text-sm leading-5">
                       <Tooltip
                         label={<span>Not Staked in a Farm</span>}
@@ -179,7 +179,7 @@ const FarmPage: NextPage = () => {
                       LP
                     </p>
                   </div>
-                  <div className="flex flex-col items-end gap-y-1">
+                  <div className="flex flex-col justify-between items-end">
                     <p className="inline-flex items-center text-sm leading-5">
                       <Tooltip
                         label={<span>Staked in a Farm</span>}
@@ -235,7 +235,7 @@ const FarmPage: NextPage = () => {
             <InfoContainer variant="primary" className="flex flex-col gap-y-1">
               <p className="text-sm leading-5">TVL (Total Value Locked)</p>
               <p className="text-2xl leading-7 font-bold text-[#101828]">
-                {toDollarUnits(farm?.tvl)}
+                {toDollarUnits(farm?.tvl, 1)}
               </p>
             </InfoContainer>
             {/* APR */}
@@ -418,16 +418,18 @@ const FarmPage: NextPage = () => {
                         />
                         <span className="ml-3">{reward.asset}</span>
                       </td>
-                      <td className="py-[14px] pl-6 underline underline-offset-4 decoration-dotted decoration-3 decoration-[#475467] cursor-default">
+                      <td className="py-[14px] pl-6 underline underline-offset-4 decoration-dashed decoration-[#475467] cursor-default">
                         <Tooltip
-                          label={<div>{"$" + reward.valueUSD.toFixed(1)}</div>}
+                          label={<>{"$" + reward.valueUSD.toFixed(1)}</>}
+                          placement="top"
                         >
-                          <>
-                            {parseFloat(
+                          <span>
+                            {`${parseFloat(
                               reward.amount.toFixed(1)
-                            ).toLocaleString("en-US")}
-                            /{reward.freq === "Weekly" ? "WEEK" : "DAY"}
-                          </>
+                            ).toLocaleString("en-US")}/${
+                              reward.freq === "Weekly" ? "WEEK" : "DAY"
+                            }`}
+                          </span>
                         </Tooltip>
                       </td>
                       <td className="py-[14px] pl-6">

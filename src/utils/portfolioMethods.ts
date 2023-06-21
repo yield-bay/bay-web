@@ -3,7 +3,7 @@ import { PortfolioPositionType } from "./types";
 export function calcTotalUnclaimedRewards(
   userPositions: PortfolioPositionType[]
 ) {
-  const totalRewards = userPositions.reduce((accumulator: number, position) => {
+  return userPositions.reduce((accumulator: number, position) => {
     return (
       accumulator +
       position.unclaimedRewards.reduce((sum: number, reward) => {
@@ -11,16 +11,14 @@ export function calcTotalUnclaimedRewards(
       }, 0)
     );
   }, 0);
-  return totalRewards.toFixed(2);
 }
 
 export function calcNetWorth(userPositions: PortfolioPositionType[]) {
-  const total = userPositions.reduce(
+  return userPositions.reduce(
     (acc, currPosition) =>
       acc + currPosition.unstaked.amountUSD + currPosition.staked.amountUSD,
     0
   );
-  return total.toFixed(2);
 }
 
 export function joinArrayElements(

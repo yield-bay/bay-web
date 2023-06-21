@@ -183,7 +183,7 @@ const MobileFarmList: FC<Props> = ({
                   <div className="inline-flex items-center gap-x-3">
                     <SafetyScorePill score={safetyScore} />
                     <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-[#F4F4F4] text-[#475467]">
-                      {toDollarUnits(farm?.tvl)} TVL
+                      {toDollarUnits(farm?.tvl, 1)} TVL
                     </span>
                     <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-[#F4F4F4] text-[#475467]">
                       {(farm?.apr.base + farm?.apr.reward).toFixed(2)}% APR
