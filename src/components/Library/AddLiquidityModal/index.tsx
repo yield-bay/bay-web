@@ -69,6 +69,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   }, [isOpen]);
 
   useEffect(() => {
+    // Get block data
     publicClient
       .getBlock()
       .then((x) => {
@@ -94,19 +95,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     chainId: chain?.id,
     // token: tokenAddress
   });
-
-  useEffect(() => {
-    if (!!selectedFarm) {
-      console.log(
-        "abi for current pool",
-        getAbi(
-          selectedFarm?.protocol as string,
-          selectedFarm?.chain as string,
-          getLpTokenSymbol(tokenNames)
-        )
-      );
-    }
-  }, [selectedFarm]);
 
   // Write contract
   const { config } = usePrepareContractWrite({
