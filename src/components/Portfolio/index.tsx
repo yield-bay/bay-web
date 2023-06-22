@@ -123,7 +123,7 @@ const PortfolioPage = () => {
               {isConnected || isConnectedDot ? (
                 <>
                   <span className="hidden group-hover:block">
-                    ${netWorth.toLocaleString("en-US")}
+                    ${parseFloat(netWorth.toFixed(2)).toLocaleString("en-US")}
                   </span>
                   <span className="group-hover:hidden">
                     {toDollarUnits(netWorth, 2)}

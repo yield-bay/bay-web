@@ -248,9 +248,7 @@ const Layout: FC<Props> = ({ children }) => {
     );
 
     // await to check if all promises are resolved
-    console.log("...fetching substrate positions 🚧");
     await Promise.allSettled(promises);
-    console.log("fetched substrate positions! ✅");
     setIsSubPosLoading(false);
     // }
     // );
@@ -889,10 +887,8 @@ const Layout: FC<Props> = ({ children }) => {
       });
     });
 
-    console.log("...fetching evm positions 🚧");
     await Promise.allSettled(allPromises);
     setIsEvmPosLoading(false);
-    console.log("fetched evm positions! ✅");
     console.log("positionsnow", positions);
   };
 
