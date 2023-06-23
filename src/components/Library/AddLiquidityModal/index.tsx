@@ -8,6 +8,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
+import { parseAbiItem } from "viem";
+import BN from "bn.js";
 import {
   useAccount,
   useNetwork,
@@ -25,10 +27,12 @@ import {
   getAddLiqFunctionName,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
+import { tokenAbi } from "@components/Common/Layout/evmUtils";
+const STELLA_ABI = require("@utils/abis/stella.json");
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
-  const [selectedFarm] = useAtom(selectedFarmAtom);
+  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const { address } = useAccount();
   const { chain } = useNetwork();
   const publicClient = usePublicClient();
@@ -37,6 +41,10 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [token0, token1] = tokenNames;
   const [farmAsset0, farmAsset1] =
     selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
+
+  useEffect(() => {
+    console.log("selectedFarm", selectedFarm);
+  }, [selectedFarm]);
 
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
@@ -99,6 +107,24 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     token: farmAsset1?.address,
   });
 
+  // Approve token
+  const { data: writeData, writeAsync } = useContractWrite({
+    address: farmAsset0?.address,
+    abi: STELLA_ABI,
+    functionName: "approve",
+    chainId: chain?.id,
+  });
+
+  useEffect(
+    () => console.log("farmaddress0", farmAsset0?.address),
+    [farmAsset0]
+  );
+
+  // const { data: approve0Data, writeAsync: approveToken0 } = useContractWrite(
+
+  // );
+
+  // useEffect(() => console.log("approve", xyz), [xyz]);
   // Write contract
   const { config } = usePrepareContractWrite({
     address:
@@ -147,6 +173,17 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     hash: data?.hash,
   });
 
+  const handleApproveToken0 = async () => {
+    const txn = await writeAsync?.({
+      args: [selectedFarm?.router, BigInt("0")],
+    });
+    console.log("txm", txn);
+  };
+
+  const { isLoading: isLoadingApprove } = useWaitForTransaction({
+    hash: writeData?.hash,
+  });
+
   const handleAddLiquidity = async () => {
     try {
       const txnRes = await addLiquidity?.();
@@ -161,8 +198,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
       setIsUnsupported(false);
     }
   }, [isToken0Approved, isToken1Approved]);
-
-  useEffect(() => console.log("farm", selectedFarm), [selectedFarm]);
 
   // Method to update token values and fetch fees based on firstToken Input
   const handleChangeFirstTokenAmount = async (e: any) => {
@@ -307,21 +342,20 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                   <MButton
                     type="secondary"
                     text={
-                      parseFloat(token0Balance?.formatted!) <= 0
-                        ? `Insufficient ${farmAsset0.symbol} Balance`
-                        : `Approve ${farmAsset0.symbol} Token`
+                      // parseFloat(token0Balance?.formatted!) <= 0
+                      // ? `Insufficient ${farmAsset0.symbol} Balance`
+                      // : `Approve ${farmAsset0.symbol} Token`
+                      "approve token0"
                     }
                     disabled={
-                      isToken0Approved ||
-                      isNaN(parseFloat(firstTokenAmount)) ||
-                      parseFloat(token0Balance?.formatted!) <= 0
+                      isToken0Approved || isNaN(parseFloat(firstTokenAmount))
+                      // parseFloat(token0Balance?.formatted!) <= 0
                     }
                     onClick={() => {
-                      setIsToken0Approved(true);
+                      handleApproveToken0();
                     }}
                   />
                 )}
-
                 {!isToken1Approved && (
                   <MButton
                     text={
@@ -336,7 +370,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                       parseFloat(token0Balance?.formatted!) <= 0
                     }
                     onClick={() => {
-                      setIsToken1Approved(true);
+                      handleApproveToken0();
                     }}
                   />
                 )}
@@ -394,5 +428,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     )
   );
 };
+
+// ("function approve(address guy, uint wad) public returns (bool)");
 
 export default AddLiquidityModal;

@@ -105,3 +105,7 @@ export const lpAbi = [
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
 ];
+
+export const tokenAbi = [
+  "function approve(address, uint256) external returns (bool)",
+];
