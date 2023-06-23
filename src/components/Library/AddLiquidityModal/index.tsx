@@ -107,25 +107,22 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     token: farmAsset1?.address,
   });
 
-  // Approve token
-  const { data: writeData, writeAsync } = useContractWrite({
+  // Approve token0
+  const { data: dataApprove0, writeAsync: approveToken0 } = useContractWrite({
+    address: farmAsset0?.address,
+    abi: STELLA_ABI,
+    functionName: "approve",
+    chainId: chain?.id,
+  });
+  // Approve token1
+  const { data: dataApprove1, writeAsync: approveToken1 } = useContractWrite({
     address: farmAsset0?.address,
     abi: STELLA_ABI,
     functionName: "approve",
     chainId: chain?.id,
   });
 
-  useEffect(
-    () => console.log("farmaddress0", farmAsset0?.address),
-    [farmAsset0]
-  );
-
-  // const { data: approve0Data, writeAsync: approveToken0 } = useContractWrite(
-
-  // );
-
-  // useEffect(() => console.log("approve", xyz), [xyz]);
-  // Write contract
+  // AddLiquidity Prepare Contract
   const { config } = usePrepareContractWrite({
     address:
       selectedFarm?.protocol.toLowerCase() != "zenlink"
@@ -165,24 +162,20 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     writeAsync: addLiquidity,
   } = useContractWrite(config);
 
-  useEffect(() => {
-    console.log("async addliquidity method", addLiquidity);
-  }, [addLiquidity]);
-
+  // Wait AddLiquidity Txn
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
   });
 
-  const handleApproveToken0 = async () => {
-    const txn = await writeAsync?.({
-      args: [selectedFarm?.router, BigInt("0")],
+  // Waiting for Txns
+  const { isLoading: isLoadingApprove0, isSuccess: isSuccessApprove0 } =
+    useWaitForTransaction({
+      hash: dataApprove0?.hash,
     });
-    console.log("txm", txn);
-  };
-
-  const { isLoading: isLoadingApprove } = useWaitForTransaction({
-    hash: writeData?.hash,
-  });
+  const { isLoading: isLoadingApprove1, isSuccess: isSuccessApprove1 } =
+    useWaitForTransaction({
+      hash: dataApprove1?.hash,
+    });
 
   const handleAddLiquidity = async () => {
     try {
@@ -223,6 +216,12 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     // // Calculate Fees
     // await handleFees(secondTokenAmount, expectedFirstTokenAmount);
   };
+
+  useEffect(() => {
+    if (isSuccessApprove0 && isSuccessApprove1) {
+      setIsUnsupported(false);
+    }
+  }, [isSuccessApprove0, isSuccessApprove1]);
 
   return (
     !!selectedFarm && (
@@ -338,39 +337,45 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
           <div className="flex flex-col gap-y-2">
             {isUnsupported ? (
               <>
-                {!isToken0Approved && (
+                {!isSuccessApprove0 && (
                   <MButton
                     type="secondary"
                     text={
-                      // parseFloat(token0Balance?.formatted!) <= 0
-                      // ? `Insufficient ${farmAsset0.symbol} Balance`
-                      // : `Approve ${farmAsset0.symbol} Token`
-                      "approve token0"
+                      isLoadingApprove0
+                        ? "Approving..."
+                        : `Approve ${farmAsset0.symbol} Token`
                     }
                     disabled={
-                      isToken0Approved || isNaN(parseFloat(firstTokenAmount))
-                      // parseFloat(token0Balance?.formatted!) <= 0
+                      isToken0Approved ||
+                      isNaN(parseFloat(firstTokenAmount)) ||
+                      isLoadingApprove0
                     }
-                    onClick={() => {
-                      handleApproveToken0();
+                    onClick={async () => {
+                      const txn = await approveToken0?.({
+                        args: [selectedFarm?.router, BigInt("0")],
+                      });
+                      console.log("Approve0 Result", txn);
                     }}
                   />
                 )}
-                {!isToken1Approved && (
+                {!isSuccessApprove1 && (
                   <MButton
                     text={
-                      parseFloat(token1Balance?.formatted!) <= 0
-                        ? `Insufficient ${farmAsset1.symbol} Balance`
+                      isLoadingApprove1
+                        ? "Approving..."
                         : `Approve ${farmAsset1.symbol} Token`
                     }
                     type="secondary"
                     disabled={
                       isToken1Approved ||
                       isNaN(parseFloat(secondTokenAmount)) ||
-                      parseFloat(token0Balance?.formatted!) <= 0
+                      isLoadingApprove1
                     }
-                    onClick={() => {
-                      handleApproveToken0();
+                    onClick={async () => {
+                      const txn = await approveToken1?.({
+                        args: [selectedFarm?.router, BigInt("0")],
+                      });
+                      console.log("Approve1 Result", txn);
                     }}
                   />
                 )}
