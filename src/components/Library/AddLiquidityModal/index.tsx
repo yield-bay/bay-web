@@ -51,6 +51,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isUnsupported, setIsUnsupported] = useState(true);
 
   const [block, setBlock] = useState<Block | null>(null);
+  const [blockTimestamp, setBlockTimestamp] = useState<Number>();
 
   // States
   // const [isProcessing, setIsProcessing] = useState(false);
@@ -59,13 +60,16 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
   const SLIPPAGE = 0.5; // In percentage
 
-  const { data: blockNumber } = useBlockNumber({
-    enabled: Boolean(debouncedFirstTokenAmount && debouncedSecondTokenAmount),
-  });
-
   useEffect(() => {
+    // Empty the values when Modal is opened or closed
     setFirstTokenAmount("");
     setSecondTokenAmount("");
+  }, [isOpen]);
+
+  // To check if Token0 and Token1 are approved
+  useEffect(() => {
+    setIsToken0Approved(false);
+    setIsToken1Approved(false);
   }, [isOpen]);
 
   useEffect(() => {
@@ -74,26 +78,25 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
       .getBlock()
       .then((x) => {
         setBlock(x);
-        console.log("block", x.timestamp, typeof x.timestamp);
-        console.log("block.timestamp in integer", Number(x.timestamp));
+        const timestamp = Number(x.timestamp.toString() + "000") + 60000; // Adding 1 minute
+        console.log("block.timestamp", timestamp);
+        setBlockTimestamp(timestamp);
       })
       .catch((error) => console.log("getBlock error", error));
   }, [publicClient]);
 
-  useEffect(() => {
-    console.log("debouncedFirstTokenAmount", debouncedFirstTokenAmount);
-    console.log("debouncedSecondTokenAmount", debouncedSecondTokenAmount);
-  }, [debouncedFirstTokenAmount, debouncedSecondTokenAmount]);
-
-  // Balance
-  const {
-    data: balanceData,
-    isLoading: balanceLoading,
-    isError: balanceError,
-  } = useBalance({
+  // Balance Token0
+  const { data: token0Balance, isLoading: token0BalanceLoading } = useBalance({
     address,
     chainId: chain?.id,
-    // token: tokenAddress
+    token: farmAsset0?.address,
+  });
+
+  // Balance Token1
+  const { data: token1Balance, isLoading: token1BalanceLoading } = useBalance({
+    address,
+    chainId: chain?.id,
+    token: farmAsset1?.address,
   });
 
   // Write contract
@@ -124,7 +127,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
         (parseFloat(debouncedSecondTokenAmount) * (100 - SLIPPAGE)) / 100
       ), // amountBMin
       address, // To
-      Number(block?.timestamp), // deadline (uint256)
+      blockTimestamp, // deadline (uint256)
     ],
     enabled: Boolean(debouncedFirstTokenAmount && debouncedSecondTokenAmount),
   });
@@ -135,6 +138,10 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     isSuccess: addLiquiditySuccess,
     writeAsync: addLiquidity,
   } = useContractWrite(config);
+
+  useEffect(() => {
+    console.log("async addliquidity method", addLiquidity);
+  }, [addLiquidity]);
 
   const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
@@ -186,20 +193,20 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     !!selectedFarm && (
       <ModalWrapper open={isOpen} setOpen={setIsOpen}>
         <p className="font-semibold text-lg text-left">Add Liquidity</p>
-        <div className="text-left text-base">
-          {balanceLoading ? (
-            <p>loading...</p>
-          ) : !!balanceData && !balanceError ? (
-            <p>
-              Balance: {balanceData?.formatted} {balanceData?.symbol}
-            </p>
-          ) : (
-            <p>error</p>
-          )}
-        </div>
         <div className="w-full flex flex-col gap-y-10">
           {/* First token Container */}
           <div className="flex flex-col gap-y-3">
+            <div className="text-left text-base">
+              {token0BalanceLoading ? (
+                <p>loading...</p>
+              ) : (
+                !!token0Balance && (
+                  <p>
+                    Balance: {token0Balance?.formatted} {token0Balance?.symbol}
+                  </p>
+                )
+              )}
+            </div>
             <div
               className={clsx(
                 "flex flex-row justify-between p-4 border border-[#727272] rounded-lg"
@@ -243,6 +250,17 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
           </div>
           {/* Second token container */}
           <div className="flex flex-col gap-y-3">
+            <div className="text-left text-base">
+              {token1BalanceLoading ? (
+                <p>loading...</p>
+              ) : (
+                !!token1Balance && (
+                  <p>
+                    Balance: {token1Balance?.formatted} {token1Balance?.symbol}
+                  </p>
+                )
+              )}
+            </div>
             <div
               className={clsx(
                 "flex flex-row justify-between p-4 border border-[#727272] rounded-lg"
@@ -285,26 +303,43 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
           <div className="flex flex-col gap-y-2">
             {isUnsupported ? (
               <>
-                <MButton
-                  type="secondary"
-                  text="Approve First Token"
-                  disabled={
-                    isToken0Approved || isNaN(parseFloat(firstTokenAmount))
-                  }
-                  onClick={() => {
-                    setIsToken0Approved(true);
-                  }}
-                />
-                <MButton
-                  type="secondary"
-                  text="Approve Second Token"
-                  disabled={
-                    isToken1Approved || isNaN(parseFloat(secondTokenAmount))
-                  }
-                  onClick={() => {
-                    setIsToken1Approved(true);
-                  }}
-                />
+                {!isToken0Approved && (
+                  <MButton
+                    type="secondary"
+                    text={
+                      parseFloat(token0Balance?.formatted!) <= 0
+                        ? `Insufficient ${farmAsset0.symbol} Balance`
+                        : `Approve ${farmAsset0.symbol} Token`
+                    }
+                    disabled={
+                      isToken0Approved ||
+                      isNaN(parseFloat(firstTokenAmount)) ||
+                      parseFloat(token0Balance?.formatted!) <= 0
+                    }
+                    onClick={() => {
+                      setIsToken0Approved(true);
+                    }}
+                  />
+                )}
+
+                {!isToken1Approved && (
+                  <MButton
+                    text={
+                      parseFloat(token1Balance?.formatted!) <= 0
+                        ? `Insufficient ${farmAsset1.symbol} Balance`
+                        : `Approve ${farmAsset1.symbol} Token`
+                    }
+                    type="secondary"
+                    disabled={
+                      isToken1Approved ||
+                      isNaN(parseFloat(secondTokenAmount)) ||
+                      parseFloat(token0Balance?.formatted!) <= 0
+                    }
+                    onClick={() => {
+                      setIsToken1Approved(true);
+                    }}
+                  />
+                )}
               </>
             ) : (
               <MButton
@@ -314,8 +349,9 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                   firstTokenAmount == "" ||
                   secondTokenAmount == "" ||
                   (parseFloat(firstTokenAmount) <= 0 &&
-                    parseFloat(secondTokenAmount) <= 0 &&
-                    (!addLiquidity || isLoading))
+                    parseFloat(secondTokenAmount) <= 0) ||
+                  typeof addLiquidity == "undefined" ||
+                  isLoading
                 }
                 text={isLoading ? "Processing..." : "Confirm"}
                 onClick={() => {

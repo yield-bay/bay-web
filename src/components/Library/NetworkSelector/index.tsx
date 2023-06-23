@@ -5,6 +5,7 @@ import { useWalletState } from "@hooks/useWalletState";
 import { useConnect, useNetwork, useSwitchNetwork } from "wagmi";
 import clsx from "clsx";
 import { getSupportedChains } from "@utils/network";
+import ClientOnly from "@components/Common/ClientOnly";
 
 export const NetworkSelector: FC = () => {
   const { chain: evmChain } = useNetwork();
@@ -40,7 +41,7 @@ export const NetworkSelector: FC = () => {
     <Popover className="relative">
       {({ open }) => {
         return (
-          <>
+          <ClientOnly>
             <Popover.Button
               className={clsx(
                 "flex items-center gap-1 md:gap-2 !bg-black/[0.04] dark:!bg-white/[0.04] hover:!bg-black/[0.08] hover:!dark:bg-white/[0.08] hover:text-black hover:dark:text-white h-[38px] rounded-xl px-2 !font-semibold !text-sm text-slate-800 dark:text-slate-200"
@@ -58,7 +59,7 @@ export const NetworkSelector: FC = () => {
               />
             </Popover.Button>
             {panel}
-          </>
+          </ClientOnly>
         );
       }}
     </Popover>
