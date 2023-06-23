@@ -1,6 +1,6 @@
 export type UnderlyingAssets = {
   symbol: string;
-  address: string;
+  address: `0x${string}`;
   decimals: number;
 };
 
@@ -26,7 +26,7 @@ export interface FarmType {
   farmImpl: string;
   asset: {
     symbol: string;
-    address: string;
+    address: `0x${string}`;
     price: number;
     logos: string[];
     underlyingAssets: UnderlyingAssets[];
@@ -42,7 +42,7 @@ export interface TokenPriceType {
   chain: string;
   protocol: string;
   symbol: string;
-  address: string;
+  address: `0x${string}`;
   price: number;
   underlyingAssets: UnderlyingAssets[];
 }
@@ -77,7 +77,7 @@ export interface PortfolioPositionType {
   unclaimedRewards: UnclaimedRewardType[];
   chain: string;
   protocol: string;
-  address: string;
+  address: `0x${string}`;
   id: number;
   lpSymbol: string;
 }
