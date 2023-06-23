@@ -123,7 +123,45 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   });
 
   // AddLiquidity Prepare Contract
-  const { config } = usePrepareContractWrite({
+  // const { config } = usePrepareContractWrite(
+  //   {
+  //   address:
+  //     selectedFarm?.protocol.toLowerCase() != "zenlink"
+  //       ? selectedFarm?.router
+  //       : getContractAddress(
+  //           selectedFarm?.protocol as string,
+  //           getLpTokenSymbol(tokenNames)
+  //         ),
+  //   abi: getAbi(
+  //     selectedFarm?.protocol as string,
+  //     selectedFarm?.chain as string,
+  //     getLpTokenSymbol(tokenNames)
+  //   ),
+  //   functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
+  //   chainId: chain?.id,
+  //   args: [
+  //     farmAsset0?.address, // TokenA Address
+  //     farmAsset1?.address, // TokenB Address
+  //     parseFloat(debouncedFirstTokenAmount), // amountADesired
+  //     parseFloat(debouncedSecondTokenAmount), // amountBDesired
+  //     Math.floor(
+  //       (parseFloat(debouncedFirstTokenAmount) * (100 - SLIPPAGE)) / 100
+  //     ), // amountAMin
+  //     Math.floor(
+  //       (parseFloat(debouncedSecondTokenAmount) * (100 - SLIPPAGE)) / 100
+  //     ), // amountBMin
+  //     address, // To
+  //     blockTimestamp, // deadline (uint256)
+  //   ],
+  //   enabled: Boolean(debouncedFirstTokenAmount && debouncedSecondTokenAmount),
+  // });
+
+  const {
+    data: addLiquidityData,
+    isLoading: addLiquidityLoading,
+    isSuccess: addLiquiditySuccess,
+    writeAsync: addLiquidity,
+  } = useContractWrite({
     address:
       selectedFarm?.protocol.toLowerCase() != "zenlink"
         ? selectedFarm?.router
@@ -152,20 +190,21 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
       address, // To
       blockTimestamp, // deadline (uint256)
     ],
-    enabled: Boolean(debouncedFirstTokenAmount && debouncedSecondTokenAmount),
   });
-
-  const {
-    data,
-    isLoading: addLiquidityLoading,
-    isSuccess: addLiquiditySuccess,
-    writeAsync: addLiquidity,
-  } = useContractWrite(config);
 
   // Wait AddLiquidity Txn
-  const { isLoading, isSuccess } = useWaitForTransaction({
-    hash: data?.hash,
-  });
+  const { isLoading: isLoadingAddLiq, isSuccess: isSuccessAddLiq } =
+    useWaitForTransaction({
+      hash: addLiquidityData?.hash,
+    });
+
+  useEffect(() => {
+    if (addLiquidityLoading) {
+      console.log("addliq method loading...");
+    } else if (isLoadingAddLiq) {
+      console.log("addliq txn loading...", isLoadingAddLiq);
+    }
+  }, [addLiquidityLoading, isLoadingAddLiq]);
 
   // Waiting for Txns
   const { isLoading: isLoadingApprove0, isSuccess: isSuccessApprove0 } =
@@ -348,7 +387,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                     disabled={
                       isToken0Approved ||
                       isNaN(parseFloat(firstTokenAmount)) ||
-                      isLoadingApprove0
+                      isLoadingApprove0 ||
+                      typeof approveToken0 == "undefined"
                     }
                     onClick={async () => {
                       const txn = await approveToken0?.({
@@ -369,7 +409,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                     disabled={
                       isToken1Approved ||
                       isNaN(parseFloat(secondTokenAmount)) ||
-                      isLoadingApprove1
+                      isLoadingApprove1 ||
+                      typeof approveToken1 == "undefined"
                     }
                     onClick={async () => {
                       const txn = await approveToken1?.({
@@ -390,9 +431,10 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                   (parseFloat(firstTokenAmount) <= 0 &&
                     parseFloat(secondTokenAmount) <= 0) ||
                   typeof addLiquidity == "undefined" ||
-                  isLoading
+                  isLoadingAddLiq ||
+                  isSuccessAddLiq
                 }
-                text={isLoading ? "Processing..." : "Confirm"}
+                text={isLoadingAddLiq ? "Processing..." : "Confirm"}
                 onClick={() => {
                   if (
                     parseFloat(firstTokenAmount) <= 0 &&
@@ -427,7 +469,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
               }}
             />
           </div>
-          {isSuccess && <div>Liquidity Added successfully</div>}
+          {isSuccessAddLiq && <div>Liquidity Added successfully</div>}
         </div>
       </ModalWrapper>
     )
