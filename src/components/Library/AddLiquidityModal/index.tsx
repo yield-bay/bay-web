@@ -9,7 +9,6 @@ import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import { parseAbiItem } from "viem";
-import BN from "bn.js";
 import {
   useAccount,
   useNetwork,
@@ -19,7 +18,6 @@ import {
   useWaitForTransaction,
   usePublicClient,
 } from "wagmi";
-import { type Block } from "viem";
 import { useDebounce } from "usehooks-ts";
 import {
   getAbi,
@@ -28,7 +26,7 @@ import {
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-const STELLA_ABI = require("@utils/abis/stella.json");
+import useBlockTimestamp from "@hooks/useBlockTimestamp";
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -54,12 +52,11 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const debouncedFirstTokenAmount = useDebounce(firstTokenAmount, 500);
   const debouncedSecondTokenAmount = useDebounce(secondTokenAmount, 500);
 
-  const [isToken0Approved, setIsToken0Approved] = useState(false);
-  const [isToken1Approved, setIsToken1Approved] = useState(false);
+  // const [isToken0Approved, setIsToken0Approved] = useState(false);
+  // const [isToken1Approved, setIsToken1Approved] = useState(false);
   const [isUnsupported, setIsUnsupported] = useState(true);
 
-  const [block, setBlock] = useState<Block | null>(null);
-  const [blockTimestamp, setBlockTimestamp] = useState<Number>();
+  const blockTimestamp = useBlockTimestamp(publicClient);
 
   // States
   // const [isProcessing, setIsProcessing] = useState(false);
@@ -72,26 +69,9 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     // Empty the values when Modal is opened or closed
     setFirstTokenAmount("");
     setSecondTokenAmount("");
+    // setIsToken0Approved(false);
+    // setIsToken1Approved(false);
   }, [isOpen]);
-
-  // To check if Token0 and Token1 are approved
-  useEffect(() => {
-    setIsToken0Approved(false);
-    setIsToken1Approved(false);
-  }, [isOpen]);
-
-  useEffect(() => {
-    // Get block data
-    publicClient
-      .getBlock()
-      .then((x) => {
-        setBlock(x);
-        const timestamp = Number(x.timestamp.toString() + "000") + 60000; // Adding 1 minute
-        console.log("block.timestamp", timestamp);
-        setBlockTimestamp(timestamp);
-      })
-      .catch((error) => console.log("getBlock error", error));
-  }, [publicClient]);
 
   // Balance Token0
   const { data: token0Balance, isLoading: token0BalanceLoading } = useBalance({
@@ -110,51 +90,17 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   // Approve token0
   const { data: dataApprove0, writeAsync: approveToken0 } = useContractWrite({
     address: farmAsset0?.address,
-    abi: STELLA_ABI,
-    functionName: "approve",
+    abi: [parseAbiItem(tokenAbi)],
+    functionName: "approve" as any,
     chainId: chain?.id,
   });
   // Approve token1
   const { data: dataApprove1, writeAsync: approveToken1 } = useContractWrite({
     address: farmAsset0?.address,
-    abi: STELLA_ABI,
-    functionName: "approve",
+    abi: [parseAbiItem(tokenAbi)],
+    functionName: "approve" as any,
     chainId: chain?.id,
   });
-
-  // AddLiquidity Prepare Contract
-  // const { config } = usePrepareContractWrite(
-  //   {
-  //   address:
-  //     selectedFarm?.protocol.toLowerCase() != "zenlink"
-  //       ? selectedFarm?.router
-  //       : getContractAddress(
-  //           selectedFarm?.protocol as string,
-  //           getLpTokenSymbol(tokenNames)
-  //         ),
-  //   abi: getAbi(
-  //     selectedFarm?.protocol as string,
-  //     selectedFarm?.chain as string,
-  //     getLpTokenSymbol(tokenNames)
-  //   ),
-  //   functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
-  //   chainId: chain?.id,
-  //   args: [
-  //     farmAsset0?.address, // TokenA Address
-  //     farmAsset1?.address, // TokenB Address
-  //     parseFloat(debouncedFirstTokenAmount), // amountADesired
-  //     parseFloat(debouncedSecondTokenAmount), // amountBDesired
-  //     Math.floor(
-  //       (parseFloat(debouncedFirstTokenAmount) * (100 - SLIPPAGE)) / 100
-  //     ), // amountAMin
-  //     Math.floor(
-  //       (parseFloat(debouncedSecondTokenAmount) * (100 - SLIPPAGE)) / 100
-  //     ), // amountBMin
-  //     address, // To
-  //     blockTimestamp, // deadline (uint256)
-  //   ],
-  //   enabled: Boolean(debouncedFirstTokenAmount && debouncedSecondTokenAmount),
-  // });
 
   const {
     data: addLiquidityData,
@@ -200,7 +146,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (addLiquidityLoading) {
-      console.log("addliq method loading...");
+      console.log("addliq method loading... sign the txn");
     } else if (isLoadingAddLiq) {
       console.log("addliq txn loading...", isLoadingAddLiq);
     }
@@ -224,12 +170,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    if (isToken0Approved && isToken1Approved) {
-      setIsUnsupported(false);
-    }
-  }, [isToken0Approved, isToken1Approved]);
 
   // Method to update token values and fetch fees based on firstToken Input
   const handleChangeFirstTokenAmount = async (e: any) => {
@@ -256,11 +196,11 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     // await handleFees(secondTokenAmount, expectedFirstTokenAmount);
   };
 
-  useEffect(() => {
-    if (isSuccessApprove0 && isSuccessApprove1) {
-      setIsUnsupported(false);
-    }
-  }, [isSuccessApprove0, isSuccessApprove1]);
+  // useEffect(() => {
+  //   if (isSuccessApprove0 && isSuccessApprove1) {
+  //     setIsUnsupported(false);
+  //   }
+  // }, [isSuccessApprove0, isSuccessApprove1]);
 
   return (
     !!selectedFarm && (
@@ -374,7 +314,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
           {/* Buttons */}
           <div className="flex flex-col gap-y-2">
-            {isUnsupported ? (
+            {!isSuccessApprove0 || !isSuccessApprove1 ? (
               <>
                 {!isSuccessApprove0 && (
                   <MButton
@@ -385,7 +325,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                         : `Approve ${farmAsset0.symbol} Token`
                     }
                     disabled={
-                      isToken0Approved ||
+                      isSuccessApprove0 ||
                       isNaN(parseFloat(firstTokenAmount)) ||
                       isLoadingApprove0 ||
                       typeof approveToken0 == "undefined"
@@ -407,7 +347,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                     }
                     type="secondary"
                     disabled={
-                      isToken1Approved ||
+                      isSuccessApprove1 ||
                       isNaN(parseFloat(secondTokenAmount)) ||
                       isLoadingApprove1 ||
                       typeof approveToken1 == "undefined"
@@ -453,7 +393,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                         (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) /
                         100,
                       msg_sender: address,
-                      block_timestamp: Number(block?.timestamp),
+                      block_timestamp: blockTimestamp,
                     });
                     // Handler of Add Liquidity
                     handleAddLiquidity();
