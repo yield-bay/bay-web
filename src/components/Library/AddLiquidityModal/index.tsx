@@ -30,7 +30,7 @@ import useBlockTimestamp from "@hooks/useBlockTimestamp";
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
-  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
+  const [selectedFarm] = useAtom(selectedFarmAtom);
   const { address } = useAccount();
   const { chain } = useNetwork();
   const publicClient = usePublicClient();

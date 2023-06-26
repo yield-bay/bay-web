@@ -104,6 +104,8 @@ export const lpAbi = [
   "function balanceOf(address) view returns (uint256)",
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
+  "function getReserves() view returns (uint112, uint112, uint32)",
+  "function totalSupply() external view returns (uint256)",
 ];
 
 export const tokenAbi = [
