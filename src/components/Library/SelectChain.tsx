@@ -1,7 +1,6 @@
 import { FC, Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { useAtom } from "jotai";
-import { ChevronDownIcon } from "@heroicons/react/solid";
 import { filteredChainAtom } from "@store/atoms";
 import clsx from "clsx";
 import Image from "next/image";

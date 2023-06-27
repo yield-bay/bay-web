@@ -56,7 +56,7 @@ const RemoveLiquidityModal = () => {
     farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
   const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
-    farm?.asset.address ?? "0x",
+    farm?.asset.address!,
     methodId == 0 ? parseFloat(percentage) : parseFloat(lpTokens),
     SLIPPAGE
   );

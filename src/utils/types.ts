@@ -86,12 +86,14 @@ export enum Network {
   MOONBEAM = "moonbeam",
   MOONRIVER = "moonriver",
   ASTAR = "astar",
+  HARDHAT = "hardhat",
 }
 
 export enum ChainId {
   MOONBEAM = 1284,
   MOONRIVER = 1285,
   ASTAR = 592,
+  HARDHAT = 31337,
 }
 
 export interface Chain {

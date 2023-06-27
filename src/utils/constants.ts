@@ -24,4 +24,5 @@ export const RPC_URL = {
   moonbeam: "https://rpc.api.moonbeam.network",
   moonriver: "https://rpc.api.moonriver.moonbeam.network",
   astar: "https://evm.astar.network",
+  hardhat: "http://localhost:8545",
 };

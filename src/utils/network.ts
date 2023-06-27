@@ -4,6 +4,7 @@ import { ChainId, Network } from "./types";
 const moonbeamRpcUrl = RPC_URL.moonbeam;
 const moonriverRpcUrl = RPC_URL.moonriver;
 const astarRpcUrl = RPC_URL.astar;
+const hardhartRpcUrl = RPC_URL.hardhat;
 
 export const getChainIdForNetwork = (network: Network): ChainId => {
   let chainId = ChainId.MOONBEAM;
@@ -17,6 +18,8 @@ export const getChainIdForNetwork = (network: Network): ChainId => {
     case "astar":
       chainId = ChainId.ASTAR;
       break;
+    case "hardhat":
+      chainId = ChainId.ASTAR;
     default:
       break;
   }
@@ -35,49 +38,12 @@ export const getRpcUrlForNetwork = (network: string) => {
     case "astar":
       rpcUrl = astarRpcUrl;
       break;
+    case "hardhat":
+      rpcUrl = hardhartRpcUrl;
     default:
       break;
   }
   return rpcUrl;
-};
-
-// Astar Network Configuration
-export const astar = {
-  id: ChainId.ASTAR,
-  name: "Astar",
-  network: Network.ASTAR,
-  nativeCurrency: {
-    decimals: 18,
-    name: "MOVR",
-    symbol: "MOVR",
-  },
-  rpcUrls: {
-    public: {
-      http: [RPC_URL.astar],
-      webSocket: ["wss://moonriver.public.blastapi.io"],
-    },
-    default: {
-      http: [RPC_URL.astar],
-      webSocket: ["wss://moonriver.public.blastapi.io"],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: "Moonscan",
-      url: "https://moonriver.moonscan.io",
-    },
-    etherscan: {
-      name: "Moonscan",
-      url: "https://moonriver.moonscan.io",
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11" as `0x${string}`,
-      blockCreated: 1597904,
-    },
-  },
-  testnet: false,
 };
 
 export const getSupportedChains = () => {
@@ -93,6 +59,11 @@ export const getSupportedChains = () => {
     {
       id: ChainId.ASTAR,
       name: "Astar",
+    },
+    // For dev
+    {
+      id: ChainId.HARDHAT,
+      name: "Hardhat",
     },
   ];
 };
