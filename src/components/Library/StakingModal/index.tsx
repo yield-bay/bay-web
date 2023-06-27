@@ -14,8 +14,11 @@ import {
 import MButton from "../MButton";
 import { selectedFarmAtom } from "@store/atoms";
 import ModalWrapper from "../ModalWrapper";
-import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbiItem } from "viem";
+import {
+  stellaswapV1ChefAbi,
+  tokenAbi,
+} from "@components/Common/Layout/evmUtils";
+import { parseAbi, parseAbiItem } from "viem";
 import { getContractAddress } from "@utils/abis/contract-helper-methods";
 import useBlockTimestamp from "@hooks/useBlockTimestamp";
 import {
@@ -109,19 +112,18 @@ const StakingModal = () => {
   } = useContractWrite({
     address:
       farm?.protocol.toLowerCase() != "zenlink"
-        ? farm?.router
+        ? farm?.chef
         : getContractAddress(
             farm?.protocol as string,
             getLpTokenSymbol(tokenNames)
           ),
-    abi: getAbi(
-      farm?.protocol as string,
-      farm?.chain as string,
-      getLpTokenSymbol(tokenNames)
-    ),
-    functionName: getAddLiqFunctionName(farm?.protocol as string),
+    abi: [...parseAbi(stellaswapV1ChefAbi)],
+    functionName: "deposit" as any,
     chainId: chain?.id,
-    args: [],
+    args: [
+      farm?.id, // pid
+      methodId == 0 ? (lpBalanceNum * parseFloat(percentage)) / 100 : lpTokens, // amount
+    ],
   });
 
   // Wait staking Txn
@@ -234,19 +236,24 @@ const StakingModal = () => {
             text="Confirm Staking"
             // disabled={lpTokensDisabled || percentageDisabled}
             disabled={
-              !isSuccessLpApprove ||
+              // !isSuccessLpApprove ||
               (methodId == 0
                 ? isNaN(parseFloat(percentage))
-                : isNaN(parseFloat(lpTokens))) ||
-              typeof staking == "undefined"
+                : isNaN(parseFloat(lpTokens))) || typeof staking == "undefined"
             }
             onClick={() => {
-              console.log("Stking setting: {}");
+              console.log("Staking args:", {
+                pid: farm?.id,
+                amount:
+                  methodId == 0
+                    ? (lpBalanceNum * parseFloat(percentage)) / 100
+                    : lpTokens,
+              });
               handleStaking();
             }}
           />
         </div>
-        {isSuccessStaking && <p>Successfully Staked LP Tokens</p>}
+        {isSuccessStaking && <p>✅ Successfully Staked LP Tokens</p>}
       </div>
     </ModalWrapper>
   );

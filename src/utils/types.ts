@@ -18,7 +18,7 @@ type APR = {
 
 export interface FarmType {
   id: number;
-  chef: string;
+  chef: `0x${string}`;
   chain: string;
   protocol: string;
   router: `0x${string}`;
