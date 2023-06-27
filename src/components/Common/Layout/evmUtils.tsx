@@ -83,7 +83,8 @@ export const stellaswapV1ChefAbi = [
   "function poolInfo(uint256) view returns (address lpToken, uint256 allocPoint, uint256 lastRewardBlock, uint256 accStellaPerShare, uint16 depositFeeBP, uint256 harvestInterval, uint256 totalLp)",
   "function userInfo(uint256, address) view returns (uint256 amount, uint256 rewardDebt, uint256 rewardLockedUp, uint256 nextHarvestUntil)",
   "function pendingStella(uint256, address) view returns (uint256 amount)",
-  "function deposit(uint256 _pid, uint256 _amount) public",
+  "function deposit(uint256, uint256) public",
+  "function withdraw(uint256, uint256) public",
 ];
 
 export const zenlinkChefAbi = [

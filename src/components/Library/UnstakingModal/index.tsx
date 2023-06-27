@@ -1,14 +1,13 @@
 import { FC, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
-import { stakingModalOpenAtom } from "@store/commonAtoms";
+import { unstakingModalOpenAtom } from "@store/commonAtoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
   useBalance,
   useContractWrite,
   useNetwork,
-  usePublicClient,
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
@@ -20,8 +19,6 @@ import {
 } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseAbiItem } from "viem";
 import { getContractAddress } from "@utils/abis/contract-helper-methods";
-import useBlockTimestamp from "@hooks/useBlockTimestamp";
-import { UnderlyingAssets } from "@utils/types";
 
 interface ChosenMethodProps {
   percentage: string;
@@ -32,13 +29,11 @@ interface ChosenMethodProps {
   methodId: number;
 }
 
-const StakingModal = () => {
+const UnstakingModal = () => {
   const { address } = useAccount();
-  const [isOpen, setIsOpen] = useAtom(stakingModalOpenAtom);
+  const [isOpen, setIsOpen] = useAtom(unstakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
-  const publicClient = usePublicClient();
 
-  // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
   const [percentage, setPercentage] = useState<string>("");
   const [lpTokens, setLpTokens] = useState<string>("");
   const [methodId, setMethodId] = useState<number>(0);
@@ -83,25 +78,12 @@ const StakingModal = () => {
     }
   }, [lpBalanceLoading, lpBalance]);
 
-  // Approve LP token
-  const { data: dataLpApprove, writeAsync: approveLpToken } = useContractWrite({
-    address: farm?.asset.address,
-    abi: [parseAbiItem(tokenAbi)],
-    functionName: "approve" as any,
-    chainId: chain?.id,
-  });
-  // Waiting for Txns
-  const { isLoading: isLoadingLpApprove, isSuccess: isSuccessLpApprove } =
-    useWaitForTransaction({
-      hash: dataLpApprove?.hash,
-    });
-
-  // Stake LP Tokens
+  // Unstake LP Tokens
   const {
-    data: stakingData,
-    isLoading: stakingLoading,
-    isSuccess: stakingSuccess,
-    writeAsync: staking,
+    data: unstakingData,
+    isLoading: unstakingCallLoading,
+    isSuccess: unstakingCallSuccess,
+    writeAsync: unstaking,
   } = useContractWrite({
     address:
       farm?.protocol.toLowerCase() != "zenlink"
@@ -111,7 +93,7 @@ const StakingModal = () => {
             getLpTokenSymbol(tokenNames)
           ),
     abi: [...parseAbi(stellaswapV1ChefAbi)],
-    functionName: "deposit" as any,
+    functionName: "withdraw" as any,
     chainId: chain?.id,
     args: [
       farm?.id, // pid
@@ -119,23 +101,23 @@ const StakingModal = () => {
     ],
   });
 
-  // Wait staking Txn
-  const { isLoading: isLoadingStaking, isSuccess: isSuccessStaking } =
+  // Wait unstaking Txn
+  const { isLoading: isLoadingUnstakingTxn, isSuccess: isSuccessUnstakingTxn } =
     useWaitForTransaction({
-      hash: stakingData?.hash,
+      hash: unstakingData?.hash,
     });
 
   useEffect(() => {
-    if (stakingLoading) {
-      console.log("staking method loading... sign the txn");
-    } else if (isLoadingStaking) {
-      console.log("staking txn loading...", isLoadingStaking);
+    if (unstakingCallLoading) {
+      console.log("unstaking method loading... sign the txn");
+    } else if (isLoadingUnstakingTxn) {
+      console.log("unstaking txn loading...", isLoadingUnstakingTxn);
     }
-  }, [stakingLoading, isLoadingStaking]);
+  }, [unstakingCallLoading, isLoadingUnstakingTxn]);
 
-  const handleStaking = async () => {
+  const handleUnstaking = async () => {
     try {
-      const txnRes = await staking?.();
+      const txnRes = await unstaking?.();
       console.log("txnResult", txnRes);
     } catch (error) {
       console.error(error);
@@ -147,7 +129,7 @@ const StakingModal = () => {
       <div className="w-full flex flex-col gap-y-10 mt-10 text-base">
         {/* Input Box based on the chosen method to enter tokens amount */}
         <h1 className="text-left font-semibold text-lg -mb-5">
-          Stake LP Tokens
+          Unstake LP Tokens
         </h1>
         <div className="flex flex-col gap-y-5">
           <ChosenMethod
@@ -197,56 +179,41 @@ const StakingModal = () => {
             <span>89 STELLA</span>
           </p>
         </div>
-        <div className="flex flex-row gap-2">
+        <div>
           <MButton
+            className="w-full"
             type="secondary"
-            className="w-1/2"
             text={
-              isSuccessLpApprove
-                ? "Approved"
-                : isLoadingLpApprove
-                ? "Approving..."
-                : `Approve Token`
+              isSuccessUnstakingTxn
+                ? "Transaction Submitted"
+                : unstakingCallLoading
+                ? "Waiting for Confirmation..."
+                : isLoadingUnstakingTxn
+                ? "Waiting for txn to complete..."
+                : "Confirm Unstaking"
             }
             disabled={
-              isSuccessLpApprove ||
+              isSuccessUnstakingTxn ||
+              unstakingCallLoading ||
+              isLoadingUnstakingTxn ||
               (methodId == 0
                 ? isNaN(parseFloat(percentage))
                 : isNaN(parseFloat(lpTokens))) ||
-              isLoadingLpApprove ||
-              typeof approveLpToken == "undefined"
-            }
-            onClick={async () => {
-              const txn = await approveLpToken?.({
-                args: [farm?.router, BigInt("0")],
-              });
-              console.log("Approve LP Token txn", txn);
-            }}
-          />
-          <MButton
-            className="w-1/2"
-            type="secondary"
-            text="Confirm Staking"
-            disabled={
-              !isSuccessLpApprove ||
-              (methodId == 0
-                ? isNaN(parseFloat(percentage))
-                : isNaN(parseFloat(lpTokens))) ||
-              typeof staking == "undefined"
+              typeof unstaking == "undefined"
             }
             onClick={() => {
-              console.log("Staking args:", {
+              console.log("Unstaking args:", {
                 pid: farm?.id,
                 amount:
                   methodId == 0
                     ? (lpBalanceNum * parseFloat(percentage)) / 100
                     : lpTokens,
               });
-              handleStaking();
+              handleUnstaking();
             }}
           />
         </div>
-        {isSuccessStaking && <p>✅ Successfully Staked LP Tokens</p>}
+        {isSuccessUnstakingTxn && <p>✅ Successfully Unstaked LP Tokens</p>}
       </div>
     </ModalWrapper>
   );
@@ -313,4 +280,4 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
   );
 };
 
-export default StakingModal;
+export default UnstakingModal;

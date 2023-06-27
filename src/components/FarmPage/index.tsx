@@ -43,6 +43,7 @@ import {
   addLiqModalOpenAtom,
   removeLiqModalOpenAtom,
   stakingModalOpenAtom,
+  unstakingModalOpenAtom,
 } from "@store/commonAtoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
@@ -80,6 +81,7 @@ const FarmPage: NextPage = () => {
   const [, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
   const [, setRemoveLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
   const [, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
+  const [, setUnstakingModalOpen] = useAtom(unstakingModalOpenAtom);
   const [, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   // const [calcOpen, setCalcOpen] = useState<boolean>(false);
@@ -184,6 +186,10 @@ const FarmPage: NextPage = () => {
           <Button
             size="large"
             style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setUnstakingModalOpen(true);
+              setSelectedFarm(farm);
+            }}
           >
             Unstake
           </Button>
