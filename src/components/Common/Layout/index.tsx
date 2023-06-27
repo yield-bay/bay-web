@@ -30,6 +30,7 @@ import {
 import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
+import StakingModal from "@components/Library/StakingModal";
 
 interface Props {
   children: ReactNode;
@@ -963,6 +964,7 @@ const Layout: FC<Props> = ({ children }) => {
       <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
       <AddLiquidityModal />
       <RemoveLiquidityModal />
+      <StakingModal />
       <Header />
       {children}
       <Footer />

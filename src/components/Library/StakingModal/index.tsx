@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
-import { removeLiqModalOpenAtom } from "@store/commonAtoms";
+import { stakingModalOpenAtom } from "@store/commonAtoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
@@ -23,7 +23,6 @@ import {
   getAddLiqFunctionName,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
-import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 
 interface ChosenMethodProps {
   percentage: string;
@@ -34,15 +33,15 @@ interface ChosenMethodProps {
   methodId: number;
 }
 
-const RemoveLiquidityModal = () => {
+const StakingModal = () => {
   const { address } = useAccount();
-  const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
+  const [isOpen, setIsOpen] = useAtom(stakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
   const publicClient = usePublicClient();
 
   // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
-  const [percentage, setPercentage] = useState<number>(0);
-  const [lpTokens, setLpTokens] = useState<number>(0);
+  const [percentage, setPercentage] = useState<string>("");
+  const [lpTokens, setLpTokens] = useState<string>("");
   const [methodId, setMethodId] = useState<number>(0);
 
   const { chain } = useNetwork();
@@ -55,12 +54,6 @@ const RemoveLiquidityModal = () => {
   const [farmAsset0, farmAsset1] =
     farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
-  const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
-    farm?.asset.address!,
-    methodId == 0 ? percentage : lpTokens,
-    SLIPPAGE
-  );
-
   useEffect(() => {
     console.log("selectedFarm", farm);
   }, [farm]);
@@ -68,8 +61,6 @@ const RemoveLiquidityModal = () => {
   // When InputType.Percentage
   const handlePercChange = (event: any) => {
     event.preventDefault();
-    const value = parseFloat(event.target.value);
-
     setPercentage(event.target.value);
   };
 
@@ -79,14 +70,7 @@ const RemoveLiquidityModal = () => {
     setLpTokens(event.target.value);
   };
 
-  // Conditions for disabling the Confirm button
-  // const lpTokensDisabled =
-  //   parseFloat(lpTokens) > (lpBalanceNum as number) ||
-  //   parseFloat(lpTokens) <= 0;
-  // const percentageDisabled =
-  //   parseFloat(percentage) <= 0 || parseFloat(percentage) > 100;
-
-  // Balance of LP Token
+  // Balance of LP Tokens
   const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
     address,
     chainId: chain?.id,
@@ -116,12 +100,12 @@ const RemoveLiquidityModal = () => {
       hash: dataLpApprove?.hash,
     });
 
-  // Remove Liquidity
+  // Stake LP Tokens
   const {
-    data: removeLiquidityData,
-    isLoading: removeLiquidityLoading,
-    isSuccess: removeLiquiditySuccess,
-    writeAsync: removeLiquidity,
+    data: stakingData,
+    isLoading: stakingLoading,
+    isSuccess: stakingSuccess,
+    writeAsync: staking,
   } = useContractWrite({
     address:
       farm?.protocol.toLowerCase() != "zenlink"
@@ -137,34 +121,26 @@ const RemoveLiquidityModal = () => {
     ),
     functionName: getAddLiqFunctionName(farm?.protocol as string),
     chainId: chain?.id,
-    args: [
-      farmAsset0?.address!, // tokenA Address
-      farmAsset1?.address!, // tokenB Address
-      methodId == 0 ? lpBalanceNum * percentage : lpTokens, // Liquidity
-      minUnderlyingAsset0, // amountAMin
-      minUnderlyingAsset1, // amountBMin
-      address, // to
-      blockTimestamp, // deadline
-    ],
+    args: [],
   });
 
-  // Wait removeLiquidity Txn
-  const { isLoading: isLoadingRemoveLiq, isSuccess: isSuccessRemoveLiq } =
+  // Wait staking Txn
+  const { isLoading: isLoadingStaking, isSuccess: isSuccessStaking } =
     useWaitForTransaction({
-      hash: removeLiquidityData?.hash,
+      hash: stakingData?.hash,
     });
 
   useEffect(() => {
-    if (removeLiquidityLoading) {
+    if (stakingLoading) {
       console.log("addliq method loading... sign the txn");
-    } else if (isLoadingRemoveLiq) {
-      console.log("addliq txn loading...", isLoadingRemoveLiq);
+    } else if (isLoadingStaking) {
+      console.log("addliq txn loading...", isLoadingStaking);
     }
-  }, [removeLiquidityLoading, isLoadingRemoveLiq]);
+  }, [stakingLoading, isLoadingStaking]);
 
-  const handleRemoveLiquidity = async () => {
+  const handleStaking = async () => {
     try {
-      const txnRes = await removeLiquidity?.();
+      const txnRes = await staking?.();
       console.log("txnResult", txnRes);
     } catch (error) {
       console.error(error);
@@ -174,14 +150,16 @@ const RemoveLiquidityModal = () => {
   return (
     <ModalWrapper open={isOpen} setOpen={setIsOpen}>
       <div className="w-full flex flex-col gap-y-10 mt-10 text-base">
-        <h1 className="text-left font-semibold text-lg -mb-5">Remove Tokens</h1>
         {/* Input Box based on the chosen method to enter tokens amount */}
+        <h1 className="text-left font-semibold text-lg -mb-5">
+          Stake LP Tokens
+        </h1>
         <div className="flex flex-col gap-y-5">
           <ChosenMethod
-            percentage={percentage.toString()}
+            percentage={percentage?.toString() ?? ""}
             handlePercChange={handlePercChange}
             lpBalance={lpBalanceNum}
-            lpTokens={lpTokens.toString()}
+            lpTokens={lpTokens?.toString() ?? ""}
             handleLpTokensChange={handleLpTokensChange}
             methodId={methodId}
           />
@@ -209,18 +187,6 @@ const RemoveLiquidityModal = () => {
               : `${(lpTokens / lpBalanceNum) * 100}%`}
           </p> */}
         </div>
-        {/* Tokens to receive */}
-        <div className="text-left">
-          <p>You receive:</p>
-          <div className="w-full inline-flex gap-x-4 mt-3">
-            <div className="rounded-md bg-gray-200 px-4 py-2">
-              <div className="inline-flex gap-x-2">40 {token0}</div>
-            </div>
-            <div className="rounded-md bg-gray-200 px-4 py-2">
-              <div className="inline-flex gap-x-2">20 {token1}</div>
-            </div>
-          </div>
-        </div>
         {/* Estimate Gas and Slippage Tolerance */}
         <div className="flex flex-col gap-y-2 p-4 bg-gray-100 rounded-lg">
           <p className="w-full inline-flex justify-between">
@@ -245,11 +211,13 @@ const RemoveLiquidityModal = () => {
                 ? "Approved"
                 : isLoadingLpApprove
                 ? "Approving..."
-                : `Approve ${getLpTokenSymbol(tokenNames)} Token`
+                : `Approve Token`
             }
             disabled={
               isSuccessLpApprove ||
-              (methodId == 0 ? isNaN(percentage) : isNaN(lpTokens)) ||
+              (methodId == 0
+                ? isNaN(parseFloat(percentage))
+                : isNaN(parseFloat(lpTokens))) ||
               isLoadingLpApprove ||
               typeof approveLpToken == "undefined"
             }
@@ -257,26 +225,28 @@ const RemoveLiquidityModal = () => {
               const txn = await approveLpToken?.({
                 args: [farm?.router, BigInt("0")],
               });
-              console.log("Approve0 Result", txn);
+              console.log("Approve LP Token txn", txn);
             }}
           />
           <MButton
             className="w-1/2"
             type="secondary"
-            text="Confirm Withdrawl"
+            text="Confirm Staking"
             // disabled={lpTokensDisabled || percentageDisabled}
             disabled={
               !isSuccessLpApprove ||
-              (methodId == 0 ? isNaN(percentage) : isNaN(lpTokens)) ||
-              typeof removeLiquidity == "undefined"
+              (methodId == 0
+                ? isNaN(parseFloat(percentage))
+                : isNaN(parseFloat(lpTokens))) ||
+              typeof staking == "undefined"
             }
             onClick={() => {
-              console.log("Remove Liquidity setting: {}");
-              handleRemoveLiquidity();
+              console.log("Stking setting: {}");
+              handleStaking();
             }}
           />
         </div>
-        {isSuccessRemoveLiq && <p>Successfully removed liquidity</p>}
+        {isSuccessStaking && <p>Successfully Staked LP Tokens</p>}
       </div>
     </ModalWrapper>
   );
@@ -316,6 +286,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
       <div className="absolute right-4 top-[21px] bottom-0 text-base leading-[21.6px] text-[#727272]">
         %
       </div>
+      <p className="absolute right-0 -top-10">Balance: {lpBalance ?? 0}</p>
     </div>
   ) : (
     <div className="relative flex flex-col gap-y-5">
@@ -342,4 +313,4 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
   );
 };
 
-export default RemoveLiquidityModal;
+export default StakingModal;

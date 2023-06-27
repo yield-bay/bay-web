@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/outline";
 import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
-import CalculatorModal from "@components/Library/CalculatorModal";
+// import CalculatorModal from "@components/Library/CalculatorModal";
 import { APP_NAME } from "@utils/constants";
 import MetaTags from "@components/Common/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
@@ -42,6 +42,7 @@ import {
 import {
   addLiqModalOpenAtom,
   removeLiqModalOpenAtom,
+  stakingModalOpenAtom,
 } from "@store/commonAtoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
 import { trackEventWithProperty } from "@utils/analytics";
@@ -78,6 +79,7 @@ const FarmPage: NextPage = () => {
   // Modal States
   const [, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
   const [, setRemoveLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
+  const [, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
   const [, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   // const [calcOpen, setCalcOpen] = useState<boolean>(false);
@@ -172,6 +174,10 @@ const FarmPage: NextPage = () => {
           <Button
             size="large"
             style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setStakingModalOpen(true);
+              setSelectedFarm(farm);
+            }}
           >
             Stack
           </Button>
