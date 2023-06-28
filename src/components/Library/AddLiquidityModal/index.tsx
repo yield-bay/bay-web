@@ -46,15 +46,14 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   }, [selectedFarm]);
 
   // Amount States
-  const [firstTokenAmount, setFirstTokenAmount] = useState("");
-  const [secondTokenAmount, setSecondTokenAmount] = useState("");
+  const [firstTokenAmount, setFirstTokenAmount]: [any, any] = useState("0");
+  const [secondTokenAmount, setSecondTokenAmount]: [any, any] = useState("0");
+
+  type StringNumber = `${number}`;
 
   // Debounced values
-  const debouncedFirstTokenAmount: string = useDebounce(firstTokenAmount, 500);
-  const debouncedSecondTokenAmount: string = useDebounce(
-    secondTokenAmount,
-    500
-  );
+  const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
+  const debouncedSecondTokenAmount: any = useDebounce(secondTokenAmount, 500);
 
   // const [isToken0Approved, setIsToken0Approved] = useState(false);
   // const [isToken1Approved, setIsToken1Approved] = useState(false);
@@ -106,11 +105,39 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     chainId: chain?.id,
   });
 
+  const { config } = usePrepareContractWrite({
+    address: selectedFarm?.router,
+    abi: getAbi(
+      selectedFarm?.protocol as string,
+      selectedFarm?.chain as string,
+      getLpTokenSymbol(tokenNames)
+    ),
+    functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
+    chainId: chain?.id,
+    args: [
+      farmAsset0?.address, // TokenA Address
+      farmAsset1?.address, // TokenB Address
+      // new BN("10000000000000000000"),
+      // new BN("1281130000000000000"),
+      parseUnits("10000000000000000000", 18),
+      parseUnits("1275860000000000000", 18),
+      // parseUnits(debouncedFirstTokenAmount, 18), // amountADesired
+      // parseUnits(debouncedSecondTokenAmount, 18), // amountBDesired
+      1, // amountAMin
+      1, // amountBMin
+      address, // To
+      1688127545000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
+    ],
+  });
+
+  console.log("prepconfig", config);
+
   const {
     data: addLiquidityData,
     isLoading: addLiquidityLoading,
     isSuccess: addLiquiditySuccess,
     writeAsync: addLiquidity,
+    // } = usePrepareContractWrite({
   } = useContractWrite({
     address: selectedFarm?.router,
     abi: getAbi(
@@ -123,14 +150,16 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     args: [
       farmAsset0?.address, // TokenA Address
       farmAsset1?.address, // TokenB Address
-      new BN("10000000000000000000"),
-      new BN("1281130000000000000"),
-      // parseEther(debouncedFirstTokenAmount.toString()), // amountADesired
+      // new BN("10000000000000000000"),
+      // new BN("1281130000000000000"),
+      parseUnits("10000000000000000000", 18),
+      parseUnits("1275860000000000000", 18),
+      // parseUnits(debouncedFirstTokenAmount, 18), // amountADesired
       // parseUnits(debouncedSecondTokenAmount, 18), // amountBDesired
-      new BN("1"), // amountAMin
-      new BN("1"), // amountBMin
+      1, // amountAMin
+      1, // amountBMin
       address, // To
-      1687953644000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
+      1688127545000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
     ],
   });
 
