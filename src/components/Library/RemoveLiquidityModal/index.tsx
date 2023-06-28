@@ -123,13 +123,7 @@ const RemoveLiquidityModal = () => {
     isSuccess: removeLiquiditySuccess,
     writeAsync: removeLiquidity,
   } = useContractWrite({
-    address:
-      farm?.protocol.toLowerCase() != "zenlink"
-        ? farm?.router
-        : getContractAddress(
-            farm?.protocol as string,
-            getLpTokenSymbol(tokenNames)
-          ),
+    address: farm?.router,
     abi: getAbi(
       farm?.protocol as string,
       farm?.chain as string,

@@ -71,13 +71,7 @@ const RemoveLiquidityModal = () => {
 
   // Write contract
   const { config } = usePrepareContractWrite({
-    address:
-      selectedFarm?.protocol.toLowerCase() != "zenlink"
-        ? selectedFarm?.router
-        : getContractAddress(
-            selectedFarm?.protocol as string,
-            getLpTokenSymbol(tokenNames)
-          ),
+    address: selectedFarm?.router,
     abi: getAbi(
       selectedFarm?.protocol as string,
       selectedFarm?.chain as string,

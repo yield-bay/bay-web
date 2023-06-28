@@ -8,7 +8,8 @@ import clsx from "clsx";
 import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
-import { parseAbiItem } from "viem";
+import { etherUnits, parseAbiItem, parseEther, parseUnits } from "viem";
+import BN from "bn.js";
 import {
   useAccount,
   useNetwork,
@@ -49,8 +50,11 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
 
   // Debounced values
-  const debouncedFirstTokenAmount = useDebounce(firstTokenAmount, 500);
-  const debouncedSecondTokenAmount = useDebounce(secondTokenAmount, 500);
+  const debouncedFirstTokenAmount: string = useDebounce(firstTokenAmount, 500);
+  const debouncedSecondTokenAmount: string = useDebounce(
+    secondTokenAmount,
+    500
+  );
 
   // const [isToken0Approved, setIsToken0Approved] = useState(false);
   // const [isToken1Approved, setIsToken1Approved] = useState(false);
@@ -108,13 +112,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     isSuccess: addLiquiditySuccess,
     writeAsync: addLiquidity,
   } = useContractWrite({
-    address:
-      selectedFarm?.protocol.toLowerCase() != "zenlink"
-        ? selectedFarm?.router
-        : getContractAddress(
-            selectedFarm?.protocol as string,
-            getLpTokenSymbol(tokenNames)
-          ),
+    address: selectedFarm?.router,
     abi: getAbi(
       selectedFarm?.protocol as string,
       selectedFarm?.chain as string,
@@ -125,16 +123,14 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     args: [
       farmAsset0?.address, // TokenA Address
       farmAsset1?.address, // TokenB Address
-      parseFloat(debouncedFirstTokenAmount), // amountADesired
-      parseFloat(debouncedSecondTokenAmount), // amountBDesired
-      Math.floor(
-        (parseFloat(debouncedFirstTokenAmount) * (100 - SLIPPAGE)) / 100
-      ), // amountAMin
-      Math.floor(
-        (parseFloat(debouncedSecondTokenAmount) * (100 - SLIPPAGE)) / 100
-      ), // amountBMin
+      new BN("10000000000000000000"),
+      new BN("1281130000000000000"),
+      // parseEther(debouncedFirstTokenAmount.toString()), // amountADesired
+      // parseUnits(debouncedSecondTokenAmount, 18), // amountBDesired
+      new BN("1"), // amountAMin
+      new BN("1"), // amountBMin
       address, // To
-      blockTimestamp, // deadline (uint256)
+      1687953644000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
     ],
   });
 
@@ -332,7 +328,12 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                     }
                     onClick={async () => {
                       const txn = await approveToken0?.({
-                        args: [selectedFarm?.router, BigInt("0")],
+                        args: [
+                          selectedFarm?.router,
+                          BigInt(
+                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                          ),
+                        ],
                       });
                       console.log("Approve0 Result", txn);
                     }}
@@ -354,7 +355,12 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                     }
                     onClick={async () => {
                       const txn = await approveToken1?.({
-                        args: [selectedFarm?.router, BigInt("0")],
+                        args: [
+                          selectedFarm?.router,
+                          BigInt(
+                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                          ),
+                        ],
                       });
                       console.log("Approve1 Result", txn);
                     }}

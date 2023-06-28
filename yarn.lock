@@ -10535,6 +10535,7 @@ __metadata:
     "@urql/core": ^2.6.1
     autoprefixer: ^10.4.8
     axios: ^1.2.1
+    bn.js: ^5.2.1
     clsx: ^1.2.1
     daisyui: ^2.51.6
     dotenv: ^16.0.1

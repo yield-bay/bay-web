@@ -85,13 +85,7 @@ const UnstakingModal = () => {
     isSuccess: unstakingCallSuccess,
     writeAsync: unstaking,
   } = useContractWrite({
-    address:
-      farm?.protocol.toLowerCase() != "zenlink"
-        ? farm?.chef
-        : getContractAddress(
-            farm?.protocol as string,
-            getLpTokenSymbol(tokenNames)
-          ),
+    address: farm?.chef,
     abi: [...parseAbi(stellaswapV1ChefAbi)],
     functionName: "withdraw" as any,
     chainId: chain?.id,
