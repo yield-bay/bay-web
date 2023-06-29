@@ -15,15 +15,13 @@ import MButton from "../MButton";
 import { selectedFarmAtom } from "@store/atoms";
 import ModalWrapper from "../ModalWrapper";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbiItem } from "viem";
-import { getContractAddress } from "@utils/abis/contract-helper-methods";
+import { parseAbiItem, parseUnits } from "viem";
+import { getRemoveLiquidFunctionName } from "@utils/abis/contract-helper-methods";
 import useBlockTimestamp from "@hooks/useBlockTimestamp";
-import {
-  getAbi,
-  getAddLiqFunctionName,
-} from "@utils/abis/contract-helper-methods";
+import { getAbi } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
+import useLPBalance from "@hooks/useLPBalance";
 
 interface ChosenMethodProps {
   percentage: string;
@@ -87,19 +85,20 @@ const RemoveLiquidityModal = () => {
   //   parseFloat(percentage) <= 0 || parseFloat(percentage) > 100;
 
   // Balance of LP Token
-  const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
-    address,
-    chainId: chain?.id,
-    token: farm?.asset.address,
-    enabled: !!farm,
-  });
-  const lpBalanceNum = lpBalance ? parseFloat(lpBalance.formatted) : 0;
+  const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
+  // const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
+  //   address,
+  //   chainId: chain?.id,
+  //   token: farm?.asset.address,
+  //   enabled: !!farm,
+  // });
+  // const lpBalanceNum = lpBalance ? parseFloat(lpBalance.formatted) : 0;
 
   useEffect(() => {
     if (lpBalanceLoading) {
       console.log("lpBalance loading...");
     } else if (lpBalance) {
-      console.log("lpbalance", `${lpBalanceNum} ${token0}-${token1}`);
+      console.log("lpbalance", `${lpBalance} ${token0}-${token1}`);
     }
   }, [lpBalanceLoading, lpBalance]);
 
@@ -129,16 +128,18 @@ const RemoveLiquidityModal = () => {
       farm?.chain as string,
       getLpTokenSymbol(tokenNames)
     ),
-    functionName: getAddLiqFunctionName(farm?.protocol as string),
+    functionName: getRemoveLiquidFunctionName(farm?.protocol ?? ""),
     chainId: chain?.id,
     args: [
-      farmAsset0?.address!, // tokenA Address
-      farmAsset1?.address!, // tokenB Address
-      methodId == 0 ? lpBalanceNum * percentage : lpTokens, // Liquidity
+      farmAsset0?.address, // tokenA Address
+      farmAsset1?.address, // tokenB Address
+      methodId == 0
+        ? parseUnits(`${(parseFloat(lpBalance!) * percentage) / 100}`, 18)
+        : parseUnits(`${lpTokens}`, 18), // Liquidity
       minUnderlyingAsset0, // amountAMin
       minUnderlyingAsset1, // amountBMin
       address, // to
-      blockTimestamp, // deadline
+      1688127545000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
     ],
   });
 
@@ -174,7 +175,7 @@ const RemoveLiquidityModal = () => {
           <ChosenMethod
             percentage={percentage.toString()}
             handlePercChange={handlePercChange}
-            lpBalance={lpBalanceNum}
+            lpBalance={parseFloat(lpBalance ?? "0")}
             lpTokens={lpTokens.toString()}
             handleLpTokensChange={handleLpTokensChange}
             methodId={methodId}

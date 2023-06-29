@@ -92,7 +92,7 @@ export function getAddLiqFunctionName(protocol: string) {
     case "solarflare":
     case "sushiswap":
     case "arthswap":
-    case "Sirius":
+    case "sirius":
       return "addLiquidity";
     default:
       return "";
@@ -111,7 +111,7 @@ export function getRemoveLiquidFunctionName(protocol: string) {
     case "solarflare":
     case "sushiswap":
     case "arthswap":
-    case "Sirius":
+    case "sirius":
       return "removeLiquidity";
     default:
       return "";

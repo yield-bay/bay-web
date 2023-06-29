@@ -44,8 +44,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   }, [selectedFarm]);
 
   // Amount States
-  const [firstTokenAmount, setFirstTokenAmount]: [any, any] = useState("");
-  const [secondTokenAmount, setSecondTokenAmount]: [any, any] = useState("");
+  const [firstTokenAmount, setFirstTokenAmount] = useState("");
+  const [secondTokenAmount, setSecondTokenAmount] = useState("");
   const [estimateLpMinted, setEstimateLpMinted] = useState<number | undefined>(
     undefined
   );
@@ -56,8 +56,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   );
 
   // Debounced values
-  const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
-  const debouncedSecondTokenAmount: any = useDebounce(secondTokenAmount, 500);
+  // const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
+  // const debouncedSecondTokenAmount: any = useDebounce(secondTokenAmount, 500);
 
   const blockTimestamp = useBlockTimestamp(publicClient);
 
@@ -148,8 +148,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     args: [
       farmAsset0?.address, // TokenA Address
       farmAsset1?.address, // TokenB Address
-      parseUnits(debouncedFirstTokenAmount, 18),
-      parseUnits(debouncedSecondTokenAmount, 18),
+      parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
+      parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset0?.decimals),
       1, // amountAMin
       1, // amountBMin
       address, // To

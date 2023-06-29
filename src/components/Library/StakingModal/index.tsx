@@ -39,8 +39,8 @@ const StakingModal = () => {
   const publicClient = usePublicClient();
 
   // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
-  const [percentage, setPercentage]: [any, any] = useState<any>("");
-  const [lpTokens, setLpTokens]: [any, any] = useState<any>("");
+  const [percentage, setPercentage] = useState("");
+  const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<number>(0);
 
   const { chain } = useNetwork();
@@ -117,13 +117,13 @@ const StakingModal = () => {
       farm?.id, // pid
       methodId == 0
         ? parseUnits(
-            (
+            `${
               (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
               100
-            ).toString() as any,
+            }`,
             18
           )
-        : lpTokens, // amount
+        : parseUnits(`${parseFloat(lpTokens)}`, 18), // amount
     ],
   });
 

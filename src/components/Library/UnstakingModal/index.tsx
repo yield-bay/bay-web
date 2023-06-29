@@ -17,7 +17,7 @@ import {
   stellaswapV1ChefAbi,
   tokenAbi,
 } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseAbiItem } from "viem";
+import { parseAbi, parseUnits } from "viem";
 import { getContractAddress } from "@utils/abis/contract-helper-methods";
 
 interface ChosenMethodProps {
@@ -91,7 +91,9 @@ const UnstakingModal = () => {
     chainId: chain?.id,
     args: [
       farm?.id, // pid
-      methodId == 0 ? (lpBalanceNum * parseFloat(percentage)) / 100 : lpTokens, // amount
+      methodId == 0
+        ? parseUnits(`${(lpBalanceNum * parseFloat(percentage)) / 100}`, 18)
+        : parseUnits(`${parseFloat(lpTokens)}`, 18), // amount
     ],
   });
 
