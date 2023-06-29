@@ -23,7 +23,7 @@ import {
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import useBlockTimestamp from "@hooks/useBlockTimestamp";
+// import useBlockTimestamp from "@hooks/useBlockTimestamp";
 import useTokenReserves from "@hooks/useTokenReserves";
 import useLPBalance from "@hooks/useLPBalance";
 
@@ -58,8 +58,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   // Debounced values
   // const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
   // const debouncedSecondTokenAmount: any = useDebounce(secondTokenAmount, 500);
-
-  const blockTimestamp = useBlockTimestamp(publicClient);
 
   // States
   // const [isProcessing, setIsProcessing] = useState(false);
@@ -145,16 +143,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     ),
     functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
     chainId: chain?.id,
-    args: [
-      farmAsset0?.address, // TokenA Address
-      farmAsset1?.address, // TokenB Address
-      parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
-      parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset0?.decimals),
-      1, // amountAMin
-      1, // amountBMin
-      address, // To
-      1688127545000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
-    ],
   });
 
   // Wait AddLiquidity Txn
@@ -175,9 +163,25 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
   const handleAddLiquidity = async () => {
     try {
-      console.log("insidehandleaddliq");
-      const txnRes = await addLiquidity?.();
-      console.log("txnResult", txnRes);
+      // Fetch latest block's timestamp
+      const block = await publicClient.getBlock();
+      const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
+      console.log("timestamp fetched //", blocktimestamp);
+
+      console.log("calling addliquidity method...");
+      const txnRes = await addLiquidity?.({
+        args: [
+          farmAsset0?.address, // TokenA Address
+          farmAsset1?.address, // TokenB Address
+          parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
+          parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset0?.decimals),
+          1, // amountAMin
+          1, // amountBMin
+          address, // To
+          blocktimestamp, // deadline (uint256)
+        ],
+      });
+      console.log("called addliquidity method.", txnRes);
     } catch (error) {
       console.error(error);
     }
@@ -401,7 +405,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                   isSuccessAddLiq
                 }
                 text={isLoadingAddLiq ? "Processing..." : "Confirm"}
-                onClick={() => {
+                onClick={async () => {
                   if (
                     parseFloat(firstTokenAmount) <= 0 &&
                     parseFloat(secondTokenAmount) <= 0
@@ -419,7 +423,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                         (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) /
                         100,
                       msg_sender: address,
-                      block_timestamp: blockTimestamp,
+                      block_timestamp: "Calc at runtime",
                     });
                     // Handler of Add Liquidity
                     handleAddLiquidity();

@@ -92,7 +92,13 @@ const UnstakingModal = () => {
     args: [
       farm?.id, // pid
       methodId == 0
-        ? parseUnits(`${(lpBalanceNum * parseFloat(percentage)) / 100}`, 18)
+        ? parseUnits(
+            `${
+              (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
+              100
+            }`,
+            18
+          )
         : parseUnits(`${parseFloat(lpTokens)}`, 18), // amount
     ],
   });
