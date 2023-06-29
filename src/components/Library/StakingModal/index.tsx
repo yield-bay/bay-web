@@ -18,7 +18,7 @@ import {
   stellaswapV1ChefAbi,
   tokenAbi,
 } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseAbiItem } from "viem";
+import { parseAbi, parseAbiItem, parseUnits } from "viem";
 import { getContractAddress } from "@utils/abis/contract-helper-methods";
 import useBlockTimestamp from "@hooks/useBlockTimestamp";
 import { UnderlyingAssets } from "@utils/types";
@@ -39,8 +39,8 @@ const StakingModal = () => {
   const publicClient = usePublicClient();
 
   // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
-  const [percentage, setPercentage] = useState<string>("");
-  const [lpTokens, setLpTokens] = useState<string>("");
+  const [percentage, setPercentage]: [any, any] = useState<any>("100");
+  const [lpTokens, setLpTokens]: [any, any] = useState<any>("");
   const [methodId, setMethodId] = useState<number>(0);
 
   const { chain } = useNetwork();
@@ -73,7 +73,7 @@ const StakingModal = () => {
     token: farm?.asset.address,
     enabled: !!farm,
   });
-  const lpBalanceNum = lpBalance ? parseFloat(lpBalance.formatted) : 0;
+  const lpBalanceNum: any = lpBalance ? parseFloat(lpBalance.formatted) : 0;
 
   useEffect(() => {
     if (lpBalanceLoading) {
@@ -109,7 +109,12 @@ const StakingModal = () => {
     chainId: chain?.id,
     args: [
       farm?.id, // pid
-      methodId == 0 ? (lpBalanceNum * parseFloat(percentage)) / 100 : lpTokens, // amount
+      methodId == 0
+        ? parseUnits(
+            ((lpBalanceNum * parseFloat(percentage)) / 100).toString() as any,
+            18
+          )
+        : lpTokens, // amount
     ],
   });
 
@@ -212,7 +217,12 @@ const StakingModal = () => {
             }
             onClick={async () => {
               const txn = await approveLpToken?.({
-                args: [farm?.router, BigInt("0")],
+                args: [
+                  farm?.chef,
+                  BigInt(
+                    "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                  ),
+                ],
               });
               console.log("Approve LP Token txn", txn);
             }}
