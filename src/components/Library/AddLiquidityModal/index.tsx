@@ -99,7 +99,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   });
   // Approve token1
   const { data: dataApprove1, writeAsync: approveToken1 } = useContractWrite({
-    address: farmAsset0?.address,
+    address: farmAsset1?.address,
     abi: [parseAbiItem(tokenAbi)],
     functionName: "approve" as any,
     chainId: chain?.id,
