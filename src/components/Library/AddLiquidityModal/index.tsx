@@ -46,8 +46,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   }, [selectedFarm]);
 
   // Amount States
-  const [firstTokenAmount, setFirstTokenAmount]: [any, any] = useState("0");
-  const [secondTokenAmount, setSecondTokenAmount]: [any, any] = useState("0");
+  const [firstTokenAmount, setFirstTokenAmount]: [any, any] = useState("");
+  const [secondTokenAmount, setSecondTokenAmount]: [any, any] = useState("");
 
   type StringNumber = `${number}`;
 
@@ -105,33 +105,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     chainId: chain?.id,
   });
 
-  const { config } = usePrepareContractWrite({
-    address: selectedFarm?.router,
-    abi: getAbi(
-      selectedFarm?.protocol as string,
-      selectedFarm?.chain as string,
-      getLpTokenSymbol(tokenNames)
-    ),
-    functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
-    chainId: chain?.id,
-    args: [
-      farmAsset0?.address, // TokenA Address
-      farmAsset1?.address, // TokenB Address
-      // new BN("10000000000000000000"),
-      // new BN("1281130000000000000"),
-      parseUnits("10000000000000000000", 18),
-      parseUnits("1275860000000000000", 18),
-      // parseUnits(debouncedFirstTokenAmount, 18), // amountADesired
-      // parseUnits(debouncedSecondTokenAmount, 18), // amountBDesired
-      1, // amountAMin
-      1, // amountBMin
-      address, // To
-      1688127545000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
-    ],
-  });
-
-  console.log("prepconfig", config);
-
   const {
     data: addLiquidityData,
     isLoading: addLiquidityLoading,
@@ -150,12 +123,8 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     args: [
       farmAsset0?.address, // TokenA Address
       farmAsset1?.address, // TokenB Address
-      // new BN("10000000000000000000"),
-      // new BN("1281130000000000000"),
-      parseUnits("10000000000000000000", 18),
-      parseUnits("1275860000000000000", 18),
-      // parseUnits(debouncedFirstTokenAmount, 18), // amountADesired
-      // parseUnits(debouncedSecondTokenAmount, 18), // amountBDesired
+      parseUnits(debouncedFirstTokenAmount, 18),
+      parseUnits(debouncedSecondTokenAmount, 18),
       1, // amountAMin
       1, // amountBMin
       address, // To
@@ -189,6 +158,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
   const handleAddLiquidity = async () => {
     try {
+      console.log("insidehandleaddliq");
       const txnRes = await addLiquidity?.();
       console.log("txnResult", txnRes);
     } catch (error) {
