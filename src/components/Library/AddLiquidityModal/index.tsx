@@ -28,6 +28,8 @@ import {
 import { UnderlyingAssets } from "@utils/types";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import useBlockTimestamp from "@hooks/useBlockTimestamp";
+import useTokenReserves from "@hooks/useTokenReserves";
+import useLPBalance from "@hooks/useLPBalance";
 
 const AddLiquidityModal: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -48,8 +50,20 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount]: [any, any] = useState("");
   const [secondTokenAmount, setSecondTokenAmount]: [any, any] = useState("");
+  const [estimateLpMinted, setEstimateLpMinted] = useState<number | undefined>(
+    undefined
+  );
 
-  type StringNumber = `${number}`;
+  const { reserve0, reserve1 } = useTokenReserves(selectedFarm?.asset.address!);
+  const { lpBalance, lpBalanceLoading } = useLPBalance(
+    selectedFarm?.asset.address!
+  );
+
+  useEffect(() => {
+    console.log("reserve0", reserve0);
+    console.log("reserve1", reserve1);
+    console.log("lpBalance", lpBalance);
+  }, [reserve0, reserve1, lpBalance]);
 
   // Debounced values
   const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
@@ -72,8 +86,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     // Empty the values when Modal is opened or closed
     setFirstTokenAmount("");
     setSecondTokenAmount("");
-    // setIsToken0Approved(false);
-    // setIsToken1Approved(false);
   }, [isOpen]);
 
   // Balance Token0
@@ -207,27 +219,59 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     }
   };
 
+  // Updated tokenAmounts based on value of other token
+  const updateSecondTokenAmount = (firstTokenAmount: number): string => {
+    const poolRatio = reserve0 / reserve1;
+    const estimatedLPAmountMinted =
+      (firstTokenAmount * parseFloat(lpBalance!)) / reserve0;
+    setEstimateLpMinted(estimatedLPAmountMinted);
+    const expectedSecondTokenAmount =
+      (firstTokenAmount / poolRatio) * (1 + SLIPPAGE);
+    const secondTokenAmount = isNaN(expectedSecondTokenAmount)
+      ? "0"
+      : expectedSecondTokenAmount.toFixed(5);
+    setSecondTokenAmount(secondTokenAmount);
+    return secondTokenAmount;
+  };
+
+  const updateFirstTokenAmount = (secondTokenAmount: number): string => {
+    const poolRatio = reserve0 / reserve1;
+    const estimatedLPAmountMinted =
+      (secondTokenAmount * parseFloat(lpBalance!)) / reserve1;
+    setEstimateLpMinted(estimatedLPAmountMinted);
+    const expectedFirstTokenAmount =
+      (poolRatio * secondTokenAmount) / (1 + SLIPPAGE);
+    const firstTokenAmount = isNaN(expectedFirstTokenAmount)
+      ? "0"
+      : expectedFirstTokenAmount.toFixed(5);
+    setFirstTokenAmount(firstTokenAmount);
+    return firstTokenAmount;
+  };
+
   // Method to update token values and fetch fees based on firstToken Input
   const handleChangeFirstTokenAmount = async (e: any) => {
     setFirstTokenAmount(e.target.value);
-    // const firstTokenAmount = parseFloat(e.target.value);
+
+    // Updating Second Token amount
+    const firstTokenFloat = parseFloat(e.target.value);
+    const expectedSecondTokenAmount = updateSecondTokenAmount(firstTokenFloat);
     // if (e.target.value == "") {
     //   setFees(null);
     // }
-    // const expectedSecondTokenAmount = updateSecondTokenAmount(firstTokenAmount);
     // await handleFees(firstTokenAmount, expectedSecondTokenAmount);
   };
 
   // Method to update token values and fetch fees based on secondToken Input
   const handleChangeSecondTokenAmount = async (e: any) => {
     setSecondTokenAmount(e.target.value);
+
+    // Calculate first token amount
+    const secondTokenFloat = parseFloat(e.target.value);
+    const expectedFirstTokenAmount = updateFirstTokenAmount(secondTokenFloat);
+
     // if (e.target.value == "") {
     //   setFees(null);
     // }
-
-    // // Calculate first token amount
-    // const secondTokenAmount = parseFloat(e.target.value);
-    // const expectedFirstTokenAmount = updateFirstTokenAmount(secondTokenAmount);
     // // Calculate Fees
     // await handleFees(secondTokenAmount, expectedFirstTokenAmount);
   };

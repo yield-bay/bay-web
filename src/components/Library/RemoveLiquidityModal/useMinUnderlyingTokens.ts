@@ -18,18 +18,18 @@ export default function useMinimumUnderlyingTokens(
     address: pair,
     abi: parseAbi(lpAbi),
     functionName: "getReserves",
+    enabled: !!pair,
   });
+  const totalReserves = reserves as bigint[];
+  const [reserve0, reserve1] = !!totalReserves
+    ? totalReserves.map((r) => Number(r))
+    : [0, 0];
 
   const { data: totalSupply } = useContractRead({
     address: pair,
     abi: parseAbi(lpAbi),
     functionName: "totalSupply",
   });
-
-  const totalReserves = reserves as bigint[];
-  const [reserve0, reserve1] = !!totalReserves
-    ? totalReserves.map((r) => Number(r))
-    : [0, 0];
 
   const lpAmountAdjusted = !!lpAmount ? (lpAmount * (100 - slippage)) / 100 : 0;
   const amount0 = (lpAmountAdjusted * reserve0) / Number(totalSupply);
