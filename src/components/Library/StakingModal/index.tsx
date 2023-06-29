@@ -39,7 +39,7 @@ const StakingModal = () => {
   const publicClient = usePublicClient();
 
   // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
-  const [percentage, setPercentage]: [any, any] = useState<any>("100");
+  const [percentage, setPercentage]: [any, any] = useState<any>("");
   const [lpTokens, setLpTokens]: [any, any] = useState<any>("");
   const [methodId, setMethodId] = useState<number>(0);
 
@@ -66,6 +66,11 @@ const StakingModal = () => {
     setLpTokens(event.target.value);
   };
 
+  useEffect(() => {
+    setPercentage("");
+    setLpTokens("");
+  }, [isOpen]);
+
   // Balance of LP Tokens
   const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
     address,
@@ -76,12 +81,13 @@ const StakingModal = () => {
   const lpBalanceNum: any = lpBalance ? parseFloat(lpBalance.formatted) : 0;
 
   useEffect(() => {
+    console.log("lpBalance", lpBalance);
     if (lpBalanceLoading) {
       console.log("lpBalance loading...");
     } else if (lpBalance) {
       console.log("lpbalance", `${lpBalanceNum} ${token0}-${token1}`);
     }
-  }, [lpBalanceLoading, lpBalance]);
+  }, [lpBalanceLoading, lpBalanceNum]);
 
   // Approve LP token
   const { data: dataLpApprove, writeAsync: approveLpToken } = useContractWrite({
@@ -111,7 +117,10 @@ const StakingModal = () => {
       farm?.id, // pid
       methodId == 0
         ? parseUnits(
-            ((lpBalanceNum * parseFloat(percentage)) / 100).toString() as any,
+            (
+              (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
+              100
+            ).toString() as any,
             18
           )
         : lpTokens, // amount

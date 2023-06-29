@@ -8,21 +8,17 @@ import clsx from "clsx";
 import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
-import { etherUnits, parseAbi, parseEther, parseUnits } from "viem";
-import BN from "bn.js";
+import { parseAbi, parseUnits } from "viem";
 import {
   useAccount,
   useNetwork,
-  useBlockNumber,
   useContractWrite,
-  usePrepareContractWrite,
   useWaitForTransaction,
   usePublicClient,
 } from "wagmi";
 import { useDebounce } from "usehooks-ts";
 import {
   getAbi,
-  getContractAddress,
   getAddLiqFunctionName,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
@@ -59,19 +55,9 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     selectedFarm?.asset.address!
   );
 
-  useEffect(() => {
-    console.log("reserve0", reserve0);
-    console.log("reserve1", reserve1);
-    console.log("lpBalance", lpBalance);
-  }, [reserve0, reserve1, lpBalance]);
-
   // Debounced values
   const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
   const debouncedSecondTokenAmount: any = useDebounce(secondTokenAmount, 500);
-
-  // const [isToken0Approved, setIsToken0Approved] = useState(false);
-  // const [isToken1Approved, setIsToken1Approved] = useState(false);
-  const [isUnsupported, setIsUnsupported] = useState(true);
 
   const blockTimestamp = useBlockTimestamp(publicClient);
 
@@ -129,13 +115,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
       enabled: !!address && !!selectedFarm,
     });
 
-  useEffect(() => {
-    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      console.log("isToken0Approved", !!Number(isToken0Approved));
-      console.log("isToken1Approved", !!Number(isToken1Approved));
-    }
-  }, [isToken1Approved, isToken0Approved]);
-
   // Approve token0
   const { data: dataApprove0, writeAsync: approveToken0 } = useContractWrite({
     address: farmAsset0?.address,
@@ -184,14 +163,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
       hash: addLiquidityData?.hash,
     });
 
-  useEffect(() => {
-    if (addLiquidityLoading) {
-      console.log("addliq method loading... sign the txn");
-    } else if (isLoadingAddLiq) {
-      console.log("addliq txn loading...", isLoadingAddLiq);
-    }
-  }, [addLiquidityLoading, isLoadingAddLiq]);
-
   // Waiting for Txns
   const { isLoading: isLoadingApprove0, isSuccess: isSuccessApprove0 } =
     useWaitForTransaction({
@@ -201,13 +172,6 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     useWaitForTransaction({
       hash: dataApprove1?.hash,
     });
-
-  useEffect(() => {
-    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      console.log("isSuccess Approve0", isSuccessApprove0);
-      console.log("isSuccess Approve1", isSuccessApprove1);
-    }
-  }, [isSuccessApprove0, isSuccessApprove1]);
 
   const handleAddLiquidity = async () => {
     try {
@@ -276,11 +240,34 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     // await handleFees(secondTokenAmount, expectedFirstTokenAmount);
   };
 
-  // useEffect(() => {
-  //   if (isSuccessApprove0 && isSuccessApprove1) {
-  //     setIsUnsupported(false);
-  //   }
-  // }, [isSuccessApprove0, isSuccessApprove1]);
+  // Testing useEffects for Console Logs
+  useEffect(() => {
+    console.log("reserve0", reserve0);
+    console.log("reserve1", reserve1);
+    console.log("lpBalance", lpBalance);
+  }, [reserve0, reserve1, lpBalance]);
+
+  useEffect(() => {
+    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
+      console.log("isToken0Approved", !!Number(isToken0Approved));
+      console.log("isToken1Approved", !!Number(isToken1Approved));
+    }
+  }, [isToken1Approved, isToken0Approved]);
+
+  useEffect(() => {
+    if (addLiquidityLoading) {
+      console.log("addliq method loading... sign the txn");
+    } else if (isLoadingAddLiq) {
+      console.log("addliq txn loading...", isLoadingAddLiq);
+    }
+  }, [addLiquidityLoading, isLoadingAddLiq]);
+
+  useEffect(() => {
+    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
+      console.log("isSuccess Approve0", isSuccessApprove0);
+      console.log("isSuccess Approve1", isSuccessApprove1);
+    }
+  }, [isSuccessApprove0, isSuccessApprove1]);
 
   return (
     !!selectedFarm && (

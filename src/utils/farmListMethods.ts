@@ -96,6 +96,6 @@ export function getWalletInstallUrl(walletName: string): string {
 
 export function checkIfPoolSupported(farm: FarmType) {
   const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
-  if (protocols) return protocols.includes(farm.protocol.toLowerCase());
+  if (!!protocols) return protocols.includes(farm.protocol.toLowerCase());
   return false;
 }

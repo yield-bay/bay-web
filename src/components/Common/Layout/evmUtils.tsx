@@ -4,9 +4,9 @@ interface SupportedPoolsType {
 
 // Pools which are supported for interacting in current version
 export const supportedPools: SupportedPoolsType = {
-  moonriver: ["zenlink", "solarbeam"],
-  moonbeam: ["curve", "zenlink", "stellaswap"],
-  astar: ["zenlink"],
+  moonriver: ["zenlink", "solarbeam", "sushiswap"],
+  moonbeam: ["curve", "zenlink", "stellaswap", "solarflare", "beamswap"],
+  astar: ["zenlink", "sirius", "arthswap"],
   "mangata kusama": ["mangata x"],
 };
 
