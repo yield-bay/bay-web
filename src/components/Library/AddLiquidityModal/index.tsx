@@ -1,5 +1,5 @@
 import { FC, PropsWithChildren, useEffect, useState } from "react";
-import { useBalance } from "wagmi";
+import { useBalance, useContractRead } from "wagmi";
 import ModalWrapper from "../ModalWrapper";
 import { addLiqModalOpenAtom } from "@store/commonAtoms";
 import { useAtom } from "jotai";
@@ -8,7 +8,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
-import { etherUnits, parseAbiItem, parseEther, parseUnits } from "viem";
+import { etherUnits, parseAbi, parseEther, parseUnits } from "viem";
 import BN from "bn.js";
 import {
   useAccount,
@@ -81,6 +81,7 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     address,
     chainId: chain?.id,
     token: farmAsset0?.address,
+    enabled: !!address && !!selectedFarm,
   });
 
   // Balance Token1
@@ -88,19 +89,52 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     address,
     chainId: chain?.id,
     token: farmAsset1?.address,
+    enabled: !!address && !!selectedFarm,
   });
+
+  // Check Approval Token0
+  const { data: isToken0Approved, isLoading: isToken0ApprovedLoading } =
+    useContractRead({
+      address: farmAsset0?.address,
+      abi: parseAbi(tokenAbi),
+      functionName: "allowance" as any,
+      args: [
+        address, // owner
+        selectedFarm?.router, // spender
+      ],
+      enabled: !!address && !!selectedFarm,
+    });
+  // Check Approval Token1
+  const { data: isToken1Approved, isLoading: isToken1ApprovedLoading } =
+    useContractRead({
+      address: farmAsset1?.address,
+      abi: parseAbi(tokenAbi),
+      functionName: "allowance" as any,
+      args: [
+        address, // owner
+        selectedFarm?.router, // spender
+      ],
+      enabled: !!address && !!selectedFarm,
+    });
+
+  useEffect(() => {
+    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
+      console.log("isToken0Approved", !!Number(isToken0Approved));
+      console.log("isToken1Approved", !!Number(isToken1Approved));
+    }
+  }, [isToken1Approved, isToken0Approved]);
 
   // Approve token0
   const { data: dataApprove0, writeAsync: approveToken0 } = useContractWrite({
     address: farmAsset0?.address,
-    abi: [parseAbiItem(tokenAbi)],
+    abi: parseAbi(tokenAbi),
     functionName: "approve" as any,
     chainId: chain?.id,
   });
   // Approve token1
   const { data: dataApprove1, writeAsync: approveToken1 } = useContractWrite({
     address: farmAsset1?.address,
-    abi: [parseAbiItem(tokenAbi)],
+    abi: parseAbi(tokenAbi),
     functionName: "approve" as any,
     chainId: chain?.id,
   });
@@ -155,6 +189,13 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
     useWaitForTransaction({
       hash: dataApprove1?.hash,
     });
+
+  useEffect(() => {
+    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
+      console.log("isSuccess Approve0", isSuccessApprove0);
+      console.log("isSuccess Approve1", isSuccessApprove1);
+    }
+  }, [isSuccessApprove0, isSuccessApprove1]);
 
   const handleAddLiquidity = async () => {
     try {
@@ -309,64 +350,13 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
 
           {/* Buttons */}
           <div className="flex flex-col gap-y-2">
-            {!isSuccessApprove0 || !isSuccessApprove1 ? (
-              <>
-                {!isSuccessApprove0 && (
-                  <MButton
-                    type="secondary"
-                    text={
-                      isLoadingApprove0
-                        ? "Approving..."
-                        : `Approve ${farmAsset0.symbol} Token`
-                    }
-                    disabled={
-                      isSuccessApprove0 ||
-                      isNaN(parseFloat(firstTokenAmount)) ||
-                      isLoadingApprove0 ||
-                      typeof approveToken0 == "undefined"
-                    }
-                    onClick={async () => {
-                      const txn = await approveToken0?.({
-                        args: [
-                          selectedFarm?.router,
-                          BigInt(
-                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-                          ),
-                        ],
-                      });
-                      console.log("Approve0 Result", txn);
-                    }}
-                  />
-                )}
-                {!isSuccessApprove1 && (
-                  <MButton
-                    text={
-                      isLoadingApprove1
-                        ? "Approving..."
-                        : `Approve ${farmAsset1.symbol} Token`
-                    }
-                    type="secondary"
-                    disabled={
-                      isSuccessApprove1 ||
-                      isNaN(parseFloat(secondTokenAmount)) ||
-                      isLoadingApprove1 ||
-                      typeof approveToken1 == "undefined"
-                    }
-                    onClick={async () => {
-                      const txn = await approveToken1?.({
-                        args: [
-                          selectedFarm?.router,
-                          BigInt(
-                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-                          ),
-                        ],
-                      });
-                      console.log("Approve1 Result", txn);
-                    }}
-                  />
-                )}
-              </>
-            ) : (
+            {isToken0ApprovedLoading || isToken1ApprovedLoading ? (
+              <MButton
+                type="primary"
+                text="Checking if tokens are approved..."
+              />
+            ) : (isSuccessApprove0 || !!Number(isToken0Approved)) &&
+              (isSuccessApprove1 || !!Number(isToken1Approved)) ? (
               <MButton
                 type="secondary"
                 disabled={
@@ -405,6 +395,61 @@ const AddLiquidityModal: FC<PropsWithChildren> = () => {
                   }
                 }}
               />
+            ) : (
+              <>
+                {!isToken0Approved && !isSuccessApprove0 && (
+                  <MButton
+                    type="secondary"
+                    text={
+                      isLoadingApprove0
+                        ? "Approving..."
+                        : `Approve ${farmAsset0.symbol} Token`
+                    }
+                    disabled={
+                      isSuccessApprove0 ||
+                      isLoadingApprove0 ||
+                      typeof approveToken0 == "undefined"
+                    }
+                    onClick={async () => {
+                      const txn = await approveToken0?.({
+                        args: [
+                          selectedFarm?.router,
+                          BigInt(
+                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                          ),
+                        ],
+                      });
+                      console.log("Approve0 Result", txn);
+                    }}
+                  />
+                )}
+                {!isToken1Approved && !isSuccessApprove1 && (
+                  <MButton
+                    text={
+                      isLoadingApprove1
+                        ? "Approving..."
+                        : `Approve ${farmAsset1.symbol} Token`
+                    }
+                    type="secondary"
+                    disabled={
+                      isSuccessApprove1 ||
+                      isLoadingApprove1 ||
+                      typeof approveToken1 == "undefined"
+                    }
+                    onClick={async () => {
+                      const txn = await approveToken1?.({
+                        args: [
+                          selectedFarm?.router,
+                          BigInt(
+                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+                          ),
+                        ],
+                      });
+                      console.log("Approve1 Result", txn);
+                    }}
+                  />
+                )}
+              </>
             )}
             <MButton
               type="transparent"

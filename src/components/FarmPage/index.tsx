@@ -78,11 +78,15 @@ const FarmPage: NextPage = () => {
   const [positions] = useAtom(positionsAtom);
 
   // Modal States
-  const [, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
-  const [, setRemoveLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
-  const [, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
-  const [, setUnstakingModalOpen] = useAtom(unstakingModalOpenAtom);
-  const [, setSelectedFarm] = useAtom(selectedFarmAtom);
+  const [addliqModalOpen, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
+  const [removeLiqModalOpen, setRemoveLiqModalOpen] = useAtom(
+    removeLiqModalOpenAtom
+  );
+  const [stakingModalOpen, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
+  const [unstakingModalOpen, setUnstakingModalOpen] = useAtom(
+    unstakingModalOpenAtom
+  );
+  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   // const [calcOpen, setCalcOpen] = useState<boolean>(false);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);
@@ -111,6 +115,12 @@ const FarmPage: NextPage = () => {
       setUnclaimedReward(unclaimedRewards);
     }
   }, [farmPosition]);
+
+  useEffect(() => {
+    if (!addliqModalOpen) {
+      setSelectedFarm(null);
+    }
+  }, [addliqModalOpen]);
 
   // useEffect(() => {
   //   if (farm?.id) {

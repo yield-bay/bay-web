@@ -9,6 +9,14 @@ interface MButtonProps {
   className?: string;
 }
 
+/**
+ * Modal Button Component
+ * @param type - primary, secondary, warning, transparent
+ * @param text - Label
+ * @param onClick - Button onClick function
+ * @param disabled - disabled condition
+ * @param className - Button Styling
+ */
 const MButton: FC<MButtonProps> = ({
   type,
   text,

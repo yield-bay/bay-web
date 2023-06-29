@@ -112,4 +112,5 @@ export const lpAbi = [
 
 export const tokenAbi = [
   "function approve(address, uint256) external returns (bool)",
+  "function allowance(address, address) external view returns (uint256)",
 ];
