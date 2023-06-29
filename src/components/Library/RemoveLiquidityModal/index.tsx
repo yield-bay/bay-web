@@ -38,13 +38,16 @@ const RemoveLiquidityModal = () => {
   const [farm] = useAtom(selectedFarmAtom);
   const publicClient = usePublicClient();
 
-  // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
-  const [percentage, setPercentage] = useState<number>(0);
-  const [lpTokens, setLpTokens] = useState<number>(0);
+  useEffect(() => console.log("selectedfarm @removeliq", farm), [farm]);
+
+  // Balance of LP Token
+  const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
+
+  const [percentage, setPercentage] = useState("");
+  const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<number>(0);
 
   const { chain } = useNetwork();
-  const blockTimestamp = useBlockTimestamp(publicClient);
 
   const SLIPPAGE = 0.5;
 
@@ -55,7 +58,11 @@ const RemoveLiquidityModal = () => {
 
   const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
     farm?.asset.address!,
-    methodId == 0 ? percentage : lpTokens,
+    methodId == 0
+      ? (parseFloat(lpBalance!) *
+          parseFloat(percentage == "" ? "0" : percentage)) /
+          100
+      : parseFloat(lpTokens),
     SLIPPAGE
   );
 
@@ -84,21 +91,11 @@ const RemoveLiquidityModal = () => {
   // const percentageDisabled =
   //   parseFloat(percentage) <= 0 || parseFloat(percentage) > 100;
 
-  // Balance of LP Token
-  const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
-  // const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
-  //   address,
-  //   chainId: chain?.id,
-  //   token: farm?.asset.address,
-  //   enabled: !!farm,
-  // });
-  // const lpBalanceNum = lpBalance ? parseFloat(lpBalance.formatted) : 0;
-
   useEffect(() => {
     if (lpBalanceLoading) {
       console.log("lpBalance loading...");
     } else if (lpBalance) {
-      console.log("lpbalance", `${lpBalance} ${token0}-${token1}`);
+      console.log("lpbalance", `${lpBalance} ${farm?.asset.symbol}`);
     }
   }, [lpBalanceLoading, lpBalance]);
 
@@ -130,17 +127,6 @@ const RemoveLiquidityModal = () => {
     ),
     functionName: getRemoveLiquidFunctionName(farm?.protocol ?? ""),
     chainId: chain?.id,
-    args: [
-      farmAsset0?.address, // tokenA Address
-      farmAsset1?.address, // tokenB Address
-      methodId == 0
-        ? parseUnits(`${(parseFloat(lpBalance!) * percentage) / 100}`, 18)
-        : parseUnits(`${lpTokens}`, 18), // Liquidity
-      minUnderlyingAsset0, // amountAMin
-      minUnderlyingAsset1, // amountBMin
-      address, // to
-      1688127545000, // TODO: to be called when the button is clicked (not on render). deadline (uint256)
-    ],
   });
 
   // Wait removeLiquidity Txn
@@ -159,8 +145,33 @@ const RemoveLiquidityModal = () => {
 
   const handleRemoveLiquidity = async () => {
     try {
-      const txnRes = await removeLiquidity?.();
-      console.log("txnResult", txnRes);
+      // Fetch latest block's timestamp
+      const block = await publicClient.getBlock();
+      const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
+      console.log("timestamp fetched //", blocktimestamp);
+
+      console.log("calling removeliquidity method...");
+      const txnRes = await removeLiquidity?.({
+        args: [
+          farmAsset0?.address, // tokenA Address
+          farmAsset1?.address, // tokenB Address
+          methodId == 0
+            ? parseUnits(
+                `${
+                  (parseFloat(lpBalance!) *
+                    parseFloat(percentage == "" ? "0" : percentage)) /
+                  100
+                }`,
+                18
+              )
+            : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+          parseUnits(`${minUnderlyingAsset0}`, farmAsset0?.decimals), // amountAMin
+          parseUnits(`${minUnderlyingAsset1}`, farmAsset1?.decimals), // amountBMin
+          address, // to
+          blocktimestamp, // deadline (uint256)
+        ],
+      });
+      console.log("called removeliquidity method.", txnRes);
     } catch (error) {
       console.error(error);
     }
@@ -171,6 +182,12 @@ const RemoveLiquidityModal = () => {
       <div className="w-full flex flex-col gap-y-10 mt-10 text-base">
         <h1 className="text-left font-semibold text-lg -mb-5">Remove Tokens</h1>
         {/* Input Box based on the chosen method to enter tokens amount */}
+        <p>
+          Balance:{" "}
+          {lpBalanceLoading
+            ? "loading..."
+            : `${parseFloat(lpBalance!).toFixed(5)} ${farm?.asset.symbol}`}
+        </p>
         <div className="flex flex-col gap-y-5">
           <ChosenMethod
             percentage={percentage.toString()}
@@ -244,7 +261,9 @@ const RemoveLiquidityModal = () => {
             }
             disabled={
               isSuccessLpApprove ||
-              (methodId == 0 ? isNaN(percentage) : isNaN(lpTokens)) ||
+              (methodId == 0
+                ? isNaN(parseFloat(percentage))
+                : isNaN(parseFloat(lpTokens))) ||
               isLoadingLpApprove ||
               typeof approveLpToken == "undefined"
             }
@@ -262,11 +281,37 @@ const RemoveLiquidityModal = () => {
             // disabled={lpTokensDisabled || percentageDisabled}
             disabled={
               !isSuccessLpApprove ||
-              (methodId == 0 ? isNaN(percentage) : isNaN(lpTokens)) ||
+              (methodId == 0
+                ? isNaN(parseFloat(percentage))
+                : isNaN(parseFloat(lpTokens))) ||
               typeof removeLiquidity == "undefined"
             }
             onClick={() => {
-              console.log("Remove Liquidity setting: {}");
+              console.log("Remove Liquidity setting args:", {
+                tokenA: farmAsset0?.address, // tokenA Address
+                tokenB: farmAsset1?.address, // tokenB Address
+                liquidity:
+                  methodId == 0
+                    ? parseUnits(
+                        `${
+                          (parseFloat(lpBalance!) *
+                            parseFloat(percentage == "" ? "0" : percentage)) /
+                          100
+                        }`,
+                        18
+                      )
+                    : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+                amountAMin: parseUnits(
+                  `${minUnderlyingAsset1}`,
+                  farmAsset0?.decimals
+                ), // amountAMin, // amountAMin
+                amountBMin: parseUnits(
+                  `${minUnderlyingAsset1}`,
+                  farmAsset1?.decimals
+                ), // amountAMin, // amountBMin
+                to: address, // to
+                timestamp: "calc at runtime", // deadline (uint256)
+              });
               handleRemoveLiquidity();
             }}
           />

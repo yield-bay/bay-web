@@ -35,6 +35,6 @@ export default function useMinimumUnderlyingTokens(
   const amount0 = (lpAmountAdjusted * reserve0) / Number(totalSupply);
   const amount1 = (lpAmountAdjusted * reserve1) / Number(totalSupply);
 
-  console.log("amount0", amount0, "\namount1", amount1);
+  // console.log("amount0", amount0, "\namount1", amount1);
   return [amount0, amount1];
 }
