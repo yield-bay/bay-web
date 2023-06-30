@@ -91,14 +91,6 @@ const RemoveLiquidityModal = () => {
   // const percentageDisabled =
   //   parseFloat(percentage) <= 0 || parseFloat(percentage) > 100;
 
-  useEffect(() => {
-    if (lpBalanceLoading) {
-      console.log("lpBalance loading...");
-    } else if (lpBalance) {
-      console.log("lpbalance", `${lpBalance} ${farm?.asset.symbol}`);
-    }
-  }, [lpBalanceLoading, lpBalance]);
-
   // Approve LP token
   const { data: dataLpApprove, writeAsync: approveLpToken } = useContractWrite({
     address: farm?.asset.address,

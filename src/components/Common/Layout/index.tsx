@@ -3,7 +3,6 @@ import clsx from "clsx";
 import Footer from "@components/Common/Footer";
 import Header from "@components/Common/Header";
 import { satoshiFont } from "@utils/localFont";
-import ConnectModal from "@components/Library/ConnectModal";
 import { useAtom } from "jotai";
 import { positionsAtom } from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";

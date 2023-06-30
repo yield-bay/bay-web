@@ -109,7 +109,7 @@ const StakingModal = () => {
     isSuccess: stakingSuccess,
     writeAsync: staking,
   } = useContractWrite({
-    address: farm?.chef,
+    address: farm?.chef as `0x${string}`,
     abi: [...parseAbi(stellaswapV1ChefAbi)],
     functionName: "deposit" as any,
     chainId: chain?.id,

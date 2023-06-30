@@ -85,7 +85,7 @@ const UnstakingModal = () => {
     isSuccess: unstakingCallSuccess,
     writeAsync: unstaking,
   } = useContractWrite({
-    address: farm?.chef,
+    address: farm?.chef as `0x${string}`,
     abi: [...parseAbi(stellaswapV1ChefAbi)],
     functionName: "withdraw" as any,
     chainId: chain?.id,

@@ -18,7 +18,7 @@ type APR = {
 
 export interface FarmType {
   id: number;
-  chef: `0x${string}`;
+  chef: string;
   chain: string;
   protocol: string;
   router: `0x${string}`;
@@ -43,6 +43,7 @@ export interface TokenPriceType {
   protocol: string;
   symbol: string;
   address: `0x${string}`;
+  decimals: number;
   price: number;
   underlyingAssets: UnderlyingAssets[];
 }
