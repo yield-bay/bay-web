@@ -243,11 +243,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   };
 
   // Testing useEffects for Console Logs
-  useEffect(() => {
-    console.log("reserve0", reserve0);
-    console.log("reserve1", reserve1);
-    console.log("lpBalance", lpBalance);
-  }, [reserve0, reserve1, lpBalance]);
+  // useEffect(() => {
+  //   console.log("reserve0", reserve0);
+  //   console.log("reserve1", reserve1);
+  //   console.log("lpBalance", lpBalance);
+  // }, [reserve0, reserve1, lpBalance]);
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {

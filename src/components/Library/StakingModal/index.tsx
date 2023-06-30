@@ -80,14 +80,14 @@ const StakingModal = () => {
   });
   const lpBalanceNum: any = lpBalance ? parseFloat(lpBalance.formatted) : 0;
 
-  useEffect(() => {
-    console.log("lpBalance", lpBalance);
-    if (lpBalanceLoading) {
-      console.log("lpBalance loading...");
-    } else if (lpBalance) {
-      console.log("lpbalance", `${lpBalanceNum} ${token0}-${token1}`);
-    }
-  }, [lpBalanceLoading, lpBalanceNum]);
+  // useEffect(() => {
+  //   console.log("lpBalance", lpBalance);
+  //   if (lpBalanceLoading) {
+  //     console.log("lpBalance loading...");
+  //   } else if (lpBalance) {
+  //     console.log("lpbalance", `${lpBalanceNum} ${token0}-${token1}`);
+  //   }
+  // }, [lpBalanceLoading, lpBalanceNum]);
 
   // Approve LP token
   const { data: dataLpApprove, writeAsync: approveLpToken } = useContractWrite({

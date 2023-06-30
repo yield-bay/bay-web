@@ -70,13 +70,13 @@ const UnstakingModal = () => {
   });
   const lpBalanceNum = lpBalance ? parseFloat(lpBalance.formatted) : 0;
 
-  useEffect(() => {
-    if (lpBalanceLoading) {
-      console.log("lpBalance loading...");
-    } else if (lpBalance) {
-      console.log("lpbalance", `${lpBalanceNum} ${token0}-${token1}`);
-    }
-  }, [lpBalanceLoading, lpBalance]);
+  // useEffect(() => {
+  //   if (lpBalanceLoading) {
+  //     console.log("lpBalance loading...");
+  //   } else if (lpBalance) {
+  //     console.log("lpbalance", `${lpBalanceNum} ${token0}-${token1}`);
+  //   }
+  // }, [lpBalanceLoading, lpBalance]);
 
   // Unstake LP Tokens
   const {
