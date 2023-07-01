@@ -1,30 +1,32 @@
+// Library Imports
 import { FC, PropsWithChildren, useEffect, useState } from "react";
-import { useBalance, useContractRead } from "wagmi";
-import ModalWrapper from "../ModalWrapper";
-import { addLiqModalOpenAtom } from "@store/commonAtoms";
 import { useAtom } from "jotai";
-import MButton from "@components/Library/MButton";
 import clsx from "clsx";
 import Image from "next/image";
-import { selectedFarmAtom } from "@store/atoms";
-import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
-import { parseAbi, parseUnits } from "viem";
+import { parseUnits } from "viem";
 import {
   useAccount,
+  useBalance,
   useNetwork,
   useContractWrite,
   useWaitForTransaction,
   usePublicClient,
 } from "wagmi";
+
+// Component, Util and Hook Imports
+import ModalWrapper from "../ModalWrapper";
+import MButton from "@components/Library/MButton";
+import { addLiqModalOpenAtom } from "@store/commonAtoms";
+import { selectedFarmAtom } from "@store/atoms";
+import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   getAbi,
   getAddLiqFunctionName,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
-import { tokenAbi } from "@components/Common/Layout/evmUtils";
-// import useBlockTimestamp from "@hooks/useBlockTimestamp";
 import useTokenReserves from "@hooks/useTokenReserves";
 import useLPBalance from "@hooks/useLPBalance";
+import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -53,15 +55,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     selectedFarm?.asset.address!
   );
 
-  // Debounced values
-  // const debouncedFirstTokenAmount: any = useDebounce(firstTokenAmount, 500);
-  // const debouncedSecondTokenAmount: any = useDebounce(secondTokenAmount, 500);
-
-  // States
-  // const [isProcessing, setIsProcessing] = useState(false);
-  // const [isSuccess, setIsSuccess] = useState(false);
-  // const [isApproving, setIsApproving] = useState(false);
-
   const SLIPPAGE = 0.5; // In percentage
 
   useEffect(() => {
@@ -86,45 +79,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     enabled: !!address && !!selectedFarm,
   });
 
-  // Check Approval Token0
+  // Check Approval Token0 & Token1
   const { data: isToken0Approved, isLoading: isToken0ApprovedLoading } =
-    useContractRead({
-      address: farmAsset0?.address,
-      abi: parseAbi(tokenAbi),
-      functionName: "allowance" as any,
-      args: [
-        address, // owner
-        selectedFarm?.router, // spender
-      ],
-      enabled: !!address && !!selectedFarm,
-    });
-  // Check Approval Token1
-  const { data: isToken1Approved, isLoading: isToken1ApprovedLoading } =
-    useContractRead({
-      address: farmAsset1?.address,
-      abi: parseAbi(tokenAbi),
-      functionName: "allowance" as any,
-      args: [
-        address, // owner
-        selectedFarm?.router, // spender
-      ],
-      enabled: !!address && !!selectedFarm,
-    });
+    useIsApprovedToken(farmAsset0, selectedFarm?.router!);
 
-  // Approve token0
-  const { data: dataApprove0, writeAsync: approveToken0 } = useContractWrite({
-    address: farmAsset0?.address,
-    abi: parseAbi(tokenAbi),
-    functionName: "approve" as any,
-    chainId: chain?.id,
-  });
-  // Approve token1
-  const { data: dataApprove1, writeAsync: approveToken1 } = useContractWrite({
-    address: farmAsset1?.address,
-    abi: parseAbi(tokenAbi),
-    functionName: "approve" as any,
-    chainId: chain?.id,
-  });
+  const { data: isToken1Approved, isLoading: isToken1ApprovedLoading } =
+    useIsApprovedToken(farmAsset1, selectedFarm?.router!);
+
+  // Approve token0 and token1
+  const { data: dataApprove0, writeAsync: approveToken0 } = useApproveToken(
+    farmAsset0,
+    selectedFarm?.router!
+  );
+  const { data: dataApprove1, writeAsync: approveToken1 } = useApproveToken(
+    farmAsset1,
+    selectedFarm?.router!
+  );
 
   const {
     data: addLiquidityData,
@@ -220,11 +190,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
     // Updating Second Token amount
     const firstTokenFloat = parseFloat(e.target.value);
-    const expectedSecondTokenAmount = updateSecondTokenAmount(firstTokenFloat);
-    // if (e.target.value == "") {
-    //   setFees(null);
-    // }
-    // await handleFees(firstTokenAmount, expectedSecondTokenAmount);
+    updateSecondTokenAmount(firstTokenFloat);
   };
 
   // Method to update token values and fetch fees based on secondToken Input
@@ -233,21 +199,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
     // Calculate first token amount
     const secondTokenFloat = parseFloat(e.target.value);
-    const expectedFirstTokenAmount = updateFirstTokenAmount(secondTokenFloat);
-
-    // if (e.target.value == "") {
-    //   setFees(null);
-    // }
-    // // Calculate Fees
-    // await handleFees(secondTokenAmount, expectedFirstTokenAmount);
+    updateFirstTokenAmount(secondTokenFloat);
   };
-
-  // Testing useEffects for Console Logs
-  // useEffect(() => {
-  //   console.log("reserve0", reserve0);
-  //   console.log("reserve1", reserve1);
-  //   console.log("lpBalance", lpBalance);
-  // }, [reserve0, reserve1, lpBalance]);
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
@@ -444,14 +397,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       typeof approveToken0 == "undefined"
                     }
                     onClick={async () => {
-                      const txn = await approveToken0?.({
-                        args: [
-                          selectedFarm?.router,
-                          BigInt(
-                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-                          ),
-                        ],
-                      });
+                      const txn = await approveToken0?.();
                       console.log("Approve0 Result", txn);
                     }}
                   />
@@ -470,14 +416,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       typeof approveToken1 == "undefined"
                     }
                     onClick={async () => {
-                      const txn = await approveToken1?.({
-                        args: [
-                          selectedFarm?.router,
-                          BigInt(
-                            "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-                          ),
-                        ],
-                      });
+                      const txn = await approveToken1?.();
                       console.log("Approve1 Result", txn);
                     }}
                   />
@@ -498,7 +437,5 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     )
   );
 };
-
-// ("function approve(address guy, uint wad) public returns (bool)");
 
 export default AddSectionStandard;
