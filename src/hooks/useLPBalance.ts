@@ -9,7 +9,7 @@ const useLPBalance = (lpAddress: `0x${string}`) => {
     address,
     chainId: chain?.id,
     token: lpAddress,
-    enabled: !!address && !!lpAddress,
+    enabled: !!address && !!lpAddress && !!chain,
   });
 
   const lpBalance = lpBalanceLoading ? "0" : lpbalance?.formatted;

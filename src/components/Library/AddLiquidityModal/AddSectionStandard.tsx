@@ -1,5 +1,5 @@
 // Library Imports
-import { FC, PropsWithChildren, useEffect, useState } from "react";
+import { FC, PropsWithChildren, useCallback, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
@@ -27,6 +27,9 @@ import { UnderlyingAssets } from "@utils/types";
 import useTokenReserves from "@hooks/useTokenReserves";
 import useLPBalance from "@hooks/useLPBalance";
 import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
+import useMinimumLPTokens from "@hooks/useMinLPTokens";
+
+const SLIPPAGE = 0.5; // In percentage
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -46,16 +49,21 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
-  const [estimateLpMinted, setEstimateLpMinted] = useState<number | undefined>(
-    undefined
-  );
 
   const { reserve0, reserve1 } = useTokenReserves(selectedFarm?.asset.address!);
+
+  const minLpTokens = useMinimumLPTokens(
+    selectedFarm?.asset.address!,
+    SLIPPAGE,
+    reserve0,
+    reserve1,
+    isNaN(parseInt(firstTokenAmount)) ? 0 : parseInt(firstTokenAmount),
+    isNaN(parseInt(secondTokenAmount)) ? 0 : parseInt(secondTokenAmount)
+  );
+
   const { lpBalance, lpBalanceLoading } = useLPBalance(
     selectedFarm?.asset.address!
   );
-
-  const SLIPPAGE = 0.5; // In percentage
 
   useEffect(() => {
     // Empty the values when Modal is opened or closed
@@ -158,9 +166,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Updated tokenAmounts based on value of other token
   const updateSecondTokenAmount = (firstTokenAmount: number): string => {
     const poolRatio = reserve0 / reserve1;
-    const estimatedLPAmountMinted =
-      (firstTokenAmount * parseFloat(lpBalance!)) / reserve0;
-    setEstimateLpMinted(estimatedLPAmountMinted);
     const expectedSecondTokenAmount =
       (firstTokenAmount / poolRatio) * (1 + SLIPPAGE);
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
@@ -172,9 +177,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   const updateFirstTokenAmount = (secondTokenAmount: number): string => {
     const poolRatio = reserve0 / reserve1;
-    const estimatedLPAmountMinted =
-      (secondTokenAmount * parseFloat(lpBalance!)) / reserve1;
-    setEstimateLpMinted(estimatedLPAmountMinted);
     const expectedFirstTokenAmount =
       (poolRatio * secondTokenAmount) / (1 + SLIPPAGE);
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
@@ -333,6 +335,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               </div>
             </div>
           </div>
+
+          {firstTokenAmount != "" && secondTokenAmount !== "" && (
+            <p>
+              You will receive: {minLpTokens} {selectedFarm?.asset.symbol}
+            </p>
+          )}
 
           {/* Buttons */}
           <div className="flex flex-col gap-y-2">
