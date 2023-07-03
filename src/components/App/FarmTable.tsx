@@ -218,6 +218,9 @@ const FarmTable: FC<Props> = ({
                   <th
                     scope="col"
                     className="pl-6 py-[13px] cursor-pointer font-medium"
+                    onClick={() => {
+                      handleSort("tvl", true);
+                    }}
                   >
                     <div className="flex justify-start items-center">
                       <Tooltip
@@ -248,6 +251,9 @@ const FarmTable: FC<Props> = ({
                   <th
                     scope="col"
                     className="flex justify-start items-center pl-6 pr-3 py-[13px] cursor-pointer font-medium"
+                    onClick={() => {
+                      handleSort("yield", true);
+                    }}
                   >
                     <Tooltip
                       label={
@@ -276,6 +282,9 @@ const FarmTable: FC<Props> = ({
                   <th
                     scope="col"
                     className="hidden lg:table-cell px-3 py-[13px] pl-3 lg:pl-6 text-left cursor-pointer font-medium"
+                    onClick={() => {
+                      handleSort("safety", true);
+                    }}
                   >
                     <Tooltip
                       label={
@@ -310,6 +319,9 @@ const FarmTable: FC<Props> = ({
                       "py-[13px] pr-3 pl-4 sm:px-6 text-center font-medium cursor-pointer",
                       (isConnected || account !== null) && "bg-[#F0F0FF]"
                     )}
+                    onClick={() => {
+                      handleSort("pos", true);
+                    }}
                   >
                     <div>
                       <span>Your Positions</span>
