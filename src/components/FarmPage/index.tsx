@@ -60,7 +60,7 @@ const FarmPage: NextPage = () => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
 
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
