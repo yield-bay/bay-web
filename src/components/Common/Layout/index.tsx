@@ -9,6 +9,7 @@ import { positionsAtom } from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { FarmType, TokenPriceType } from "@utils/types";
 import {
+  createWalletConnectEvent,
   fetchListicleFarms,
   fetchLpTokenPrices,
   fetchTokenPrices,
@@ -28,6 +29,7 @@ import {
   stellaswapV1ChefAbi,
 } from "./evmUtils";
 import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
+import getTimestamp from "@utils/getTimestamp";
 
 interface Props {
   children: ReactNode;
@@ -47,7 +49,7 @@ const Layout: FC<Props> = ({ children }) => {
     console.log("---- Updated Positions ----\n", positions);
   }, [positions]);
 
-  const { isConnected, address } = useAccount();
+  const { isConnected, address, connector } = useAccount();
   const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   const [account] = useAtom(dotAccountAtom);
@@ -73,7 +75,7 @@ const Layout: FC<Props> = ({ children }) => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
 
   // Fetching Lp token prices
   const { isLoading: isLpPricesLoading, data: lpTokenPrices } = useQuery({
@@ -921,7 +923,22 @@ const Layout: FC<Props> = ({ children }) => {
 
   // Side-effect for Substrate Chains
   useEffect(() => {
+    async function walletEvent() {
+      try {
+        const connectWalletEvent = await createWalletConnectEvent(
+          account?.address!,
+          "DOT",
+          account?.wallet?.extensionName!,
+          getTimestamp()
+        );
+        console.log("connectWalletEvent: DOT", connectWalletEvent);
+      } catch (error) {
+        console.log("Error: CreateWalletEvent DOT", error);
+      }
+    }
+
     if (isConnectedDot && farms.length > 0) {
+      walletEvent();
       console.log("running mangata setup");
       fetchSubstratePositions();
     } else if (!isConnectedDot && farms.length > 0) {
@@ -934,12 +951,28 @@ const Layout: FC<Props> = ({ children }) => {
   useEffect(() => {
     const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
     const tokenPricesLength = Object.keys(tokenPricesMap).length;
+
+    async function walletEvent() {
+      try {
+        const connectWalletEvent = await createWalletConnectEvent(
+          address!,
+          "EVM",
+          connector?.name!,
+          getTimestamp()
+        );
+        console.log("connectWalletEvent: EVM", connectWalletEvent);
+      } catch (error) {
+        console.log("Error: CreateWalletEvent EVM", error);
+      }
+    }
+
     if (
       isConnected &&
       farms.length > 0 &&
       lpTokensPricesLength > 0 &&
       tokenPricesLength > 0
     ) {
+      walletEvent();
       fetchEvmPositions(); // Run setup when wallet connected
     } else if (
       !isConnected &&

@@ -98,7 +98,7 @@ const PortfolioPage = () => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
 
   useEffect(() => {
     if (!!userPositions) {

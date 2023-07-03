@@ -94,11 +94,11 @@ const FarmPage: NextPage = () => {
     }
   }, [farmPosition]);
 
-  // useEffect(() => {
-  //   if (farm?.id) {
-  //     trackEventWithProperty("farm-page-view", farm?.asset.symbol);
-  //   }
-  // }, [farm]);
+  useEffect(() => {
+    if (!!farm) {
+      trackEventWithProperty("farm-page-view", farm?.asset.symbol);
+    }
+  }, [farm]);
 
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
   const safetyScoreColor = useSafetyscoreColor(safetyScore);

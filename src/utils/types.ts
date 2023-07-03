@@ -76,3 +76,10 @@ export interface PortfolioPositionType {
   id: number;
   lpSymbol: string;
 }
+
+export interface WalletConnectEventType {
+  userAddress: string;
+  walletType: string;
+  walletProvider: string;
+  timestamp: string;
+}

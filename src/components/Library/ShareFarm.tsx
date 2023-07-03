@@ -8,6 +8,7 @@ import { useAtom } from "jotai";
 import { hashAtom } from "@store/atoms";
 import Image from "next/image";
 import clsx from "clsx";
+import { FarmType } from "@utils/types";
 
 // Types
 type ShareFarmPropsType = {
@@ -15,7 +16,7 @@ type ShareFarmPropsType = {
 };
 
 type ShareMenuPropsType = {
-  farm: any;
+  farm: FarmType;
   url: string;
   tweetUrl: string;
 };
@@ -103,7 +104,6 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
               <button
                 onClick={(e) => {
                   navigator.clipboard.writeText(url);
-
                   trackEventWithProperty("farm-share", {
                     shareVia: "copy",
                     farmAddress: farm.asset?.address,

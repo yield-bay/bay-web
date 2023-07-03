@@ -1,6 +1,6 @@
 import { createClient, defaultExchanges, gql } from "@urql/core";
 import { API_URL } from "./constants";
-import { TokenPriceType } from "./types";
+import { FarmType, TokenPriceType, WalletConnectEventType } from "./types";
 
 const client = createClient({
   url: API_URL,
@@ -10,7 +10,9 @@ const client = createClient({
 /**
  * @returns list of farms
  */
-export const fetchListicleFarms = async () => {
+export const fetchListicleFarms = async (): Promise<{
+  farms: FarmType[];
+}> => {
   const farmObj = await client
     .query(
       gql`
@@ -125,4 +127,49 @@ export const fetchTokenPrices = async (): Promise<{
   return {
     tokenPrices,
   };
+};
+
+export const createWalletConnectEvent = async (
+  userAddress: string,
+  walletType: string,
+  walletProvider: string,
+  timestamp: string
+): Promise<{
+  walletConnectEvent: WalletConnectEventType;
+}> => {
+  const walletConnectObj = await client
+    .mutation(
+      gql`
+        mutation CreateWalletConnectEvent(
+          $userAddress: String!
+          $walletType: String!
+          $walletProvider: String!
+          $timestamp: String!
+        ) {
+          createWalletConnectEvent(
+            userAddress: $userAddress
+            walletType: $walletType
+            walletProvider: $walletProvider
+            timestamp: $timestamp
+          ) {
+            userAddress
+            walletType
+            walletProvider
+            timestamp
+          }
+        }
+      `,
+      {
+        // variables
+        userAddress,
+        walletType,
+        walletProvider,
+        timestamp,
+      }
+    )
+    .toPromise();
+
+  const walletConnectEvent = walletConnectObj?.data?.createWalletConnectEvent;
+
+  return { walletConnectEvent };
 };

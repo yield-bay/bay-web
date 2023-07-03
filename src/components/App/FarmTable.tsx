@@ -332,7 +332,7 @@ const FarmTable: FC<Props> = ({
                     onClick={() => {
                       handleSort("pos", true);
                       trackEventWithProperty("table-sorting", {
-                        sortingType: "safety-score",
+                        sortingType: "pos",
                       });
                     }}
                   >

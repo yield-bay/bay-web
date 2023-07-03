@@ -52,7 +52,7 @@ const Home: NextPage = () => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
   const totalProtocols = getTotalProtocols(farms);
 
   // Filtering farms based on FarmType and then search term
@@ -89,10 +89,9 @@ const Home: NextPage = () => {
     };
   }, []);
 
-  // Tracking OFF in Staging
-  // useEffect(() => {
-  //   trackPageView();
-  // }, []);
+  useEffect(() => {
+    trackPageView();
+  }, []);
 
   useEffect(() => {
     if (router.query.id) {
