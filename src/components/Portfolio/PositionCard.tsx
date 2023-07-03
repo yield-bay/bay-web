@@ -160,15 +160,15 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
             </table>
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row items-center text-base leading-5 justify-center py-6 px-4 bg-[#EDEDFF] rounded-lg">
-          <span className="font-medium text-sm xl:text-base">
+        <div className="flex flex-col gap-2 sm:flex-row items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
+          <span className="font-medium">
             Staked at {(thisFarm?.apr.base + thisFarm?.apr.reward).toFixed(2)}%
             APY
           </span>
           <Link
             // href={`/farm/${position.id}?addr=${position.address}`}
             href={`/farm/${thisFarm?.id}?addr=${thisFarm?.asset.address}`}
-            className="font-bold underline underline-offset-2 text-sm xl:text-base"
+            className="font-bold underline underline-offset-2"
           >
             View Farm
           </Link>
