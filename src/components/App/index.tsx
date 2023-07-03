@@ -12,7 +12,6 @@ import MobileFarmList from "./MobileFarmList";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
-import { trackPageView } from "@utils/analytics";
 import { fetchListicleFarms } from "@utils/api";
 import {
   filterFarmTypeAtom,
@@ -87,10 +86,6 @@ const Home: NextPage = () => {
     return () => {
       window.removeEventListener("scroll", () => {});
     };
-  }, []);
-
-  useEffect(() => {
-    trackPageView();
   }, []);
 
   useEffect(() => {

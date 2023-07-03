@@ -35,7 +35,6 @@ import {
 } from "@utils/farmPageMethods";
 import { addrQueryAtom, idQueryAtom, positionsAtom } from "@store/atoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
-import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
 import { FarmType } from "@utils/types";
 import Breadcrumb from "@components/Library/Breadcrumb";
@@ -94,12 +93,6 @@ const FarmPage: NextPage = () => {
     }
   }, [farmPosition]);
 
-  useEffect(() => {
-    if (!!farm) {
-      trackEventWithProperty("farm-page-view", farm?.asset.symbol);
-    }
-  }, [farm]);
-
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
   const safetyScoreColor = useSafetyscoreColor(safetyScore);
 
@@ -121,16 +114,7 @@ const FarmPage: NextPage = () => {
           <div className="flex gap-x-7 items-center">
             <ShareFarm farm={farm} />
             <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-              <Button
-                size="large"
-                onButtonClick={() => {
-                  trackEventWithProperty("go-to-farm", {
-                    protocol: farm?.protocol,
-                  });
-                }}
-              >
-                Visit Farm
-              </Button>
+              <Button size="large">Visit Farm</Button>
             </a>
           </div>
         </div>
