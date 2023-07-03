@@ -6,9 +6,15 @@
  */
 export default function toDollarUnits(num: number, decimals: number): string {
   if (num >= 1000000) {
-    return "$" + (num / 1000000).toFixed(decimals) + "M";
+    return (
+      "$" +
+      Number((num / 1000000).toFixed(decimals)).toLocaleString("en-US") +
+      "M"
+    );
   } else if (num >= 1000 && num < 1000000) {
-    return "$" + (num / 1000).toFixed(decimals) + "K";
+    return (
+      "$" + Number((num / 1000).toFixed(decimals)).toLocaleString("en-US") + "K"
+    );
   }
-  return "$" + num.toFixed(decimals);
+  return "$" + Number(num.toFixed(decimals)).toLocaleString("en-US");
 }
