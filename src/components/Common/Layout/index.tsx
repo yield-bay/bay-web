@@ -142,6 +142,7 @@ const Layout: FC<Props> = ({ children }) => {
    * Protocols -- Mangata X
    */
   const fetchSubstratePositions = async () => {
+    emptySubstratePositions();
     console.log("substrate setup initialised");
     setIsSubPosLoading(true);
     // Filter Mangata X Farms
@@ -285,6 +286,7 @@ const Layout: FC<Props> = ({ children }) => {
    * Protocols -- Curve, Zenlink, Solarbeam, Stellaswap
    */
   const fetchEvmPositions = async () => {
+    emptyEvmPositions();
     // Fetching EVM positions...
     setIsEvmPosLoading(true);
     let allPromises = new Array<Promise<void>>();
