@@ -961,7 +961,7 @@ const Layout: FC<Props> = ({ children }) => {
       console.log("emptying mangata positions");
       emptySubstratePositions();
     }
-  }, [isConnectedDot, farms]);
+  }, [isConnectedDot, farms, account]);
 
   // Side-effect for EVM Chains
   useEffect(() => {
@@ -998,7 +998,7 @@ const Layout: FC<Props> = ({ children }) => {
     ) {
       emptyEvmPositions();
     }
-  }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
+  }, [isConnected, farms, address, lpTokenPricesMap, tokenPricesMap]);
 
   return (
     <div
