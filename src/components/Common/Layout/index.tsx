@@ -817,7 +817,7 @@ const Layout: FC<Props> = ({ children }) => {
                   reward_token
                 );
                 console.log(
-                  `reward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+                  `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
                 );
                 const tok = new ethers.Contract(reward_token, lpAbi, provider);
                 const sym = await tok.symbol();
@@ -829,7 +829,7 @@ const Layout: FC<Props> = ({ children }) => {
                   dec,
                   "\ntokenPrice",
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${sym}-${reward_token}`
+                    `${chain.name}-stellaswap-${sym}-${reward_token}`
                   ],
                   "\nlpTokenPrice",
                   lpTokenPricesMap[
@@ -848,7 +848,7 @@ const Layout: FC<Props> = ({ children }) => {
                   amountUSD:
                     (Number(claimable_reward) / 10 ** Number(dec)) *
                     tokenPricesMap[
-                      `${chain.name}-${protocol.name}-${sym}-${reward_token}`
+                      `${chain.name}-stellaswap-${sym}-${reward_token}`
                     ],
                 });
               }
