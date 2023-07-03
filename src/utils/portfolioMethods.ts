@@ -8,7 +8,10 @@ export function calcTotalUnclaimedRewards(
     return (
       accumulator +
       position.unclaimedRewards.reduce((sum: number, reward) => {
-        return sum + reward.amountUSD;
+        if (!isNaN(reward.amountUSD)) {
+          return sum + reward.amountUSD;
+        }
+        return sum;
       }, 0)
     );
   }, 0);
