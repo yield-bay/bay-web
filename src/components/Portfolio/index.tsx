@@ -102,6 +102,7 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     if (!!userPositions) {
+      console.log("upsss", userPositions);
       setNetWorth(calcNetWorth(userPositions));
       setTotalUnclaimedRewardsUSD(calcTotalUnclaimedRewards(userPositions));
     }

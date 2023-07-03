@@ -396,7 +396,9 @@ const Layout: FC<Props> = ({ children }) => {
               let ucrews: any = [];
               for (let i = 0; i < ucrewAmounts.length; i++) {
                 console.log(
+                  "stellaucre",
                   ucrewSymbols[i],
+                  ucrewAmounts[i],
                   tokenPricesMap[
                     `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ]
@@ -409,7 +411,10 @@ const Layout: FC<Props> = ({ children }) => {
                   amount:
                     Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
                   amountUSD:
-                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
                 });
               }
 
@@ -549,7 +554,10 @@ const Layout: FC<Props> = ({ children }) => {
                   amount:
                     Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
                   amountUSD:
-                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
                 });
               }
 
@@ -681,7 +689,11 @@ const Layout: FC<Props> = ({ children }) => {
                 ucrews.push({
                   token: sym,
                   amount: Number(rewards[i]) / 10 ** Number(dec),
-                  amountUSD: Number(rewards[i]) / 10 ** Number(dec), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                  amountUSD:
+                    (Number(rewards[i]) / 10 ** Number(dec)) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
+                    ],
                 });
               }
 
@@ -833,7 +845,11 @@ const Layout: FC<Props> = ({ children }) => {
                 ucrews.push({
                   token: sym,
                   amount: Number(claimable_reward) / 10 ** Number(dec),
-                  amountUSD: Number(claimable_reward) / 10 ** Number(dec), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                  amountUSD:
+                    (Number(claimable_reward) / 10 ** Number(dec)) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${sym}-${reward_token}`
+                    ],
                 });
               }
 
