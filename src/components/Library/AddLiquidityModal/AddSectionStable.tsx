@@ -12,14 +12,14 @@ import { selectedFarmAtom } from "@store/atoms";
 import MButton from "../MButton";
 import { UnderlyingAssets } from "@utils/types";
 import {
-  getAbi,
   getAddLiqFunctionName,
-  getStableRouterAbi,
+  getStableFarmAbi,
 } from "@utils/abis/contract-helper-methods";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
-import { parseAbiItem, parseUnits } from "viem";
+import { parseAbi, parseUnits } from "viem";
+import useTokenReserves from "@hooks/useTokenReserves";
 
 const SLIPPAGE = 0.5; // In percentage
 
@@ -28,7 +28,7 @@ const AddSectionStable: FC = () => {
   const { chain } = useNetwork();
 
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
-  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
+  const [farm] = useAtom(selectedFarmAtom);
   const [approvalMap, setApprovalMap] = useState<{
     [address: `0x${string}`]: boolean;
   }>({});
@@ -36,8 +36,12 @@ const AddSectionStable: FC = () => {
     [address: `0x${string}`]: string;
   }>({});
 
-  const tokenNames = formatTokenSymbols(selectedFarm?.asset.symbol ?? "");
-  const tokens = selectedFarm?.asset.underlyingAssets ?? [];
+  const tokens = farm?.asset.underlyingAssets ?? [];
+
+  const { reserve0, reserve1 } = useTokenReserves(
+    farm?.asset.address!,
+    farm?.protocol!
+  );
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
     setInputMap((pre: any) => ({
@@ -84,13 +88,12 @@ const AddSectionStable: FC = () => {
     isSuccess: addLiquiditySuccess,
     writeAsync: addLiquidity,
   } = useContractWrite({
-    address: selectedFarm?.router,
-    abi: [
-      parseAbiItem(
-        getStableRouterAbi(selectedFarm?.protocol!, selectedFarm?.chain!)!
-      ),
-    ],
-    functionName: getAddLiqFunctionName(selectedFarm?.protocol!) as any,
+    address:
+      farm?.protocol.toLowerCase() == "curve"
+        ? farm?.asset.address
+        : farm?.router,
+    abi: parseAbi(getStableFarmAbi(farm?.protocol!)),
+    functionName: getAddLiqFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
 
@@ -107,13 +110,21 @@ const AddSectionStable: FC = () => {
       const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
       console.log("timestamp fetched //", blocktimestamp);
       console.log("calling addliquidity method...", amounts);
+
+      const args_to_pass =
+        farm?.protocol.toLowerCase() == "curve"
+          ? [
+              amounts, // amounts (uint256[])
+              1, // minToMint (uint256)
+            ]
+          : [
+              amounts, // amounts (uint256[])
+              1, // minToMint (uint256)
+              blocktimestamp, // deadline (uint256)
+            ];
+
       const txnRes = await addLiquidity?.({
-        args: [
-          amounts, // amounts (uint256[])
-          // (amounts.length * (100 - SLIPPAGE)) / 100, // minToMint (uint256)
-          1, // minToMint (uint256)
-          blocktimestamp, // deadline (uint256)
-        ],
+        args: args_to_pass,
       });
       console.log("called addliquidity method.", txnRes);
     } catch (error) {
@@ -133,7 +144,7 @@ const AddSectionStable: FC = () => {
             index={index}
             handleInput={handleInput}
             inputMap={inputMap}
-            selectedFarm={selectedFarm}
+            selectedFarm={farm}
             tokensLength={tokens.length}
           />
         ))}
@@ -144,7 +155,7 @@ const AddSectionStable: FC = () => {
             <TokenButton
               key={`${token?.symbol}-${index}`}
               token={token}
-              selectedFarm={selectedFarm!}
+              selectedFarm={farm!}
               setApprovalMap={setApprovalMap}
             />
           ))}

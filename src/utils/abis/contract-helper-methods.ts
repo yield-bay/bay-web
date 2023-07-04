@@ -1,4 +1,7 @@
-import { solarbeamRouterAbi } from "@components/Common/Layout/evmUtils";
+import {
+  curveChefAbi,
+  solarbeamRouterAbi,
+} from "@components/Common/Layout/evmUtils";
 const solarbeamMoonriver = require("./solarbeam-moonriver-router.json");
 const stellaswapMoonbeam = require("./stellaswap-moonbeam-router.json");
 const zenlinkAstar = require("./zenlink-astar-router.json");
@@ -12,16 +15,22 @@ const sushiswapMoonriver = require("./sushiswap-moonriver-router.json");
 const arthswapAstar = require("./arthswap-astar-router.json");
 const siriusAstar = require("./sirius-astar-router.json");
 
-export function getStableRouterAbi(protocol: string, chain: string) {
-  if (protocol !== undefined && chain !== undefined) {
-    switch (protocol.toLowerCase()) {
-      case "stellaswap":
-        if (chain.toLowerCase() == "moonbeam") {
-          return solarbeamRouterAbi;
-        }
-      default:
-        return [];
-    }
+export function getStableFarmAbi(protocol: string): string[] {
+  if (!protocol) return [""];
+  switch (protocol.toLowerCase()) {
+    case "curve":
+      return curveChefAbi;
+    case "solarbeam":
+    case "stellaswap":
+    case "zenlink":
+    case "beamswap":
+    case "solarflare":
+    case "sushiswap":
+    case "arthswap":
+    case "sirius":
+      return solarbeamRouterAbi;
+    default:
+      return [""];
   }
 }
 

@@ -100,10 +100,15 @@ export const curveChefAbi = [
   "function reward_tokens(uint256) view returns (address)",
   "function balanceOf(address) view returns (uint256)",
   "function lp_token() view returns (address)",
+  "function add_liquidity(uint256, uint256, address) returns (uint256)",
 ];
 
 export const solarbeamRouterAbi = [
   "function addLiquidity(uint256[], uint256, uint256) external returns (uint256)",
+];
+
+export const curveLpAbi = [
+  "function get_balances() view returns (uint256, uint256)",
 ];
 
 export const lpAbi = [

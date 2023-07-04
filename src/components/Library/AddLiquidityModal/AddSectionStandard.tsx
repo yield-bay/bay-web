@@ -50,7 +50,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
 
-  const { reserve0, reserve1 } = useTokenReserves(selectedFarm?.asset.address!);
+  const { reserve0, reserve1 } = useTokenReserves(
+    selectedFarm?.asset.address!,
+    selectedFarm?.protocol!
+  );
 
   const minLpTokens = useMinimumLPTokens(
     selectedFarm?.asset.address!,
