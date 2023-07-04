@@ -13,6 +13,8 @@ import {
   calcTotalRewardValue,
 } from "@utils/farmPageMethods";
 import { FarmType } from "@utils/types";
+import toDollarUnits from "@utils/toDollarUnits";
+import toUnits from "@utils/toUnits";
 
 interface Props {
   tokenNames: string[];
@@ -47,14 +49,14 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
         <div className="flex flex-col gap-y-2">
           <p className="truncate text-sm leading-5">Total Holdings</p>
           <p className="text-2xl leading-7 font-semibold text-[#101828]">
-            $
-            {(position.unstaked.amountUSD + position.staked.amountUSD).toFixed(
+            {toDollarUnits(
+              position.unstaked.amountUSD + position.staked.amountUSD,
               2
             )}
           </p>
           <p className="inilne-flex p-2 bg-[#F5F5F5] rounded-lg text-base leading-5 max-w-fit">
             <span className="font-bold">
-              {(position.unstaked.amount + position.staked.amount).toFixed(2)}
+              {toUnits(position.unstaked.amount + position.staked.amount, 2)}
             </span>{" "}
             LP
           </p>
@@ -68,11 +70,11 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
               Idle
             </p>
             <p className="text-[#4D6089] font-semibold text-xl leading-7">
-              ${position?.unstaked?.amountUSD.toFixed(2)}
+              {toDollarUnits(position?.unstaked?.amountUSD, 2)}
             </p>
             <p className="inline-flex gap-x-1 p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
               <span className="font-bold">
-                {position?.unstaked.amount.toFixed(2)}
+                {toUnits(position?.unstaked.amount, 2)}
               </span>{" "}
               <span>LP</span>
             </p>
@@ -85,11 +87,11 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
               Staked
             </p>
             <p className="text-[#4D6089] font-semibold text-xl leading-7">
-              ${position?.staked.amountUSD.toFixed(2)}
+              {toDollarUnits(position?.staked.amountUSD, 2)}
             </p>
             <p className="inline-flex gap-x-1 p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
               <span className="font-bold">
-                {position?.staked.amount.toFixed(2)}
+                {toUnits(position?.staked.amount, 2)}
               </span>
               <span>LP</span>
             </p>

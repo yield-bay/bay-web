@@ -4,10 +4,14 @@ export function calcTotalUnclaimedRewards(
   userPositions: PortfolioPositionType[]
 ) {
   return userPositions.reduce((accumulator: number, position) => {
+    console.log("upreduce", accumulator, position.unclaimedRewards);
     return (
       accumulator +
       position.unclaimedRewards.reduce((sum: number, reward) => {
-        return sum + reward.amountUSD;
+        if (!isNaN(reward.amountUSD)) {
+          return sum + reward.amountUSD;
+        }
+        return sum;
       }, 0)
     );
   }, 0);

@@ -12,7 +12,6 @@ import MobileFarmList from "./MobileFarmList";
 import ScrollToTopBtn from "@components/Library/ScrollToTopBtn";
 import useFilteredFarmTypes from "@hooks/useFilteredFarmTypes";
 import useScreenSize from "@hooks/useScreenSize";
-import { trackPageView } from "@utils/analytics";
 import { fetchListicleFarms } from "@utils/api";
 import {
   filterFarmTypeAtom,
@@ -52,7 +51,7 @@ const Home: NextPage = () => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
   const totalProtocols = getTotalProtocols(farms);
 
   // Filtering farms based on FarmType and then search term
@@ -88,11 +87,6 @@ const Home: NextPage = () => {
       window.removeEventListener("scroll", () => {});
     };
   }, []);
-
-  // Tracking OFF in Staging
-  // useEffect(() => {
-  //   trackPageView();
-  // }, []);
 
   useEffect(() => {
     if (router.query.id) {

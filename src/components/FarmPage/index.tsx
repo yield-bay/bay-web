@@ -46,7 +46,6 @@ import {
   unstakingModalOpenAtom,
 } from "@store/commonAtoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
-import { trackEventWithProperty } from "@utils/analytics";
 import Tooltip from "@components/Library/Tooltip";
 import { FarmType } from "@utils/types";
 import Breadcrumb from "@components/Library/Breadcrumb";
@@ -71,7 +70,7 @@ const FarmPage: NextPage = () => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
 
   const [idQuery, idQuerySet] = useAtom(idQueryAtom);
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
@@ -122,12 +121,6 @@ const FarmPage: NextPage = () => {
     }
   }, [addliqModalOpen]);
 
-  // useEffect(() => {
-  //   if (farm?.id) {
-  //     trackEventWithProperty("farm-page-view", farm?.asset.symbol);
-  //   }
-  // }, [farm]);
-
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
   const safetyScoreColor = useSafetyscoreColor(safetyScore);
 
@@ -149,16 +142,7 @@ const FarmPage: NextPage = () => {
           <div className="flex gap-x-7 items-center">
             <ShareFarm farm={farm} />
             <a href={farmURL(farm)} target="_blank" rel="noreferrer">
-              <Button
-                size="large"
-                onButtonClick={() => {
-                  trackEventWithProperty("go-to-farm", {
-                    protocol: farm?.protocol,
-                  });
-                }}
-              >
-                Visit Farm
-              </Button>
+              <Button size="large">Visit Farm</Button>
             </a>
           </div>
         </div>

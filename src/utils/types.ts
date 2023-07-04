@@ -101,3 +101,10 @@ export interface Chain {
   id: ChainId;
   name: Network;
 }
+
+export interface WalletConnectEventType {
+  userAddress: string;
+  walletType: string;
+  walletProvider: string;
+  timestamp: string;
+}

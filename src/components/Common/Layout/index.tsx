@@ -8,6 +8,7 @@ import { positionsAtom } from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { FarmType, TokenPriceType } from "@utils/types";
 import {
+  createWalletConnectEvent,
   fetchListicleFarms,
   fetchLpTokenPrices,
   fetchTokenPrices,
@@ -27,6 +28,7 @@ import {
   stellaswapV1ChefAbi,
 } from "./evmUtils";
 import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
+import getTimestamp from "@utils/getTimestamp";
 import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
 import StakingModal from "@components/Library/StakingModal";
@@ -50,7 +52,7 @@ const Layout: FC<Props> = ({ children }) => {
     console.log("---- Updated Positions ----\n", positions);
   }, [positions]);
 
-  const { isConnected, address } = useAccount();
+  const { isConnected, address, connector } = useAccount();
   const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   const [account] = useAtom(dotAccountAtom);
@@ -76,7 +78,7 @@ const Layout: FC<Props> = ({ children }) => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
 
   // Fetching Lp token prices
   const { isLoading: isLpPricesLoading, data: lpTokenPrices } = useQuery({
@@ -143,6 +145,7 @@ const Layout: FC<Props> = ({ children }) => {
    * Protocols -- Mangata X
    */
   const fetchSubstratePositions = async () => {
+    emptySubstratePositions();
     console.log("substrate setup initialised");
     setIsSubPosLoading(true);
     // Filter Mangata X Farms
@@ -286,6 +289,7 @@ const Layout: FC<Props> = ({ children }) => {
    * Protocols -- Curve, Zenlink, Solarbeam, Stellaswap
    */
   const fetchEvmPositions = async () => {
+    emptyEvmPositions();
     // Fetching EVM positions...
     setIsEvmPosLoading(true);
     let allPromises = new Array<Promise<void>>();
@@ -397,7 +401,9 @@ const Layout: FC<Props> = ({ children }) => {
               let ucrews: any = [];
               for (let i = 0; i < ucrewAmounts.length; i++) {
                 console.log(
+                  "stellaucre",
                   ucrewSymbols[i],
+                  ucrewAmounts[i],
                   tokenPricesMap[
                     `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ]
@@ -410,7 +416,10 @@ const Layout: FC<Props> = ({ children }) => {
                   amount:
                     Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
                   amountUSD:
-                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
                 });
               }
 
@@ -550,7 +559,10 @@ const Layout: FC<Props> = ({ children }) => {
                   amount:
                     Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
                   amountUSD:
-                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
                 });
               }
 
@@ -682,7 +694,11 @@ const Layout: FC<Props> = ({ children }) => {
                 ucrews.push({
                   token: sym,
                   amount: Number(rewards[i]) / 10 ** Number(dec),
-                  amountUSD: Number(rewards[i]) / 10 ** Number(dec), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                  amountUSD:
+                    (Number(rewards[i]) / 10 ** Number(dec)) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
+                    ],
                 });
               }
 
@@ -806,7 +822,7 @@ const Layout: FC<Props> = ({ children }) => {
                   reward_token
                 );
                 console.log(
-                  `reward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+                  `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
                 );
                 const tok = new ethers.Contract(reward_token, lpAbi, provider);
                 const sym = await tok.symbol();
@@ -818,7 +834,7 @@ const Layout: FC<Props> = ({ children }) => {
                   dec,
                   "\ntokenPrice",
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${sym}-${reward_token}`
+                    `${chain.name}-stellaswap-${sym}-${reward_token}`
                   ],
                   "\nlpTokenPrice",
                   lpTokenPricesMap[
@@ -834,7 +850,11 @@ const Layout: FC<Props> = ({ children }) => {
                 ucrews.push({
                   token: sym,
                   amount: Number(claimable_reward) / 10 ** Number(dec),
-                  amountUSD: Number(claimable_reward) / 10 ** Number(dec), // * tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+                  amountUSD:
+                    (Number(claimable_reward) / 10 ** Number(dec)) *
+                    tokenPricesMap[
+                      `${chain.name}-stellaswap-${sym}-${reward_token}`
+                    ],
                 });
               }
 
@@ -924,25 +944,56 @@ const Layout: FC<Props> = ({ children }) => {
 
   // Side-effect for Substrate Chains
   useEffect(() => {
+    async function walletEvent() {
+      try {
+        const connectWalletEvent = await createWalletConnectEvent(
+          account?.address!,
+          "DOT",
+          account?.wallet?.extensionName!,
+          getTimestamp()
+        );
+        console.log("connectWalletEvent: DOT", connectWalletEvent);
+      } catch (error) {
+        console.log("Error: CreateWalletEvent DOT", error);
+      }
+    }
+
     if (isConnectedDot && farms.length > 0) {
+      walletEvent();
       console.log("running mangata setup");
       fetchSubstratePositions();
     } else if (!isConnectedDot && farms.length > 0) {
       console.log("emptying mangata positions");
       emptySubstratePositions();
     }
-  }, [isConnectedDot, farms]);
+  }, [isConnectedDot, farms, account]);
 
   // Side-effect for EVM Chains
   useEffect(() => {
     const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
     const tokenPricesLength = Object.keys(tokenPricesMap).length;
+
+    async function walletEvent() {
+      try {
+        const connectWalletEvent = await createWalletConnectEvent(
+          address!,
+          "EVM",
+          connector?.name!,
+          getTimestamp()
+        );
+        console.log("connectWalletEvent: EVM", connectWalletEvent);
+      } catch (error) {
+        console.log("Error: CreateWalletEvent EVM", error);
+      }
+    }
+
     if (
       isConnected &&
       farms.length > 0 &&
       lpTokensPricesLength > 0 &&
       tokenPricesLength > 0
     ) {
+      walletEvent();
       fetchEvmPositions(); // Run setup when wallet connected
     } else if (
       !isConnected &&
@@ -952,7 +1003,7 @@ const Layout: FC<Props> = ({ children }) => {
     ) {
       emptyEvmPositions();
     }
-  }, [isConnected, farms, lpTokenPricesMap, tokenPricesMap]);
+  }, [isConnected, farms, address, lpTokenPricesMap, tokenPricesMap]);
 
   return (
     <div

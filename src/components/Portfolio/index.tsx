@@ -98,10 +98,11 @@ const PortfolioPage = () => {
       }
     },
   });
-  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList;
+  const farms: FarmType[] = isLoading ? new Array<FarmType>() : farmsList!;
 
   useEffect(() => {
     if (!!userPositions) {
+      console.log("upsss", userPositions);
       setNetWorth(calcNetWorth(userPositions));
       setTotalUnclaimedRewardsUSD(calcTotalUnclaimedRewards(userPositions));
     }

@@ -11,7 +11,6 @@ import {
 } from "@store/atoms";
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
-import { trackEventWithProperty } from "@utils/analytics";
 import LoadingSkeleton from "@components/Library/LoadingSkeleton";
 import { FarmType } from "@utils/types";
 import Image from "next/image";
@@ -221,9 +220,6 @@ const FarmTable: FC<Props> = ({
                     className="pl-6 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("tvl", true);
-                      trackEventWithProperty("table-sorting", {
-                        sortingType: "tvl",
-                      });
                     }}
                   >
                     <div className="flex justify-start items-center">
@@ -257,9 +253,6 @@ const FarmTable: FC<Props> = ({
                     className="flex justify-start items-center pl-6 pr-3 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("yield", true);
-                      trackEventWithProperty("table-sorting", {
-                        sortingType: "yield",
-                      });
                     }}
                   >
                     <Tooltip
@@ -291,9 +284,6 @@ const FarmTable: FC<Props> = ({
                     className="hidden lg:table-cell px-3 py-[13px] pl-3 lg:pl-6 text-left cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("safety", true);
-                      trackEventWithProperty("table-sorting", {
-                        sortingType: "safety-score",
-                      });
                     }}
                   >
                     <Tooltip
@@ -331,9 +321,6 @@ const FarmTable: FC<Props> = ({
                     )}
                     onClick={() => {
                       handleSort("pos", true);
-                      trackEventWithProperty("table-sorting", {
-                        sortingType: "safety-score",
-                      });
                     }}
                   >
                     <div>
