@@ -18,6 +18,7 @@ import {
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
+import { parseUnits } from "viem";
 
 const SLIPPAGE = 0.5; // In percentage
 
@@ -30,7 +31,7 @@ const AddSectionStable: FC = () => {
   const [approvalMap, setApprovalMap] = useState<{
     [address: `0x${string}`]: boolean;
   }>({});
-  const [inputMap, setInputMap] = useState<{
+  const [inputMap, setInputMap]: [any, any] = useState<{
     [address: `0x${string}`]: string;
   }>({});
 
@@ -38,7 +39,7 @@ const AddSectionStable: FC = () => {
   const tokens = selectedFarm?.asset.underlyingAssets ?? [];
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
-    setInputMap((pre) => ({
+    setInputMap((pre: any) => ({
       ...pre,
       [token.address]: value,
     }));
@@ -47,9 +48,15 @@ const AddSectionStable: FC = () => {
   // Array of input amounts
   const amounts = useMemo(() => {
     return tokens
-      .map((token) => parseFloat(inputMap[token.address]) ?? 0)
+      .map((token) => {
+        console.log("waota", token, inputMap, inputMap[token.address]);
+        return parseUnits(
+          (parseFloat(inputMap[token.address]) as any) ?? 0,
+          token.decimals
+        );
+      })
       .filter((amount) => {
-        return !isNaN(amount) && amount > 0;
+        return !isNaN(amount as any) && amount > 0;
       });
   }, [inputMap, tokens]);
 
@@ -86,7 +93,7 @@ const AddSectionStable: FC = () => {
       const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
       console.log("timestamp fetched //", blocktimestamp);
 
-      console.log("calling addliquidity method...");
+      console.log("calling addliquidity method...", amounts);
       const txnRes = await addLiquidity?.({
         args: [
           amounts, // amounts (uint256[])
