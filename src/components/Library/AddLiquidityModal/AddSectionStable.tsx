@@ -14,11 +14,12 @@ import { UnderlyingAssets } from "@utils/types";
 import {
   getAbi,
   getAddLiqFunctionName,
+  getStableRouterAbi,
 } from "@utils/abis/contract-helper-methods";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
-import { parseUnits } from "viem";
+import { parseAbiItem, parseUnits } from "viem";
 
 const SLIPPAGE = 0.5; // In percentage
 
@@ -46,17 +47,28 @@ const AddSectionStable: FC = () => {
   }, []);
 
   // Array of input amounts
+  const tokenAmount = (value: string | undefined): Number => {
+    if (!isNaN(Number(value))) {
+      return Number(value);
+    }
+    return 0;
+  };
+
   const amounts = useMemo(() => {
     const updatedTokens = tokens
       .map((token) => {
         console.log("waota", token, inputMap);
         return parseUnits(
-          `${parseFloat(inputMap[token.address] ?? "0")}`,
+          `${
+            !isNaN(Number(inputMap[token.address]))
+              ? parseFloat(inputMap[token.address])
+              : 0
+          }`,
           token.decimals
         );
       })
       .filter((amount) => {
-        return !isNaN(Number(amount)) && Number(amount) > 0;
+        return !isNaN(Number(amount));
       });
     console.log("updated tokens", updatedTokens);
     return updatedTokens;
@@ -73,12 +85,12 @@ const AddSectionStable: FC = () => {
     writeAsync: addLiquidity,
   } = useContractWrite({
     address: selectedFarm?.router,
-    abi: getAbi(
-      selectedFarm?.protocol!,
-      selectedFarm?.chain!,
-      getLpTokenSymbol(tokenNames)
-    ),
-    functionName: getAddLiqFunctionName(selectedFarm?.protocol!),
+    abi: [
+      parseAbiItem(
+        getStableRouterAbi(selectedFarm?.protocol!, selectedFarm?.chain!)!
+      ),
+    ],
+    functionName: getAddLiqFunctionName(selectedFarm?.protocol!) as any,
     chainId: chain?.id,
   });
 
@@ -94,11 +106,11 @@ const AddSectionStable: FC = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
       console.log("timestamp fetched //", blocktimestamp);
-
       console.log("calling addliquidity method...", amounts);
       const txnRes = await addLiquidity?.({
         args: [
           amounts, // amounts (uint256[])
+          // (amounts.length * (100 - SLIPPAGE)) / 100, // minToMint (uint256)
           1, // minToMint (uint256)
           blocktimestamp, // deadline (uint256)
         ],

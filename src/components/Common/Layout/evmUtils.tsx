@@ -102,6 +102,10 @@ export const curveChefAbi = [
   "function lp_token() view returns (address)",
 ];
 
+export const solarbeamRouterAbi = [
+  "function addLiquidity(uint256[], uint256, uint256) external returns (uint256)",
+];
+
 export const lpAbi = [
   "function balanceOf(address) view returns (uint256)",
   "function symbol() view returns (string)",

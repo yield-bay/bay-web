@@ -1,3 +1,4 @@
+import { solarbeamRouterAbi } from "@components/Common/Layout/evmUtils";
 const solarbeamMoonriver = require("./solarbeam-moonriver-router.json");
 const stellaswapMoonbeam = require("./stellaswap-moonbeam-router.json");
 const zenlinkAstar = require("./zenlink-astar-router.json");
@@ -10,6 +11,19 @@ const solarflareMoonbeam = require("./solarflare-moonbeam-router.json");
 const sushiswapMoonriver = require("./sushiswap-moonriver-router.json");
 const arthswapAstar = require("./arthswap-astar-router.json");
 const siriusAstar = require("./sirius-astar-router.json");
+
+export function getStableRouterAbi(protocol: string, chain: string) {
+  if (protocol !== undefined && chain !== undefined) {
+    switch (protocol.toLowerCase()) {
+      case "stellaswap":
+        if (chain.toLowerCase() == "moonbeam") {
+          return solarbeamRouterAbi;
+        }
+      default:
+        return [];
+    }
+  }
+}
 
 export function getAbi(protocol: string, chain: string, lpToken: string) {
   if (protocol !== undefined && chain !== undefined && lpToken !== undefined) {
