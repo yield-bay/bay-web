@@ -73,12 +73,11 @@ export function formatTokenSymbols(farmName: string): string[] {
   return [farmName];
 }
 
-export function getLpTokenSymbol(symbol: string): string {
-  const tokenNames = formatTokenSymbols(symbol);
-  if (tokenNames.length == 1) {
-    return tokenNames[0].trim();
+export function getLpTokenSymbol(tokenNames: string[]): string {
+  if (tokenNames.length === 1) {
+    return tokenNames[0];
   } else {
-    return tokenNames.join("-").trim();
+    return tokenNames.join("-");
   }
 }
 
@@ -97,6 +96,6 @@ export function getWalletInstallUrl(walletName: string): string {
 
 export function checkIfPoolSupported(farm: FarmType) {
   const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
-  if (protocols) return protocols.includes(farm.protocol.toLowerCase());
+  if (!!protocols) return protocols.includes(farm.protocol.toLowerCase());
   return false;
 }

@@ -3,7 +3,6 @@ import clsx from "clsx";
 import Footer from "@components/Common/Footer";
 import Header from "@components/Common/Header";
 import { satoshiFont } from "@utils/localFont";
-import ConnectModal from "@components/Library/ConnectModal";
 import { useAtom } from "jotai";
 import { positionsAtom } from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";
@@ -30,6 +29,10 @@ import {
 } from "./evmUtils";
 import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 import getTimestamp from "@utils/getTimestamp";
+import AddLiquidityModal from "@components/Library/AddLiquidityModal";
+import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
+import StakingModal from "@components/Library/StakingModal";
+import UnstakingModal from "@components/Library/UnstakingModal";
 
 interface Props {
   children: ReactNode;
@@ -1010,7 +1013,10 @@ const Layout: FC<Props> = ({ children }) => {
       )}
     >
       <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
-      <ConnectModal />
+      <AddLiquidityModal />
+      <RemoveLiquidityModal />
+      <StakingModal />
+      <UnstakingModal />
       <Header />
       {children}
       <Footer />

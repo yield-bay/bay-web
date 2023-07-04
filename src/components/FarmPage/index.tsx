@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/outline";
 import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
-import CalculatorModal from "@components/Library/CalculatorModal";
+// import CalculatorModal from "@components/Library/CalculatorModal";
 import { APP_NAME } from "@utils/constants";
 import MetaTags from "@components/Common/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
@@ -33,7 +33,18 @@ import {
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
-import { addrQueryAtom, idQueryAtom, positionsAtom } from "@store/atoms";
+import {
+  addrQueryAtom,
+  idQueryAtom,
+  positionsAtom,
+  selectedFarmAtom,
+} from "@store/atoms";
+import {
+  addLiqModalOpenAtom,
+  removeLiqModalOpenAtom,
+  stakingModalOpenAtom,
+  unstakingModalOpenAtom,
+} from "@store/commonAtoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
 import Tooltip from "@components/Library/Tooltip";
 import { FarmType } from "@utils/types";
@@ -65,6 +76,17 @@ const FarmPage: NextPage = () => {
   const [addrQuery, addrQuerySet] = useAtom(addrQueryAtom);
   const [positions] = useAtom(positionsAtom);
 
+  // Modal States
+  const [addliqModalOpen, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
+  const [removeLiqModalOpen, setRemoveLiqModalOpen] = useAtom(
+    removeLiqModalOpenAtom
+  );
+  const [stakingModalOpen, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
+  const [unstakingModalOpen, setUnstakingModalOpen] = useAtom(
+    unstakingModalOpenAtom
+  );
+  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
+
   // const [calcOpen, setCalcOpen] = useState<boolean>(false);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);
 
@@ -93,6 +115,12 @@ const FarmPage: NextPage = () => {
     }
   }, [farmPosition]);
 
+  useEffect(() => {
+    if (!addliqModalOpen) {
+      setSelectedFarm(null);
+    }
+  }, [addliqModalOpen]);
+
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
   const safetyScoreColor = useSafetyscoreColor(safetyScore);
 
@@ -117,6 +145,48 @@ const FarmPage: NextPage = () => {
               <Button size="large">Visit Farm</Button>
             </a>
           </div>
+        </div>
+        <div className="inline-flex gap-x-3">
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setAddLiqModalOpen(true);
+              setSelectedFarm(farm);
+            }}
+          >
+            Add Liquidity
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setRemoveLiqModalOpen(true);
+              setSelectedFarm(farm);
+            }}
+          >
+            Remove Liquidity
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setStakingModalOpen(true);
+              setSelectedFarm(farm);
+            }}
+          >
+            Stack
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setUnstakingModalOpen(true);
+              setSelectedFarm(farm);
+            }}
+          >
+            Unstake
+          </Button>
         </div>
         {/* Positions Row */}
         {hasPosition && (

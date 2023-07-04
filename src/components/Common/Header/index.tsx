@@ -7,6 +7,8 @@ import ConnectWallet from "@components/Library/ConnectWallet";
 import { MenuIcon } from "@heroicons/react/outline";
 import useScreenSize from "@hooks/useScreenSize";
 import MobileMenu from "./MobileMenu";
+import { NetworkSelector } from "@components/Library/NetworkSelector";
+import BalanceBar from "@components/Library/BalanceBar";
 
 export default function Header() {
   const router = useRouter();
@@ -74,8 +76,12 @@ export default function Header() {
                 <span>my portfolio</span>
               </Link>
             </div>
-            <div className="hidden sm:inline-flex items-center gap-x-4">
-              <ConnectWallet />
+            <div className="inline-flex items-center gap-x-2">
+              <BalanceBar />
+              <NetworkSelector />
+              <div className="hidden sm:inline-flex items-center gap-x-4">
+                <ConnectWallet />
+              </div>
             </div>
           </>
         )}

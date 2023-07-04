@@ -1,5 +1,6 @@
 // STATE
-export const IS_PRODUCTION = process.env.NODE_ENV === "production";
+export const IS_PRODUCTION =
+  process.env.NEXT_PUBLIC_IS_PRODUCTION === "production";
 
 // API URLS
 export const API_URL = process.env.NEXT_PUBLIC_API_URL as string;
@@ -17,3 +18,10 @@ export const DESCRIPTION =
 export const DOMAIN = "https://list.yieldbay.io";
 export const IMAGE = "https://list.yieldbay.io/twitter-cover.png"; // OG like twitter card generally needs full path of image, not relative
 export const USERNAME = "yield_bay";
+
+export const RPC_URL = {
+  moonbeam: "https://rpc.api.moonbeam.network",
+  moonriver: "https://rpc.api.moonriver.moonbeam.network",
+  astar: "https://evm.astar.network",
+  hardhat: "http://localhost:8545",
+};
