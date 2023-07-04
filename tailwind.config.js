@@ -54,5 +54,4 @@ module.exports = {
         "linear-gradient(172.15deg, #6DA695 -104.57%, rgba(54, 54, 77, 0) 261.47%);",
     },
   },
-  plugins: [require("daisyui")],
 };
