@@ -33,12 +33,23 @@ import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
 import StakingModal from "@components/Library/StakingModal";
 import UnstakingModal from "@components/Library/UnstakingModal";
+import { useConnection } from "@hooks/useConnection";
+import { useRouter } from "next/router";
 
 interface Props {
   children: ReactNode;
 }
 
 const Layout: FC<Props> = ({ children }) => {
+  const isOnline = useConnection();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isOnline) {
+      router.push("/500");
+    }
+  }, [isOnline]);
+
   // States
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useState<{
