@@ -29,9 +29,7 @@ const useScreenSize = () => {
     const handleResize = debounce(() => {
       setWindowWidth(window.innerWidth);
     }, 500);
-
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 

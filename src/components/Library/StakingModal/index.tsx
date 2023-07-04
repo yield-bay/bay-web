@@ -19,9 +19,6 @@ import {
   tokenAbi,
 } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseAbiItem, parseUnits } from "viem";
-import { getContractAddress } from "@utils/abis/contract-helper-methods";
-import useBlockTimestamp from "@hooks/useBlockTimestamp";
-import { UnderlyingAssets } from "@utils/types";
 
 interface ChosenMethodProps {
   percentage: string;

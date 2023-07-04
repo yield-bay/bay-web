@@ -17,7 +17,6 @@ import ModalWrapper from "../ModalWrapper";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbiItem, parseUnits } from "viem";
 import { getRemoveLiquidFunctionName } from "@utils/abis/contract-helper-methods";
-import useBlockTimestamp from "@hooks/useBlockTimestamp";
 import { getAbi } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";

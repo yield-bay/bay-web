@@ -31,7 +31,7 @@ const AddSectionStable: FC = () => {
   const [approvalMap, setApprovalMap] = useState<{
     [address: `0x${string}`]: boolean;
   }>({});
-  const [inputMap, setInputMap]: [any, any] = useState<{
+  const [inputMap, setInputMap] = useState<{
     [address: `0x${string}`]: string;
   }>({});
 
@@ -47,17 +47,19 @@ const AddSectionStable: FC = () => {
 
   // Array of input amounts
   const amounts = useMemo(() => {
-    return tokens
+    const updatedTokens = tokens
       .map((token) => {
-        console.log("waota", token, inputMap, inputMap[token.address]);
+        console.log("waota", token, inputMap);
         return parseUnits(
-          (parseFloat(inputMap[token.address]) as any) ?? 0,
+          `${parseFloat(inputMap[token.address] ?? "0")}`,
           token.decimals
         );
       })
       .filter((amount) => {
-        return !isNaN(amount as any) && amount > 0;
+        return !isNaN(Number(amount)) && Number(amount) > 0;
       });
+    console.log("updated tokens", updatedTokens);
+    return updatedTokens;
   }, [inputMap, tokens]);
 
   const approvalArray = useMemo(() => {

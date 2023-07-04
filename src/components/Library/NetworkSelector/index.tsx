@@ -1,7 +1,6 @@
 import type { FC } from "react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
 import { Popover } from "@headlessui/react";
-import { useWalletState } from "@hooks/useWalletState";
 import { useConnect, useNetwork, useSwitchNetwork } from "wagmi";
 import clsx from "clsx";
 import { getSupportedChains } from "@utils/network";
@@ -10,7 +9,6 @@ import ClientOnly from "@components/Common/ClientOnly";
 export const NetworkSelector: FC = () => {
   const { chain: evmChain } = useNetwork();
   const { pendingConnector } = useConnect();
-  const { notConnected } = useWalletState(!!pendingConnector);
   const { switchNetwork } = useSwitchNetwork();
 
   const panel = (
