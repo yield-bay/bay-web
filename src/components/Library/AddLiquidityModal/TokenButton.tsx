@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useWaitForTransaction } from "wagmi";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import MButton from "../MButton";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
@@ -24,43 +23,41 @@ const TokenButton: React.FC<Props> = ({
 
   // Approve token
   const {
-    data: approveTokenData,
-    isLoading: approveIsLoading,
+    isLoadingApproveCall,
+    isLoadingApproveTxn,
+    isSuccessApproveTxn,
     writeAsync: approveToken,
   } = useApproveToken(token, selectedFarm?.router);
 
-  const { isLoading: isLoadingApprove, isSuccess: isSuccessApprove } =
-    useWaitForTransaction({
-      hash: approveTokenData?.hash,
-    });
-
   useEffect(() => {
     // Either already approved or approved after transaction
-    if (isSuccessApprove || !!Number(isApproved)) {
+    if (isSuccessApproveTxn || !!Number(isApproved)) {
       setApprovalMap((pre) => ({
         ...pre,
         [token?.address]: true,
       }));
     }
-  }, [isSuccessApprove, isApproved]);
+  }, [isSuccessApproveTxn, isApproved]);
 
   return (
     !Number(isApproved) &&
-    !isSuccessApprove && (
+    !isSuccessApproveTxn && (
       <MButton
         type="secondary"
+        isLoading={isLoadingApproveCall || isLoadingApproveTxn}
         text={
-          approveIsLoading
-            ? "Sign the Transaction..."
-            : isLoadingApprove
-            ? "Approving..."
+          isLoadingApproveCall
+            ? "Sign the Txn in Wallet"
+            : isLoadingApproveTxn
+            ? "Waiting for Approval"
             : `Approve ${token.symbol} Token`
         }
         disabled={
-          isSuccessApprove ||
-          isLoadingApprove ||
+          isLoadingApproveCall ||
+          isLoadingApproveTxn ||
           typeof approveToken == "undefined" ||
-          !!Number(isApproved)
+          !!Number(isApproved) ||
+          isSuccessApproveTxn
         }
         onClick={async () => {
           const txn = await approveToken?.({

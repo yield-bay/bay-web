@@ -183,6 +183,7 @@ const UnstakingModal = () => {
         </div>
         <div>
           <MButton
+            isLoading={unstakingCallLoading || isLoadingUnstakingTxn}
             className="w-full"
             type="secondary"
             text={

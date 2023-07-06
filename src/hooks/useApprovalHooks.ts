@@ -4,10 +4,17 @@ import {
   useContractRead,
   useContractWrite,
   useNetwork,
+  useWaitForTransaction,
 } from "wagmi";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { UnderlyingAssets } from "@utils/types";
 
+/**
+ *
+ * @param token Underlying Asset
+ * @param router Router Contract Address
+ * @returns data, isLoading, isError, isSuccess
+ */
 const useIsApprovedToken = (token: UnderlyingAssets, router: `0x${string}`) => {
   const { address } = useAccount();
   const { data, isLoading, isError, isSuccess } = useContractRead({
@@ -23,9 +30,21 @@ const useIsApprovedToken = (token: UnderlyingAssets, router: `0x${string}`) => {
   return { data, isLoading, isError, isSuccess };
 };
 
+/**
+ *
+ * @param token Underlying Asset
+ * @param router Router Contract Address
+ * @returns data, isLoading, isError, isSuccess, writeAsync
+ */
 const useApproveToken = (token: UnderlyingAssets, router: `0x${string}`) => {
   const { chain } = useNetwork();
-  const { data, isLoading, isError, isSuccess, writeAsync } = useContractWrite({
+  const {
+    data,
+    isLoading: isLoadingApproveCall,
+    isError,
+    isSuccess: isSuccessApproveCall,
+    writeAsync,
+  } = useContractWrite({
     address: token?.address,
     abi: parseAbi(tokenAbi),
     functionName: "approve" as any,
@@ -40,7 +59,22 @@ const useApproveToken = (token: UnderlyingAssets, router: `0x${string}`) => {
       console.log(`Approve Error in ${token?.symbol}`, error);
     },
   });
-  return { data, isLoading, isError, isSuccess, writeAsync };
+
+  // Waiting for Txns
+  const { isLoading: isLoadingApproveTxn, isSuccess: isSuccessApproveTxn } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
+
+  return {
+    data,
+    isLoadingApproveCall,
+    isLoadingApproveTxn,
+    isError,
+    isSuccessApproveCall,
+    isSuccessApproveTxn,
+    writeAsync,
+  };
 };
 
 export { useIsApprovedToken, useApproveToken };

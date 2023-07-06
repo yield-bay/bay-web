@@ -205,6 +205,7 @@ const StakingModal = () => {
         <div className="flex flex-row gap-2">
           <MButton
             type="secondary"
+            isLoading={isLoadingLpApprove}
             className="w-1/2"
             text={
               isSuccessLpApprove
@@ -235,6 +236,7 @@ const StakingModal = () => {
           />
           <MButton
             className="w-1/2"
+            isLoading={stakingLoading}
             type="secondary"
             text="Confirm Staking"
             disabled={

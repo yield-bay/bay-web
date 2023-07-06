@@ -1,5 +1,5 @@
 // Library Imports
-import { FC, PropsWithChildren, useCallback, useEffect, useState } from "react";
+import { FC, PropsWithChildren, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
@@ -14,7 +14,6 @@ import {
 } from "wagmi";
 
 // Component, Util and Hook Imports
-import ModalWrapper from "../ModalWrapper";
 import MButton from "@components/Library/MButton";
 import { addLiqModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom } from "@store/atoms";
@@ -28,6 +27,9 @@ import useTokenReserves from "@hooks/useTokenReserves";
 import useLPBalance from "@hooks/useLPBalance";
 import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
 import useMinimumLPTokens from "@hooks/useMinLPTokens";
+import LiquidityModalWrapper from "../LiquidityModalWrapper";
+import toUnits from "@utils/toUnits";
+import { CogIcon } from "@heroicons/react/solid";
 
 const SLIPPAGE = 0.5; // In percentage
 
@@ -41,6 +43,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const tokenNames = formatTokenSymbols(selectedFarm?.asset.symbol ?? "");
   const [farmAsset0, farmAsset1] =
     selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
+
+  // Transaction Process Steps
+  const [isConfirmStep, setIsConfirmStep] = useState(false);
+  const [isProcessStep, setIsProcessStep] = useState(false);
 
   useEffect(() => {
     console.log("selectedFarm", selectedFarm);
@@ -97,20 +103,26 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const { data: isToken1Approved, isLoading: isToken1ApprovedLoading } =
     useIsApprovedToken(farmAsset1, selectedFarm?.router!);
 
-  // Approve token0 and token1
-  const { data: dataApprove0, writeAsync: approveToken0 } = useApproveToken(
-    farmAsset0,
-    selectedFarm?.router!
-  );
-  const { data: dataApprove1, writeAsync: approveToken1 } = useApproveToken(
-    farmAsset1,
-    selectedFarm?.router!
-  );
+  // To approve token0 and token1
+  const {
+    isLoadingApproveCall: approveToken0Loading,
+    isLoadingApproveTxn: approveToken0TxnLoading,
+    isSuccessApproveCall: approveToken0Success,
+    isSuccessApproveTxn: approveToken0TxnSuccess,
+    writeAsync: approveToken0,
+  } = useApproveToken(farmAsset0, selectedFarm?.router!);
+  const {
+    isLoadingApproveCall: approveToken1Loading,
+    isLoadingApproveTxn: approveToken1TxnLoading,
+    isSuccessApproveCall: approveToken1Success,
+    isSuccessApproveTxn: approveToken1TxnSuccess,
+    writeAsync: approveToken1,
+  } = useApproveToken(farmAsset1, selectedFarm?.router!);
 
   const {
     data: addLiquidityData,
-    isLoading: addLiquidityLoading,
-    isSuccess: addLiquiditySuccess,
+    isLoading: isLoadingAddLiqCall,
+    isSuccess: isSuccessAddLiqCall,
     writeAsync: addLiquidity,
     // } = usePrepareContractWrite({
   } = useContractWrite({
@@ -125,19 +137,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   });
 
   // Wait AddLiquidity Txn
-  const { isLoading: isLoadingAddLiq, isSuccess: isSuccessAddLiq } =
+  const { isLoading: isLoadingAddLiqTxn, isSuccess: isSuccessAddLiqTxn } =
     useWaitForTransaction({
       hash: addLiquidityData?.hash,
-    });
-
-  // Waiting for Txns
-  const { isLoading: isLoadingApprove0, isSuccess: isSuccessApprove0 } =
-    useWaitForTransaction({
-      hash: dataApprove0?.hash,
-    });
-  const { isLoading: isLoadingApprove1, isSuccess: isSuccessApprove1 } =
-    useWaitForTransaction({
-      hash: dataApprove1?.hash,
     });
 
   const handleAddLiquidity = async () => {
@@ -214,160 +216,241 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     }
   }, [isToken1Approved, isToken0Approved]);
 
+  // Remove after testing
   useEffect(() => {
-    if (addLiquidityLoading) {
+    if (isLoadingAddLiqCall) {
       console.log("addliq method loading... sign the txn");
-    } else if (isLoadingAddLiq) {
-      console.log("addliq txn loading...", isLoadingAddLiq);
+    } else if (isLoadingAddLiqTxn) {
+      console.log("addliq txn loading...");
     }
-  }, [addLiquidityLoading, isLoadingAddLiq]);
+  }, [isLoadingAddLiqCall, isLoadingAddLiqTxn]);
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      console.log("isSuccess Approve0", isSuccessApprove0);
-      console.log("isSuccess Approve1", isSuccessApprove1);
+      console.log("isSuccess Approve0", approveToken0TxnSuccess);
+      console.log("isSuccess Approve1", approveToken1TxnSuccess);
     }
-  }, [isSuccessApprove0, isSuccessApprove1]);
+  }, [approveToken0TxnSuccess, approveToken1TxnSuccess]);
 
-  return (
-    !!selectedFarm && (
-      <ModalWrapper open={isOpen} setOpen={setIsOpen}>
-        <p className="font-semibold text-lg text-left">Add Liquidity</p>
-        <div className="w-full flex flex-col gap-y-10">
-          {/* First token Container */}
-          <div className="flex flex-col gap-y-3">
-            <div className="text-left text-base">
-              {token0BalanceLoading ? (
-                <p>loading...</p>
+  const InputStep = !!selectedFarm && (
+    <LiquidityModalWrapper
+      open={isOpen}
+      setOpen={setIsOpen}
+      title="Add Liquidity"
+    >
+      <div className="w-full flex flex-col gap-y-3">
+        {/* First token Container */}
+        <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
+          <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={selectedFarm?.asset.logos[0] as string}
+                alt={selectedFarm?.asset.logos[0] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+            <span className="text-[#344054 text-[14px] font-medium leading-5">
+              {farmAsset0?.symbol}
+            </span>
+          </div>
+          <input
+            placeholder="0"
+            className={clsx(
+              "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
+            )}
+            min={0}
+            onChange={handleChangeFirstTokenAmount}
+            value={firstTokenAmount}
+            autoFocus
+          />
+          <div className="inline-flex items-center gap-x-2">
+            <p className="flex flex-col items-end text-sm leading-5 opacity-50">
+              {token1BalanceLoading ? (
+                <span>loading...</span>
               ) : (
                 !!token0Balance && (
-                  <p>
-                    Balance: {token0Balance?.formatted} {token0Balance?.symbol}
-                  </p>
+                  <div className="flex flex-col items-end">
+                    <span>Balance</span>
+                    <span>
+                      {parseFloat(token0Balance?.formatted).toLocaleString(
+                        "en-US"
+                      )}{" "}
+                      {token0Balance?.symbol}
+                    </span>
+                  </div>
                 )
               )}
-            </div>
-            <div
-              className={clsx(
-                "flex flex-row justify-between p-4 border border-[#727272] rounded-lg"
-              )}
-            >
-              <div className="flex flex-row gap-x-5 items-center">
-                <div className="z-10 flex overflow-hidden rounded-full">
-                  <Image
-                    src={selectedFarm?.asset.logos[0] as string}
-                    alt={selectedFarm?.asset.symbol as string}
-                    width={32}
-                    height={32}
-                  />
-                </div>
-                <span>{farmAsset0?.symbol}</span>
-              </div>
-              <div className="flex flex-col gap-y-3">
-                <div className="flex flex-row justify-end items-center gap-x-3">
-                  <p className="flex flex-col items-end text-sm leading-[19px] opacity-50">
-                    <span>Balance</span>
-                  </p>
-                </div>
-                <div className="text-right">
-                  <input
-                    placeholder="0"
-                    className={clsx(
-                      "text-xl leading-[27px] bg-transparent text-right focus:outline-none"
-                      // token0BalNotAvailable && "text-[#FF8787]"
-                    )}
-                    min={0}
-                    onChange={handleChangeFirstTokenAmount}
-                    value={firstTokenAmount}
-                    autoFocus
-                  />
-                </div>
-              </div>
-            </div>
+            </p>
+            <button className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5">
+              MAX
+            </button>
           </div>
-          <div className="py-3 px-4 bg-[#E0DCDC] rounded-full max-w-fit mx-auto select-none">
-            +
+        </div>
+        {/* Plus Icon */}
+        <div className="bg-[#e0dcdc] flex justify-center p-3 max-w-fit items-center rounded-full text-base select-none mx-auto">
+          <Image src="/icons/PlusIcon.svg" alt="Plus" width={16} height={16} />
+        </div>
+        {/* Second token container */}
+        <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
+          <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={selectedFarm?.asset.logos[1] as string}
+                alt={selectedFarm?.asset.logos[1] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+            <span className="text-[#344054 text-[14px] font-medium leading-5">
+              {farmAsset1?.symbol}
+            </span>
           </div>
-          {/* Second token container */}
-          <div className="flex flex-col gap-y-3">
-            <div className="text-left text-base">
+          <input
+            placeholder="0"
+            className={clsx(
+              "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
+            )}
+            min={0}
+            onChange={handleChangeSecondTokenAmount}
+            value={secondTokenAmount}
+            autoFocus
+          />
+          <div className="inline-flex items-center gap-x-2">
+            <p className="flex flex-col items-end text-sm leading-5 opacity-50">
               {token1BalanceLoading ? (
-                <p>loading...</p>
+                <span>loading...</span>
               ) : (
                 !!token1Balance && (
-                  <p>
-                    Balance: {token1Balance?.formatted} {token1Balance?.symbol}
-                  </p>
+                  <div className="flex flex-col items-end">
+                    <span>Balance</span>
+                    <span>
+                      {parseFloat(token1Balance?.formatted).toLocaleString(
+                        "en-US"
+                      )}{" "}
+                      {token1Balance?.symbol}
+                    </span>
+                  </div>
                 )
               )}
+            </p>
+            <button className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5">
+              MAX
+            </button>
+          </div>
+        </div>
+
+        {/* Relative Conversion and Share of Pool */}
+        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
+          <div className="flex flex-col gap-y-2">
+            <p>0.1234 GLMR per STELLA</p>
+            <p>0.1234 STELLA per GLMR</p>
+          </div>
+          <p className="flex flex-col items-end">
+            <span>{"<0.001%"}</span>
+            <span>Share of pool</span>
+          </p>
+        </div>
+
+        {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        <div className="bg-[#C0F9C9] rounded-xl">
+          <div className="flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]">
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p>
+                <span className="opacity-40 mr-2 font-semibold">
+                  0.000045 STELLA
+                </span>
+                <span>$1234</span>
+              </p>
             </div>
-            <div
-              className={clsx(
-                "flex flex-row justify-between p-4 border border-[#727272] rounded-lg"
-              )}
-            >
-              <div className="flex flex-row gap-x-5 items-center">
-                <div className="z-10 flex overflow-hidden rounded-full">
-                  <Image
-                    src={selectedFarm?.asset.logos[1] as string}
-                    alt={selectedFarm?.asset.symbol as string}
-                    width={32}
-                    height={32}
-                  />
-                </div>
-                <span>{farmAsset1?.symbol}</span>
-              </div>
-              <div className="flex flex-col gap-y-3">
-                <div className="flex flex-row justify-end items-center gap-x-3">
-                  <p className="flex flex-col items-end text-sm leading-[19px] opacity-50">
-                    <span>Balance</span>
-                  </p>
-                </div>
-                <div className="text-right">
-                  <input
-                    placeholder="0"
-                    className={clsx(
-                      "text-xl leading-[27px] bg-transparent text-right focus:outline-none"
-                      // token1BalNotAvailable && "text-[#FF8787]"
-                    )}
-                    min={0}
-                    onChange={handleChangeSecondTokenAmount}
-                    value={secondTokenAmount}
-                  />
-                </div>
-              </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button onClick={() => {}}>
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
+              </button>
             </div>
           </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              Sufficient Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              89.567576 STELLA
+            </span>
+          </div>
+        </div>
 
-          {firstTokenAmount != "" && secondTokenAmount !== "" && (
-            <p>
-              You will receive: {minLpTokens} {selectedFarm?.asset.symbol}
-            </p>
-          )}
-
-          {/* Buttons */}
-          <div className="flex flex-col gap-y-2">
-            {isToken0ApprovedLoading || isToken1ApprovedLoading ? (
+        {/* Buttons */}
+        <div className="flex flex-row gap-x-3 mt-9">
+          {isToken0ApprovedLoading || isToken0ApprovedLoading ? (
+            <MButton
+              type="primary"
+              isLoading={false}
+              text="Checking if tokens are approved..."
+            />
+          ) : (
+            <div className="flex flex-row w-full gap-x-3">
+              {!isToken0Approved && !approveToken0TxnSuccess && (
+                <MButton
+                  type="secondary"
+                  isLoading={approveToken0Loading || approveToken0TxnLoading}
+                  text={
+                    approveToken0Loading
+                      ? "Sign the Txn in Wallet"
+                      : approveToken0TxnLoading
+                      ? "Waiting for Approval"
+                      : `Approve ${farmAsset0.symbol}`
+                  }
+                  disabled={
+                    approveToken0TxnSuccess ||
+                    approveToken0TxnLoading ||
+                    typeof approveToken0 == "undefined"
+                  }
+                  onClick={async () => {
+                    const txn = await approveToken0?.();
+                    console.log("Approve0 Result", txn);
+                  }}
+                />
+              )}
+              {!isToken1Approved &&
+                !approveToken1TxnSuccess &&
+                (isToken0Approved || approveToken0TxnSuccess) && (
+                  <MButton
+                    type="secondary"
+                    isLoading={approveToken1Loading || approveToken1TxnLoading}
+                    text={
+                      approveToken1Loading
+                        ? "Sign the Txn in Wallet"
+                        : approveToken1TxnLoading
+                        ? "Waiting for Approval"
+                        : `Approve ${farmAsset1.symbol}`
+                    }
+                    disabled={
+                      approveToken1TxnSuccess ||
+                      approveToken1TxnLoading ||
+                      typeof approveToken1 == "undefined"
+                    }
+                    onClick={async () => {
+                      const txn = await approveToken1?.();
+                      console.log("Approve1 Result", txn);
+                    }}
+                  />
+                )}
               <MButton
                 type="primary"
-                text="Checking if tokens are approved..."
-              />
-            ) : (isSuccessApprove0 || !!Number(isToken0Approved)) &&
-              (isSuccessApprove1 || !!Number(isToken1Approved)) ? (
-              <MButton
-                type="secondary"
+                isLoading={false}
                 disabled={
-                  // Atleast one token must be more than zero
                   firstTokenAmount == "" ||
                   secondTokenAmount == "" ||
                   (parseFloat(firstTokenAmount) <= 0 &&
                     parseFloat(secondTokenAmount) <= 0) ||
                   typeof addLiquidity == "undefined" ||
-                  isLoadingAddLiq ||
-                  isSuccessAddLiq
+                  isLoadingAddLiqCall ||
+                  isSuccessAddLiqTxn
                 }
-                text={isLoadingAddLiq ? "Processing..." : "Confirm"}
-                onClick={async () => {
+                text={"Confirm Adding Liquidity"}
+                onClick={() => {
                   if (
                     parseFloat(firstTokenAmount) <= 0 &&
                     parseFloat(secondTokenAmount) <= 0
@@ -380,7 +463,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       token0Amount: parseFloat(firstTokenAmount),
                       token1Amount: parseFloat(secondTokenAmount),
                       minToken0Amount:
-                        (parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100, // TODO: Need to multiply it with token amount?
+                        (parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100,
                       minToken1Amount:
                         (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) /
                         100,
@@ -388,65 +471,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       block_timestamp: "Calc at runtime",
                     });
                     // Handler of Add Liquidity
-                    handleAddLiquidity();
+                    // handleAddLiquidity();
                   }
                 }}
               />
-            ) : (
-              <>
-                {!isToken0Approved && !isSuccessApprove0 && (
-                  <MButton
-                    type="secondary"
-                    text={
-                      isLoadingApprove0
-                        ? "Approving..."
-                        : `Approve ${farmAsset0.symbol} Token`
-                    }
-                    disabled={
-                      isSuccessApprove0 ||
-                      isLoadingApprove0 ||
-                      typeof approveToken0 == "undefined"
-                    }
-                    onClick={async () => {
-                      const txn = await approveToken0?.();
-                      console.log("Approve0 Result", txn);
-                    }}
-                  />
-                )}
-                {!isToken1Approved && !isSuccessApprove1 && (
-                  <MButton
-                    text={
-                      isLoadingApprove1
-                        ? "Approving..."
-                        : `Approve ${farmAsset1.symbol} Token`
-                    }
-                    type="secondary"
-                    disabled={
-                      isSuccessApprove1 ||
-                      isLoadingApprove1 ||
-                      typeof approveToken1 == "undefined"
-                    }
-                    onClick={async () => {
-                      const txn = await approveToken1?.();
-                      console.log("Approve1 Result", txn);
-                    }}
-                  />
-                )}
-              </>
-            )}
-            <MButton
-              type="transparent"
-              text="Go Back"
-              onClick={() => {
-                setIsOpen(false);
-              }}
-            />
-          </div>
-          {isSuccessAddLiq && <div>Liquidity Added successfully</div>}
+            </div>
+          )}
         </div>
-      </ModalWrapper>
-    )
+      </div>
+    </LiquidityModalWrapper>
   );
+
+  const ConfirmStep = <></>;
+
+  const ProcessStep = <></>;
+
+  return isProcessStep ? ProcessStep : isConfirmStep ? ConfirmStep : InputStep;
 };
 
 export default AddSectionStandard;

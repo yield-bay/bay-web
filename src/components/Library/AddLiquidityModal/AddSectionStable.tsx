@@ -162,6 +162,7 @@ const AddSectionStable: FC = () => {
           {approvalArray.length === tokens.length && (
             <MButton
               type="secondary"
+              isLoading={addLiquidityLoading}
               disabled={
                 amounts.length < 1 ||
                 typeof addLiquidity == "undefined" ||
@@ -183,13 +184,6 @@ const AddSectionStable: FC = () => {
               }}
             />
           )}
-          <MButton
-            type="transparent"
-            text="Go Back"
-            onClick={() => {
-              setIsOpen(false);
-            }}
-          />
         </div>
         {/* {isSuccessAddLiq && <div>Liquidity Added successfully</div>} */}
       </div>

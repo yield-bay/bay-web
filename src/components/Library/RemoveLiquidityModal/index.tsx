@@ -242,6 +242,7 @@ const RemoveLiquidityModal = () => {
         <div className="flex flex-row gap-2">
           <MButton
             type="secondary"
+            isLoading={isLoadingLpApprove}
             className="w-1/2"
             text={
               isSuccessLpApprove
@@ -266,6 +267,7 @@ const RemoveLiquidityModal = () => {
             }}
           />
           <MButton
+            isLoading={isLoadingRemoveLiq}
             className="w-1/2"
             type="secondary"
             text="Confirm Withdrawl"

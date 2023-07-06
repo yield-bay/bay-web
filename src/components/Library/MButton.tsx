@@ -2,7 +2,8 @@ import type { FC } from "react";
 import clsx from "clsx";
 
 interface MButtonProps {
-  type: "primary" | "secondary" | "warning" | "transparent";
+  type: "primary" | "secondary";
+  isLoading: boolean;
   text: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -19,6 +20,7 @@ interface MButtonProps {
  */
 const MButton: FC<MButtonProps> = ({
   type,
+  isLoading,
   text,
   onClick,
   disabled,
@@ -28,13 +30,11 @@ const MButton: FC<MButtonProps> = ({
     <button
       disabled={disabled}
       className={clsx(
-        "text-center text-base leading-[21.6px] py-[13px] transition duration-100 ease-in-out rounded-lg",
-        type === "primary" && "bg-white hover:bg-gray-100 text-black",
-        type === "secondary" &&
-          "text-white bg-[#1E1E1E] hover:bg-[#252525] active:bg-[#1E1E1E]",
-        type === "warning" && "bg-warningRed hover:bg-[#E53C3C]",
-        type === "transparent" && "",
-        disabled && "opacity-50 pointer-events-none",
+        "text-base shadow-sm hover:shadow-md active:shadow-sm font-semibold w-full text-[#1D2939] leading-5 py-5 transition duration-100 ease-in-out rounded-lg",
+        type === "primary" && "border border-[#99F] bg-[#EDEDFF]",
+        type === "secondary" && "border border-[#D0D5DD] bg-[#F9FAFB]",
+        isLoading && "border-dashed animate-pulse",
+        disabled && "opacity-40 pointer-events-none",
         className ?? ""
       )}
       onClick={onClick}
