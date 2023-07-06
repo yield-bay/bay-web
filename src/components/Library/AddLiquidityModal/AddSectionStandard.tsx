@@ -80,6 +80,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     setSecondTokenAmount("");
   }, [isOpen]);
 
+  const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
+    address,
+    chainId: chain?.id,
+    enabled: !!address && !!selectedFarm,
+  });
+
+  const GAS_FEES = 0.0014; // In STELLA
+
   // Balance Token0
   const { data: token0Balance, isLoading: token0BalanceLoading } = useBalance({
     address,
@@ -194,7 +202,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Method to update token values and fetch fees based on firstToken Input
   const handleChangeFirstTokenAmount = async (e: any) => {
     setFirstTokenAmount(e.target.value);
-
     // Updating Second Token amount
     const firstTokenFloat = parseFloat(e.target.value);
     updateSecondTokenAmount(firstTokenFloat);
@@ -203,7 +210,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Method to update token values and fetch fees based on secondToken Input
   const handleChangeSecondTokenAmount = async (e: any) => {
     setSecondTokenAmount(e.target.value);
-
     // Calculate first token amount
     const secondTokenFloat = parseFloat(e.target.value);
     updateFirstTokenAmount(secondTokenFloat);
@@ -353,13 +359,27 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         </div>
 
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        <div className="bg-[#C0F9C9] rounded-xl">
-          <div className="flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]">
+        <div
+          className={clsx(
+            "rounded-xl",
+            parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              ? "bg-[#C0F9C9]"
+              : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+                ? "bg-[#ECFFEF]"
+                : "bg-[#FFE8E8]"
+            )}
+          >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  0.000045 STELLA
+                  {GAS_FEES} STELLA
                 </span>
                 <span>$1234</span>
               </p>
@@ -373,10 +393,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              Sufficient Wallet Balance
+              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+                ? "Sufficient"
+                : "Insufficient"}{" "}
+              Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              89.567576 STELLA
+              {nativeBal?.formatted} {nativeBal?.symbol}
             </span>
           </div>
         </div>
@@ -405,7 +428,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   disabled={
                     approveToken0TxnSuccess ||
                     approveToken0TxnLoading ||
-                    typeof approveToken0 == "undefined"
+                    typeof approveToken0 == "undefined" ||
+                    parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
                   }
                   onClick={async () => {
                     const txn = await approveToken0?.();
@@ -429,7 +453,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     disabled={
                       approveToken1TxnSuccess ||
                       approveToken1TxnLoading ||
-                      typeof approveToken1 == "undefined"
+                      typeof approveToken1 == "undefined" ||
+                      parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
                     }
                     onClick={async () => {
                       const txn = await approveToken1?.();
@@ -447,7 +472,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     parseFloat(secondTokenAmount) <= 0) ||
                   typeof addLiquidity == "undefined" ||
                   isLoadingAddLiqCall ||
-                  isSuccessAddLiqTxn
+                  isSuccessAddLiqTxn ||
+                  parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
                 }
                 text={"Confirm Adding Liquidity"}
                 onClick={() => {
