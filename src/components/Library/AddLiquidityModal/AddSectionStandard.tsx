@@ -149,6 +149,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   // Wait AddLiquidity Txn
   const {
+    data: addLiquidityTxnData,
     isLoading: isLoadingAddLiqTxn,
     isError: isErrorAddLiqTxn,
     isSuccess: isSuccessAddLiqTxn,
@@ -234,8 +235,16 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       console.log("addliq method loading... sign the txn");
     } else if (isLoadingAddLiqTxn) {
       console.log("addliq txn loading...");
+      console.log("call hash", addLiquidityData?.hash);
     }
   }, [isLoadingAddLiqCall, isLoadingAddLiqTxn]);
+
+  useEffect(() => {
+    if (isSuccessAddLiqTxn) {
+      console.log("addliq txn success!");
+      console.log("txn data", addLiquidityTxnData);
+    }
+  }, [isSuccessAddLiqTxn]);
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
@@ -290,7 +299,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 )
               )}
             </p>
-            <button className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5">
+            <button
+              className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
+              onClick={() => {
+                setFirstTokenAmount(token0Balance?.formatted ?? "0");
+                updateSecondTokenAmount(
+                  parseFloat(token0Balance?.formatted ?? "0")
+                );
+              }}
+            >
               MAX
             </button>
           </div>
@@ -341,7 +358,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 )
               )}
             </p>
-            <button className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5">
+            <button
+              className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
+              onClick={() => {
+                setSecondTokenAmount(token1Balance?.formatted ?? "0");
+                updateFirstTokenAmount(
+                  parseFloat(token1Balance?.formatted ?? "0")
+                );
+              }}
+            >
               MAX
             </button>
           </div>
@@ -601,7 +626,37 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const ProcessStep = () => {
     return (
       <div className="flex flex-col items-center gap-y-8 text-left font-semibold leading-5">
-        {!isErrorAddLiqTxn && !isErrorAddLiqCall ? (
+        {isSuccessAddLiqTxn ? (
+          <>
+            <Image
+              src="/icons/ArrowCircleUp.svg"
+              alt="Transaciton Submitted"
+              width={32}
+              height={32}
+              className="select-none"
+            />
+            <h1 className="text-[#1D2939] text-xl leading-5 font-semibold">
+              Transaction Submitted
+            </h1>
+            <hr className="border-t border-[#E3E3E3] min-w-full" />
+            <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
+              <Link
+                href={`https://moonscan.io/tx/${addLiquidityTxnData?.hash}}`}
+                className="text-[#9999FF] underline underline-offset-4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on Explorer
+              </Link>
+              <button
+                className="text-[#A3A3A3]"
+                onClick={() => setIsOpen(false)}
+              >
+                Go Back
+              </button>
+            </div>
+          </>
+        ) : !isErrorAddLiqTxn && !isErrorAddLiqCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
@@ -617,34 +672,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 : ""}
             </p>
             <Spinner />
-          </>
-        ) : isSuccessAddLiqTxn ? (
-          <>
-            <Image
-              src="/icons/ArrowCircleUp.svg"
-              alt="Transaciton Submitted"
-              width={32}
-              height={32}
-              className="select-none"
-            />
-            <h1 className="text-[#1D2939] text-xl leading-5 font-semibold">
-              Transaction Submitted
-            </h1>
-            <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
-              <Link
-                href="#"
-                className="text-[#9999FF] underline underline-offset-4"
-              >
-                View on Explorer
-              </Link>
-              <button
-                className="text-[#A3A3A3]"
-                onClick={() => setIsOpen(false)}
-              >
-                Go Back
-              </button>
-            </div>
           </>
         ) : (
           <>
