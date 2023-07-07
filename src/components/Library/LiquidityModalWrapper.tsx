@@ -68,7 +68,7 @@ const LiquidityModalWrapper: FC<Props> = ({
                     </button>
                   </div>
                 </div>
-                <div className="border border-[#99F] px-6 pb-6 pt-[80px] -mt-[7px] rounded-lg bg-white">
+                <div className="border border-[#99F] px-6 pb-6 pt-[44px] -mt-[7px] rounded-lg bg-white">
                   {children}
                 </div>
               </Dialog.Panel>

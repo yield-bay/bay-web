@@ -15,6 +15,7 @@ import {
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
+import Spinner from "@components/Library/Spinner";
 import { addLiqModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
@@ -30,6 +31,7 @@ import useMinimumLPTokens from "@hooks/useMinLPTokens";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import toUnits from "@utils/toUnits";
 import { CogIcon } from "@heroicons/react/solid";
+import Link from "next/link";
 
 const SLIPPAGE = 0.5; // In percentage
 
@@ -47,6 +49,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
+
+  const [isTxnFailed, setIsTxnFailed] = useState(false);
 
   useEffect(() => {
     console.log("selectedFarm", selectedFarm);
@@ -132,6 +136,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isLoading: isLoadingAddLiqCall,
     isSuccess: isSuccessAddLiqCall,
     writeAsync: addLiquidity,
+    is,
     // } = usePrepareContractWrite({
   } = useContractWrite({
     address: selectedFarm?.router,
@@ -142,13 +147,20 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     ),
     functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
     chainId: chain?.id,
+    onError: (error) => {
+      console.log("error while calling addLiquidity", error);
+      setIsTxnFailed(true);
+    },
   });
 
   // Wait AddLiquidity Txn
-  const { isLoading: isLoadingAddLiqTxn, isSuccess: isSuccessAddLiqTxn } =
-    useWaitForTransaction({
-      hash: addLiquidityData?.hash,
-    });
+  const {
+    isLoading: isLoadingAddLiqTxn,
+    isError: isErrorAddLiqTxn,
+    isSuccess: isSuccessAddLiqTxn,
+  } = useWaitForTransaction({
+    hash: addLiquidityData?.hash,
+  });
 
   const handleAddLiquidity = async () => {
     try {
@@ -238,13 +250,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     }
   }, [approveToken0TxnSuccess, approveToken1TxnSuccess]);
 
-  const InputStep = !!selectedFarm && (
-    <LiquidityModalWrapper
-      open={isOpen}
-      setOpen={setIsOpen}
-      title="Add Liquidity"
-    >
-      <div className="w-full flex flex-col gap-y-3">
+  const InputStep = () => {
+    return (
+      <div className="w-full mt-9 flex flex-col gap-y-3">
         {/* First token Container */}
         <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
           <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
@@ -272,7 +280,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           />
           <div className="inline-flex items-center gap-x-2">
             <p className="flex flex-col items-end text-sm leading-5 opacity-50">
-              {token1BalanceLoading ? (
+              {token0BalanceLoading ? (
                 <span>loading...</span>
               ) : (
                 !!token0Balance && (
@@ -470,12 +478,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   secondTokenAmount == "" ||
                   (parseFloat(firstTokenAmount) <= 0 &&
                     parseFloat(secondTokenAmount) <= 0) ||
-                  typeof addLiquidity == "undefined" ||
-                  isLoadingAddLiqCall ||
-                  isSuccessAddLiqTxn ||
                   parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
                 }
-                text={"Confirm Adding Liquidity"}
+                text="Confirm Adding Liquidity"
                 onClick={() => {
                   if (
                     parseFloat(firstTokenAmount) <= 0 &&
@@ -483,21 +488,20 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   ) {
                     console.log("Both token amount can't be zero");
                   } else {
-                    console.log("router.addLiquidity @params", {
-                      address_token0: farmAsset0?.address,
-                      address_token1: farmAsset1?.address,
-                      token0Amount: parseFloat(firstTokenAmount),
-                      token1Amount: parseFloat(secondTokenAmount),
-                      minToken0Amount:
-                        (parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100,
-                      minToken1Amount:
-                        (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) /
-                        100,
-                      msg_sender: address,
-                      block_timestamp: "Calc at runtime",
-                    });
-                    // Handler of Add Liquidity
-                    // handleAddLiquidity();
+                    setIsConfirmStep(true);
+                    // console.log("router.addLiquidity @params", {
+                    //   address_token0: farmAsset0?.address,
+                    //   address_token1: farmAsset1?.address,
+                    //   token0Amount: parseFloat(firstTokenAmount),
+                    //   token1Amount: parseFloat(secondTokenAmount),
+                    //   minToken0Amount:
+                    //     (parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100,
+                    //   minToken1Amount:
+                    //     (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) /
+                    //     100,
+                    //   msg_sender: address,
+                    //   block_timestamp: "Calc at runtime",
+                    // });
                   }
                 }}
               />
@@ -505,14 +509,168 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           )}
         </div>
       </div>
-    </LiquidityModalWrapper>
+    );
+  };
+
+  const ConfirmStep = () => {
+    return (
+      <div className="flex flex-col gap-y-8 text-left">
+        <button
+          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
+          onClick={() => setIsConfirmStep(false)}
+        >
+          <Image
+            src="/icons/ArrowLeft.svg"
+            alt="Go back"
+            height={24}
+            width={24}
+          />
+        </button>
+        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
+          You will receive
+        </h3>
+        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
+          <div className="inline-flex items-center gap-x-2">
+            <span>15.06</span>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={selectedFarm?.asset.logos[0] as string}
+                alt={selectedFarm?.asset.logos[0] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={selectedFarm?.asset.logos[1] as string}
+                alt={selectedFarm?.asset.logos[1] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+          </div>
+          <p>
+            {farmAsset0?.symbol}/{farmAsset1?.symbol} Pool Tokens
+          </p>
+        </div>
+        <div className="inline-flex justify-between text-sm font-bold">
+          <span className="text-[#0B0B0B]">Rates</span>
+          <p className="flex flex-col gap-y-2 text-[#282929]">
+            <span>1 STELLA = 0.1235 GLMR</span>
+            <span>1 GLMR = 7.0389 STELLA</span>
+          </p>
+        </div>
+        <hr className="border-t border-[#E3E3E3] min-w-full" />
+        {/* Relative Conversion and Share of Pool */}
+        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
+          <div className="flex flex-col gap-y-2">
+            <p>0.1234 GLMR per STELLA</p>
+            <p>0.1234 STELLA per GLMR</p>
+          </div>
+          <p className="flex flex-col items-end">
+            <span>{"<0.001%"}</span>
+            <span>Share of pool</span>
+          </p>
+        </div>
+        <MButton
+          type="primary"
+          isLoading={false}
+          text="Confirm Supply"
+          onClick={() => {
+            setIsProcessStep(true);
+          }}
+        />
+      </div>
+    );
+  };
+
+  const ProcessStep = () => {
+    return (
+      <div className="flex flex-col items-center gap-y-8 text-left font-semibold leading-5">
+        {!isErrorAddLiqTxn && !isTxnFailed ? (
+          <>
+            <h3 className="text-base">Waiting For Confirmation</h3>
+            <h2 className="text-xl">
+              Supplying {firstTokenAmount} {farmAsset0?.symbol} and{" "}
+              {secondTokenAmount} {farmAsset1?.symbol}
+            </h2>
+            <hr className="border-t border-[#E3E3E3] min-w-full" />
+            <p className="text-base text-[#373738]">
+              {isLoadingAddLiqTxn
+                ? "Waiting for Completion"
+                : isLoadingAddLiqCall
+                ? "Confirmation Transaction in your Wallet"
+                : ""}
+            </p>
+            <Spinner />
+          </>
+        ) : true ? (
+          <>
+            <Image
+              src="/icons/ArrowCircleUp.svg"
+              alt="Transaciton Submitted"
+              width={32}
+              height={32}
+              className="select-none"
+            />
+            <h1 className="text-[#1D2939] text-xl leading-5 font-semibold">
+              Transaction Submitted
+            </h1>
+            <hr className="border-t border-[#E3E3E3] min-w-full" />
+            <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
+              <Link
+                href="#"
+                className="text-[#9999FF] underline underline-offset-4"
+              >
+                View on Explorer
+              </Link>
+              <button
+                className="text-[#A3A3A3]"
+                onClick={() => setIsOpen(false)}
+              >
+                Go Back
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="text-base">Something is Wrong</h3>
+            <h2 className="text-xl">Tansaction Failed!</h2>
+            <hr className="border-t border-[#E3E3E3] min-w-full" />
+            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  const isOpenModalCondition =
+    approveToken0Loading ||
+    approveToken1Loading ||
+    approveToken0TxnLoading ||
+    approveToken1TxnLoading ||
+    isLoadingAddLiqCall ||
+    isLoadingAddLiqTxn ||
+    isLoadingAddLiqCall ||
+    isLoadingAddLiqTxn;
+
+  return (
+    !!selectedFarm && (
+      <LiquidityModalWrapper
+        open={isOpen || isOpenModalCondition}
+        setOpen={isOpenModalCondition ? () => {} : setIsOpen}
+        title="Add Liquidity"
+      >
+        {isProcessStep ? (
+          <ProcessStep />
+        ) : isConfirmStep ? (
+          <ConfirmStep />
+        ) : (
+          <InputStep />
+        )}
+      </LiquidityModalWrapper>
+    )
   );
-
-  const ConfirmStep = <></>;
-
-  const ProcessStep = <></>;
-
-  return isProcessStep ? ProcessStep : isConfirmStep ? ConfirmStep : InputStep;
 };
 
 export default AddSectionStandard;
