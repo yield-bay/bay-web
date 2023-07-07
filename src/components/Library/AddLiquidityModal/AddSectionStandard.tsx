@@ -50,8 +50,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
 
-  const [isTxnFailed, setIsTxnFailed] = useState(false);
-
   useEffect(() => {
     console.log("selectedFarm", selectedFarm);
   }, [selectedFarm]);
@@ -136,7 +134,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isLoading: isLoadingAddLiqCall,
     isSuccess: isSuccessAddLiqCall,
     writeAsync: addLiquidity,
-    is,
+    isError: isErrorAddLiqCall,
     // } = usePrepareContractWrite({
   } = useContractWrite({
     address: selectedFarm?.router,
@@ -147,10 +145,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     ),
     functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
     chainId: chain?.id,
-    onError: (error) => {
-      console.log("error while calling addLiquidity", error);
-      setIsTxnFailed(true);
-    },
   });
 
   // Wait AddLiquidity Txn
@@ -184,7 +178,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       });
       console.log("called addliquidity method.", txnRes);
     } catch (error) {
-      console.error(error);
+      console.error("Error in Adding liquidity", error);
     }
   };
 
@@ -328,7 +322,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             min={0}
             onChange={handleChangeSecondTokenAmount}
             value={secondTokenAmount}
-            autoFocus
           />
           <div className="inline-flex items-center gap-x-2">
             <p className="flex flex-col items-end text-sm leading-5 opacity-50">
@@ -440,8 +433,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
                   }
                   onClick={async () => {
-                    const txn = await approveToken0?.();
-                    console.log("Approve0 Result", txn);
+                    try {
+                      const txn = await approveToken0?.();
+                      console.log("Approve0 Result", txn);
+                    } catch (error) {
+                      console.log("Error while Approving toke0", error);
+                    }
                   }}
                 />
               )}
@@ -577,6 +574,23 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           isLoading={false}
           text="Confirm Supply"
           onClick={() => {
+            console.log("args:", {
+              aAddress: farmAsset0?.address,
+              bAddress: farmAsset1?.address,
+              aAmount: parseUnits(
+                `${parseFloat(firstTokenAmount)}`,
+                farmAsset0?.decimals
+              ),
+              bAmount: parseUnits(
+                `${parseFloat(secondTokenAmount)}`,
+                farmAsset0?.decimals
+              ),
+              aAmountMin: 1, // amountAMin
+              bAmountMin: 1, // amountBMin
+              to: address, // To
+              timestamp: "calculated in call", // deadline (uint256)
+            });
+            handleAddLiquidity();
             setIsProcessStep(true);
           }}
         />
@@ -587,7 +601,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const ProcessStep = () => {
     return (
       <div className="flex flex-col items-center gap-y-8 text-left font-semibold leading-5">
-        {!isErrorAddLiqTxn && !isTxnFailed ? (
+        {!isErrorAddLiqTxn && !isErrorAddLiqCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
@@ -604,7 +618,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             </p>
             <Spinner />
           </>
-        ) : true ? (
+        ) : isSuccessAddLiqTxn ? (
           <>
             <Image
               src="/icons/ArrowCircleUp.svg"
@@ -635,7 +649,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         ) : (
           <>
             <h3 className="text-base">Something is Wrong</h3>
-            <h2 className="text-xl">Tansaction Failed!</h2>
+            <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
           </>
