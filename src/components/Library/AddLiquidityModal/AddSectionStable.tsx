@@ -15,7 +15,6 @@ import {
   getAddLiqFunctionName,
   getStableFarmAbi,
 } from "@utils/abis/contract-helper-methods";
-import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
 import { parseAbi, parseUnits } from "viem";

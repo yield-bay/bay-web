@@ -67,6 +67,7 @@ const RemoveLiquidityModal = () => {
 
   const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
     farm?.asset.address!,
+    farm?.protocol!,
     methodId == 0
       ? (parseFloat(lpBalance!) *
           parseFloat(percentage == "" ? "0" : percentage)) /
@@ -78,10 +79,6 @@ const RemoveLiquidityModal = () => {
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
-
-  useEffect(() => {
-    console.log("farm", farm);
-  }, [farm]);
 
   // When InputType.Percentage
   const handlePercChange = (event: any) => {
@@ -115,16 +112,27 @@ const RemoveLiquidityModal = () => {
 
   // Check if already approved
   const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-    useContractRead({
-      address: farm?.asset.address,
-      abi: parseAbi(tokenAbi),
-      functionName: "allowance" as any,
-      args: [
-        address, // owner
-        farm?.router, // spender
-      ],
-      enabled: !!address && !!farm?.router,
-    });
+    useIsApprovedToken(
+      {
+        symbol: farm?.asset.symbol!,
+        address: farm?.asset.address!,
+        decimals: 18,
+      },
+      farm?.router!
+    );
+
+  // Check if already approved
+  // const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
+  //   useContractRead({
+  //     address: farm?.asset.address,
+  //     abi: parseAbi(tokenAbi),
+  //     functionName: "allowance" as any,
+  //     args: [
+  //       address, // owner
+  //       farm?.router, // spender
+  //     ],
+  //     enabled: !!address && !!farm?.router,
+  //   });
 
   // Approve LP token
   const {
@@ -133,10 +141,11 @@ const RemoveLiquidityModal = () => {
     writeAsync: approveLpToken,
   } = useContractWrite({
     address: farm?.asset.address,
-    abi: [parseAbiItem(tokenAbi)],
+    abi: parseAbi(tokenAbi),
     functionName: "approve" as any,
     chainId: chain?.id,
   });
+
   // Waiting for Txns
   const { isLoading: approveLpLoadingTxn, isSuccess: approveLpSuccessTxn } =
     useWaitForTransaction({
@@ -228,7 +237,7 @@ const RemoveLiquidityModal = () => {
 
   const InputStep = () => {
     return (
-      <div className="w-full flex mt-8 flex-col gap-y-8 border">
+      <div className="w-full flex mt-8 flex-col gap-y-8">
         <div className="flex flex-col gap-y-3">
           <ChosenMethod
             farm={farm!}
@@ -271,6 +280,7 @@ const RemoveLiquidityModal = () => {
                   alt={token?.address}
                   width={24}
                   height={24}
+                  className="rounded-full"
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
                   40 {token?.symbol}

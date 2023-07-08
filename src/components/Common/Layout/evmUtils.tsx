@@ -108,18 +108,22 @@ export const solarbeamRouterAbi = [
 ];
 
 export const curveLpAbi = [
-  "function get_balances() view returns (uint256, uint256)",
+  "function allowance(address, address) external view returns (uint256)",
+  "function get_balances() external view returns (uint256, uint256)",
+  "function totalSupply() external view returns (uint256)",
+  "function balanceOf(address) external view returns (uint256)",
 ];
 
 export const lpAbi = [
-  "function balanceOf(address) view returns (uint256)",
+  "function balanceOf(address) external view returns (uint256)",
   "function symbol() view returns (string)",
   "function decimals() view returns (uint8)",
-  "function getReserves() view returns (uint112, uint112, uint32)",
+  "function getReserves() external view returns (uint112, uint112, uint32)",
   "function totalSupply() external view returns (uint256)",
 ];
 
 export const tokenAbi = [
+  "function balanceOf(address) external view returns (uint256)",
   "function approve(address, uint256) external returns (bool)",
   "function allowance(address, address) external view returns (uint256)",
 ];
