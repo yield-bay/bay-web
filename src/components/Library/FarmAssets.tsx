@@ -15,7 +15,7 @@ const FarmAssets = ({ logos }: FarmAssetsProps) => {
           {logos.map((logo: string, index: number) => (
             <div
               key={index}
-              className="z-0 flex overflow-hidden ring-2 ring-white rounded-full bg-neutral-800 transition duration-200"
+              className="z-0 flex overflow-hidden ring-2 ring-white rounded-full bg-neutral-800"
             >
               <Image src={logo} alt={logo} width={24} height={24} />
             </div>

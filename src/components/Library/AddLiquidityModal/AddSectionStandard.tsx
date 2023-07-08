@@ -85,7 +85,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
     chainId: chain?.id,
-    enabled: !!address && !!selectedFarm,
+    enabled: !!address,
   });
 
   const GAS_FEES = 0.0014; // In STELLA
@@ -453,6 +453,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   }
                   disabled={
                     approveToken0TxnSuccess ||
+                    approveToken0Loading ||
                     approveToken0TxnLoading ||
                     typeof approveToken0 == "undefined" ||
                     parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
@@ -482,6 +483,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     }
                     disabled={
                       approveToken1TxnSuccess ||
+                      approveToken1Loading ||
                       approveToken1TxnLoading ||
                       typeof approveToken1 == "undefined" ||
                       parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
@@ -511,19 +513,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     console.log("Both token amount can't be zero");
                   } else {
                     setIsConfirmStep(true);
-                    // console.log("router.addLiquidity @params", {
-                    //   address_token0: farmAsset0?.address,
-                    //   address_token1: farmAsset1?.address,
-                    //   token0Amount: parseFloat(firstTokenAmount),
-                    //   token1Amount: parseFloat(secondTokenAmount),
-                    //   minToken0Amount:
-                    //     (parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100,
-                    //   minToken1Amount:
-                    //     (parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) /
-                    //     100,
-                    //   msg_sender: address,
-                    //   block_timestamp: "Calc at runtime",
-                    // });
                   }
                 }}
               />
@@ -641,7 +630,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                href={`https://moonscan.io/tx/${addLiquidityTxnData?.hash}}`}
+                // href={`https://moonscan.io/tx/${addLiquidityTxnData?.hash}}`}
+                href={"#"}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"
