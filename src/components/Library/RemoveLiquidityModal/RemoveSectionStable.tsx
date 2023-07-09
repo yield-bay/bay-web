@@ -16,7 +16,10 @@ import MButton from "../MButton";
 import { selectedFarmAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseAbiItem, parseUnits } from "viem";
-import { getRemoveLiquidFunctionName } from "@utils/abis/contract-helper-methods";
+import {
+  getRemoveLiquidFunctionName,
+  getStableFarmAbi,
+} from "@utils/abis/contract-helper-methods";
 import { getAbi } from "@utils/abis/contract-helper-methods";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
@@ -27,6 +30,7 @@ import Spinner from "../Spinner";
 import { useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
+import useCalcMinAmount from "@utils/useCalcMinAmount";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -152,6 +156,20 @@ const RemoveSectionStable = () => {
       hash: approveLpData?.hash,
     });
 
+  const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
+    methodId == 0
+      ? parseFloat(percentage !== "" ? percentage : "0") *
+          parseFloat(lpBalance ?? "0")
+      : parseFloat(lpTokens !== "" ? lpTokens : "0"),
+    farm!
+  );
+
+  useEffect(() => {
+    if (!isLoadingMinAmount) {
+      console.log("minamoutdata removeliq stable", minAmount);
+    }
+  }, [isLoadingMinAmount]);
+
   // Remove Liquidity
   const {
     data: removeLiqData,
@@ -161,12 +179,8 @@ const RemoveSectionStable = () => {
     writeAsync: removeLiquidity,
   } = useContractWrite({
     address: farm?.router,
-    abi: getAbi(
-      farm?.protocol as string,
-      farm?.chain as string,
-      getLpTokenSymbol(tokenNames)
-    ),
-    functionName: getRemoveLiquidFunctionName(farm?.protocol ?? ""),
+    abi: parseAbi(getStableFarmAbi(farm?.protocol!)),
+    functionName: getRemoveLiquidFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
 

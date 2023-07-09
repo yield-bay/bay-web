@@ -77,7 +77,7 @@ export function getAbi(protocol: string, chain: string, lpToken: string) {
         if (chain.toLowerCase() == "astar") {
           return arthswapAstar;
         }
-      case "Sirius":
+      case "sirius":
         if (chain.toLowerCase() == "astar") {
           return siriusAstar;
         }

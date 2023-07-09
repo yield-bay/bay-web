@@ -26,6 +26,7 @@ const useMinimumLPTokens = (
 
   const { data: tokenInfo } = useToken({
     address: pair,
+    enabled: !!pair,
   });
 
   const minLpToken = useMemo(() => {
