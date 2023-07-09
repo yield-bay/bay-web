@@ -29,7 +29,6 @@ import useLPBalance from "@hooks/useLPBalance";
 import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
 import useMinimumLPTokens from "@hooks/useMinLPTokens";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import toUnits from "@utils/toUnits";
 import { CogIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 

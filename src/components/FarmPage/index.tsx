@@ -116,10 +116,20 @@ const FarmPage: NextPage = () => {
   }, [farmPosition]);
 
   useEffect(() => {
-    if (!addliqModalOpen) {
+    if (
+      !addliqModalOpen &&
+      !removeLiqModalOpen &&
+      !stakingModalOpen &&
+      !unstakingModalOpen
+    ) {
       setSelectedFarm(null);
     }
-  }, [addliqModalOpen]);
+  }, [
+    addliqModalOpen,
+    removeLiqModalOpen,
+    stakingModalOpen,
+    unstakingModalOpen,
+  ]);
 
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
   const safetyScoreColor = useSafetyscoreColor(safetyScore);
