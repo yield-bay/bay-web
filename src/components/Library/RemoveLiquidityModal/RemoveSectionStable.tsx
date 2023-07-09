@@ -116,14 +116,7 @@ const RemoveSectionStable = () => {
 
   // Check if already approved
   const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-    useIsApprovedToken(
-      {
-        symbol: farm?.asset.symbol!,
-        address: farm?.asset.address!,
-        decimals: 18,
-      },
-      farm?.router!
-    );
+    useIsApprovedToken(farm?.asset.address!, farm?.router!);
 
   // Check if already approved
   // const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =

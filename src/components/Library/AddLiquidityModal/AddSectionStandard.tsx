@@ -107,10 +107,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   // Check Approval Token0 & Token1
   const { data: isToken0Approved, isLoading: isToken0ApprovedLoading } =
-    useIsApprovedToken(farmAsset0, selectedFarm?.router!);
+    useIsApprovedToken(farmAsset0?.address, selectedFarm?.router!);
 
   const { data: isToken1Approved, isLoading: isToken1ApprovedLoading } =
-    useIsApprovedToken(farmAsset1, selectedFarm?.router!);
+    useIsApprovedToken(farmAsset1?.address, selectedFarm?.router!);
 
   // To approve token0 and token1
   const {
@@ -119,14 +119,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isSuccessApproveCall: approveToken0Success,
     isSuccessApproveTxn: approveToken0TxnSuccess,
     writeAsync: approveToken0,
-  } = useApproveToken(farmAsset0, selectedFarm?.router!);
+  } = useApproveToken(farmAsset0?.address, selectedFarm?.router!);
   const {
     isLoadingApproveCall: approveToken1Loading,
     isLoadingApproveTxn: approveToken1TxnLoading,
     isSuccessApproveCall: approveToken1Success,
     isSuccessApproveTxn: approveToken1TxnSuccess,
     writeAsync: approveToken1,
-  } = useApproveToken(farmAsset1, selectedFarm?.router!);
+  } = useApproveToken(farmAsset1?.address, selectedFarm?.router!);
 
   const {
     data: addLiquidityData,
@@ -435,6 +435,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <MButton
               type="primary"
               isLoading={false}
+              disabled={true}
               text="Checking if tokens are approved..."
             />
           ) : (

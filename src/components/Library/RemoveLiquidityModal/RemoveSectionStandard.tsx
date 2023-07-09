@@ -112,14 +112,7 @@ const RemoveSectionStandard = () => {
 
   // Check if already approved
   const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-    useIsApprovedToken(
-      {
-        symbol: farm?.asset.symbol!,
-        address: farm?.asset.address!,
-        decimals: 18,
-      },
-      farm?.router!
-    );
+    useIsApprovedToken(farm?.asset.address!, farm?.router!);
 
   // Check if already approved
   // const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
@@ -500,7 +493,7 @@ const RemoveSectionStandard = () => {
               {isLoadingRemoveLiqTxn
                 ? "Waiting for Completion"
                 : approveLpLoadingTxn
-                ? "Confirmation Transaction in your Wallet"
+                ? "Confirm Transaction in your Wallet"
                 : ""}
             </p>
             <Spinner />

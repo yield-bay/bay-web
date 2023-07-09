@@ -12,20 +12,23 @@ import { UnderlyingAssets } from "@utils/types";
 /**
  *
  * @param token Underlying Asset
- * @param router Router Contract Address
+ * @param spender spender Contract Address
  * @returns data, isLoading, isError, isSuccess
  */
-const useIsApprovedToken = (token: UnderlyingAssets, router: `0x${string}`) => {
+const useIsApprovedToken = (
+  tokenAddress: `0x${string}`,
+  spender: `0x${string}`
+) => {
   const { address } = useAccount();
   const { data, isLoading, isError, isSuccess } = useContractRead({
-    address: token?.address,
+    address: tokenAddress,
     abi: parseAbi(tokenAbi),
     functionName: "allowance" as any,
     args: [
       address, // owner
-      router, // spender
+      spender, // spender
     ],
-    enabled: !!address && !!router,
+    enabled: !!address && !!spender,
   });
   return { data, isLoading, isError, isSuccess };
 };
@@ -33,10 +36,13 @@ const useIsApprovedToken = (token: UnderlyingAssets, router: `0x${string}`) => {
 /**
  *
  * @param token Underlying Asset
- * @param router Router Contract Address
+ * @param spender spender Contract Address
  * @returns data, isLoading, isError, isSuccess, writeAsync
  */
-const useApproveToken = (token: UnderlyingAssets, router: `0x${string}`) => {
+const useApproveToken = (
+  tokenAddress: `0x${string}`,
+  spender: `0x${string}`
+) => {
   const { chain } = useNetwork();
   const {
     data,
@@ -45,18 +51,18 @@ const useApproveToken = (token: UnderlyingAssets, router: `0x${string}`) => {
     isSuccess: isSuccessApproveCall,
     writeAsync,
   } = useContractWrite({
-    address: token?.address,
+    address: tokenAddress,
     abi: parseAbi(tokenAbi),
     functionName: "approve" as any,
     chainId: chain?.id,
     args: [
-      router,
+      spender,
       BigInt(
         "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       ),
     ],
     onError: (error) => {
-      console.log(`Approve Error in ${token?.symbol}`, error);
+      console.log(`Error while Approving:`, error);
     },
   });
 
