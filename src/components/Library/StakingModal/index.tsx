@@ -14,7 +14,7 @@ import {
 import MButton from "../MButton";
 import { selectedFarmAtom } from "@store/atoms";
 import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseAbiItem, parseUnits } from "viem";
+import { parseAbi, parseUnits } from "viem";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/outline";
