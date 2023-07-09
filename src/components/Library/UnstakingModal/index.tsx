@@ -73,6 +73,8 @@ const UnstakingModal = () => {
   useEffect(() => {
     setPercentage("");
     setLpTokens("");
+    setIsConfirmStep(false);
+    setIsProcessStep(false);
   }, [isOpen]);
 
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({

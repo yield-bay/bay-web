@@ -8,7 +8,6 @@ import {
   useBalance,
   useContractWrite,
   useNetwork,
-  usePublicClient,
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
@@ -40,9 +39,7 @@ const StakingModal = () => {
   const { address } = useAccount();
   const [isOpen, setIsOpen] = useAtom(stakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
-  const publicClient = usePublicClient();
 
-  // const [lpBalanceNum, setLpBalanceNum] = useState<number | null>(0);
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<number>(0);
@@ -76,6 +73,8 @@ const StakingModal = () => {
   useEffect(() => {
     setPercentage("");
     setLpTokens("");
+    setIsConfirmStep(false);
+    setIsProcessStep(false);
   }, [isOpen]);
 
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
