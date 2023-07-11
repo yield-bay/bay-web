@@ -3,16 +3,17 @@ import ModalWrapper from "./ModalWrapper";
 import {
   farmURL,
   formatFirstLetter,
+  formatTokenSymbols,
   getLpTokenSymbol,
 } from "@utils/farmListMethods";
 import Link from "next/link";
-import { UnclaimedRewardType } from "@utils/types";
+import { PortfolioPositionType, UnclaimedRewardType } from "@utils/types";
 import clsx from "clsx";
 
 interface Props {
   open: boolean;
   setOpen: (value: boolean) => void;
-  positions: any[];
+  positions: PortfolioPositionType[];
 }
 
 const RewardsModal = ({ open, setOpen, positions }: Props) => {
@@ -34,6 +35,7 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
           (acc, reward) => acc + reward.amount,
           0
         );
+        const tokenNames = formatTokenSymbols(position?.lpSymbol);
 
         return (
           <div
@@ -45,7 +47,7 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
           >
             <div className="flex flex-col gap-y-6 justify-between">
               <div className="text-left">
-                <p className="mb-1">{getLpTokenSymbol(position?.lpSymbol)}</p>
+                <p className="mb-1">{getLpTokenSymbol(tokenNames)}</p>
                 <p className="font-normal text-base leading-5 text-[#475467]">
                   {formatFirstLetter(position?.protocol)} on{" "}
                   {formatFirstLetter(position?.chain)}
