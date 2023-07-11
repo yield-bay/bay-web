@@ -15,8 +15,7 @@
     "lint": "next lint"
   },
   "engines": {
-    "node": ">=16.8.0",
-    "yarn": ">=3.5.0"
+    "node": ">=16.8.0"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.6.1",
@@ -67,6 +66,5 @@
     "prettier": "^2.7.1",
     "tailwindcss": "^3.1.8",
     "typescript": "^5.0.4"
-  },
-  "packageManager": "yarn@3.6.1"
+  }
 }
