@@ -36,6 +36,26 @@ export function getStableFarmAbi(protocol: string): string[] {
   }
 }
 
+export function getStandardFarmAbi(protocol: string): string[] {
+  if (!protocol) return [""];
+  switch (protocol.toLowerCase()) {
+    case "curve":
+      return curveLpAbi;
+    case "solarbeam":
+    case "stellaswap":
+    case "zenlink":
+    case "beamswap":
+    case "solarflare":
+    case "sushiswap":
+    case "arthswap":
+      return solarbeamRouterAbi;
+    case "sirius":
+      return [""]; // TODO: Yet to findout
+    default:
+      return [""];
+  }
+}
+
 export function getClaimAbi(protocol: string): string[] {
   if (!protocol) return [""];
   switch (protocol.toLowerCase()) {

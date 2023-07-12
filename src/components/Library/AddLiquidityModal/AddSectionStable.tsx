@@ -215,7 +215,8 @@ const AddSectionStable: FC = () => {
               Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {nativeBal?.formatted} {nativeBal?.symbol}
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
             </span>
           </div>
         </div>

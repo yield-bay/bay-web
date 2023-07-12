@@ -104,8 +104,8 @@ export const curveChefAbi = [
 ];
 
 export const solarbeamRouterAbi = [
-  "function addLiquidity(uint256[], uint256, uint256) external returns (uint256)",
-  "function removeLiquidity(uint256, uint256[], uint256) external returns (uint256[])",
+  "function addLiquidity(address, address, uint256, uint256, uint256, uint256, address, uint256) external returns (uint256, uint256, uint256)",
+  "function removeLiquidity(address, address, uint256, uint256, uint256, address, uint256) external returns (uint256, uint256)",
   "function removeLiquidityOneToken(uint256, uint8, uint256, uint256) external returns (uint256)",
   "function calculateRemoveLiquidity(uint256) external view returns (uint256[])",
   "function getTokens() external view returns (address[])",

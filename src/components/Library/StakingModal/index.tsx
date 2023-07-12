@@ -16,7 +16,7 @@ import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { CogIcon } from "@heroicons/react/outline";
+import { CogIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { FarmType } from "@utils/types";
 import Spinner from "../Spinner";
@@ -110,7 +110,6 @@ const StakingModal = () => {
   const {
     isLoadingApproveCall,
     isLoadingApproveTxn,
-    // isSuccessApproveCall,
     isSuccessApproveTxn,
     writeAsync: approveLpToken,
   } = useApproveToken(farm?.asset.address!, farm?.chef as `0x${string}`);
@@ -177,12 +176,6 @@ const StakingModal = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    if (!isApprovedLoading) {
-      console.log("isTokenApproved", !!Number(isApprovedData));
-    }
-  }, [isApprovedLoading]);
 
   const isOpenModalCondition =
     isLoadingApproveCall ||
@@ -263,7 +256,8 @@ const StakingModal = () => {
               Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {nativeBal?.formatted} {nativeBal?.symbol}
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
             </span>
           </div>
         </div>

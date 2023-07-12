@@ -3,7 +3,7 @@ import { FC, PropsWithChildren, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
-import { parseUnits } from "viem";
+import { parseAbi, parseUnits } from "viem";
 import {
   useAccount,
   useBalance,
@@ -20,8 +20,8 @@ import { addLiqModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom } from "@store/atoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
-  getAbi,
   getAddLiqFunctionName,
+  getStandardFarmAbi,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import useTokenReserves from "@hooks/useTokenReserves";
@@ -137,12 +137,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     // } = usePrepareContractWrite({
   } = useContractWrite({
     address: selectedFarm?.router,
-    abi: getAbi(
-      selectedFarm?.protocol as string,
-      selectedFarm?.chain as string,
-      getLpTokenSymbol(tokenNames)
-    ),
-    functionName: getAddLiqFunctionName(selectedFarm?.protocol as string),
+    abi: parseAbi(getStandardFarmAbi(selectedFarm?.protocol!)),
+    functionName: getAddLiqFunctionName(
+      selectedFarm?.protocol as string
+    ) as any,
     chainId: chain?.id,
   });
 
@@ -424,14 +422,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {nativeBal?.formatted} {nativeBal?.symbol}
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
             </span>
           </div>
         </div>
 
         {/* Buttons */}
         <div className="flex flex-row gap-x-3 mt-9">
-          {isToken0ApprovedLoading || isToken0ApprovedLoading ? (
+          {isToken0ApprovedLoading || isToken1ApprovedLoading ? (
             <MButton
               type="primary"
               isLoading={false}
@@ -542,7 +541,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>15.06</span>
+            <span>{minLpTokens}</span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={selectedFarm?.asset.logos[0] as string}
