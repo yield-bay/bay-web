@@ -1,11 +1,11 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import { unstakingModalOpenAtom } from "@store/commonAtoms";
-import { formatTokenSymbols } from "@utils/farmListMethods";
 import {
   useAccount,
   useBalance,
+  useContractRead,
   useContractWrite,
   useNetwork,
   useWaitForTransaction,
@@ -26,8 +26,8 @@ interface ChosenMethodProps {
   percentage: string;
   setPercentage: (value: string) => void;
   handlePercChange: (event: any) => void;
-  lpBal: string;
-  lpBalLoading: boolean;
+  staked: number;
+  isLoadingStaked: boolean;
   lpTokens: string;
   setLpTokens: (value: string) => void;
   handleLpTokensChange: (event: any) => void;
@@ -50,13 +50,6 @@ const UnstakingModal = () => {
   const { chain } = useNetwork();
 
   const SLIPPAGE = 0.5;
-
-  const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
-  const [token0, token1] = tokenNames;
-
-  useEffect(() => {
-    console.log("selectedFarm", farm);
-  }, [farm]);
 
   // When InputType.Percentage
   const handlePercChange = (event: any) => {
@@ -85,23 +78,27 @@ const UnstakingModal = () => {
 
   const GAS_FEES = 0.0014; // In STELLA
 
-  // Balance of LP Tokens
-  const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
-    address,
-    chainId: chain?.id,
-    token: farm?.asset.address,
-    enabled: !!farm,
+  // Deriving Staked balance
+  const { data: userInfo, isLoading: isLoadingUserInfo } = useContractRead({
+    address: farm?.chef as `0x${string}`,
+    abi: parseAbi(stellaswapV1ChefAbi),
+    functionName: "userInfo" as any,
+    args: [farm?.id, address],
+    enabled: !!farm && !!address,
   });
-  const lpBalanceNum: number = !!lpBalance
-    ? parseFloat(lpBalance.formatted)
-    : 0;
+  const staked: number = useMemo(() => {
+    console.log("userInfo", userInfo);
+    if (!userInfo) return 0;
+    const ui = userInfo as bigint[];
+    return Number(ui[0]) / 10 ** 18;
+  }, [userInfo]);
 
   // Unstake LP Tokens
   const {
     data: unstakingData,
     isLoading: isLoadingUnstakingCall,
     isError: isErrorUnstakingCall,
-    isSuccess: isSuccessUnstakingCall,
+    // isSuccess: isSuccessUnstakingCall,
     writeAsync: unstaking,
   } = useContractWrite({
     address: farm?.chef as `0x${string}`,
@@ -113,8 +110,7 @@ const UnstakingModal = () => {
       methodId == 0
         ? parseUnits(
             `${
-              (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
-              100
+              (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
             }`,
             18 // TODO: Put the correct decimals from useToken
           )
@@ -140,7 +136,17 @@ const UnstakingModal = () => {
     }
   };
 
+  const unstakeAmount = useMemo(() => {
+    return methodId == 0
+      ? (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
+      : parseFloat(lpTokens == "" ? "0" : lpTokens);
+  }, [methodId, percentage, lpTokens]);
+
   const InputStep = () => {
+    const confirmDisable =
+      unstakeAmount > staked &&
+      (methodId == 0 ? percentage != "" : lpTokens != "");
+
     return (
       <div className="w-full flex mt-8 flex-col gap-y-8">
         <div className="flex flex-col gap-y-3">
@@ -149,8 +155,8 @@ const UnstakingModal = () => {
             percentage={percentage.toString()}
             setPercentage={setPercentage}
             handlePercChange={handlePercChange}
-            lpBal={lpBalance?.formatted!}
-            lpBalLoading={lpBalanceLoading}
+            staked={staked}
+            isLoadingStaked={isLoadingUserInfo}
             lpTokens={lpTokens.toString()}
             setLpTokens={setLpTokens}
             handleLpTokensChange={handleLpTokensChange}
@@ -226,9 +232,10 @@ const UnstakingModal = () => {
               (methodId == 0
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
+              confirmDisable ||
               parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
             }
-            text="Confirm Unstaking"
+            text={confirmDisable ? "Insufficient Balance" : "Confirm Unstaking"}
             onClick={() => {
               setIsConfirmStep(true);
             }}
@@ -242,7 +249,7 @@ const UnstakingModal = () => {
     return (
       <div className="flex flex-col gap-y-8 text-left">
         <button
-          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
+          className="max-w-fit hover:translate-x-1 active:-translate-x-0 transition-all duration-200 ease-in-out"
           onClick={() => setIsConfirmStep(false)}
         >
           <Image
@@ -257,29 +264,18 @@ const UnstakingModal = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>
-              {methodId == 0
-                ? (lpBalanceNum *
-                    parseFloat(percentage == "" ? "0" : percentage)) /
-                  100
-                : parseFloat(lpTokens == "" ? "0" : lpTokens)}
-            </span>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[0] as string}
-                alt={farm?.asset.logos[0] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[1] as string}
-                alt={farm?.asset.logos[1] as string}
-                width={24}
-                height={24}
-              />
-            </div>
+            <span>{unstakeAmount}</span>
+            {farm?.asset.underlyingAssets.map((token, index) => (
+              <div key={index} className="rounded-full overflow-hidden">
+                <Image
+                  src={farm.asset.logos[index]}
+                  alt={token?.address}
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+              </div>
+            ))}
           </div>
           <p>{farm?.asset.symbol} Pool Tokens</p>
         </div>
@@ -333,7 +329,10 @@ const UnstakingModal = () => {
         ) : !isErrorUnstakingCall && !isErrorUnstakingTxn ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">Withdrawing 50 STELLA/GLMR LP Tokens</h2>
+            <h2 className="text-xl">
+              Unstaking {unstakeAmount.toLocaleString("en-US")}{" "}
+              {farm?.asset.symbol} Tokens
+            </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
               {isLoadingUnstakingCall
@@ -383,8 +382,8 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
   percentage,
   setPercentage,
   handlePercChange,
-  lpBal,
-  lpBalLoading,
+  staked,
+  isLoadingStaked,
   lpTokens,
   setLpTokens,
   handleLpTokensChange,
@@ -415,16 +414,13 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
       />
       <div className="inline-flex items-center gap-x-2">
         <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
-          {lpBalLoading ? (
+          {isLoadingStaked ? (
             <span>loading...</span>
           ) : (
-            !!lpBal && (
+            !!staked && (
               <div className="flex flex-col items-end">
                 <span>Balance</span>
-                <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
-                </span>
+                <span>{staked.toLocaleString("en-US")}</span>
               </div>
             )
           )}
@@ -451,7 +447,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
           ))}
         </div>
         <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Remove</span>
+        <span>Tokens to Unstake</span>
       </div>
       <input
         placeholder="0"
@@ -464,16 +460,13 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
       />
       <div className="inline-flex items-center gap-x-2">
         <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
-          {lpBalLoading ? (
+          {isLoadingStaked ? (
             <span>loading...</span>
           ) : (
-            !!lpBal && (
+            !!staked && (
               <div className="flex flex-col items-end">
                 <span>Balance</span>
-                <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
-                </span>
+                <span>{staked.toLocaleString("en-US")}</span>
               </div>
             )
           )}
@@ -481,7 +474,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
         <button
           className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
           onClick={() => {
-            setLpTokens(lpBal!);
+            setLpTokens(staked.toString(10));
           }}
         >
           MAX
