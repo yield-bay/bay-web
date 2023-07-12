@@ -16,7 +16,10 @@ import MButton from "../MButton";
 import { selectedFarmAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
-import { getRemoveLiquidFunctionName } from "@utils/abis/contract-helper-methods";
+import {
+  getRemoveLiquidFunctionName,
+  getStandardFarmAbi,
+} from "@utils/abis/contract-helper-methods";
 import { getAbi } from "@utils/abis/contract-helper-methods";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
@@ -24,9 +27,10 @@ import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
 import Spinner from "../Spinner";
-import { useIsApprovedToken } from "@hooks/useApprovalHooks";
+import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
+import toUnits from "@utils/toUnits";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -65,7 +69,7 @@ const RemoveSectionStandard = () => {
   const [farmAsset0, farmAsset1] =
     farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
-  const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
+  const minUnderlyingAssets = useMinimumUnderlyingTokens(
     farm?.asset.address!,
     farm?.protocol!,
     methodId == 0
@@ -111,39 +115,18 @@ const RemoveSectionStandard = () => {
   const GAS_FEES = 0.0014; // In STELLA
 
   // Check if already approved
-  const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-    useIsApprovedToken(farm?.asset.address!, farm?.router!);
-
-  // Check if already approved
-  // const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-  //   useContractRead({
-  //     address: farm?.asset.address,
-  //     abi: parseAbi(tokenAbi),
-  //     functionName: "allowance" as any,
-  //     args: [
-  //       address, // owner
-  //       farm?.router, // spender
-  //     ],
-  //     enabled: !!address && !!farm?.router,
-  //   });
-
-  // Approve LP token
   const {
-    data: approveLpData,
-    isLoading: approveLpLoading,
-    writeAsync: approveLpToken,
-  } = useContractWrite({
-    address: farm?.asset.address,
-    abi: parseAbi(tokenAbi),
-    functionName: "approve" as any,
-    chainId: chain?.id,
-  });
+    data: isLpApprovedData,
+    isLoading: isLpApprovedLoading,
+    isSuccess: isLpApprovedSuccess,
+  } = useIsApprovedToken(farm?.asset.address!, farm?.router!);
 
-  // Waiting for Txns
-  const { isLoading: approveLpLoadingTxn, isSuccess: approveLpSuccessTxn } =
-    useWaitForTransaction({
-      hash: approveLpData?.hash,
-    });
+  const {
+    isLoadingApproveCall: approveLpLoading,
+    isLoadingApproveTxn: approveLpLoadingTxn,
+    isSuccessApproveTxn: approveLpSuccessTxn,
+    writeAsync: approveLpToken,
+  } = useApproveToken(farm?.asset.address!, farm?.router!);
 
   // Remove Liquidity
   const {
@@ -153,12 +136,8 @@ const RemoveSectionStandard = () => {
     writeAsync: removeLiquidity,
   } = useContractWrite({
     address: farm?.router,
-    abi: getAbi(
-      farm?.protocol as string,
-      farm?.chain as string,
-      getLpTokenSymbol(tokenNames)
-    ),
-    functionName: getRemoveLiquidFunctionName(farm?.protocol ?? ""),
+    abi: parseAbi(getStandardFarmAbi(farm?.protocol!)),
+    functionName: getRemoveLiquidFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
 
@@ -215,8 +194,8 @@ const RemoveSectionStandard = () => {
                 18
               )
             : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-          parseUnits(`${minUnderlyingAsset0}`, farmAsset0?.decimals), // amountAMin
-          parseUnits(`${minUnderlyingAsset1}`, farmAsset1?.decimals), // amountBMin
+          parseUnits(`${minUnderlyingAssets[0]}`, farmAsset0?.decimals), // amountAMin
+          parseUnits(`${minUnderlyingAssets[1]}`, farmAsset1?.decimals), // amountBMin
           address, // to
           blocktimestamp, // deadline (uint256)
         ],
@@ -275,7 +254,7 @@ const RemoveSectionStandard = () => {
                   className="rounded-full"
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  40 {token?.symbol}
+                  {toUnits(minUnderlyingAssets[index], 2)} {token?.symbol}
                 </span>
               </div>
             ))}
@@ -323,36 +302,45 @@ const RemoveSectionStandard = () => {
               Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {nativeBal?.formatted} {nativeBal?.symbol}
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
             </span>
           </div>
         </div>
         <div className="flex flex-row mt-6 gap-2">
-          {!isLpApprovedData && !approveLpSuccessTxn && (
+          {isLpApprovedLoading ? (
             <MButton
-              type="secondary"
-              isLoading={approveLpLoading || approveLpLoadingTxn}
-              text={
-                approveLpLoadingTxn
-                  ? "Waiting for Approval"
-                  : approveLpLoading
-                  ? "Sign the Txn in Wallet"
-                  : `Approve ${getLpTokenSymbol(tokenNames)}`
-              }
-              disabled={
-                approveLpSuccessTxn ||
-                approveLpLoading ||
-                approveLpLoadingTxn ||
-                typeof approveLpToken == "undefined" ||
-                parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
-              }
-              onClick={async () => {
-                const txn = await approveLpToken?.({
-                  args: [farm?.router, BigInt("0")],
-                });
-                console.log("Approve0 Result", txn);
-              }}
+              type="primary"
+              isLoading={false}
+              disabled={true}
+              text="Checking if tokens are approved..."
             />
+          ) : (
+            !isLpApprovedSuccess &&
+            !approveLpSuccessTxn && (
+              <MButton
+                type="secondary"
+                isLoading={approveLpLoading || approveLpLoadingTxn}
+                text={
+                  approveLpLoadingTxn
+                    ? "Waiting for Approval"
+                    : approveLpLoading
+                    ? "Sign the Txn in Wallet"
+                    : `Approve ${getLpTokenSymbol(tokenNames)}`
+                }
+                disabled={
+                  approveLpSuccessTxn ||
+                  isLpApprovedLoading ||
+                  approveLpLoadingTxn ||
+                  typeof approveLpToken == "undefined" ||
+                  parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+                }
+                onClick={async () => {
+                  const txn = await approveLpToken?.();
+                  console.log("Approve0 Result", txn);
+                }}
+              />
+            )
           )}
           <MButton
             type="primary"
@@ -405,7 +393,7 @@ const RemoveSectionStandard = () => {
                   height={24}
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  40 {token?.symbol}
+                  {toUnits(minUnderlyingAssets[index], 2)} {token?.symbol}
                 </span>
               </div>
             ))}
@@ -431,11 +419,11 @@ const RemoveSectionStandard = () => {
                     )
                   : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
               amountAMin: parseUnits(
-                `${minUnderlyingAsset1}`,
+                `${minUnderlyingAssets[0]}`,
                 farmAsset0?.decimals
               ), // amountAMin, // amountAMin
               amountBMin: parseUnits(
-                `${minUnderlyingAsset1}`,
+                `${minUnderlyingAssets[1]}`,
                 farmAsset1?.decimals
               ), // amountAMin, // amountBMin
               to: address, // to

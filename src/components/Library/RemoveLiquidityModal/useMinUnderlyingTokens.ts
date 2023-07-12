@@ -1,4 +1,5 @@
 import { curveLpAbi, lpAbi } from "@components/Common/Layout/evmUtils";
+import { useMemo } from "react";
 import { parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 
@@ -14,13 +15,14 @@ export default function useMinimumUnderlyingTokens(
   protocol: string,
   lpAmount: number,
   slippage: number
-) {
+): number[] {
   const { data: reserves } = useContractRead({
     address: pair,
     abi: parseAbi(protocol == "curve" ? curveLpAbi : lpAbi),
     functionName: protocol == "curve" ? "get_balances" : "getReserves",
     enabled: !!pair && !!protocol,
   });
+
   const totalReserves = reserves as bigint[];
   const [reserve0, reserve1] = !!totalReserves
     ? totalReserves.map((r) => Number(r))
@@ -32,10 +34,16 @@ export default function useMinimumUnderlyingTokens(
     functionName: "totalSupply",
   });
 
-  const lpAmountAdjusted = !!lpAmount ? (lpAmount * (100 - slippage)) / 100 : 0;
-  const amount0 = (lpAmountAdjusted * reserve0) / Number(totalSupply);
-  const amount1 = (lpAmountAdjusted * reserve1) / Number(totalSupply);
+  const minunderlyingtokens = useMemo(() => {
+    const lpAmountAdjusted = !!lpAmount
+      ? (lpAmount * (100 - slippage)) / 100
+      : 0;
+    const amount0 = (lpAmountAdjusted * reserve0) / Number(totalSupply);
+    const amount1 = (lpAmountAdjusted * reserve1) / Number(totalSupply);
 
-  // console.log("amount0", amount0, "\namount1", amount1);
-  return [amount0, amount1];
+    // console.log("minunderlyingtokens:\namount0", amount0, "\namount1", amount1);
+    return [amount0, amount1];
+  }, [lpAmount]);
+
+  return minunderlyingtokens;
 }

@@ -6,7 +6,7 @@ import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
   useBalance,
-  useContractRead,
+  // useContractRead,
   useContractWrite,
   useNetwork,
   usePublicClient,
@@ -20,7 +20,6 @@ import {
   getRemoveLiquidFunctionName,
   getStableFarmAbi,
 } from "@utils/abis/contract-helper-methods";
-import { getAbi } from "@utils/abis/contract-helper-methods";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import useLPBalance from "@hooks/useLPBalance";
@@ -338,7 +337,8 @@ const RemoveSectionStable = () => {
               Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {nativeBal?.formatted} {nativeBal?.symbol}
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
             </span>
           </div>
         </div>
