@@ -96,8 +96,16 @@ const StakingModal = () => {
     ? parseFloat(lpBalance.formatted)
     : 0;
 
-  const { data: isApprovedData, isLoading: isApprovedLoading } =
-    useIsApprovedToken(farm?.asset.address!, farm?.chef as `0x${string}`);
+  const {
+    data: isApprovedData,
+    isLoading: isApprovedLoading,
+    isSuccess: isApprovedSuccess,
+  } = useIsApprovedToken(farm?.asset.address!, farm?.chef as `0x${string}`);
+
+  useEffect(() => {
+    console.log("isApproedData", isApprovedData);
+    console.log("isApprovedSuccess", isApprovedSuccess);
+  }, [isApprovedData, isApprovedSuccess]);
 
   const {
     isLoadingApproveCall,
@@ -119,18 +127,6 @@ const StakingModal = () => {
     abi: [...parseAbi(stellaswapV1ChefAbi)],
     functionName: "deposit" as any,
     chainId: chain?.id,
-    args: [
-      farm?.id, // pid
-      methodId == 0
-        ? parseUnits(
-            `${
-              (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
-              100
-            }`,
-            18 // TODO: Put the correct decimals from useToken
-          )
-        : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
-    ],
   });
 
   // Wait staking Txn
@@ -144,7 +140,38 @@ const StakingModal = () => {
 
   const handleStaking = async () => {
     try {
-      const txnRes = await staking?.();
+      const argument = [
+        farm?.id, // pid
+        methodId == 0
+          ? parseUnits(
+              `${
+                (lpBalanceNum *
+                  parseFloat(percentage == "" ? "0" : percentage)) /
+                100
+              }`,
+              18 // TODO: Put the correct decimals from useToken
+            )
+          : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
+      ];
+
+      console.log(
+        "method0 arg",
+        parseUnits(
+          `${
+            (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
+            100
+          }`,
+          18 // TODO: Put the correct decimals from useToken
+        )
+      );
+      console.log(
+        "method1 arg",
+        parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18)
+      );
+
+      const txnRes = await staking?.({
+        args: argument,
+      });
       console.log("txnResult", txnRes);
     } catch (error) {
       console.error(error);
@@ -241,7 +268,7 @@ const StakingModal = () => {
           </div>
         </div>
         <div className="flex flex-row mt-6 gap-2">
-          {!isApprovedData && !isSuccessApproveTxn && (
+          {!isApprovedSuccess && !isSuccessApproveTxn && (
             <MButton
               type="secondary"
               isLoading={isLoadingApproveTxn || isLoadingApproveCall}
@@ -260,9 +287,7 @@ const StakingModal = () => {
                 parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
               }
               onClick={async () => {
-                const txn = await approveLpToken?.({
-                  args: [farm?.router, BigInt("0")],
-                });
+                const txn = await approveLpToken?.();
                 console.log("Approve0 Result", txn);
               }}
             />
@@ -274,7 +299,7 @@ const StakingModal = () => {
               (methodId == 0
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
-              !isSuccessApproveTxn ||
+              // !isSuccessApproveTxn ||
               parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
             }
             text="Confirm Staking"

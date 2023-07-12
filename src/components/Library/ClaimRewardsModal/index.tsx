@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { selectedClaimFarmAtom, selectedPositionAtom } from "@store/atoms";
+import { selectedPositionAtom } from "@store/atoms";
 import { claimModalOpenAtom } from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
@@ -32,7 +32,6 @@ const ClaimRewardsModal = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
   const [position] = useAtom(selectedPositionAtom);
-  const [farm] = useAtom(selectedClaimFarmAtom);
 
   useEffect(() => console.log("selected position"), [position]);
 

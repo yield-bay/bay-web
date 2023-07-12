@@ -7,7 +7,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { UnderlyingAssets } from "@utils/types";
+import { useMemo } from "react";
 
 /**
  *
@@ -20,7 +20,7 @@ const useIsApprovedToken = (
   spender: `0x${string}`
 ) => {
   const { address } = useAccount();
-  const { data, isLoading, isError, isSuccess } = useContractRead({
+  const { data, isLoading, isError } = useContractRead({
     address: tokenAddress,
     abi: parseAbi(tokenAbi),
     functionName: "allowance" as any,
@@ -30,6 +30,15 @@ const useIsApprovedToken = (
     ],
     enabled: !!address && !!spender,
   });
+
+  const isSuccess = useMemo(() => {
+    console.log("data isApproval", Number(data));
+    return (
+      Number(data) ==
+      115792089237316195423570985008687907853269984665640564039457584007913129639935
+    );
+  }, [data]);
+
   return { data, isLoading, isError, isSuccess };
 };
 
@@ -56,8 +65,9 @@ const useApproveToken = (
     functionName: "approve" as any,
     chainId: chain?.id,
     args: [
-      spender,
+      spender, // spender
       BigInt(
+        // value
         "115792089237316195423570985008687907853269984665640564039457584007913129639935"
       ),
     ],
