@@ -85,7 +85,7 @@ const FarmPage: NextPage = () => {
   const [unstakingModalOpen, setUnstakingModalOpen] = useAtom(
     unstakingModalOpenAtom
   );
-  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
+  const [, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   // const [calcOpen, setCalcOpen] = useState<boolean>(false);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);

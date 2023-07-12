@@ -35,6 +35,7 @@ import StakingModal from "@components/Library/StakingModal";
 import UnstakingModal from "@components/Library/UnstakingModal";
 import { useConnection } from "@hooks/useConnection";
 import { useRouter } from "next/router";
+import ClaimRewardsModal from "@components/Library/ClaimRewardsModal";
 
 interface Props {
   children: ReactNode;
@@ -355,7 +356,7 @@ const Layout: FC<Props> = ({ children }) => {
                 Object.values(poolInfo)[0]
               );
               console.log("poolInfo", poolInfo);
-              console.log("userInfo", userInfo);
+              console.log("userInfo stella", userInfo);
               const stakedLpAmount =
                 Number(Object.values(userInfo)[0] as number) / 10 ** 18;
               const rewardDebt = Object.values(userInfo)[1];
@@ -874,7 +875,7 @@ const Layout: FC<Props> = ({ children }) => {
               if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
                 const tempPositions = { ...positions };
 
-                console.log("before creating temp positions obejct:\n", {
+                console.log("before creating temp positions object:\n", {
                   unstakedAmount: unstakedLpAmount,
                   stakedLpAmount: stakedLpAmount,
                   lpTokenPricesMap: lpTokenPricesMap,
@@ -1028,6 +1029,7 @@ const Layout: FC<Props> = ({ children }) => {
       <RemoveLiquidityModal />
       <StakingModal />
       <UnstakingModal />
+      <ClaimRewardsModal />
       <Header />
       {children}
       <Footer />

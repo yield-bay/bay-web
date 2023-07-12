@@ -100,9 +100,7 @@ export const curveChefAbi = [
   "function reward_tokens(uint256) view returns (address)",
   "function balanceOf(address) view returns (uint256)",
   "function lp_token() view returns (address)",
-  "function add_liquidity(uint256, uint256, address) returns (uint256)",
-  "function remove_liquidity(uint256, uint256[], address) returns (uint256[])",
-  "function remove_liquidity_one_coin(uint256, int128, uint256) returns (uint256)",
+  "function claim_rewards() external",
 ];
 
 export const solarbeamRouterAbi = [
@@ -118,6 +116,9 @@ export const curveLpAbi = [
   "function get_balances() external view returns (uint256, uint256)",
   "function totalSupply() external view returns (uint256)",
   "function balanceOf(address) external view returns (uint256)",
+  "function add_liquidity(uint256, uint256, address) returns (uint256)",
+  "function remove_liquidity(uint256, uint256[], address) returns (uint256[])",
+  "function remove_liquidity_one_coin(uint256, int128, uint256) returns (uint256)",
 ];
 
 export const lpAbi = [

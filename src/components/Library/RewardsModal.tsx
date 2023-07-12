@@ -1,14 +1,15 @@
 import Image from "next/image";
 import ModalWrapper from "./ModalWrapper";
 import {
-  farmURL,
   formatFirstLetter,
   formatTokenSymbols,
   getLpTokenSymbol,
 } from "@utils/farmListMethods";
-import Link from "next/link";
 import { PortfolioPositionType, UnclaimedRewardType } from "@utils/types";
 import clsx from "clsx";
+import { useAtom } from "jotai";
+import { claimModalOpenAtom } from "@store/commonAtoms";
+import { selectedPositionAtom } from "@store/atoms";
 
 interface Props {
   open: boolean;
@@ -17,6 +18,8 @@ interface Props {
 }
 
 const RewardsModal = ({ open, setOpen, positions }: Props) => {
+  const [, setOpenClaimRewardsModal] = useAtom(claimModalOpenAtom);
+  const [, setSelectedPosition] = useAtom(selectedPositionAtom);
   return (
     <ModalWrapper open={open} setOpen={setOpen}>
       <div className="flex flex-col items-center gap-y-4 mx-auto">
@@ -82,24 +85,16 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
                 )}
               </div>
             </div>
-            <Link
-              href={farmURL({
-                id: position?.id,
-                protocol: position?.protocol,
-                asset: {
-                  symbol: position?.lpSymbol,
-                },
-              })}
-              rel="noreferrer"
-              target="_blank"
+            <button
+              onClick={() => {
+                setSelectedPosition(position);
+                setOpen(false);
+                setOpenClaimRewardsModal(true);
+              }}
+              className="shadow py-[10px] h-fit px-4 rounded-lg font-medium text-sm leading-5 hover:bg-gray-50 border border-[#D0D5DD]"
             >
-              <button
-                onClick={() => setOpen(false)}
-                className="shadow py-[10px] h-fit px-4 rounded-lg font-medium text-sm leading-5 hover:bg-gray-50 border border-[#D0D5DD]"
-              >
-                Claim Rewards
-              </button>
-            </Link>
+              Claim Rewards
+            </button>
           </div>
         );
       })}

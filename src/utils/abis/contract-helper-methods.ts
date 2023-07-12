@@ -1,7 +1,9 @@
 import {
   curveChefAbi,
+  curveLpAbi,
   solarbeamRouterAbi,
 } from "@components/Common/Layout/evmUtils";
+import { PortfolioPositionType } from "@utils/types";
 const solarbeamMoonriver = require("./solarbeam-moonriver-router.json");
 const stellaswapMoonbeam = require("./stellaswap-moonbeam-router.json");
 const zenlinkAstar = require("./zenlink-astar-router.json");
@@ -16,6 +18,25 @@ const arthswapAstar = require("./arthswap-astar-router.json");
 const siriusAstar = require("./sirius-astar-router.json");
 
 export function getStableFarmAbi(protocol: string): string[] {
+  if (!protocol) return [""];
+  switch (protocol.toLowerCase()) {
+    case "curve":
+      return curveLpAbi;
+    case "solarbeam":
+    case "stellaswap":
+    case "zenlink":
+    case "beamswap":
+    case "solarflare":
+    case "sushiswap":
+    case "arthswap":
+    case "sirius":
+      return solarbeamRouterAbi;
+    default:
+      return [""];
+  }
+}
+
+export function getClaimAbi(protocol: string): string[] {
   if (!protocol) return [""];
   switch (protocol.toLowerCase()) {
     case "curve":
@@ -87,22 +108,6 @@ export function getAbi(protocol: string, chain: string, lpToken: string) {
   }
 }
 
-export function getContractAddress(
-  protocol: string,
-  lpToken: string
-): `0x${string}` {
-  switch (protocol.toLowerCase()) {
-    case "curve":
-      if (lpToken.toLowerCase() == "stdot") {
-        return "0xc6e37086d09ec2048f151d11cdb9f9bbbdb7d685";
-      } else if (lpToken.toLowerCase() == "d2o-usdt") {
-        return "0xff6dd348e6eecea2d81d4194b60c5157cd9e64f4";
-      } else return "0x000000";
-    default:
-      return "0x000000";
-  }
-}
-
 export function getAddLiqFunctionName(protocol: string) {
   if (!protocol) return "";
   switch (protocol.toLowerCase()) {
@@ -138,5 +143,53 @@ export function getRemoveLiquidFunctionName(protocol: string) {
       return "removeLiquidity";
     default:
       return "";
+  }
+}
+
+export function getClaimRewardsFunctionName(protocol: string) {
+  if (!protocol) return "";
+  switch (protocol.toLowerCase()) {
+    case "curve":
+      return "claim_rewards"; // ()
+    case "beamswap":
+    case "solarbeam":
+    case "stellaswap":
+    case "solarflare":
+      return "harvestMany"; // (pids[])
+    case "zenlink":
+      return "claim"; // (pid)
+    case "arthswap":
+    case "sushiswap":
+      return "harvest"; // (pid, address)
+    case "sirius":
+      return "claimRewards"; // (farm.asset.address, address)
+    default:
+      return "";
+  }
+}
+
+export function getClaimRewardsArgs(
+  position: PortfolioPositionType,
+  signer: `0x${string}`,
+  lpAddress: `0x${string}`
+) {
+  if (!position) return [""];
+  switch (position.protocol.toLowerCase()) {
+    case "curve":
+      return [];
+    case "beamswap":
+    case "solarbeam":
+    case "stellaswap":
+    case "solarflare":
+      return [position.id];
+    case "zenlink":
+      return [position.id];
+    case "arthswap":
+    case "sushiswap":
+      return [position.id, signer];
+    case "sirius":
+      return [lpAddress, signer];
+    default:
+      return [];
   }
 }

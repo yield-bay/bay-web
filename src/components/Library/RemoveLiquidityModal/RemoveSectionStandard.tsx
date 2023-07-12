@@ -6,7 +6,7 @@ import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
   useBalance,
-  useContractRead,
+  // useContractRead,
   useContractWrite,
   useNetwork,
   usePublicClient,
@@ -15,7 +15,7 @@ import {
 import MButton from "../MButton";
 import { selectedFarmAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseAbiItem, parseUnits } from "viem";
+import { parseAbi, parseUnits } from "viem";
 import { getRemoveLiquidFunctionName } from "@utils/abis/contract-helper-methods";
 import { getAbi } from "@utils/abis/contract-helper-methods";
 import { FarmType, UnderlyingAssets } from "@utils/types";
@@ -61,7 +61,7 @@ const RemoveSectionStandard = () => {
   const SLIPPAGE = 0.5;
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
-  const [token0, token1] = tokenNames;
+  // const [token0, token1] = tokenNames;
   const [farmAsset0, farmAsset1] =
     farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
@@ -148,9 +148,8 @@ const RemoveSectionStandard = () => {
   // Remove Liquidity
   const {
     data: removeLiqData,
-    isLoading: removeLiqLoading,
+    isLoading: isLoadingRemoveLiqCall,
     isError: isErrorRemoveLiqCall,
-    isSuccess: removeLiqSuccess,
     writeAsync: removeLiquidity,
   } = useContractWrite({
     address: farm?.router,
@@ -180,12 +179,12 @@ const RemoveSectionStandard = () => {
   }, [isLpApprovedLoading]);
 
   useEffect(() => {
-    if (removeLiqLoading) {
+    if (isLoadingRemoveLiqTxn) {
       console.log("removeliq method loading... sign the txn");
     } else if (isLoadingRemoveLiqTxn) {
       console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
     }
-  }, [removeLiqLoading, isLoadingRemoveLiqTxn]);
+  }, [isLoadingRemoveLiqTxn, isLoadingRemoveLiqTxn]);
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
@@ -492,7 +491,7 @@ const RemoveSectionStandard = () => {
             <p className="text-base text-[#373738]">
               {isLoadingRemoveLiqTxn
                 ? "Waiting for Completion"
-                : approveLpLoadingTxn
+                : isLoadingRemoveLiqCall
                 ? "Confirm Transaction in your Wallet"
                 : ""}
             </p>

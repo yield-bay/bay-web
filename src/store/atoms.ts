@@ -1,4 +1,4 @@
-import { FarmType } from "@utils/types";
+import { FarmType, PortfolioPositionType } from "@utils/types";
 import { atom } from "jotai";
 
 // Interfaces
@@ -37,3 +37,4 @@ export const positionsAtom = atom<{ [key: string]: any }>({});
 export const showSupportedFarmsAtom = atom<boolean>(false);
 export const filteredChainAtom = atom<number>(0);
 export const selectedFarmAtom = atom<FarmType | null>(null);
+export const selectedPositionAtom = atom<PortfolioPositionType | null>(null);

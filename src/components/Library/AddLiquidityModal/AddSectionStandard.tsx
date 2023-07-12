@@ -169,7 +169,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           farmAsset0?.address, // TokenA Address
           farmAsset1?.address, // TokenB Address
           parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
-          parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset0?.decimals),
+          parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset1?.decimals),
           1, // amountAMin
           1, // amountBMin
           address, // To
