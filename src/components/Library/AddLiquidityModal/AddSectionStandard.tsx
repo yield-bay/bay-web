@@ -190,8 +190,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Updated tokenAmounts based on value of other token
   const updateSecondTokenAmount = (firstTokenAmount: number): string => {
     const poolRatio = reserve0 / reserve1;
-    const expectedSecondTokenAmount =
-      (firstTokenAmount / poolRatio) * (1 + SLIPPAGE);
+    const expectedSecondTokenAmount = firstTokenAmount / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
       : expectedSecondTokenAmount.toFixed(5);
@@ -201,8 +200,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   const updateFirstTokenAmount = (secondTokenAmount: number): string => {
     const poolRatio = reserve0 / reserve1;
-    const expectedFirstTokenAmount =
-      (poolRatio * secondTokenAmount) / (1 + SLIPPAGE);
+    const expectedFirstTokenAmount = poolRatio * secondTokenAmount;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
       ? "0"
       : expectedFirstTokenAmount.toFixed(5);
