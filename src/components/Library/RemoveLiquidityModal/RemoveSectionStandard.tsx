@@ -20,7 +20,6 @@ import {
   getRemoveLiquidFunctionName,
   getStandardFarmAbi,
 } from "@utils/abis/contract-helper-methods";
-import { getAbi } from "@utils/abis/contract-helper-methods";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import useLPBalance from "@hooks/useLPBalance";

@@ -19,7 +19,7 @@ const TokenButton: React.FC<Props> = ({
   setApprovalMap,
 }) => {
   // Check Approval Token
-  const { data: isApproved } = useIsApprovedToken(
+  const { data: isApproved, isSuccess: isApprovedSuccess } = useIsApprovedToken(
     token?.address,
     selectedFarm?.router
   );
@@ -43,7 +43,7 @@ const TokenButton: React.FC<Props> = ({
   }, [isSuccessApproveTxn, isApproved]);
 
   return (
-    !Number(isApproved) &&
+    !isApprovedSuccess &&
     !isSuccessApproveTxn && (
       <MButton
         type="secondary"
@@ -58,19 +58,10 @@ const TokenButton: React.FC<Props> = ({
         disabled={
           isLoadingApproveCall ||
           isLoadingApproveTxn ||
-          typeof approveToken == "undefined" ||
-          !!Number(isApproved) ||
-          isSuccessApproveTxn
+          typeof approveToken == "undefined"
         }
         onClick={async () => {
-          const txn = await approveToken?.({
-            args: [
-              selectedFarm?.router,
-              BigInt(
-                "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-              ),
-            ],
-          });
+          const txn = await approveToken?.();
           console.log("Approve Result", txn);
         }}
       />

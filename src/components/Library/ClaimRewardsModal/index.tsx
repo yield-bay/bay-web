@@ -16,13 +16,11 @@ import { Spinner } from "@chakra-ui/react";
 import Link from "next/link";
 import MButton from "../MButton";
 import {
-  getAbi,
+  getClaimRewardsAbi,
   getClaimRewardsArgs,
   getClaimRewardsFunctionName,
-  getStableFarmAbi,
 } from "@utils/abis/contract-helper-methods";
-import { getLpTokenSymbol } from "@utils/farmListMethods";
-import { parseAbi } from "viem";
+import { parseAbi, parseAbiItem } from "viem";
 
 // const SLIPPAGE = 0.5;
 const GAS_FEES = 0.0014; // In STELLA
@@ -52,7 +50,7 @@ const ClaimRewardsModal = () => {
     writeAsync: claimRewards,
   } = useContractWrite({
     address: position?.address,
-    // abi: parseAbi(getStableFarmAbi(position?.protocol!)),
+    // abi: parseAbi(getClaimRewardsAbi(position?.protocol!)),
     functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
     chainId: chain?.id,
   });

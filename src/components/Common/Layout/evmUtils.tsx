@@ -85,6 +85,7 @@ export const stellaswapV1ChefAbi = [
   "function pendingStella(uint256, address) view returns (uint256 amount)",
   "function deposit(uint256, uint256) public",
   "function withdraw(uint256, uint256) public",
+  "function harvestMany(uint256[]) public",
 ];
 
 export const zenlinkChefAbi = [
@@ -92,7 +93,12 @@ export const zenlinkChefAbi = [
   // "struct UserInfo { uint256 amount, uint256 rewardDebt, uint256 rewardLockedUp, uint256 nextHarvestUntil }",
   "function getUserInfo(uint256, address) view returns (uint256 amount, uint256[] pending, uint256[] rewardDebt, uint256 nextClaimableBlock)",
   "function pendingRewards(uint256, address) view returns (uint256[] rewards, uint256 nextClaimableBlock)",
+  "function claim(uint256) public",
 ];
+
+export const sushiswapChefAbi = ["function harvest(pid, address) public"];
+
+export const siriusChefAbi = ["function claimRewards(address, address) public"];
 
 export const curveChefAbi = [
   "function claimable_reward(address, address) view returns (uint256)",
