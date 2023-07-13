@@ -1,7 +1,10 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
-import { stakingModalOpenAtom } from "@store/commonAtoms";
+import {
+  slippageModalOpenAtom,
+  stakingModalOpenAtom,
+} from "@store/commonAtoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
@@ -38,6 +41,9 @@ interface ChosenMethodProps {
 const StakingModal = () => {
   const { address } = useAccount();
 
+  const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
+    slippageModalOpenAtom
+  );
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(stakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
@@ -148,7 +154,7 @@ const StakingModal = () => {
                   parseFloat(percentage == "" ? "0" : percentage)) /
                 100
               }`,
-              18 // TODO: Put the correct decimals from useToken
+              18
             )
           : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
       ];
@@ -160,7 +166,7 @@ const StakingModal = () => {
             (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
             100
           }`,
-          18 // TODO: Put the correct decimals from useToken
+          18
         )
       );
       console.log(
@@ -187,7 +193,8 @@ const StakingModal = () => {
     isLoadingApproveCall ||
     isLoadingApproveTxn ||
     isLoadingStakingCall ||
-    isLoadingStakingTxn;
+    isLoadingStakingTxn ||
+    isSlippageModalOpen;
 
   const InputStep = () => {
     return (
@@ -249,7 +256,7 @@ const StakingModal = () => {
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button onClick={() => {}}>
+              <button onClick={() => setIsSlippageModalOpen(true)}>
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
               </button>
             </div>

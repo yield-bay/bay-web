@@ -3,7 +3,6 @@ import {
   curveLpAbi,
   swapFlashLoanAbi,
   standardRouterAbi,
-  solarbeamRouterAbi,
   // chef
   solarbeamChefAbi,
   stellaswapChefAbi,
@@ -24,7 +23,9 @@ export function getChefAbi(protocol: string, chef: string): string[] {
     case "solarbeam":
       return solarbeamChefAbi;
     case "stellaswap":
-      return chef == "0xEDFB330F5FA216C9D2039B99C8cE9dA85Ea91c1E" ? stellaswapV1ChefAbi : stellaswapChefAbi;
+      return chef == "0xEDFB330F5FA216C9D2039B99C8cE9dA85Ea91c1E"
+        ? stellaswapV1ChefAbi
+        : stellaswapChefAbi;
     case "zenlink":
       return zenlinkChefAbi;
     case "curve":

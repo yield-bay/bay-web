@@ -16,7 +16,7 @@ import {
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
-import { addLiqModalOpenAtom } from "@store/commonAtoms";
+import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { formatTokenSymbols } from "@utils/farmListMethods";
 import {
@@ -32,11 +32,12 @@ import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 
-// const SLIPPAGE = 0.5; // In percentage
-
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [selectedFarm] = useAtom(selectedFarmAtom);
+  const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
+    slippageModalOpenAtom
+  );
   const [SLIPPAGE] = useAtom(slippageAtom);
 
   const { address } = useAccount();
@@ -138,7 +139,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isError: isErrorAddLiqCall,
   } = useContractWrite({
     address: selectedFarm?.router,
-    abi: parseAbi(getRouterAbi(selectedFarm?.protocol!, selectedFarm?.farmType == "StandardAmm" ? false : true)),
+    abi: parseAbi(
+      getRouterAbi(
+        selectedFarm?.protocol!,
+        selectedFarm?.farmType == "StandardAmm" ? false : true
+      )
+    ),
     functionName: getAddLiqFunctionName(
       selectedFarm?.protocol as string
     ) as any,
@@ -410,7 +416,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button onClick={() => {}}>
+              <button onClick={() => setIsSlippageModalOpen(true)}>
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
               </button>
             </div>
@@ -682,8 +688,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     approveToken1TxnLoading ||
     isLoadingAddLiqCall ||
     isLoadingAddLiqTxn ||
-    isLoadingAddLiqCall ||
-    isLoadingAddLiqTxn;
+    isSlippageModalOpen;
 
   return (
     !!selectedFarm && (

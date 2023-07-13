@@ -17,7 +17,12 @@ const useCalcMinAmount = (amount: number, farm: FarmType) => {
       farm?.protocol.toLowerCase() == "curve"
         ? farm?.asset.address
         : farm?.router,
-    abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
+    abi: parseAbi(
+      getRouterAbi(
+        farm?.protocol!,
+        farm?.farmType == "StandardAmm" ? false : true
+      )
+    ),
     functionName:
       farm?.protocol.toLowerCase() == "curve"
         ? "get_balances" // todo: change
@@ -32,7 +37,12 @@ const useCalcMinAmount = (amount: number, farm: FarmType) => {
         farm?.protocol.toLowerCase() == "curve"
           ? farm?.asset.address
           : farm?.router,
-      abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
+      abi: parseAbi(
+        getRouterAbi(
+          farm?.protocol!,
+          farm?.farmType == "StandardAmm" ? false : true
+        )
+      ),
       functionName:
         farm?.protocol.toLowerCase() == "curve"
           ? "get_balances"

@@ -21,7 +21,7 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
-      <Dialog as="div" className="relative z-10" onClose={() => setOpen(false)}>
+      <Dialog as="div" className="relative z-50" onClose={() => setOpen(false)}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -44,7 +44,7 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-6 align-middle shadow transform transition-all">
+              <Dialog.Panel className="flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-6 align-middle shadow transform transition-all bg-liquidity-modal">
                 <div className="absolute top-0 right-0 pt-6 pr-9">
                   <div className="flex items-center rounded-full p-1 hover:bg-gray-100 transition-all duration-200">
                     <button

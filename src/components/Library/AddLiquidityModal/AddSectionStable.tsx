@@ -8,7 +8,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useAtom } from "jotai";
-import { addLiqModalOpenAtom } from "@store/commonAtoms";
+import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import MButton from "../MButton";
 import { UnderlyingAssets } from "@utils/types";
@@ -36,6 +36,9 @@ const AddSectionStable: FC = () => {
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
 
+  const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
+    slippageModalOpenAtom
+  );
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
@@ -116,7 +119,12 @@ const AddSectionStable: FC = () => {
     writeAsync: addLiquidity,
   } = useContractWrite({
     address: farm?.router,
-    abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
+    abi: parseAbi(
+      getRouterAbi(
+        farm?.protocol!,
+        farm?.farmType == "StandardAmm" ? false : true
+      )
+    ),
     functionName: getAddLiqFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
@@ -221,7 +229,7 @@ const AddSectionStable: FC = () => {
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button onClick={() => {}}>
+              <button onClick={() => setIsSlippageModalOpen(true)}>
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
               </button>
             </div>
@@ -284,7 +292,8 @@ const AddSectionStable: FC = () => {
     isLoadingAddLiqCall ||
     isLoadingAddLiqTxn ||
     isLoadingAddLiqCall ||
-    isLoadingAddLiqTxn;
+    isLoadingAddLiqTxn ||
+    isSlippageModalOpen;
 
   const ConfirmStep = () => {
     return (

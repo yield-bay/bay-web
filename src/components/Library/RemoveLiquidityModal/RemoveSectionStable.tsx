@@ -1,7 +1,10 @@
 import { FC, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
-import { removeLiqModalOpenAtom } from "@store/commonAtoms";
+import {
+  removeLiqModalOpenAtom,
+  slippageModalOpenAtom,
+} from "@store/commonAtoms";
 import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
@@ -47,6 +50,9 @@ interface ChosenMethodProps {
 const RemoveSectionStable = () => {
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
+  const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
+    slippageModalOpenAtom
+  );
   const [SLIPPAGE] = useAtom(slippageAtom);
 
   const { address } = useAccount();
@@ -64,7 +70,7 @@ const RemoveSectionStable = () => {
   const { chain } = useNetwork();
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
-  const [token0, token1] = tokenNames;
+  // const [token0, token1] = tokenNames;
   const [farmAsset0, farmAsset1] =
     farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
@@ -117,19 +123,6 @@ const RemoveSectionStable = () => {
   const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
     useIsApprovedToken(farm?.asset.address!, farm?.router!);
 
-  // Check if already approved
-  // const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-  //   useContractRead({
-  //     address: farm?.asset.address,
-  //     abi: parseAbi(tokenAbi),
-  //     functionName: "allowance" as any,
-  //     args: [
-  //       address, // owner
-  //       farm?.router, // spender
-  //     ],
-  //     enabled: !!address && !!farm?.router,
-  //   });
-
   // Approve LP token
   const {
     data: approveLpData,
@@ -162,16 +155,20 @@ const RemoveSectionStable = () => {
     }
   }, [isLoadingMinAmount]);
 
-  // Remove Liquidity
+  // Remove Liquidity Call
   const {
     data: removeLiqData,
-    isLoading: removeLiqLoading,
+    isLoading: isLoadingRemoveLiqCall,
     isError: isErrorRemoveLiqCall,
-    isSuccess: removeLiqSuccess,
     writeAsync: removeLiquidity,
   } = useContractWrite({
     address: farm?.router,
-    abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
+    abi: parseAbi(
+      getRouterAbi(
+        farm?.protocol!,
+        farm?.farmType == "StandardAmm" ? false : true
+      )
+    ),
     functionName: getRemoveLiquidFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
@@ -193,12 +190,12 @@ const RemoveSectionStable = () => {
   }, [isLpApprovedLoading]);
 
   useEffect(() => {
-    if (removeLiqLoading) {
+    if (isLoadingRemoveLiqCall) {
       console.log("removeliq method loading... sign the txn");
     } else if (isLoadingRemoveLiqTxn) {
       console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
     }
-  }, [removeLiqLoading, isLoadingRemoveLiqTxn]);
+  }, [isLoadingRemoveLiqCall, isLoadingRemoveLiqTxn]);
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
@@ -324,7 +321,7 @@ const RemoveSectionStable = () => {
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button onClick={() => {}}>
+              <button onClick={() => setIsSlippageModalOpen(true)}>
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
               </button>
             </div>
@@ -524,11 +521,18 @@ const RemoveSectionStable = () => {
     );
   };
 
+  const isOpenModalCondition =
+    approveLpLoading ||
+    approveLpLoadingTxn ||
+    isLoadingRemoveLiqCall ||
+    isLoadingRemoveLiqTxn ||
+    isSlippageModalOpen;
+
   return (
     !!farm && (
       <LiquidityModalWrapper
-        open={isOpen}
-        setOpen={setIsOpen}
+        open={isOpen || !isOpenModalCondition}
+        setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Remove Liquidity"
       >
         {isProcessStep ? (

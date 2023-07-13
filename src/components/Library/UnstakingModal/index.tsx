@@ -1,7 +1,10 @@
 import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
-import { unstakingModalOpenAtom } from "@store/commonAtoms";
+import {
+  slippageModalOpenAtom,
+  unstakingModalOpenAtom,
+} from "@store/commonAtoms";
 import {
   useAccount,
   useBalance,
@@ -37,6 +40,9 @@ interface ChosenMethodProps {
 const UnstakingModal = () => {
   const { address } = useAccount();
 
+  const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
+    slippageModalOpenAtom
+  );
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(unstakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
@@ -206,7 +212,7 @@ const UnstakingModal = () => {
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button onClick={() => {}}>
+              <button onClick={() => setIsSlippageModalOpen(true)}>
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
               </button>
             </div>
@@ -355,7 +361,8 @@ const UnstakingModal = () => {
     );
   };
 
-  const isOpenModalCondition = isLoadingUnstakingCall || isLoadingUnstakingTxn;
+  const isOpenModalCondition =
+    isLoadingUnstakingCall || isLoadingUnstakingTxn || isSlippageModalOpen;
 
   return (
     !!farm && (

@@ -36,6 +36,7 @@ import UnstakingModal from "@components/Library/UnstakingModal";
 import { useConnection } from "@hooks/useConnection";
 import { useRouter } from "next/router";
 import ClaimRewardsModal from "@components/Library/ClaimRewardsModal";
+import SlippageModal from "@components/Library/SlippageModal";
 
 interface Props {
   children: ReactNode;
@@ -1030,6 +1031,7 @@ const Layout: FC<Props> = ({ children }) => {
       <StakingModal />
       <UnstakingModal />
       <ClaimRewardsModal />
+      <SlippageModal />
       <Header />
       {children}
       <Footer />
