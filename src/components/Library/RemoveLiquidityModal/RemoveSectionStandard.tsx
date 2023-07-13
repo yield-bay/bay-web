@@ -13,7 +13,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import {
@@ -46,9 +46,11 @@ interface ChosenMethodProps {
 
 const RemoveSectionStandard = () => {
   const { address } = useAccount();
+  const publicClient = usePublicClient();
+
+  const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
-  const publicClient = usePublicClient();
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
@@ -60,8 +62,6 @@ const RemoveSectionStandard = () => {
   const [methodId, setMethodId] = useState<number>(0);
 
   const { chain } = useNetwork();
-
-  const SLIPPAGE = 0.5;
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
   // const [token0, token1] = tokenNames;

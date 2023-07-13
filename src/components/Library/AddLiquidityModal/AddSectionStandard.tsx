@@ -17,8 +17,8 @@ import {
 import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
 import { addLiqModalOpenAtom } from "@store/commonAtoms";
-import { selectedFarmAtom } from "@store/atoms";
-import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
+import { selectedFarmAtom, slippageAtom } from "@store/atoms";
+import { formatTokenSymbols } from "@utils/farmListMethods";
 import {
   getAddLiqFunctionName,
   getStandardFarmAbi,
@@ -32,11 +32,13 @@ import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 
-const SLIPPAGE = 0.5; // In percentage
+// const SLIPPAGE = 0.5; // In percentage
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [selectedFarm] = useAtom(selectedFarmAtom);
+  const [SLIPPAGE] = useAtom(slippageAtom);
+
   const { address } = useAccount();
   const { chain } = useNetwork();
   const publicClient = usePublicClient();

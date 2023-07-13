@@ -11,7 +11,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
@@ -37,6 +37,8 @@ interface ChosenMethodProps {
 
 const StakingModal = () => {
   const { address } = useAccount();
+
+  const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(stakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
 
@@ -49,8 +51,6 @@ const StakingModal = () => {
   const [isProcessStep, setIsProcessStep] = useState(false);
 
   const { chain } = useNetwork();
-
-  const SLIPPAGE = 0.5;
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
 
@@ -242,7 +242,7 @@ const StakingModal = () => {
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} STELLA
+                  {GAS_FEES} {nativeBal?.symbol}
                 </span>
                 <span>$1234</span>
               </p>

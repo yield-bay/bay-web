@@ -11,7 +11,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
@@ -36,6 +36,8 @@ interface ChosenMethodProps {
 
 const UnstakingModal = () => {
   const { address } = useAccount();
+
+  const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(unstakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
 
@@ -48,8 +50,6 @@ const UnstakingModal = () => {
   const [methodId, setMethodId] = useState<number>(0);
 
   const { chain } = useNetwork();
-
-  const SLIPPAGE = 0.5;
 
   // When InputType.Percentage
   const handlePercChange = (event: any) => {
@@ -112,7 +112,7 @@ const UnstakingModal = () => {
             `${
               (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
             }`,
-            18 // TODO: Put the correct decimals from useToken
+            18
           )
         : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
     ],

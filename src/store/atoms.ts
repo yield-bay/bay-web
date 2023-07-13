@@ -38,3 +38,5 @@ export const showSupportedFarmsAtom = atom<boolean>(false);
 export const filteredChainAtom = atom<number>(0);
 export const selectedFarmAtom = atom<FarmType | null>(null);
 export const selectedPositionAtom = atom<PortfolioPositionType | null>(null);
+
+export const slippageAtom = atom<number>(0.5);

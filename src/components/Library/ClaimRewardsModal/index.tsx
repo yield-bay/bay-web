@@ -20,9 +20,7 @@ import {
   getClaimRewardsArgs,
   getClaimRewardsFunctionName,
 } from "@utils/abis/contract-helper-methods";
-import { parseAbi, parseAbiItem } from "viem";
 
-// const SLIPPAGE = 0.5;
 const GAS_FEES = 0.0014; // In STELLA
 
 const ClaimRewardsModal = () => {
