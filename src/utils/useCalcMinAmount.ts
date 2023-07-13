@@ -1,7 +1,7 @@
 import { useContractRead, useContractReads, useNetwork, useToken } from "wagmi";
 import { FarmType } from "./types";
 import { parseAbi, parseUnits } from "viem";
-import { getStableFarmAbi } from "./abis/contract-helper-methods";
+import { getRouterAbi } from "./abis/contract-helper-methods";
 import { useMemo } from "react";
 
 const useCalcMinAmount = (amount: number, farm: FarmType) => {
@@ -17,7 +17,7 @@ const useCalcMinAmount = (amount: number, farm: FarmType) => {
       farm?.protocol.toLowerCase() == "curve"
         ? farm?.asset.address
         : farm?.router,
-    abi: parseAbi(getStableFarmAbi(farm?.protocol!)),
+    abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
     functionName:
       farm?.protocol.toLowerCase() == "curve"
         ? "get_balances" // todo: change
@@ -32,7 +32,7 @@ const useCalcMinAmount = (amount: number, farm: FarmType) => {
         farm?.protocol.toLowerCase() == "curve"
           ? farm?.asset.address
           : farm?.router,
-      abi: parseAbi(getStableFarmAbi(farm?.protocol!)),
+      abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
       functionName:
         farm?.protocol.toLowerCase() == "curve"
           ? "get_balances"

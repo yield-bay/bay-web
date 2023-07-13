@@ -14,7 +14,7 @@ import MButton from "../MButton";
 import { UnderlyingAssets } from "@utils/types";
 import {
   getAddLiqFunctionName,
-  getStableFarmAbi,
+  getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
@@ -115,11 +115,8 @@ const AddSectionStable: FC = () => {
     isSuccess: isSuccessAddLiqCall,
     writeAsync: addLiquidity,
   } = useContractWrite({
-    address:
-      farm?.protocol.toLowerCase() == "curve"
-        ? farm?.asset.address
-        : farm?.router,
-    abi: parseAbi(getStableFarmAbi(farm?.protocol!)),
+    address: farm?.router,
+    abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
     functionName: getAddLiqFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });

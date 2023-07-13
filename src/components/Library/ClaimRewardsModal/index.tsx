@@ -16,7 +16,7 @@ import { Spinner } from "@chakra-ui/react";
 import Link from "next/link";
 import MButton from "../MButton";
 import {
-  getClaimRewardsAbi,
+  getChefAbi,
   getClaimRewardsArgs,
   getClaimRewardsFunctionName,
 } from "@utils/abis/contract-helper-methods";
@@ -48,7 +48,7 @@ const ClaimRewardsModal = () => {
     writeAsync: claimRewards,
   } = useContractWrite({
     address: position?.address,
-    // abi: parseAbi(getClaimRewardsAbi(position?.protocol!)),
+    // abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
     functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
     chainId: chain?.id,
   });

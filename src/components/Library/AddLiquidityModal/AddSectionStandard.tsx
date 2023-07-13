@@ -21,7 +21,7 @@ import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { formatTokenSymbols } from "@utils/farmListMethods";
 import {
   getAddLiqFunctionName,
-  getStandardFarmAbi,
+  getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import useTokenReserves from "@hooks/useTokenReserves";
@@ -136,10 +136,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isSuccess: isSuccessAddLiqCall,
     writeAsync: addLiquidity,
     isError: isErrorAddLiqCall,
-    // } = usePrepareContractWrite({
   } = useContractWrite({
     address: selectedFarm?.router,
-    abi: parseAbi(getStandardFarmAbi(selectedFarm?.protocol!)),
+    abi: parseAbi(getRouterAbi(selectedFarm?.protocol!, selectedFarm?.farmType == "StandardAmm" ? false : true)),
     functionName: getAddLiqFunctionName(
       selectedFarm?.protocol as string
     ) as any,

@@ -18,7 +18,7 @@ import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseAbiItem, parseUnits } from "viem";
 import {
   getRemoveLiquidFunctionName,
-  getStableFarmAbi,
+  getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
@@ -171,7 +171,7 @@ const RemoveSectionStable = () => {
     writeAsync: removeLiquidity,
   } = useContractWrite({
     address: farm?.router,
-    abi: parseAbi(getStableFarmAbi(farm?.protocol!)),
+    abi: parseAbi(getRouterAbi(farm?.protocol!, farm?.farmType == "StandardAmm" ? false : true)),
     functionName: getRemoveLiquidFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
