@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import { stakingModalOpenAtom } from "@store/commonAtoms";
@@ -177,6 +177,12 @@ const StakingModal = () => {
     }
   };
 
+  const stakeAmount = useMemo(() => {
+    return methodId == 0
+      ? (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) / 100
+      : parseFloat(lpTokens == "" ? "0" : lpTokens);
+  }, [methodId, percentage, lpTokens]);
+
   const isOpenModalCondition =
     isLoadingApproveCall ||
     isLoadingApproveTxn ||
@@ -325,13 +331,7 @@ const StakingModal = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>
-              {methodId == 0
-                ? (lpBalanceNum *
-                    parseFloat(percentage == "" ? "0" : percentage)) /
-                  100
-                : parseFloat(lpTokens == "" ? "0" : lpTokens)}
-            </span>
+            <span>{stakeAmount.toLocaleString("en-US")}</span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={farm?.asset.logos[0] as string}
@@ -401,7 +401,9 @@ const StakingModal = () => {
         ) : !isErrorStakingCall && !isErrorStakingTxn ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">Withdrawing 50 STELLA/GLMR LP Tokens</h2>
+            <h2 className="text-xl">
+              Staking {stakeAmount} {farm?.asset.symbol} Tokens
+            </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
               {isLoadingStakingCall
