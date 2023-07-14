@@ -46,21 +46,26 @@ const SlippageModal = () => {
       <div className="inline-flex items-center gap-x-3">
         <div className="relative w-full border border-[#BEBEBE] p-6 rounded-lg">
           <input
+            autoFocus
             placeholder="0"
             className="text-lg leading-[27px] w-full font-bold text-[#344054] text-left bg-transparent focus:outline-none"
             onChange={(event: any) => {
               setInputSlippage(event.target.value);
             }}
             value={inputSlippage}
-            autoFocus
+            name="slippage"
+            id="slippage"
           />
-          <span className="absolute right-6 opacity-50 text-[#344054] text-lg leading-[27px]">
+          <span className="absolute select-none right-6 opacity-50 text-[#344054] text-lg leading-[27px]">
             %
           </span>
         </div>
         <button
           className="px-8 py-[28px] bg-[#F9FAFB] border border-[#D0D5DD] shadow-sm rounded-lg text-base font-semibold leading-5 text-[#1D2939]"
-          onClick={() => setInputSlippage("0.5")}
+          onClick={() => {
+            setInputSlippage("0.05");
+            submitSlippage();
+          }}
         >
           Auto
         </button>
@@ -70,7 +75,10 @@ const SlippageModal = () => {
         isLoading={false}
         type="primary"
         className="w-full"
-        onClick={submitSlippage}
+        onClick={() => {
+          submitSlippage();
+          setIsOpen(false);
+        }}
       />
     </ModalWrapper>
   );
