@@ -230,7 +230,7 @@ const AddSectionStable: FC = () => {
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button onClick={() => setIsSlippageModalOpen(true)}>
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
               </button>
             </div>
           </div>

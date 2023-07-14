@@ -329,7 +329,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             name="firstTokenAmount"
             id="firstTokenAmount"
             ref={firstInputRef}
-            onBlur={() => setFocusedInput(InputType.Off)}
+            // onBlur={() => setFocusedInput(InputType.Off)}
             onFocus={() => setFocusedInput(InputType.First)}
             autoFocus={focusedInput === InputType.First}
           />
@@ -393,7 +393,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             name="secondTokenAmount"
             id="secondTokenAmount"
             ref={secondInputRef}
-            onBlur={() => setFocusedInput(InputType.Off)}
+            // onBlur={() => setFocusedInput(InputType.Off)}
             onFocus={() => setFocusedInput(InputType.Second)}
             autoFocus={focusedInput === InputType.Second}
           />
@@ -481,7 +481,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button onClick={() => setIsSlippageModalOpen(true)}>
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2" />
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
               </button>
             </div>
           </div>
