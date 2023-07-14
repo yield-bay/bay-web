@@ -4,7 +4,7 @@ import { selectedFarmAtom } from "@store/atoms";
 import RemoveSectionStandard from "./RemoveSectionStandard";
 import RemoveSectionStable from "./RemoveSectionStable";
 
-const AddLiquidityModal: FC = () => {
+const RemoveLiquidityModal: FC = () => {
   const [selectedFarm] = useAtom(selectedFarmAtom);
 
   if (!!selectedFarm) {
@@ -20,4 +20,4 @@ const AddLiquidityModal: FC = () => {
   }
 };
 
-export default AddLiquidityModal;
+export default RemoveLiquidityModal;

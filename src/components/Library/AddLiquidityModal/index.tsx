@@ -1,8 +1,8 @@
+import { FC } from "react";
 import { useAtom } from "jotai";
 import { selectedFarmAtom } from "@store/atoms";
 import AddSectionStandard from "./AddSectionStandard";
 import AddSectionStable from "./AddSectionStable";
-import { FC } from "react";
 
 const AddLiquidityModal: FC = () => {
   const [selectedFarm] = useAtom(selectedFarmAtom);
