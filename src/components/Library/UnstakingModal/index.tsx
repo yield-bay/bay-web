@@ -201,7 +201,7 @@ const UnstakingModal = () => {
                 : "bg-[#FFE8E8]"
             )}
           >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+            {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
@@ -209,7 +209,7 @@ const UnstakingModal = () => {
                 </span>
                 <span>$1234</span>
               </p>
-            </div>
+            </div> */}
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button onClick={() => setIsSlippageModalOpen(true)}>

@@ -32,13 +32,10 @@ const useMinimumLPTokens = (
   const minLpToken = useMemo(() => {
     if (!totalSupply || !tokenInfo) return BigInt(0);
 
-    const _totalSupply =
-      BigInt(Number(totalSupply)) * BigInt(10 ** tokenInfo?.decimals!);
+    const _totalSupply = BigInt(Number(totalSupply));
 
-    const value0 =
-      (BigInt(amount0) * _totalSupply) / (BigInt(reserve0) * BigInt(10 ** 18));
-    const value1 =
-      (BigInt(amount1) * _totalSupply) / (BigInt(reserve1) * BigInt(10 ** 18));
+    const value0 = (BigInt(amount0) * _totalSupply) / BigInt(reserve0);
+    const value1 = (BigInt(amount1) * _totalSupply) / BigInt(reserve1);
 
     const minLP = value0 < value1 ? value0 : value1;
 
@@ -46,7 +43,10 @@ const useMinimumLPTokens = (
     return (minLP * BigInt(Math.floor(100 - slippage))) / BigInt(100);
   }, [totalSupply, tokenInfo, reserve0, reserve1, amount0, amount1, slippage]);
 
-  return Number(minLpToken);
+  return {
+    minLpTokens: Number(minLpToken),
+    totalSupply: Number(totalSupply) / 10 ** tokenInfo?.decimals!,
+  };
 };
 
 export default useMinimumLPTokens;

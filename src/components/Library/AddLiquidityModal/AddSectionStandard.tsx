@@ -65,7 +65,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     selectedFarm?.protocol!
   );
 
-  const minLpTokens = useMinimumLPTokens(
+  const { minLpTokens, totalSupply } = useMinimumLPTokens(
     selectedFarm?.asset.address!,
     SLIPPAGE,
     reserve0,
@@ -169,14 +169,21 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       console.log("timestamp fetched //", blocktimestamp);
 
       console.log("calling addliquidity method...");
+
       const txnRes = await addLiquidity?.({
         args: [
           farmAsset0?.address, // TokenA Address
           farmAsset1?.address, // TokenB Address
           parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
           parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset1?.decimals),
-          1, // amountAMin
-          1, // amountBMin
+          parseUnits(
+            `${(parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+            farmAsset0?.decimals
+          ), // amountAMin
+          parseUnits(
+            `${(parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+            farmAsset1?.decimals
+          ), // amountBMin
           address, // To
           blocktimestamp, // deadline (uint256)
         ],
@@ -185,6 +192,24 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     } catch (error) {
       console.error("Error in Adding liquidity", error);
     }
+  };
+
+  const getFirstTokenRelation = () => {
+    const poolRatio = reserve0 / reserve1;
+    const expectedFirstTokenAmount = poolRatio;
+    const firstTokenAmount = isNaN(expectedFirstTokenAmount)
+      ? "0"
+      : expectedFirstTokenAmount.toFixed(5);
+    return firstTokenAmount;
+  };
+
+  const getSecondTokenRelation = () => {
+    const poolRatio = reserve0 / reserve1;
+    const expectedSecondTokenAmount = 1 / poolRatio;
+    const secondTokenAmount = isNaN(expectedSecondTokenAmount)
+      ? "0"
+      : expectedSecondTokenAmount.toFixed(5);
+    return secondTokenAmount;
   };
 
   // Updated tokenAmounts based on value of other token
@@ -377,11 +402,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col gap-y-2">
-            <p>0.1234 GLMR per STELLA</p>
-            <p>0.1234 STELLA per GLMR</p>
+            <p>
+              {getFirstTokenRelation()} {farmAsset0?.symbol} per{" "}
+              {farmAsset1?.symbol}
+            </p>
+            <p>
+              {getSecondTokenRelation()} {farmAsset1?.symbol} per{" "}
+              {farmAsset0?.symbol}
+            </p>
           </div>
           <p className="flex flex-col items-end">
-            <span>{"<0.001%"}</span>
+            <span>
+              {(totalSupply !== 0
+                ? (minLpTokens / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")}
+            </span>
             <span>Share of pool</span>
           </p>
         </div>
@@ -403,7 +439,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 : "bg-[#FFE8E8]"
             )}
           >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+            {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
@@ -411,7 +447,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 </span>
                 <span>$1234</span>
               </p>
-            </div>
+            </div> */}
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button onClick={() => setIsSlippageModalOpen(true)}>
@@ -571,19 +607,36 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         <div className="inline-flex justify-between text-sm font-bold">
           <span className="text-[#0B0B0B]">Rates</span>
           <p className="flex flex-col gap-y-2 text-[#282929]">
-            <span>1 STELLA = 0.1235 GLMR</span>
-            <span>1 GLMR = 7.0389 STELLA</span>
+            <span>
+              1 {farmAsset0?.symbol} = {getSecondTokenRelation()}{" "}
+              {farmAsset1?.symbol}
+            </span>
+            <span>
+              1 {farmAsset1?.symbol} = {getFirstTokenRelation()}{" "}
+              {farmAsset0?.symbol}
+            </span>
           </p>
         </div>
         <hr className="border-t border-[#E3E3E3] min-w-full" />
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col gap-y-2">
-            <p>0.1234 GLMR per STELLA</p>
-            <p>0.1234 STELLA per GLMR</p>
+            <p>
+              {getFirstTokenRelation()} {farmAsset0?.symbol} per{" "}
+              {farmAsset1?.symbol}
+            </p>
+            <p>
+              {getSecondTokenRelation()} {farmAsset1?.symbol} per{" "}
+              {farmAsset0?.symbol}
+            </p>
           </div>
           <p className="flex flex-col items-end">
-            <span>{"<0.001%"}</span>
+            <span>
+              {(totalSupply !== 0
+                ? (minLpTokens / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")}
+            </span>
             <span>Share of pool</span>
           </p>
         </div>

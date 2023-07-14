@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
@@ -119,6 +119,14 @@ const RemoveSectionStandard = () => {
 
   const GAS_FEES = 0.0014; // In STELLA
 
+  const removeAmount = useMemo(() => {
+    return methodId == 0
+      ? (parseFloat(lpBalance!) *
+          parseFloat(percentage == "" ? "0" : percentage)) /
+          100
+      : parseFloat(lpTokens == "" ? "0" : lpTokens);
+  }, [methodId, percentage, lpTokens]);
+
   // Check if already approved
   const {
     data: isLpApprovedData,
@@ -190,6 +198,33 @@ const RemoveSectionStandard = () => {
       console.log("timestamp fetched //", blocktimestamp);
 
       console.log("calling removeliquidity method...");
+
+      console.log("Remove Liquidity setting args:", {
+        tokenA: farmAsset0?.address, // tokenA Address
+        tokenB: farmAsset1?.address, // tokenB Address
+        liquidity:
+          methodId == 0
+            ? parseUnits(
+                `${
+                  (parseFloat(lpBalance!) *
+                    parseFloat(percentage == "" ? "0" : percentage)) /
+                  100
+                }`,
+                18
+              )
+            : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+        amountAMin: parseUnits(
+          `${minUnderlyingAssets[0]}`,
+          farmAsset0?.decimals
+        ), // amountAMin, // amountAMin
+        amountBMin: parseUnits(
+          `${minUnderlyingAssets[1]}`,
+          farmAsset1?.decimals
+        ), // amountAMin, // amountBMin
+        to: address, // to
+        timestamp: "calc at runtime", // deadline (uint256)
+      });
+
       const txnRes = await removeLiquidity?.({
         args: [
           farmAsset0?.address, // tokenA Address
@@ -288,7 +323,7 @@ const RemoveSectionStandard = () => {
                 : "bg-[#FFE8E8]"
             )}
           >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+            {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
@@ -296,7 +331,7 @@ const RemoveSectionStandard = () => {
                 </span>
                 <span>$1234</span>
               </p>
-            </div>
+            </div> */}
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button onClick={() => setIsSlippageModalOpen(true)}>
@@ -359,8 +394,8 @@ const RemoveSectionStandard = () => {
               (methodId == 0
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
-              !approveLpSuccessTxn ||
-              parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+              (!isLpApprovedSuccess && !approveLpSuccessTxn)
+              // parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
             }
             text="Confirm Removing Liquidity"
             onClick={() => {
@@ -414,31 +449,6 @@ const RemoveSectionStandard = () => {
           isLoading={false}
           text="Confirm Withdrawal"
           onClick={() => {
-            console.log("Remove Liquidity setting args:", {
-              tokenA: farmAsset0?.address, // tokenA Address
-              tokenB: farmAsset1?.address, // tokenB Address
-              liquidity:
-                methodId == 0
-                  ? parseUnits(
-                      `${
-                        (parseFloat(lpBalance!) *
-                          parseFloat(percentage == "" ? "0" : percentage)) /
-                        100
-                      }`,
-                      18
-                    )
-                  : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-              amountAMin: parseUnits(
-                `${minUnderlyingAssets[0]}`,
-                farmAsset0?.decimals
-              ), // amountAMin, // amountAMin
-              amountBMin: parseUnits(
-                `${minUnderlyingAssets[1]}`,
-                farmAsset1?.decimals
-              ), // amountAMin, // amountBMin
-              to: address, // to
-              timestamp: "calc at runtime", // deadline (uint256)
-            });
             handleRemoveLiquidity();
             setIsProcessStep(true);
           }}
@@ -484,7 +494,9 @@ const RemoveSectionStandard = () => {
         ) : !isErrorRemoveLiqTxn && !isErrorRemoveLiqCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">Withdrawing 50 STELLA/GLMR LP Tokens</h2>
+            <h2 className="text-xl">
+              Withdrawing {removeAmount} STELLA/GLMR LP Tokens
+            </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
               {isLoadingRemoveLiqTxn

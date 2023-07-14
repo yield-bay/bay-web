@@ -18,9 +18,9 @@ export default function useMinimumUnderlyingTokens(
 ): number[] {
   const { data: reserves } = useContractRead({
     address: pair,
-    abi: parseAbi(protocol == "curve" ? curveLpAbi : lpAbi),
-    functionName: protocol == "curve" ? "get_balances" : "getReserves",
-    enabled: !!pair && !!protocol,
+    abi: parseAbi(lpAbi),
+    functionName: "getReserves",
+    enabled: !!pair && !!protocol && protocol !== "curve",
   });
 
   const totalReserves = reserves as bigint[];
