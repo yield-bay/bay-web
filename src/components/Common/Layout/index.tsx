@@ -27,7 +27,15 @@ import {
   stellaswapChefAbi,
   stellaswapV1ChefAbi,
 } from "./evmUtils";
-import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
+import {
+  addLiqModalOpenAtom,
+  claimModalOpenAtom,
+  evmPosLoadingAtom,
+  removeLiqModalOpenAtom,
+  stakingModalOpenAtom,
+  subPosLoadingAtom,
+  unstakingModalOpenAtom,
+} from "@store/commonAtoms";
 import getTimestamp from "@utils/getTimestamp";
 import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
@@ -45,6 +53,13 @@ interface Props {
 const Layout: FC<Props> = ({ children }) => {
   const isOnline = useConnection();
   const router = useRouter();
+
+  // Modal States
+  const [addliqModalOpen] = useAtom(addLiqModalOpenAtom);
+  const [removeLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
+  const [stakingModalOpen] = useAtom(stakingModalOpenAtom);
+  const [unstakingModalOpen] = useAtom(unstakingModalOpenAtom);
+  const [claimModalOpen] = useAtom(claimModalOpenAtom);
 
   useEffect(() => {
     if (!isOnline) {
@@ -1026,11 +1041,11 @@ const Layout: FC<Props> = ({ children }) => {
       )}
     >
       <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
-      <AddLiquidityModal />
-      <RemoveLiquidityModal />
-      <StakingModal />
-      <UnstakingModal />
-      <ClaimRewardsModal />
+      {addliqModalOpen && <AddLiquidityModal />}
+      {removeLiqModalOpen && <RemoveLiquidityModal />}
+      {stakingModalOpen && <StakingModal />}
+      {unstakingModalOpen && <UnstakingModal />}
+      {claimModalOpen && <ClaimRewardsModal />}
       <SlippageModal />
       <Header />
       {children}

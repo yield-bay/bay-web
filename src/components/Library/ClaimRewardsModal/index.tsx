@@ -11,7 +11,7 @@ import {
   useNetwork,
   useWaitForTransaction,
 } from "wagmi";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Spinner } from "@chakra-ui/react";
 import Link from "next/link";
 import MButton from "../MButton";
@@ -35,6 +35,7 @@ const ClaimRewardsModal = () => {
 
   const [isProcessStep, setIsProcessStep] = useState(false);
   const isOpenModalCondition = false; // Conditions to be written
+  const [txnHash, setTxnHash] = useState<string>("");
 
   useEffect(() => {
     setIsProcessStep(false);
@@ -46,6 +47,14 @@ const ClaimRewardsModal = () => {
     enabled: !!address,
   });
 
+  const chefAbi = useMemo(() => {
+    return getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`);
+  }, [farm]);
+
+  const contractFnName = useMemo(() => {
+    return getClaimRewardsFunctionName(farm?.protocol!);
+  }, [farm]);
+
   const {
     data: claimRewardsData,
     isLoading: isLoadingClaimRewardsCall,
@@ -54,8 +63,8 @@ const ClaimRewardsModal = () => {
     writeAsync: claimRewards,
   } = useContractWrite({
     address: farm?.chef as `0x${string}`,
-    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
-    functionName: getClaimRewardsFunctionName(farm?.protocol!) as any,
+    abi: parseAbi(chefAbi),
+    functionName: contractFnName as any,
     chainId: chain?.id,
   });
 
@@ -75,17 +84,21 @@ const ClaimRewardsModal = () => {
         farm?.protocol!,
         address!
       );
-      console.log("contract params", {
+
+      console.log("CLAIMREWARDS contract @params", {
         address: farm?.chef as `0x${string}`,
         abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
         functionName: getClaimRewardsFunctionName(farm?.protocol!) as any,
         chainId: chain?.id,
+        args: thisArgs,
       });
-      console.log("thisArgs", thisArgs, typeof thisArgs);
 
       const txnRes = await claimRewards?.({
         args: thisArgs,
       });
+      if (!!txnRes) {
+        setTxnHash(txnRes.hash);
+      }
       console.log("called claim rewards method:", txnRes);
     } catch (error) {
       console.error("error while claiming rewards:", error);
@@ -200,8 +213,7 @@ const ClaimRewardsModal = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                // href={`https://moonscan.io/tx/${removeLiqTxnData?.hash}}`}
-                href="#"
+                href={`https://moonscan.io/tx/${txnHash}}`}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"

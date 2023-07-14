@@ -15,7 +15,6 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
-import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
@@ -40,6 +39,7 @@ interface ChosenMethodProps {
 
 const UnstakingModal = () => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -55,8 +55,7 @@ const UnstakingModal = () => {
   const [percentage, setPercentage] = useState<string>("");
   const [lpTokens, setLpTokens] = useState<string>("");
   const [methodId, setMethodId] = useState<number>(0);
-
-  const { chain } = useNetwork();
+  const [txnHash, setTrxnHash] = useState<string>("");
 
   // When InputType.Percentage
   const handlePercChange = (event: any) => {
@@ -85,10 +84,14 @@ const UnstakingModal = () => {
 
   const GAS_FEES = 0.0014; // In STELLA
 
+  const chefAbi = useMemo(() => {
+    return getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`);
+  }, [farm]);
+
   // Deriving Staked balance
   const { data: userInfo, isLoading: isLoadingUserInfo } = useContractRead({
     address: farm?.chef as `0x${string}`,
-    abi: parseAbi(stellaswapV1ChefAbi),
+    abi: parseAbi(chefAbi),
     functionName: "userInfo" as any,
     args: [farm?.id, address],
     enabled: !!farm && !!address,
@@ -109,7 +112,7 @@ const UnstakingModal = () => {
     writeAsync: unstaking,
   } = useContractWrite({
     address: farm?.chef as `0x${string}`,
-    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
+    abi: parseAbi(chefAbi),
     functionName: "withdraw" as any,
     chainId: chain?.id,
     args: [
@@ -136,8 +139,23 @@ const UnstakingModal = () => {
 
   const handleUnstaking = async () => {
     try {
+      console.log("unstaking contract @params", {
+        pid: farm?.id, // pid
+        amount:
+          methodId == 0
+            ? parseUnits(
+                `${
+                  (staked * parseFloat(percentage == "" ? "0" : percentage)) /
+                  100
+                }`,
+                18
+              )
+            : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
+      });
       const txnRes = await unstaking?.();
-      console.log("txnResult", txnRes);
+      if (!!txnRes) {
+        setTrxnHash(txnRes.hash);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -317,8 +335,7 @@ const UnstakingModal = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                // href={`https://moonscan.io/tx/${removeLiqTxnData?.hash}}`}
-                href="#"
+                href={`https://moonscan.io/tx/${txnHash}`}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"

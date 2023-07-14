@@ -55,7 +55,6 @@ import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
-import ClaimRewardsModal from "@components/Library/ClaimRewardsModal";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();

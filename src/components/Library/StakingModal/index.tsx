@@ -41,6 +41,7 @@ interface ChosenMethodProps {
 
 const StakingModal = () => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -52,12 +53,11 @@ const StakingModal = () => {
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<number>(0);
+  const [txnHash, setTxnHash] = useState<string>("");
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
-
-  const { chain } = useNetwork();
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
 
@@ -108,11 +108,6 @@ const StakingModal = () => {
     isLoading: isApprovedLoading,
     isSuccess: isApprovedSuccess,
   } = useIsApprovedToken(farm?.asset.address!, farm?.chef as `0x${string}`);
-
-  useEffect(() => {
-    console.log("isApproedData", isApprovedData);
-    console.log("isApprovedSuccess", isApprovedSuccess);
-  }, [isApprovedData, isApprovedSuccess]);
 
   const {
     isLoadingApproveCall,
@@ -178,6 +173,9 @@ const StakingModal = () => {
       const txnRes = await staking?.({
         args: argument,
       });
+      if (!!txnRes) {
+        setTxnHash(txnRes.hash);
+      }
       console.log("txnResult", txnRes);
     } catch (error) {
       console.error(error);
@@ -390,8 +388,7 @@ const StakingModal = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                // href={`https://moonscan.io/tx/${removeLiqTxnData?.hash}}`}
-                href="#"
+                href={`https://moonscan.io/tx/${txnHash}}`}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"

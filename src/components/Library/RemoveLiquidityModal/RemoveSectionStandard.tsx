@@ -58,6 +58,8 @@ const RemoveSectionStandard = () => {
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
 
+  const [txnHash, setTxnHash] = useState<string>("");
+
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
   // Balance of LP Token
@@ -199,55 +201,36 @@ const RemoveSectionStandard = () => {
 
       console.log("calling removeliquidity method...");
 
-      console.log("Remove Liquidity setting args:", {
-        tokenA: farmAsset0?.address, // tokenA Address
-        tokenB: farmAsset1?.address, // tokenB Address
-        liquidity:
-          methodId == 0
-            ? parseUnits(
-                `${
-                  (parseFloat(lpBalance!) *
-                    parseFloat(percentage == "" ? "0" : percentage)) /
-                  100
-                }`,
-                18
-              )
-            : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-        amountAMin: parseUnits(
-          `${minUnderlyingAssets[0]}`,
-          farmAsset0?.decimals
-        ), // amountAMin, // amountAMin
-        amountBMin: parseUnits(
-          `${minUnderlyingAssets[1]}`,
-          farmAsset1?.decimals
-        ), // amountAMin, // amountBMin
-        to: address, // to
-        timestamp: "calc at runtime", // deadline (uint256)
-      });
+      const removeArgs = [
+        farmAsset0?.address, // tokenA Address
+        farmAsset1?.address, // tokenB Address
+        methodId == 0
+          ? parseUnits(
+              `${
+                (parseFloat(lpBalance!) *
+                  parseFloat(percentage == "" ? "0" : percentage)) /
+                100
+              }`,
+              18
+            )
+          : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+        parseUnits(`${minUnderlyingAssets[0]}`, farmAsset0?.decimals), // amountAMin
+        parseUnits(`${minUnderlyingAssets[1]}`, farmAsset1?.decimals), // amountBMin
+        address, // to
+        blocktimestamp, // deadline (uint256)
+      ];
+
+      console.log("Remove Liquidity setting args:", removeArgs);
 
       const txnRes = await removeLiquidity?.({
-        args: [
-          farmAsset0?.address, // tokenA Address
-          farmAsset1?.address, // tokenB Address
-          methodId == 0
-            ? parseUnits(
-                `${
-                  (parseFloat(lpBalance!) *
-                    parseFloat(percentage == "" ? "0" : percentage)) /
-                  100
-                }`,
-                18
-              )
-            : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-          parseUnits(`${minUnderlyingAssets[0]}`, farmAsset0?.decimals), // amountAMin
-          parseUnits(`${minUnderlyingAssets[1]}`, farmAsset1?.decimals), // amountBMin
-          address, // to
-          blocktimestamp, // deadline (uint256)
-        ],
+        args: removeArgs,
       });
+      if (!!txnRes) {
+        setTxnHash(txnRes);
+      }
       console.log("called removeliquidity method.", txnRes);
     } catch (error) {
-      console.error(error);
+      console.error("Error in Removing liquidity", error);
     }
   };
 
@@ -475,8 +458,7 @@ const RemoveSectionStandard = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                // href={`https://moonscan.io/tx/${removeLiqTxnData?.hash}}`}
-                href="#"
+                href={`https://moonscan.io/tx/${txnHash}}`}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"

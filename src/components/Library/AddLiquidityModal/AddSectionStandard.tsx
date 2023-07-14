@@ -18,7 +18,6 @@ import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
 import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
-import { formatTokenSymbols } from "@utils/farmListMethods";
 import {
   getAddLiqFunctionName,
   getRouterAbi,
@@ -45,6 +44,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     slippageModalOpenAtom
   );
   const [SLIPPAGE] = useAtom(slippageAtom);
+  const [txnHash, setTxnHash] = useState<string>("");
 
   // Input focus states
   const [focusedInput, setFocusedInput] = useState<InputType>(InputType.First);
@@ -186,24 +186,29 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
       console.log("calling addliquidity method...");
 
+      const addArgs = [
+        farmAsset0?.address, // TokenA Address
+        farmAsset1?.address, // TokenB Address
+        parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
+        parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset1?.decimals),
+        parseUnits(
+          `${(parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+          farmAsset0?.decimals
+        ), // amountAMin
+        parseUnits(
+          `${(parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+          farmAsset1?.decimals
+        ), // amountBMin
+        address, // To
+        blocktimestamp, // deadline (uint256)
+      ];
+
       const txnRes = await addLiquidity?.({
-        args: [
-          farmAsset0?.address, // TokenA Address
-          farmAsset1?.address, // TokenB Address
-          parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
-          parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset1?.decimals),
-          parseUnits(
-            `${(parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-            farmAsset0?.decimals
-          ), // amountAMin
-          parseUnits(
-            `${(parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-            farmAsset1?.decimals
-          ), // amountBMin
-          address, // To
-          blocktimestamp, // deadline (uint256)
-        ],
+        args: addArgs,
       });
+      if (!!txnRes) {
+        setTxnHash(txnRes.hash);
+      }
       console.log("called addliquidity method.", txnRes);
     } catch (error) {
       console.error("Error in Adding liquidity", error);
@@ -712,8 +717,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                // href={`https://moonscan.io/tx/${addLiquidityTxnData?.hash}}`}
-                href={"#"}
+                href={`https://moonscan.io/tx/${txnHash}}`}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"
