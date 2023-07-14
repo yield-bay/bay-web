@@ -1,5 +1,5 @@
 // Library Imports
-import { FC, PropsWithChildren, useEffect, useState } from "react";
+import { FC, useRef, PropsWithChildren, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
@@ -25,12 +25,18 @@ import {
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import useTokenReserves from "@hooks/useTokenReserves";
-import useLPBalance from "@hooks/useLPBalance";
+// import useLPBalance from "@hooks/useLPBalance";
 import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
 import useMinimumLPTokens from "@hooks/useMinLPTokens";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import Link from "next/link";
+
+enum InputType {
+  Off = -1,
+  First = 0,
+  Second = 1,
+}
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -40,11 +46,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   );
   const [SLIPPAGE] = useAtom(slippageAtom);
 
+  // Input focus states
+  const [focusedInput, setFocusedInput] = useState<InputType>(InputType.First);
+  const firstInputRef = useRef<HTMLInputElement>(null);
+  const secondInputRef = useRef<HTMLInputElement>(null);
+
   const { address } = useAccount();
   const { chain } = useNetwork();
   const publicClient = usePublicClient();
 
-  const tokenNames = formatTokenSymbols(selectedFarm?.asset.symbol ?? "");
   const [farmAsset0, farmAsset1] =
     selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
@@ -74,9 +84,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isNaN(parseInt(secondTokenAmount)) ? 0 : parseInt(secondTokenAmount)
   );
 
-  const { lpBalance, lpBalanceLoading } = useLPBalance(
-    selectedFarm?.asset.address!
-  );
+  useEffect(() => {
+    if (firstInputRef.current && secondInputRef.current) {
+      if (focusedInput == InputType.First) {
+        firstInputRef.current.focus();
+      } else if (focusedInput == InputType.Second) {
+        secondInputRef.current.focus();
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // Empty the values when Modal is opened or closed
@@ -213,40 +229,40 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   };
 
   // Updated tokenAmounts based on value of other token
-  const updateSecondTokenAmount = (firstTokenAmount: number): string => {
+  const updateSecondTokenAmount = (firstTokenAmount: number) => {
     const poolRatio = reserve0 / reserve1;
     const expectedSecondTokenAmount = firstTokenAmount / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
       : expectedSecondTokenAmount.toFixed(5);
     setSecondTokenAmount(secondTokenAmount);
-    return secondTokenAmount;
   };
 
-  const updateFirstTokenAmount = (secondTokenAmount: number): string => {
+  const updateFirstTokenAmount = (secondTokenAmount: number) => {
     const poolRatio = reserve0 / reserve1;
     const expectedFirstTokenAmount = poolRatio * secondTokenAmount;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
       ? "0"
       : expectedFirstTokenAmount.toFixed(5);
     setFirstTokenAmount(firstTokenAmount);
-    return firstTokenAmount;
   };
 
-  // Method to update token values and fetch fees based on firstToken Input
-  const handleChangeFirstTokenAmount = async (e: any) => {
+  // update first token values
+  const handleChangeFirstTokenAmount = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setFirstTokenAmount(e.target.value);
-    // Updating Second Token amount
-    const firstTokenFloat = parseFloat(e.target.value);
-    updateSecondTokenAmount(firstTokenFloat);
+    // update first amount based on second
+    updateSecondTokenAmount(parseFloat(e.target.value));
   };
 
-  // Method to update token values and fetch fees based on secondToken Input
-  const handleChangeSecondTokenAmount = async (e: any) => {
+  // update token values
+  const handleChangeSecondTokenAmount = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setSecondTokenAmount(e.target.value);
-    // Calculate first token amount
-    const secondTokenFloat = parseFloat(e.target.value);
-    updateFirstTokenAmount(secondTokenFloat);
+    // update first amount based on second
+    updateFirstTokenAmount(parseFloat(e.target.value));
   };
 
   useEffect(() => {
@@ -303,10 +319,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             className={clsx(
               "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
             )}
-            min={0}
             onChange={handleChangeFirstTokenAmount}
             value={firstTokenAmount}
-            autoFocus
+            name="firstTokenAmount"
+            id="firstTokenAmount"
+            ref={firstInputRef}
+            onBlur={() => setFocusedInput(InputType.Off)}
+            onFocus={() => setFocusedInput(InputType.First)}
+            autoFocus={focusedInput === InputType.First}
           />
           <div className="inline-flex items-center gap-x-2">
             <p className="flex flex-col items-end text-sm leading-5 opacity-50">
@@ -363,9 +383,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             className={clsx(
               "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
             )}
-            min={0}
             onChange={handleChangeSecondTokenAmount}
             value={secondTokenAmount}
+            name="secondTokenAmount"
+            id="secondTokenAmount"
+            ref={secondInputRef}
+            onBlur={() => setFocusedInput(InputType.Off)}
+            onFocus={() => setFocusedInput(InputType.Second)}
+            autoFocus={focusedInput === InputType.Second}
           />
           <div className="inline-flex items-center gap-x-2">
             <p className="flex flex-col items-end text-sm leading-5 opacity-50">
