@@ -16,6 +16,7 @@ import {
   siriusChefAbi,
 } from "@components/Common/Layout/evmUtils";
 import { PortfolioPositionType } from "@utils/types";
+import { parseUnits } from "viem";
 
 export function getChefAbi(protocol: string, chef: string): string[] {
   console.log("this -- protocol", protocol, "\nchef", chef);
@@ -42,7 +43,7 @@ export function getChefAbi(protocol: string, chef: string): string[] {
     case "sirius":
       return siriusChefAbi;
     default:
-      return [""];
+      return stellaswapV1ChefAbi;
   }
 }
 
@@ -119,24 +120,26 @@ export function getClaimRewardsFunctionName(protocol: string) {
 }
 
 export function getClaimRewardsArgs(
-  position: PortfolioPositionType,
+  // position: PortfolioPositionType,
+  farmId: number,
+  protocol: string,
   signer: `0x${string}`
   // lpAddress: `0x${string}`
 ) {
-  if (!position) return [""];
-  switch (position.protocol.toLowerCase()) {
+  console.log("this -- farmid", [farmId], typeof farmId);
+  switch (protocol.toLowerCase()) {
     case "curve":
       return [];
     case "beamswap":
     case "solarbeam":
     case "stellaswap":
     case "solarflare":
-      return [position.id];
+      return [parseUnits(`${farmId}`, 0)];
     case "zenlink":
-      return [position.id];
+      return [farmId];
     case "arthswap":
     case "sushiswap":
-      return [position.id, signer];
+      return [farmId, signer];
     // case "sirius":
     //   return [lpAddress, signer];
     default:

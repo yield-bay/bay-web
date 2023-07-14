@@ -36,6 +36,10 @@ const ClaimRewardsModal = () => {
   const [isProcessStep, setIsProcessStep] = useState(false);
   const isOpenModalCondition = false; // Conditions to be written
 
+  useEffect(() => {
+    setIsProcessStep(false);
+  }, [isOpen]);
+
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
     chainId: chain?.id,
@@ -49,9 +53,9 @@ const ClaimRewardsModal = () => {
     isError: isErrorClaimRewardsCall,
     writeAsync: claimRewards,
   } = useContractWrite({
-    address: position?.chef!,
-    abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
-    functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
+    address: farm?.chef as `0x${string}`,
+    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
+    functionName: getClaimRewardsFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
 
@@ -66,8 +70,21 @@ const ClaimRewardsModal = () => {
 
   const handleClaimRewards = async () => {
     try {
+      const thisArgs = getClaimRewardsArgs(
+        farm?.id!,
+        farm?.protocol!,
+        address!
+      );
+      console.log("contract params", {
+        address: farm?.chef as `0x${string}`,
+        abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
+        functionName: getClaimRewardsFunctionName(farm?.protocol!) as any,
+        chainId: chain?.id,
+      });
+      console.log("thisArgs", thisArgs, typeof thisArgs);
+
       const txnRes = await claimRewards?.({
-        args: getClaimRewardsArgs(position!, address!),
+        args: thisArgs,
       });
       console.log("called claim rewards method:", txnRes);
     } catch (error) {
@@ -225,7 +242,7 @@ const ClaimRewardsModal = () => {
     );
   };
 
-  return !!position && !!farm ? (
+  return !!farm ? (
     <LiquidityModalWrapper
       open={isOpen || isOpenModalCondition}
       setOpen={isOpenModalCondition ? () => {} : setIsOpen}

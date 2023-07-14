@@ -55,6 +55,7 @@ import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
+import ClaimRewardsModal from "@components/Library/ClaimRewardsModal";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -122,7 +123,8 @@ const FarmPage: NextPage = () => {
       !addliqModalOpen &&
       !removeLiqModalOpen &&
       !stakingModalOpen &&
-      !unstakingModalOpen
+      !unstakingModalOpen &&
+      !claimModalOpen
     ) {
       setSelectedFarm(null);
     }
@@ -131,6 +133,7 @@ const FarmPage: NextPage = () => {
     removeLiqModalOpen,
     stakingModalOpen,
     unstakingModalOpen,
+    claimModalOpen,
   ]);
 
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
