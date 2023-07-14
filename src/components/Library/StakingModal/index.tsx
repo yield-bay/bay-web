@@ -24,6 +24,7 @@ import Image from "next/image";
 import { FarmType } from "@utils/types";
 import Spinner from "../Spinner";
 import Link from "next/link";
+import { getChefAbi } from "@utils/abis/contract-helper-methods";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -129,7 +130,7 @@ const StakingModal = () => {
     writeAsync: staking,
   } = useContractWrite({
     address: farm?.chef as `0x${string}`,
-    abi: [...parseAbi(stellaswapV1ChefAbi)],
+    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
     functionName: "deposit" as any,
     chainId: chain?.id,
   });

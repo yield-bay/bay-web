@@ -18,7 +18,8 @@ import {
 import { PortfolioPositionType } from "@utils/types";
 
 export function getChefAbi(protocol: string, chef: string): string[] {
-  if (!protocol) return [""];
+  console.log("this -- protocol", protocol, "\nchef", chef);
+  if (!protocol) return solarbeamChefAbi;
   switch (protocol.toLowerCase()) {
     case "solarbeam":
       return solarbeamChefAbi;
@@ -119,8 +120,8 @@ export function getClaimRewardsFunctionName(protocol: string) {
 
 export function getClaimRewardsArgs(
   position: PortfolioPositionType,
-  signer: `0x${string}`,
-  lpAddress: `0x${string}`
+  signer: `0x${string}`
+  // lpAddress: `0x${string}`
 ) {
   if (!position) return [""];
   switch (position.protocol.toLowerCase()) {
@@ -136,8 +137,8 @@ export function getClaimRewardsArgs(
     case "arthswap":
     case "sushiswap":
       return [position.id, signer];
-    case "sirius":
-      return [lpAddress, signer];
+    // case "sirius":
+    //   return [lpAddress, signer];
     default:
       return [];
   }

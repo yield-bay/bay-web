@@ -44,6 +44,7 @@ import {
   removeLiqModalOpenAtom,
   stakingModalOpenAtom,
   unstakingModalOpenAtom,
+  claimModalOpenAtom,
 } from "@store/commonAtoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
 import Tooltip from "@components/Library/Tooltip";
@@ -85,6 +86,7 @@ const FarmPage: NextPage = () => {
   const [unstakingModalOpen, setUnstakingModalOpen] = useAtom(
     unstakingModalOpenAtom
   );
+  const [claimModalOpen, setClaimModalOpen] = useAtom(claimModalOpenAtom);
   const [, setSelectedFarm] = useAtom(selectedFarmAtom);
 
   // const [calcOpen, setCalcOpen] = useState<boolean>(false);
@@ -196,6 +198,16 @@ const FarmPage: NextPage = () => {
             }}
           >
             Unstake
+          </Button>
+          <Button
+            size="large"
+            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
+            onButtonClick={() => {
+              setSelectedFarm(farm);
+              setClaimModalOpen(true);
+            }}
+          >
+            Claim Rewards
           </Button>
         </div>
         {/* Positions Row */}
@@ -560,7 +572,7 @@ const FarmPage: NextPage = () => {
             {
               chain: farm?.chain,
               protocol: farm?.protocol,
-              address: farm?.asset.address,
+              chef: farm?.chef,
               id: farm?.id,
               lpSymbol: farm?.asset.symbol,
               ...farmPosition,

@@ -68,7 +68,7 @@ const PortfolioPage = () => {
         return {
           chain: farmInfo[0],
           protocol: farmInfo[1],
-          address: farmInfo[2],
+          chef: farmInfo[2],
           id: farmInfo[3],
           lpSymbol,
           ...(value as any),

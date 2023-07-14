@@ -23,6 +23,7 @@ import { FarmType } from "@utils/types";
 import Spinner from "../Spinner";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
+import { getChefAbi } from "@utils/abis/contract-helper-methods";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -108,7 +109,7 @@ const UnstakingModal = () => {
     writeAsync: unstaking,
   } = useContractWrite({
     address: farm?.chef as `0x${string}`,
-    abi: [...parseAbi(stellaswapV1ChefAbi)],
+    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
     functionName: "withdraw" as any,
     chainId: chain?.id,
     args: [

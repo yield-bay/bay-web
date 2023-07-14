@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { selectedPositionAtom } from "@store/atoms";
+import { selectedPositionAtom, selectedFarmAtom } from "@store/atoms";
 import { claimModalOpenAtom } from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
@@ -20,6 +20,7 @@ import {
   getClaimRewardsArgs,
   getClaimRewardsFunctionName,
 } from "@utils/abis/contract-helper-methods";
+import { parseAbi } from "viem";
 
 const GAS_FEES = 0.0014; // In STELLA
 
@@ -28,8 +29,9 @@ const ClaimRewardsModal = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
   const [position] = useAtom(selectedPositionAtom);
+  const [farm] = useAtom(selectedFarmAtom);
 
-  useEffect(() => console.log("selected position"), [position]);
+  useEffect(() => console.log("selected position @claimrewards"), [position]);
 
   const [isProcessStep, setIsProcessStep] = useState(false);
   const isOpenModalCondition = false; // Conditions to be written
@@ -47,8 +49,8 @@ const ClaimRewardsModal = () => {
     isError: isErrorClaimRewardsCall,
     writeAsync: claimRewards,
   } = useContractWrite({
-    address: position?.address,
-    // abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
+    address: position?.chef!,
+    abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
     functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
     chainId: chain?.id,
   });
@@ -65,7 +67,7 @@ const ClaimRewardsModal = () => {
   const handleClaimRewards = async () => {
     try {
       const txnRes = await claimRewards?.({
-        args: getClaimRewardsArgs(position!, address!, position?.address!),
+        args: getClaimRewardsArgs(position!, address!),
       });
       console.log("called claim rewards method:", txnRes);
     } catch (error) {
@@ -223,7 +225,7 @@ const ClaimRewardsModal = () => {
     );
   };
 
-  return (
+  return !!position && !!farm ? (
     <LiquidityModalWrapper
       open={isOpen || isOpenModalCondition}
       setOpen={isOpenModalCondition ? () => {} : setIsOpen}
@@ -231,6 +233,8 @@ const ClaimRewardsModal = () => {
     >
       <div>{isProcessStep ? <ProcessStep /> : <InputStep />}</div>
     </LiquidityModalWrapper>
+  ) : (
+    <></>
   );
 };
 

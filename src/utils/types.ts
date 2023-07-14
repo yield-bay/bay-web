@@ -78,7 +78,7 @@ export interface PortfolioPositionType {
   unclaimedRewards: UnclaimedRewardType[];
   chain: string;
   protocol: string;
-  address: `0x${string}`;
+  chef: `0x${string}`;
   id: number;
   lpSymbol: string;
 }
