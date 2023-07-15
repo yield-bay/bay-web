@@ -11,6 +11,8 @@ import "react-circular-progressbar/dist/styles.css";
 // Components, Hooks, Utils Imports
 import {
   ExternalLinkIcon,
+  MinusIcon,
+  PlusIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/outline";
 import ShareFarm from "@components/Library/ShareFarm";
@@ -144,8 +146,8 @@ const FarmPage: NextPage = () => {
       <Breadcrumb tokenNames={tokenNames} />
       <div className="flex flex-col bg-white rounded-lg p-6 sm:pb-24 sm:pt-[69px] md:pb-24 sm:px-11 lg:pl-[51px] lg:pr-[76px]">
         {/* Heading */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-8 sm:gap-x-9">
-          <p className="text-2xl text-[#454545] font-semibold leading-[29px]">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-8 sm:gap-x-4">
+          <p className="text-2xl text-[#454545] font-semibold leading-[29px] sm:mr-1">
             {tokenNames.map((tokenName, index) => (
               <span key={index}>
                 {tokenName}
@@ -153,71 +155,32 @@ const FarmPage: NextPage = () => {
               </span>
             ))}
           </p>
-          <div className="flex gap-x-7 items-center">
-            <ShareFarm farm={farm} />
+          <ShareFarm farm={farm} />
+          <div className="flex gap-x-2 items-center">
             <a href={farmURL(farm)} target="_blank" rel="noreferrer">
               <Button size="large">Visit Farm</Button>
             </a>
+            {!hasPosition && (
+              <Button
+                size="custom"
+                style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
+                onButtonClick={() => {
+                  setAddLiqModalOpen(true);
+                  setSelectedFarm(farm);
+                }}
+              >
+                <span>Add Liquidity</span>
+                <PlusIcon className="text-black h-4 w-4" />
+              </Button>
+            )}
           </div>
-        </div>
-        <div className="inline-flex gap-x-3">
-          <Button
-            size="large"
-            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
-            onButtonClick={() => {
-              setAddLiqModalOpen(true);
-              setSelectedFarm(farm);
-            }}
-          >
-            Add Liquidity
-          </Button>
-          <Button
-            size="large"
-            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
-            onButtonClick={() => {
-              setRemoveLiqModalOpen(true);
-              setSelectedFarm(farm);
-            }}
-          >
-            Remove Liquidity
-          </Button>
-          <Button
-            size="large"
-            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
-            onButtonClick={() => {
-              setStakingModalOpen(true);
-              setSelectedFarm(farm);
-            }}
-          >
-            Stack
-          </Button>
-          <Button
-            size="large"
-            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
-            onButtonClick={() => {
-              setUnstakingModalOpen(true);
-              setSelectedFarm(farm);
-            }}
-          >
-            Unstake
-          </Button>
-          <Button
-            size="large"
-            style="bg-purple-100 hover:bg-purple-200 transition duration-200 shadow-md"
-            onButtonClick={() => {
-              setSelectedFarm(farm);
-              setClaimModalOpen(true);
-            }}
-          >
-            Claim Rewards
-          </Button>
         </div>
         {/* Positions Row */}
         {hasPosition && (
-          <div className="w-full flex flex-col sm:flex-row gap-y-6 rounded-xl sm:rounded-none shadow-md sm:shadow-none sm:gap-x-3">
+          <div className="w-full flex flex-col lg:flex-row gap-y-6 rounded-xl sm:rounded-none shadow-md sm:shadow-none sm:gap-x-3">
             <InfoContainer variant="default" className="w-full sm:w-1/2">
               <div className="flex flex-col gap-y-6 sm:flex-row justify-between">
-                <div className="flex flex-col gap-y-2">
+                <div className="flex flex-col items-end sm:items-start gap-y-2">
                   <p className="text-sm leading-5">You hold</p>
                   <p className="text-2xl leading-7 font-bold text-[#101828]">
                     $
@@ -236,7 +199,7 @@ const FarmPage: NextPage = () => {
                     LP
                   </p>
                 </div>
-                <div className="flex flex-row max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
+                <div className="flex flex-row justify-around sm:justify-start max-w-full sm:max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
                   <div className="flex flex-col justify-between items-end">
                     <p className="inline-flex items-center text-sm leading-5">
                       <Tooltip
@@ -280,10 +243,10 @@ const FarmPage: NextPage = () => {
                 </div>
               </div>
             </InfoContainer>
-            <div className="w-full sm:w-1/2 ">
+            <div className="w-full lg:w-1/2 flex flex-col sm:flex-row gap-3">
               <InfoContainer
                 variant={unclaimedReward > 0 ? "tirtiary" : "secondary"}
-                className="flex flex-row justify-between"
+                className="flex flex-row justify-between w-full sm:min-w-[252px]"
               >
                 <div className="flex flex-col text-sm leading-5">
                   <p>Unclaimed</p>
@@ -292,16 +255,91 @@ const FarmPage: NextPage = () => {
                     ${unclaimedReward}
                   </p>
                 </div>
-                {unclaimedReward >= 0.01 && (
+                <Button
+                  size="large"
+                  style="h-max"
+                  onButtonClick={() => setIsRewardsModalOpen(true)}
+                  disabled={unclaimedReward < 0.01}
+                >
+                  Claim
+                </Button>
+              </InfoContainer>
+              <div className="flex flex-col gap-y-3 justify-between w-full">
+                <Button
+                  size="large"
+                  style="inline-flex justify-between items-center"
+                  onButtonClick={() => {
+                    setAddLiqModalOpen(true);
+                    setSelectedFarm(farm);
+                  }}
+                >
+                  <span>Add Liquidity</span>
+                  <PlusIcon className="text-black h-4 w-4" />
+                </Button>
+                <Button
+                  size="large"
+                  style="inline-flex justify-between items-center"
+                  onButtonClick={() => {
+                    setRemoveLiqModalOpen(true);
+                    setSelectedFarm(farm);
+                  }}
+                  disabled={
+                    farmPosition.unstaked.amount + farmPosition.staked.amount <=
+                    0.01
+                  }
+                  tooltipText="You need to have liquidity first"
+                >
+                  <span>Remove Liquidity</span>
+                  <MinusIcon className="text-black h-4 w-4" />
+                </Button>
+                <div className="inline-flex items-center gap-x-2">
                   <Button
                     size="large"
-                    style="h-max"
-                    onButtonClick={() => setIsRewardsModalOpen(true)}
+                    style="inline-flex justify-between items-center w-1/2"
+                    onButtonClick={() => {
+                      setStakingModalOpen(true);
+                      setSelectedFarm(farm);
+                    }}
+                    disabled={
+                      farmPosition.unstaked.amount +
+                        farmPosition.staked.amount <=
+                      0.01
+                    }
+                    tooltipText="You need to have liquidity first"
                   >
-                    Claim
+                    <span>Stake</span>
+                    <Image
+                      src="/icons/ArrowLineUpIcon.svg"
+                      alt="Stake"
+                      height="16"
+                      width="16"
+                    />
                   </Button>
-                )}
-              </InfoContainer>
+                  <Button
+                    size="large"
+                    style="inline-flex justify-between items-center w-1/2"
+                    onButtonClick={() => {
+                      setUnstakingModalOpen(true);
+                      setSelectedFarm(farm);
+                    }}
+                    disabled={
+                      farmPosition.unstaked.amount +
+                        farmPosition.staked.amount >
+                        0.01 && farmPosition.unstaked.amount <= 0.01
+                    }
+                    tooltipText="You need to stake tokens first"
+                  >
+                    <span>Unstake</span>
+                    <Image
+                      className="transform rotate-180"
+                      src="/icons/ArrowLineUpIcon.svg"
+                      alt="Stake"
+                      height="16"
+                      width="16"
+                    />
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         )}

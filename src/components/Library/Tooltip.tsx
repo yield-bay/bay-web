@@ -23,6 +23,7 @@ const Tooltip: FC<Props> = ({ label, children, placement = "bottom" }) => {
       fontSize="14px"
       fontWeight="500"
       rounded="8px"
+      zIndex={9999}
       lineHeight="20px"
       maxWidth="320px"
       hasArrow={true}
