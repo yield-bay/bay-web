@@ -24,6 +24,10 @@ export const chains = [
         name: "solarbeam",
         chef: "0x0329867a8c457e9F75e25b0685011291CD30904F",
       },
+      {
+        name: "sushiswap",
+        chef: "0x3dB01570D97631f69bbb0ba39796865456Cf89A5",
+      },
     ],
   },
   {
@@ -50,6 +54,14 @@ export const chains = [
         name: "stellaswap", // v2
         chef: "0xF3a5454496E26ac57da879bf3285Fa85DEBF0388",
       },
+      {
+        name: "beamswap",
+        chef: "0xC6ca172FC8BDB803c5e12731109744fb0200587b",
+      },
+      {
+        name: "solarflare",
+        chef: "0x995da7dfB96B4dd1e2bd954bE384A1e66cBB4b8c",
+      },
     ],
   },
   {
@@ -60,6 +72,10 @@ export const chains = [
         name: "zenlink",
         chef: "0x460ee9DBc82B2Be84ADE50629dDB09f6A1746545",
       },
+      {
+        name: "arthswap",
+        chef: "0xc5b016c5597D298Fe9eD22922CE290A048aA5B75",
+      }
     ],
   },
 ];
@@ -142,9 +158,9 @@ export const sushiChefAbi = [
 ];
 
 export const arthswapChefAbi = [
+  "function lpTokens(uint256) external view returns (address lp)",
   "function poolInfos(uint256) external view returns (uint128 accARSWPerShare, uint64 lastRewardBlock, uint64 allocPoint)",
   "function userInfos(uint256, address) external view returns (uint256 amount, int256 rewardDebt)",
-  "function lpTokens(uint256) external view returns (address lp)",
   "function pendingARSW(uint256, address) external view returns (uint256 pending)",
   "function deposit(uint256, uint256, address) external",
   "function withdraw(uint256, uint256, address) external",

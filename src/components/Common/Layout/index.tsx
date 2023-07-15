@@ -21,6 +21,11 @@ import { fetchTokenPricesMangata } from "@utils/fetch-prices";
 import {
   chains,
   lpAbi,
+  siriusChefAbi,
+  arthswapChefAbi,
+  sushiChefAbi,
+  solarflareChefAbi,
+  beamswapChefAbi,
   curveChefAbi,
   zenlinkChefAbi,
   solarbeamChefAbi,
@@ -933,6 +938,570 @@ const Layout: FC<Props> = ({ children }) => {
             }
           );
           allPromises.push(...cur);
+          // });
+        } else if (protocol.name == "beamswap") {
+          const chef = new ethers.Contract(
+            protocol.chef,
+            beamswapChefAbi,
+            provider
+          );
+          // provider.on("block", async () => {
+          const solar = filteredFarms.map(
+            async (ff: {
+              chain: any;
+              protocol: any;
+              chef: any;
+              id: any;
+              asset: { symbol: any; address: any };
+            }) => {
+              console.log(
+                "beamswapff",
+                ff.chain,
+                ff.protocol,
+                ff.chef,
+                ff.id,
+                ff.asset.symbol
+              );
+
+              // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
+              const poolInfo = await chef.poolInfo(ff.id);
+              const userInfo = await chef.userInfo(ff.id, address);
+              console.log(
+                "beamswapInfo0",
+                Object.keys(poolInfo),
+                Object.values(poolInfo)[0]
+              );
+              console.log("beamswappoolInfo", poolInfo);
+              console.log("beamswapuserInfo", userInfo);
+              const stakedLpAmount =
+                Number(Object.values(userInfo)[0] as number) / 10 ** 18;
+              const rewardDebt = Object.values(userInfo)[1];
+              const rewardLockedUp = Object.values(userInfo)[2];
+              const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
+              const lp = new ethers.Contract(
+                Object.values(poolInfo)[0] as string,
+                lpAbi,
+                provider
+              );
+              const unstakedLpAmount =
+                Number(await lp.balanceOf(address)) / 10 ** 18;
+              console.log(
+                "beamswapstakedLpAmount",
+                stakedLpAmount,
+                "beamswapunstakedLpAmount",
+                unstakedLpAmount
+              );
+              const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+              const pendingTokens = await chef.pendingTokens(ff.id, address);
+              const ucrewAddrs: any = Object.values(pendingTokens)[0];
+              const ucrewSymbols: any = Object.values(pendingTokens)[1];
+              const ucrewDecimals: any = Object.values(pendingTokens)[2];
+              const ucrewAmounts: any = Object.values(pendingTokens)[3];
+
+              console.log(
+                "ucrewAddrs",
+                ucrewAddrs,
+                "ucrewSymbols",
+                ucrewSymbols,
+                "ucrewDecimals",
+                ucrewDecimals,
+                "ucrewAmounts",
+                ucrewAmounts
+              );
+
+              let ucrews: any = [];
+              for (let i = 0; i < ucrewAmounts.length; i++) {
+                console.log(
+                  "tokenSymbol",
+                  ucrewSymbols[i],
+                  "\ntokenPrice",
+                  tokenPricesMap[
+                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  ]
+                );
+                ucrews.push({
+                  token: ucrewSymbols[i],
+                  amount:
+                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
+                  amountUSD:
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
+                });
+              }
+
+              console.log("ucrewsbeamswap", ucrews);
+
+              if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
+                const tempPositions = { ...positions };
+
+                console.log("before creating temp positions obejct:\n", {
+                  unstakedAmount: unstakedLpAmount,
+                  stakedLpAmount: stakedLpAmount,
+                  lpTokenPricesMap: lpTokenPricesMap,
+                  lpTokenPrice:
+                    lpTokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    ],
+                  lpSymbol: ff.asset.symbol,
+                });
+
+                tempPositions[name] = {
+                  unstaked: {
+                    amount: unstakedLpAmount,
+                    amountUSD:
+                      unstakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  staked: {
+                    amount: stakedLpAmount,
+                    amountUSD:
+                      stakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  unclaimedRewards: ucrews,
+                };
+                setPositions((prevState: any) => ({
+                  ...prevState,
+                  ...tempPositions,
+                }));
+              }
+              console.log("after beamswap positions", positions);
+            }
+          );
+          allPromises.push(...solar);
+          // });
+        } else if (protocol.name == "solarflare") {
+          const chef = new ethers.Contract(
+            protocol.chef,
+            solarflareChefAbi,
+            provider
+          );
+          // provider.on("block", async () => {
+          const solar = filteredFarms.map(
+            async (ff: {
+              chain: any;
+              protocol: any;
+              chef: any;
+              id: any;
+              asset: { symbol: any; address: any };
+            }) => {
+              console.log(
+                "solarflareff",
+                ff.chain,
+                ff.protocol,
+                ff.chef,
+                ff.id,
+                ff.asset.symbol
+              );
+
+              // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
+              const poolInfo = await chef.poolInfo(ff.id);
+              const userInfo = await chef.userInfo(ff.id, address);
+              console.log(
+                "solarflareInfo0",
+                Object.keys(poolInfo),
+                Object.values(poolInfo)[0]
+              );
+              console.log("solarflarepoolInfo", poolInfo);
+              console.log("solarflareuserInfo", userInfo);
+              const stakedLpAmount =
+                Number(Object.values(userInfo)[0] as number) / 10 ** 18;
+              const rewardDebt = Object.values(userInfo)[1];
+              const rewardLockedUp = Object.values(userInfo)[2];
+              const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
+              const lp = new ethers.Contract(
+                Object.values(poolInfo)[0] as string,
+                lpAbi,
+                provider
+              );
+              const unstakedLpAmount =
+                Number(await lp.balanceOf(address)) / 10 ** 18;
+              console.log(
+                "solarflarestakedLpAmount",
+                stakedLpAmount,
+                "solarflareunstakedLpAmount",
+                unstakedLpAmount
+              );
+              const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+              const pendingTokens = await chef.pendingTokens(ff.id, address);
+              const ucrewAddrs: any = Object.values(pendingTokens)[0];
+              const ucrewSymbols: any = Object.values(pendingTokens)[1];
+              const ucrewDecimals: any = Object.values(pendingTokens)[2];
+              const ucrewAmounts: any = Object.values(pendingTokens)[3];
+
+              console.log(
+                "ucrewAddrs",
+                ucrewAddrs,
+                "ucrewSymbols",
+                ucrewSymbols,
+                "ucrewDecimals",
+                ucrewDecimals,
+                "ucrewAmounts",
+                ucrewAmounts
+              );
+
+              let ucrews: any = [];
+              for (let i = 0; i < ucrewAmounts.length; i++) {
+                console.log(
+                  "tokenSymbol",
+                  ucrewSymbols[i],
+                  "\ntokenPrice",
+                  tokenPricesMap[
+                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  ]
+                );
+                ucrews.push({
+                  token: ucrewSymbols[i],
+                  amount:
+                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
+                  amountUSD:
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
+                });
+              }
+
+              console.log("ucrewssolarflare", ucrews);
+
+              if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
+                const tempPositions = { ...positions };
+
+                console.log("before creating temp positions obejct:\n", {
+                  unstakedAmount: unstakedLpAmount,
+                  stakedLpAmount: stakedLpAmount,
+                  lpTokenPricesMap: lpTokenPricesMap,
+                  lpTokenPrice:
+                    lpTokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    ],
+                  lpSymbol: ff.asset.symbol,
+                });
+
+                tempPositions[name] = {
+                  unstaked: {
+                    amount: unstakedLpAmount,
+                    amountUSD:
+                      unstakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  staked: {
+                    amount: stakedLpAmount,
+                    amountUSD:
+                      stakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  unclaimedRewards: ucrews,
+                };
+                setPositions((prevState: any) => ({
+                  ...prevState,
+                  ...tempPositions,
+                }));
+              }
+              console.log("after solarflare positions", positions);
+            }
+          );
+          allPromises.push(...solar);
+          // });
+        } else if (protocol.name == "sushiswap") {
+          const chef = new ethers.Contract(
+            protocol.chef,
+            sushiswapChefAbi,
+            provider
+          );
+          // provider.on("block", async () => {
+          const solar = filteredFarms.map(
+            async (ff: {
+              chain: any;
+              protocol: any;
+              chef: any;
+              id: any;
+              asset: { symbol: any; address: any };
+            }) => {
+              console.log(
+                "sushiswapff",
+                ff.chain,
+                ff.protocol,
+                ff.chef,
+                ff.id,
+                ff.asset.symbol
+              );
+
+              // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
+              const lpToken = await chef.lpToken(ff.id);
+              const poolInfo = await chef.poolInfo(ff.id);
+              const userInfo = await chef.userInfo(ff.id, address);
+              console.log(
+                "sushiswapInfo0",
+                Object.keys(poolInfo),
+                lpToken
+              );
+              console.log("sushiswappoolInfo", poolInfo);
+              console.log("sushiswapuserInfo", userInfo);
+              const stakedLpAmount =
+                Number(Object.values(userInfo)[0] as number) / 10 ** 18;
+              const rewardDebt = Object.values(userInfo)[1];
+              // const rewardLockedUp = Object.values(userInfo)[2];
+              // const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
+              const lp = new ethers.Contract(
+                lpToken as string,
+                lpAbi,
+                provider
+              );
+              const unstakedLpAmount =
+                Number(await lp.balanceOf(address)) / 10 ** 18;
+              console.log(
+                "sushiswapstakedLpAmount",
+                stakedLpAmount,
+                "sushiswapunstakedLpAmount",
+                unstakedLpAmount
+              );
+
+              const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+
+              let pending: any;
+              let ucrewAddrs: any;
+              let ucrewSymbols: any;
+              let ucrewDecimals: any;
+              let ucrewAmounts: any;
+              pending = await chef.pendingSushi(ff.id, address);
+              ucrewAddrs = ["0xf390830DF829cf22c53c8840554B98eafC5dCBc2"];
+              ucrewSymbols = ["SUSHI"];
+              ucrewDecimals = [18];
+              ucrewAmounts = [pending];
+
+              console.log(
+                "ucrewAddrs",
+                ucrewAddrs,
+                "ucrewSymbols",
+                ucrewSymbols,
+                "ucrewDecimals",
+                ucrewDecimals,
+                "ucrewAmounts",
+                ucrewAmounts
+              );
+
+              let ucrews: any = [];
+              for (let i = 0; i < ucrewAmounts.length; i++) {
+                console.log(
+                  "tokenSymbol",
+                  ucrewSymbols[i],
+                  "\ntokenPrice",
+                  tokenPricesMap[
+                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  ]
+                );
+                ucrews.push({
+                  token: ucrewSymbols[i],
+                  amount:
+                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
+                  amountUSD:
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
+                });
+              }
+
+              console.log("ucrewssushiswap", ucrews);
+
+              if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
+                const tempPositions = { ...positions };
+
+                console.log("before creating temp positions obejct:\n", {
+                  unstakedAmount: unstakedLpAmount,
+                  stakedLpAmount: stakedLpAmount,
+                  lpTokenPricesMap: lpTokenPricesMap,
+                  lpTokenPrice:
+                    lpTokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    ],
+                  lpSymbol: ff.asset.symbol,
+                });
+
+                tempPositions[name] = {
+                  unstaked: {
+                    amount: unstakedLpAmount,
+                    amountUSD:
+                      unstakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  staked: {
+                    amount: stakedLpAmount,
+                    amountUSD:
+                      stakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  unclaimedRewards: ucrews,
+                };
+                setPositions((prevState: any) => ({
+                  ...prevState,
+                  ...tempPositions,
+                }));
+              }
+              console.log("after sushiswap positions", positions);
+            }
+          );
+          allPromises.push(...solar);
+          // });
+        } else if (protocol.name == "arthswap") {
+          const chef = new ethers.Contract(
+            protocol.chef,
+            arthswapChefAbi,
+            provider
+          );
+          // provider.on("block", async () => {
+          const solar = filteredFarms.map(
+            async (ff: {
+              chain: any;
+              protocol: any;
+              chef: any;
+              id: any;
+              asset: { symbol: any; address: any };
+            }) => {
+              console.log(
+                "arthswapff",
+                ff.chain,
+                ff.protocol,
+                ff.chef,
+                ff.id,
+                ff.asset.symbol
+              );
+
+              // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
+              const lpToken = await chef.lpTokens(ff.id);
+              const poolInfo = await chef.poolInfo(ff.id);
+              const userInfo = await chef.userInfo(ff.id, address);
+              console.log(
+                "arthswapInfo0",
+                Object.keys(poolInfo),
+                lpToken
+              );
+              console.log("arthswappoolInfo", poolInfo);
+              console.log("arthswapuserInfo", userInfo);
+              const stakedLpAmount =
+                Number(Object.values(userInfo)[0] as number) / 10 ** 18;
+              const rewardDebt = Object.values(userInfo)[1];
+              // const rewardLockedUp = Object.values(userInfo)[2];
+              // const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
+              const lp = new ethers.Contract(
+                lpToken as string,
+                lpAbi,
+                provider
+              );
+              const unstakedLpAmount =
+                Number(await lp.balanceOf(address)) / 10 ** 18;
+              console.log(
+                "arthswapstakedLpAmount",
+                stakedLpAmount,
+                "arthswapunstakedLpAmount",
+                unstakedLpAmount
+              );
+
+              const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+
+              let pending: any;
+              let ucrewAddrs: any;
+              let ucrewSymbols: any;
+              let ucrewDecimals: any;
+              let ucrewAmounts: any;
+              pending = await chef.pendingARSW(ff.id, address);
+              ucrewAddrs = ["0xf390830DF829cf22c53c8840554B98eafC5dCBc2"];
+              ucrewSymbols = ["SUSHI"];
+              ucrewDecimals = [18];
+              ucrewAmounts = [pending];
+
+              console.log(
+                "ucrewAddrs",
+                ucrewAddrs,
+                "ucrewSymbols",
+                ucrewSymbols,
+                "ucrewDecimals",
+                ucrewDecimals,
+                "ucrewAmounts",
+                ucrewAmounts
+              );
+
+              let ucrews: any = [];
+              for (let i = 0; i < ucrewAmounts.length; i++) {
+                console.log(
+                  "tokenSymbol",
+                  ucrewSymbols[i],
+                  "\ntokenPrice",
+                  tokenPricesMap[
+                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  ]
+                );
+                ucrews.push({
+                  token: ucrewSymbols[i],
+                  amount:
+                    Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
+                  amountUSD:
+                    (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
+                    tokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    ],
+                });
+              }
+
+              console.log("ucrewsarthswap", ucrews);
+
+              if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
+                const tempPositions = { ...positions };
+
+                console.log("before creating temp positions obejct:\n", {
+                  unstakedAmount: unstakedLpAmount,
+                  stakedLpAmount: stakedLpAmount,
+                  lpTokenPricesMap: lpTokenPricesMap,
+                  lpTokenPrice:
+                    lpTokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    ],
+                  lpSymbol: ff.asset.symbol,
+                });
+
+                tempPositions[name] = {
+                  unstaked: {
+                    amount: unstakedLpAmount,
+                    amountUSD:
+                      unstakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  staked: {
+                    amount: stakedLpAmount,
+                    amountUSD:
+                      stakedLpAmount *
+                      lpTokenPricesMap[
+                        `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      ],
+                  },
+                  unclaimedRewards: ucrews,
+                };
+                setPositions((prevState: any) => ({
+                  ...prevState,
+                  ...tempPositions,
+                }));
+              }
+              console.log("after arthswap positions", positions);
+            }
+          );
+          allPromises.push(...solar);
           // });
         }
       });
