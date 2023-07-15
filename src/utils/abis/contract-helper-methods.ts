@@ -134,7 +134,7 @@ export function getClaimRewardsArgs(
     case "solarbeam":
     case "stellaswap":
     case "solarflare":
-      return [parseUnits(`${farmId}`, 0)];
+      return [farmId];
     case "zenlink":
       return [farmId];
     case "arthswap":

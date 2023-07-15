@@ -94,7 +94,7 @@ const ClaimRewardsModal = () => {
       });
 
       const txnRes = await claimRewards?.({
-        args: thisArgs,
+        args: [thisArgs],
       });
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
