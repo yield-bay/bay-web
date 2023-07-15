@@ -226,7 +226,7 @@ const RemoveSectionStandard = () => {
         args: removeArgs,
       });
       if (!!txnRes) {
-        setTxnHash(txnRes);
+        setTxnHash(txnRes as any);
       }
       console.log("called removeliquidity method.", txnRes);
     } catch (error) {
