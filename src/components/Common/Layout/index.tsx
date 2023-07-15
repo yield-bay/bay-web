@@ -1216,7 +1216,7 @@ const Layout: FC<Props> = ({ children }) => {
         } else if (protocol.name == "sushiswap") {
           const chef = new ethers.Contract(
             protocol.chef,
-            sushiswapChefAbi,
+            sushiChefAbi,
             provider
           );
           // provider.on("block", async () => {
@@ -1241,11 +1241,7 @@ const Layout: FC<Props> = ({ children }) => {
               const lpToken = await chef.lpToken(ff.id);
               const poolInfo = await chef.poolInfo(ff.id);
               const userInfo = await chef.userInfo(ff.id, address);
-              console.log(
-                "sushiswapInfo0",
-                Object.keys(poolInfo),
-                lpToken
-              );
+              console.log("sushiswapInfo0", Object.keys(poolInfo), lpToken);
               console.log("sushiswappoolInfo", poolInfo);
               console.log("sushiswapuserInfo", userInfo);
               const stakedLpAmount =
@@ -1386,11 +1382,7 @@ const Layout: FC<Props> = ({ children }) => {
               const lpToken = await chef.lpTokens(ff.id);
               const poolInfo = await chef.poolInfo(ff.id);
               const userInfo = await chef.userInfo(ff.id, address);
-              console.log(
-                "arthswapInfo0",
-                Object.keys(poolInfo),
-                lpToken
-              );
+              console.log("arthswapInfo0", Object.keys(poolInfo), lpToken);
               console.log("arthswappoolInfo", poolInfo);
               console.log("arthswapuserInfo", userInfo);
               const stakedLpAmount =

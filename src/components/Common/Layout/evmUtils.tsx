@@ -75,7 +75,7 @@ export const chains = [
       {
         name: "arthswap",
         chef: "0xc5b016c5597D298Fe9eD22922CE290A048aA5B75",
-      }
+      },
     ],
   },
 ];
