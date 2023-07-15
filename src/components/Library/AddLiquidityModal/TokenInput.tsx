@@ -1,5 +1,4 @@
 import { UnderlyingAssets } from "@utils/types";
-import clsx from "clsx";
 import Image from "next/image";
 import { useAccount, useBalance, useNetwork } from "wagmi";
 

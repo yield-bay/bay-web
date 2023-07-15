@@ -2,6 +2,7 @@ import { type FC, useState, useCallback, useMemo, useEffect } from "react";
 import {
   useAccount,
   useBalance,
+  useContractRead,
   useContractWrite,
   useNetwork,
   usePublicClient,
@@ -19,13 +20,15 @@ import {
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
 import { parseAbi, parseUnits } from "viem";
-import useTokenReserves from "@hooks/useTokenReserves";
+// import useTokenReserves from "@hooks/useTokenReserves";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
 import Spinner from "../Spinner";
 import Link from "next/link";
 import Image from "next/image";
+import useMinLPTokensStable from "@hooks/useMinLPTokensStable";
+import useStableAmounts from "./useStableAmounts";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -48,63 +51,73 @@ const AddSectionStable: FC = () => {
   const [inputMap, setInputMap] = useState<{
     [address: `0x${string}`]: string;
   }>({});
+  const [inputMapAmount, setInputMapAmount] = useState<{
+    [address: `0x${string}`]: number;
+  }>({});
 
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
     chainId: chain?.id,
-    enabled: !!address,
+    enabled: !!address && !!chain,
   });
+
+  useEffect(() => console.log("selectedfarm", farm), [farm]);
+
+  const { data: tokensSeqArr } = useContractRead({
+    address:
+      farm?.protocol.toLowerCase() == "curve"
+        ? farm?.asset.address
+        : farm?.router,
+    abi: parseAbi(
+      getRouterAbi(
+        farm?.protocol!,
+        farm?.farmType == "StandardAmm" ? false : true
+      )
+    ),
+    functionName: "getTokens",
+    chainId: chain?.id,
+    enabled: !!chain && !!farm,
+  });
+  const tokensSeq = tokensSeqArr as `0x${string}`[];
 
   useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
 
   const GAS_FEES = 0.0014; // In STELLA
 
-  const tokens = farm?.asset.underlyingAssets ?? [];
-  let assets = tokens;
-
-  // const { reserve0, reserve1 } = useTokenReserves(
-  //   farm?.asset.address!,
-  //   farm?.protocol!
-  // );
+  // Correct sequence of tokens!
+  const tokensArr = farm?.asset.underlyingAssets ?? [];
+  const tokens = useMemo(() => {
+    if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
+    if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
+    return tokensSeq.map(
+      (address) => tokensArr.find((token) => token.address == address)!
+    );
+  }, [tokensArr, tokensSeq]);
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
+    // Setting inputMap for Input fields
     setInputMap((pre: any) => ({
       ...pre,
       [token.address]: value,
     }));
+    // Setting inputMapAmount of amount array for calculation
+    setInputMapAmount((pre: any) => ({
+      ...pre,
+      [token.address]: isNaN(parseFloat(value)) ? 0 : parseFloat(value),
+    }));
   }, []);
 
-  // Array of input amounts
-  const tokenAmount = (value: string | undefined): Number => {
-    if (!isNaN(Number(value))) {
-      return Number(value);
-    }
-    return 0;
-  };
-
-  const amounts = useMemo(() => {
-    const updatedTokens = tokens
-      .map((token) => {
-        console.log("waota", token, inputMap);
-        return parseUnits(
-          `${
-            !isNaN(Number(inputMap[token.address]))
-              ? parseFloat(inputMap[token.address])
-              : 0
-          }`,
-          token.decimals
-        );
-      })
-      .filter((amount) => {
-        return !isNaN(Number(amount));
-      });
-    console.log("updated tokens", updatedTokens);
-    return updatedTokens;
-  }, [inputMap, tokens]);
+  const amounts = useStableAmounts(inputMapAmount, tokens);
 
   const approvalArray = useMemo(() => {
     return approvalMap ? Object.values(approvalMap) : [];
   }, [approvalMap]);
+
+  const estLpAmount = useMinLPTokensStable(
+    farm?.router!,
+    farm?.protocol!,
+    amounts
+  );
 
   // This method returns true if all tokens are approved
   // const isAllTokensApproved = useMemo(() => {
@@ -152,11 +165,10 @@ const AddSectionStable: FC = () => {
           ? [
               amounts, // amounts (uint256[])
               1, // minToMint (uint256)
-              // address???
             ]
           : [
               amounts, // amounts (uint256[])
-              1, // minToMint (uint256)
+              parseUnits(`${(estLpAmount * (100 - SLIPPAGE)) / 100}`, 18), // minToMint (uint256)
               blocktimestamp, // deadline (uint256)
             ];
 
@@ -261,6 +273,7 @@ const AddSectionStable: FC = () => {
                 key={`${token?.symbol}-${index}`}
                 token={token}
                 selectedFarm={farm!}
+                approvalMap={approvalMap}
                 setApprovalMap={setApprovalMap}
               />
             ))}
@@ -269,7 +282,7 @@ const AddSectionStable: FC = () => {
             type="primary"
             isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
             disabled={
-              amounts.length < 1 ||
+              Object.keys(approvalMap).length !== tokens.length ||
               typeof addLiquidity == "undefined" ||
               isLoadingAddLiqCall ||
               isLoadingAddLiqTxn

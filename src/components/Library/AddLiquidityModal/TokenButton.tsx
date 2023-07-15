@@ -6,6 +6,7 @@ import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 interface Props {
   token: UnderlyingAssets;
   selectedFarm: FarmType;
+  approvalMap: { [address: `0x${string}`]: boolean };
   setApprovalMap: React.Dispatch<
     React.SetStateAction<{
       [address: `0x${string}`]: boolean;
@@ -16,6 +17,7 @@ interface Props {
 const TokenButton: React.FC<Props> = ({
   token,
   selectedFarm,
+  approvalMap,
   setApprovalMap,
 }) => {
   // Check Approval Token
@@ -34,13 +36,16 @@ const TokenButton: React.FC<Props> = ({
 
   useEffect(() => {
     // Either already approved or approved after transaction
-    if (isSuccessApproveTxn || !!Number(isApproved)) {
+    if (
+      (isSuccessApproveTxn || isApprovedSuccess) &&
+      !approvalMap[token?.address]
+    ) {
       setApprovalMap((pre) => ({
         ...pre,
         [token?.address]: true,
       }));
     }
-  }, [isSuccessApproveTxn, isApproved]);
+  }, [isSuccessApproveTxn, isApprovedSuccess]);
 
   return (
     !isApprovedSuccess &&
