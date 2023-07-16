@@ -35,6 +35,7 @@ import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import useCalcMinAmount from "@utils/useCalcMinAmount";
+import toUnits from "@utils/toUnits";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -65,6 +66,8 @@ const RemoveSectionStable = () => {
   const { chain } = useNetwork();
   const { address } = useAccount();
   const publicClient = usePublicClient();
+
+  const [txnHash, setTxnHash] = useState<string>("");
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
@@ -106,17 +109,6 @@ const RemoveSectionStable = () => {
       (address) => tokensArr.find((token) => token.address == address)!
     );
   }, [tokensArr, tokensSeq]);
-
-  const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
-    farm?.asset.address!,
-    farm?.protocol!,
-    methodId == 0
-      ? (parseFloat(lpBalance!) *
-          parseFloat(percentage == "" ? "0" : percentage)) /
-          100
-      : parseFloat(lpTokens),
-    SLIPPAGE
-  );
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
@@ -286,6 +278,9 @@ const RemoveSectionStable = () => {
       const txnRes = await removeLiquidity?.({
         args: args_to_pass,
       });
+      if (!!txnRes) {
+        setTxnHash(txnRes.hash);
+      }
       console.log("called removeliquidity method.", txnRes);
     } catch (error) {
       console.error(error);
@@ -331,7 +326,7 @@ const RemoveSectionStable = () => {
               <button
                 key={index}
                 className={clsx(
-                  "inline-flex items-center space-x-3 hover:-translate-y-1 active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                  "inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
                   removeMethodId == RemoveMethod.INDIVIDUAL &&
                     indiTokenId == index
                     ? "border border-[#8F8FFC] bg-[#ECECFF]"
@@ -350,13 +345,17 @@ const RemoveSectionStable = () => {
                   className="rounded-full"
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                  {removeMethodId == RemoveMethod.INDIVIDUAL &&
+                  indiTokenId == index
+                    ? toUnits(minAmount as number, 3)
+                    : 0}{" "}
                   {token?.symbol}
                 </span>
               </button>
             ))}
             <button
               className={clsx(
-                "mt-3 inline-flex items-center space-x-3 hover:-translate-y-1 active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                "mt-3 inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
                 removeMethodId == RemoveMethod.ALL
                   ? "border border-[#8F8FFC] bg-[#ECECFF]"
                   : "bg-[#FAFAFA]"
@@ -374,6 +373,9 @@ const RemoveSectionStable = () => {
                     className="rounded-full"
                   />
                   <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                    {removeMethodId === RemoveMethod.ALL
+                      ? toUnits((minAmount as number[])[index], 3)
+                      : 0}{" "}
                     {token?.symbol}
                   </span>
                   {index !== tokens.length - 1 && (
@@ -499,23 +501,41 @@ const RemoveSectionStable = () => {
           You will receive
         </h3>
         <div className="p-6 border border-[#BEBEBE] rounded-lg">
-          <div className="inline-flex gap-x-4">
-            {tokens.map((token, index) => (
-              <div
-                key={index}
-                className="inline-flex items-center space-x-3 rounded-xl bg-[#F1F1F1] px-6 py-[14px]"
-              >
+          <div className="grid grid-cols-2 gap-4">
+            {removeMethodId == RemoveMethod.ALL ? (
+              <>
+                {tokens.map((token, index) => (
+                  <div
+                    key={index}
+                    className="inline-flex items-center space-x-3 rounded-xl bg-[#F1F1F1] px-6 py-[14px]"
+                  >
+                    <Image
+                      src={farm!.asset.logos[index]}
+                      alt={token?.address}
+                      width={24}
+                      height={24}
+                    />
+                    <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                      {toUnits((minAmount as number[])[index], 3)}{" "}
+                      {token.symbol}
+                    </span>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="inline-flex items-center space-x-3 rounded-xl bg-[#F1F1F1] px-6 py-[14px]">
                 <Image
-                  src={farm!.asset.logos[index]}
-                  alt={token?.address}
+                  src={farm!.asset.logos[indiTokenId]}
+                  alt={tokens[indiTokenId]?.address}
                   width={24}
                   height={24}
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  40 {token?.symbol}
+                  `${toUnits(minAmount as number, 3)} $
+                  {tokens[indiTokenId]?.symbol}`
                 </span>
               </div>
-            ))}
+            )}
           </div>
         </div>
         <MButton
@@ -549,8 +569,7 @@ const RemoveSectionStable = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                // href={`https://moonscan.io/tx/${removeLiqTxnData?.hash}}`}
-                href="#"
+                href={`https://moonscan.io/tx/${txnHash}}`}
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"
@@ -568,7 +587,17 @@ const RemoveSectionStable = () => {
         ) : !isErrorRemoveLiqTxn && !isErrorRemoveLiqCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">Withdrawing 50 STELLA/GLMR LP Tokens</h2>
+            <h2 className="text-xl">
+              Withdrawing{" "}
+              {methodId == 0
+                ? toUnits(
+                    parseFloat(percentage !== "" ? percentage : "0") *
+                      parseFloat(lpBalance ?? "0"),
+                    3
+                  )
+                : toUnits(parseFloat(lpTokens !== "" ? lpTokens : "0"), 3)}{" "}
+              {farm?.asset.symbol} Tokens
+            </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
               {isLoadingRemoveLiqTxn
