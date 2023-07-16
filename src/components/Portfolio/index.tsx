@@ -245,7 +245,10 @@ const PortfolioPage = () => {
                         >
                           {farms.length > 0 ? (
                             positionsByChain.map(
-                              (position: any, index: number) => {
+                              (
+                                position: PortfolioPositionType,
+                                index: number
+                              ) => {
                                 const tokenNames = formatTokenSymbols(
                                   position.lpSymbol
                                 );

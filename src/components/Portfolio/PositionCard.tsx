@@ -3,6 +3,8 @@ import Link from "next/link";
 import clsx from "clsx";
 import {
   ChevronDownIcon,
+  MinusIcon,
+  PlusIcon,
   QuestionMarkCircleIcon,
 } from "@heroicons/react/outline";
 import Tooltip from "@components/Library/Tooltip";
@@ -12,20 +14,37 @@ import {
   calcAssetPercentage,
   calcTotalRewardValue,
 } from "@utils/farmPageMethods";
-import { FarmType } from "@utils/types";
+import { FarmType, PortfolioPositionType } from "@utils/types";
 import toDollarUnits from "@utils/toDollarUnits";
 import toUnits from "@utils/toUnits";
+import Image from "next/image";
+import Button from "@components/Library/Button";
+import { useAtom } from "jotai";
+import {
+  addLiqModalOpenAtom,
+  removeLiqModalOpenAtom,
+  stakingModalOpenAtom,
+  unstakingModalOpenAtom,
+} from "@store/commonAtoms";
+import { selectedFarmAtom } from "@store/atoms";
 
 interface Props {
   tokenNames: string[];
   thisFarm: FarmType;
-  position: any;
+  position: PortfolioPositionType;
 }
 
 const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
   const [showRewards, setShowRewards] = useState<boolean>(false);
+  // Modal States
+  const [, setAddLiqModalOpen] = useAtom(addLiqModalOpenAtom);
+  const [, setRemoveLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
+  const [, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
+  const [, setUnstakingModalOpen] = useAtom(unstakingModalOpenAtom);
+  const [, setSelectedFarm] = useAtom(selectedFarmAtom);
+
   return (
-    <li className="col-span-1 divide-y h-fit divide-[#EAECF0] z-0 p-6 border border-[#EAECF0] max-w-sm rounded-xl bg-white shadow">
+    <li className="col-span-1 divide-y border border-[#EAECF0] h-fit divide-[#EAECF0] z-0 p-6 max-w-sm rounded-xl bg-white shadow">
       <div className="flex-1 flex flex-row justify-between truncate mb-6">
         <div className="flex w-full flex-col space-y-4 items-start truncate">
           <FarmAssets logos={thisFarm?.asset.logos} />
@@ -99,6 +118,76 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
         </div>
       </div>
       <div className="flex flex-col gap-y-4 pt-6">
+        <div className="flex flex-col gap-y-3 justify-between w-full">
+          <Button
+            size="large"
+            style="inline-flex justify-between items-center"
+            onButtonClick={() => {
+              setAddLiqModalOpen(true);
+              setSelectedFarm(thisFarm);
+            }}
+          >
+            <span>Add Liquidity</span>
+            <PlusIcon className="text-black h-4 w-4" />
+          </Button>
+          <Button
+            size="large"
+            style="inline-flex justify-between items-center"
+            onButtonClick={() => {
+              setRemoveLiqModalOpen(true);
+              setSelectedFarm(thisFarm);
+            }}
+            disabled={position.unstaked.amount + position.staked.amount <= 0.01}
+            tooltipText="You need to have liquidity first"
+          >
+            <span>Remove Liquidity</span>
+            <MinusIcon className="text-black h-4 w-4" />
+          </Button>
+          <div className="inline-flex items-center gap-x-2">
+            <Button
+              size="large"
+              style="inline-flex justify-between items-center w-1/2"
+              onButtonClick={() => {
+                setStakingModalOpen(true);
+                setSelectedFarm(thisFarm);
+              }}
+              disabled={
+                position.unstaked.amount + position.staked.amount <= 0.01
+              }
+              tooltipText="You need to have liquidity first"
+            >
+              <span>Stake</span>
+              <Image
+                src="/icons/ArrowLineUpIcon.svg"
+                alt="Stake"
+                height="16"
+                width="16"
+              />
+            </Button>
+            <Button
+              size="large"
+              style="inline-flex justify-between items-center w-1/2"
+              onButtonClick={() => {
+                setUnstakingModalOpen(true);
+                setSelectedFarm(thisFarm);
+              }}
+              disabled={
+                position.unstaked.amount > 0.01 &&
+                position.staked.amount <= 0.01
+              }
+              tooltipText="You need to stake tokens first"
+            >
+              <span>Unstake</span>
+              <Image
+                className="transform rotate-180"
+                src="/icons/ArrowLineUpIcon.svg"
+                alt="Stake"
+                height="16"
+                width="16"
+              />
+            </Button>
+          </div>
+        </div>
         <div>
           <button
             className={clsx(

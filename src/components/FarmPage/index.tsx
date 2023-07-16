@@ -328,9 +328,8 @@ const FarmPage: NextPage = () => {
                       setSelectedFarm(farm);
                     }}
                     disabled={
-                      farmPosition.unstaked.amount +
-                        farmPosition.staked.amount >
-                        0.01 && farmPosition.unstaked.amount <= 0.01
+                      farmPosition.unstaked.amount > 0.01 &&
+                      farmPosition.staked.amount <= 0.01
                     }
                     tooltipText="You need to stake tokens first"
                   >
