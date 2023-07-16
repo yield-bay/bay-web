@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { selectedPositionAtom, selectedFarmAtom } from "@store/atoms";
+import { selectedPositionAtom } from "@store/atoms";
 import { claimModalOpenAtom } from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
@@ -29,7 +29,6 @@ const ClaimRewardsModal = () => {
   const { address } = useAccount();
   const { chain } = useNetwork();
   const [position] = useAtom(selectedPositionAtom);
-  const [farm] = useAtom(selectedFarmAtom);
 
   useEffect(() => console.log("selected position @claimrewards"), [position]);
 
@@ -48,12 +47,12 @@ const ClaimRewardsModal = () => {
   });
 
   const chefAbi = useMemo(() => {
-    return getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`);
-  }, [farm]);
+    return getChefAbi(position?.protocol!, position?.chef as `0x${string}`);
+  }, [position]);
 
   const contractFnName = useMemo(() => {
-    return getClaimRewardsFunctionName(farm?.protocol!);
-  }, [farm]);
+    return getClaimRewardsFunctionName(position?.protocol!);
+  }, [position]);
 
   const {
     data: claimRewardsData,
@@ -62,7 +61,7 @@ const ClaimRewardsModal = () => {
     isError: isErrorClaimRewardsCall,
     writeAsync: claimRewards,
   } = useContractWrite({
-    address: farm?.chef as `0x${string}`,
+    address: position?.chef as `0x${string}`,
     abi: parseAbi(chefAbi),
     functionName: contractFnName as any,
     chainId: chain?.id,
@@ -80,15 +79,17 @@ const ClaimRewardsModal = () => {
   const handleClaimRewards = async () => {
     try {
       const thisArgs = getClaimRewardsArgs(
-        farm?.id!,
-        farm?.protocol!,
+        position?.id!,
+        position?.protocol!,
         address!
       );
 
       console.log("CLAIMREWARDS contract @params", {
-        address: farm?.chef as `0x${string}`,
-        abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
-        functionName: getClaimRewardsFunctionName(farm?.protocol!) as any,
+        address: position?.chef as `0x${string}`,
+        abi: parseAbi(
+          getChefAbi(position?.protocol!, position?.chef as `0x${string}`)
+        ),
+        functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
         chainId: chain?.id,
         args: thisArgs,
       });
@@ -254,7 +255,7 @@ const ClaimRewardsModal = () => {
     );
   };
 
-  return !!farm ? (
+  return !!position ? (
     <LiquidityModalWrapper
       open={isOpen || isOpenModalCondition}
       setOpen={isOpenModalCondition ? () => {} : setIsOpen}

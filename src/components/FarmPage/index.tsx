@@ -115,6 +115,11 @@ const FarmPage: NextPage = () => {
       const unclaimedRewards = parseFloat(
         calcUnclaimedReward(farmPosition.unclaimedRewards)
       );
+      console.log(
+        "total unclaimed rewards",
+        farm?.asset.symbol,
+        unclaimedRewards
+      );
       setUnclaimedReward(unclaimedRewards);
     }
   }, [farmPosition]);
@@ -183,11 +188,11 @@ const FarmPage: NextPage = () => {
                 <div className="flex flex-col items-end sm:items-start gap-y-2">
                   <p className="text-sm leading-5">You hold</p>
                   <p className="text-2xl leading-7 font-bold text-[#101828]">
-                    $
-                    {(
+                    {toDollarUnits(
                       farmPosition.unstaked.amountUSD +
-                      farmPosition.staked.amountUSD
-                    ).toFixed(2)}
+                        farmPosition.staked.amountUSD,
+                      2
+                    )}
                   </p>
                   <p className="p-2 bg-[#F5F5F5] rounded-lg max-w-fit text-base leading-5">
                     <span className="font-bold">
@@ -211,7 +216,7 @@ const FarmPage: NextPage = () => {
                       Idle
                     </p>
                     <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                      ${farmPosition?.unstaked?.amountUSD.toFixed(2)}
+                      {toDollarUnits(farmPosition?.unstaked?.amountUSD, 2)}
                     </p>
                     <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                       <span className="font-bold">
@@ -231,7 +236,7 @@ const FarmPage: NextPage = () => {
                       Staked
                     </p>
                     <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                      ${farmPosition?.staked?.amount.toFixed(2)}
+                      {toDollarUnits(farmPosition?.staked?.amountUSD, 2)}
                     </p>
                     <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
                       <span className="font-bold">

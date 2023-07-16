@@ -19,7 +19,7 @@ import { PortfolioPositionType } from "@utils/types";
 import { parseUnits } from "viem";
 
 export function getChefAbi(protocol: string, chef: string): string[] {
-  console.log("this -- protocol", protocol, "\nchef", chef);
+  // console.log("this -- protocol", protocol, "\nchef", chef);
   if (!protocol) return solarbeamChefAbi;
   switch (protocol.toLowerCase()) {
     case "solarbeam":
