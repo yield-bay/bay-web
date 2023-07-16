@@ -1,81 +1,91 @@
 import { useContractRead, useContractReads, useNetwork, useToken } from "wagmi";
-import { FarmType } from "./types";
+import { FarmType, UnderlyingAssets } from "./types";
 import { parseAbi, parseUnits } from "viem";
 import { getRouterAbi } from "./abis/contract-helper-methods";
 import { useMemo } from "react";
+import { slippageAtom } from "@store/atoms";
+import { useAtom } from "jotai";
 
-const useCalcMinAmount = (amount: number, farm: FarmType) => {
+const useCalcMinAmount = (
+  tokens: UnderlyingAssets[],
+  amount: number,
+  farm: FarmType,
+  removalId: number,
+  singleTokenIndex: number
+) => {
   const { chain } = useNetwork();
+  const [SLIPPAGE] = useAtom(slippageAtom);
 
   const { data: lpToken } = useToken({
     address: farm?.asset.address,
     enabled: !!farm,
   });
 
-  const { data: tokensArr } = useContractRead({
-    address:
-      farm?.protocol.toLowerCase() == "curve"
-        ? farm?.asset.address
-        : farm?.router,
-    abi: parseAbi(
-      getRouterAbi(
-        farm?.protocol!,
-        farm?.farmType == "StandardAmm" ? false : true
-      )
-    ),
-    functionName:
-      farm?.protocol.toLowerCase() == "curve"
-        ? "get_balances" // todo: change
-        : "getTokens",
-    chainId: chain?.id,
-    enabled: !!chain && !!farm,
-  });
+  const functionNames = useMemo(() => {
+    if (removalId === 1) {
+      // SINGLE TOKEN
+      if (farm?.protocol.toLowerCase() == "curve") {
+        return "calc_withdraw_one_coin";
+      } else {
+        return "calculateRemoveLiquidityOneToken";
+      }
+    } else {
+      // MULTIPLE TOKENS
+      return "calculateRemoveLiquidity";
+    }
+  }, [removalId]);
+
+  const argsToPass = useMemo(() => {
+    if (removalId === 1) {
+      // SINGLE TOKEN
+      return [parseUnits(`${amount}`, 18), singleTokenIndex];
+    } else {
+      // MULTIPLE TOKENS
+      return [parseUnits(`${amount}`, 18)];
+    }
+  }, [removalId, amount, singleTokenIndex]);
 
   const { data: minAmountData, isLoading: isLoadingMinAmount } =
     useContractRead({
-      address:
-        farm?.protocol.toLowerCase() == "curve"
-          ? farm?.asset.address
-          : farm?.router,
+      address: farm.router,
       abi: parseAbi(
         getRouterAbi(
           farm?.protocol!,
           farm?.farmType == "StandardAmm" ? false : true
         )
       ),
-      functionName:
-        farm?.protocol.toLowerCase() == "curve"
-          ? "get_balances"
-          : "calculateRemoveLiquidity",
+      functionName: functionNames,
       chainId: chain?.id,
-      args: [
-        parseUnits(`${amount}`, lpToken?.decimals!), // Amount to be removed
-      ],
+      args: argsToPass,
       enabled: !!farm && !!lpToken && !!amount,
     });
 
   const minAmountBigInt = minAmountData as bigint[];
-  const tokens = tokensArr as `0x${string}`[];
 
   const minAmount = useMemo(() => {
-    if (!!minAmountBigInt) {
-      console.log("minamountbigint", minAmountBigInt);
-      console.log("tokens", tokens);
-      return minAmountBigInt.map((amt, index) => {
-        // there will always be only one token in array
-        const currToken = farm?.asset.underlyingAssets.filter(
-          (asset) => tokens[index] == asset.address
+    if (!!minAmountBigInt && minAmountBigInt !== undefined) {
+      if (removalId === 1) {
+        return (
+          ((Number(minAmountBigInt) / 10 ** tokens[singleTokenIndex].decimals) *
+            (100 - SLIPPAGE)) /
+          100
         );
-        console.log(
-          `${currToken[0].symbol} decimals:`,
-          currToken[0].decimals,
-          "\nminAmount:",
-          Number(amt) / 10 ** currToken[0].decimals
-        );
-        return Number(amt) / 10 ** currToken[0].decimals;
-      });
+      } else {
+        return minAmountBigInt.map((amt, index) => {
+          // console.log(
+          //   `${tokens[index].symbol} decimals:`,
+          //   tokens[index].decimals,
+          //   "\nminAmount:",
+          //   Number(amt) / 10 ** tokens[index].decimals
+          // );
+          return (
+            ((Number(amt) / 10 ** tokens[index].decimals) * (100 - SLIPPAGE)) /
+            100
+          );
+        });
+      }
     }
-    return [0, 0];
+    return removalId == 1 ? 0 : tokens.map((token) => 0);
   }, [minAmountBigInt, amount]);
 
   return { minAmount, isLoadingMinAmount };

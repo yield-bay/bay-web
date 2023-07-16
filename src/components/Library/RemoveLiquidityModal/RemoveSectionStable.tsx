@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
@@ -9,6 +9,7 @@ import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
   useBalance,
+  useContractRead,
   // useContractRead,
   useContractWrite,
   useNetwork,
@@ -18,8 +19,9 @@ import {
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseAbiItem, parseUnits } from "viem";
+import { parseAbi, parseUnits } from "viem";
 import {
+  getRemoveLiqStableFunctionName,
   getRemoveLiquidFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
@@ -29,7 +31,7 @@ import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
 import Spinner from "../Spinner";
-import { useIsApprovedToken } from "@hooks/useApprovalHooks";
+import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import useCalcMinAmount from "@utils/useCalcMinAmount";
@@ -47,6 +49,11 @@ interface ChosenMethodProps {
   methodId: number;
 }
 
+enum RemoveMethod {
+  ALL = 0,
+  INDIVIDUAL = 1,
+}
+
 const RemoveSectionStable = () => {
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
@@ -55,10 +62,28 @@ const RemoveSectionStable = () => {
   );
   const [SLIPPAGE] = useAtom(slippageAtom);
 
+  const { chain } = useNetwork();
   const { address } = useAccount();
   const publicClient = usePublicClient();
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
+
+  const { data: tokensSeqArr } = useContractRead({
+    address:
+      farm?.protocol.toLowerCase() == "curve"
+        ? farm?.asset.address
+        : farm?.router,
+    abi: parseAbi(
+      getRouterAbi(
+        farm?.protocol!,
+        farm?.farmType == "StandardAmm" ? false : true
+      )
+    ),
+    functionName: "getTokens",
+    chainId: chain?.id,
+    enabled: !!chain && !!farm,
+  });
+  const tokensSeq = tokensSeqArr as `0x${string}`[];
 
   // Balance of LP Token
   const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
@@ -66,13 +91,21 @@ const RemoveSectionStable = () => {
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<number>(0);
-
-  const { chain } = useNetwork();
+  const [removeMethodId, setRemoveMethodId] = useState<RemoveMethod>(
+    RemoveMethod.ALL
+  );
+  const [indiTokenId, setIndiTokenId] = useState<number>(0);
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
-  // const [token0, token1] = tokenNames;
-  const [farmAsset0, farmAsset1] =
-    farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
+
+  const tokensArr = farm?.asset.underlyingAssets ?? [];
+  const tokens = useMemo(() => {
+    if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
+    if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
+    return tokensSeq.map(
+      (address) => tokensArr.find((token) => token.address == address)!
+    );
+  }, [tokensArr, tokensSeq]);
 
   const [minUnderlyingAsset0, minUnderlyingAsset1] = useMinimumUnderlyingTokens(
     farm?.asset.address!,
@@ -120,33 +153,29 @@ const RemoveSectionStable = () => {
   const GAS_FEES = 0.0014; // In STELLA
 
   // Check if already approved
-  const { data: isLpApprovedData, isLoading: isLpApprovedLoading } =
-    useIsApprovedToken(farm?.asset.address!, farm?.router!);
+  const {
+    data: isLpApprovedData,
+    isLoading: isLpApprovedLoading,
+    isSuccess: isLpApprovedSuccess,
+  } = useIsApprovedToken(farm?.asset.address!, farm?.router!);
 
   // Approve LP token
   const {
-    data: approveLpData,
-    isLoading: approveLpLoading,
+    isLoadingApproveCall: approveLpLoading,
+    isLoadingApproveTxn: approveLpLoadingTxn,
+    isSuccessApproveTxn: approveLpSuccessTxn,
     writeAsync: approveLpToken,
-  } = useContractWrite({
-    address: farm?.asset.address,
-    abi: parseAbi(tokenAbi),
-    functionName: "approve" as any,
-    chainId: chain?.id,
-  });
-
-  // Waiting for Txns
-  const { isLoading: approveLpLoadingTxn, isSuccess: approveLpSuccessTxn } =
-    useWaitForTransaction({
-      hash: approveLpData?.hash,
-    });
+  } = useApproveToken(farm?.asset.address!, farm?.router!);
 
   const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
+    tokens,
     methodId == 0
       ? parseFloat(percentage !== "" ? percentage : "0") *
           parseFloat(lpBalance ?? "0")
       : parseFloat(lpTokens !== "" ? lpTokens : "0"),
-    farm!
+    farm!,
+    removeMethodId,
+    indiTokenId
   );
 
   useEffect(() => {
@@ -169,7 +198,10 @@ const RemoveSectionStable = () => {
         farm?.farmType == "StandardAmm" ? false : true
       )
     ),
-    functionName: getRemoveLiquidFunctionName(farm?.protocol!) as any,
+    functionName: getRemoveLiqStableFunctionName(
+      removeMethodId,
+      farm?.protocol!
+    ) as any,
     chainId: chain?.id,
   });
 
@@ -182,12 +214,6 @@ const RemoveSectionStable = () => {
   } = useWaitForTransaction({
     hash: removeLiqData?.hash,
   });
-
-  useEffect(() => {
-    if (!isLpApprovedLoading) {
-      console.log("isTokenLpApproved", !!Number(isLpApprovedData));
-    }
-  }, [isLpApprovedLoading]);
 
   useEffect(() => {
     if (isLoadingRemoveLiqCall) {
@@ -204,6 +230,42 @@ const RemoveSectionStable = () => {
     }
   }, [isSuccessRemoveLiqTxn]);
 
+  const getArgs = (
+    removalId: number,
+    protocol: string,
+    tokenIndex: number,
+    timestamp: number
+  ) => {
+    const tokenAmount =
+      methodId == 0
+        ? parseUnits(
+            `${
+              (parseFloat(lpBalance!) *
+                parseFloat(percentage == "" ? "0" : percentage)) /
+              100
+            }`,
+            18
+          )
+        : parseUnits(`${parseFloat(lpTokens)}`, 18); // Liquidity
+
+    if (removalId === 1) {
+      const parsedMinAmount = parseUnits(
+        `${minAmount as number}`,
+        tokens[tokenIndex]?.decimals
+      );
+      if (protocol.toLowerCase() == "curve") {
+        return [tokenAmount, tokenIndex, parsedMinAmount];
+      } else {
+        return [tokenAmount, tokenIndex, parsedMinAmount, timestamp];
+      }
+    } else {
+      const parsedMinAmountList = (minAmount as number[]).map((amount) => {
+        return parseUnits(`${amount}`, tokens[tokenIndex]?.decimals);
+      });
+      return [tokenAmount, parsedMinAmountList, timestamp];
+    }
+  };
+
   const handleRemoveLiquidity = async () => {
     try {
       // Fetch latest block's timestamp
@@ -212,25 +274,17 @@ const RemoveSectionStable = () => {
       console.log("timestamp fetched //", blocktimestamp);
 
       console.log("calling removeliquidity method...");
+
+      const args_to_pass = getArgs(
+        removeMethodId,
+        farm?.protocol!,
+        indiTokenId,
+        blocktimestamp
+      );
+      console.log("removal_args_to_pass", args_to_pass);
+
       const txnRes = await removeLiquidity?.({
-        args: [
-          farmAsset0?.address, // tokenA Address
-          farmAsset1?.address, // tokenB Address
-          methodId == 0
-            ? parseUnits(
-                `${
-                  (parseFloat(lpBalance!) *
-                    parseFloat(percentage == "" ? "0" : percentage)) /
-                  100
-                }`,
-                18
-              )
-            : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-          parseUnits(`${minUnderlyingAsset0}`, farmAsset0?.decimals), // amountAMin
-          parseUnits(`${minUnderlyingAsset1}`, farmAsset1?.decimals), // amountBMin
-          address, // to
-          blocktimestamp, // deadline (uint256)
-        ],
+        args: args_to_pass,
       });
       console.log("called removeliquidity method.", txnRes);
     } catch (error) {
@@ -273,23 +327,61 @@ const RemoveSectionStable = () => {
         <div className="text-[#344054] text-left">
           <p className="text-base font-medium leading-5">You receive:</p>
           <div className="flex flex-col space-y-3 mt-3">
-            {farm?.asset.underlyingAssets.map((token, index) => (
-              <div
+            {tokens.map((token, index) => (
+              <button
                 key={index}
-                className="inline-flex items-center space-x-3 rounded-xl bg-[#FAFAFA] px-6 py-3"
+                className={clsx(
+                  "inline-flex items-center space-x-3 hover:-translate-y-1 active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                  removeMethodId == RemoveMethod.INDIVIDUAL &&
+                    indiTokenId == index
+                    ? "border border-[#8F8FFC] bg-[#ECECFF]"
+                    : "bg-[#FAFAFA]"
+                )}
+                onClick={() => {
+                  setRemoveMethodId(RemoveMethod.INDIVIDUAL);
+                  setIndiTokenId(index);
+                }}
               >
                 <Image
-                  src={farm.asset.logos[index]}
+                  src={farm!.asset.logos[index]}
                   alt={token?.address}
                   width={24}
                   height={24}
                   className="rounded-full"
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  40 {token?.symbol}
+                  {token?.symbol}
                 </span>
-              </div>
+              </button>
             ))}
+            <button
+              className={clsx(
+                "mt-3 inline-flex items-center space-x-3 hover:-translate-y-1 active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                removeMethodId == RemoveMethod.ALL
+                  ? "border border-[#8F8FFC] bg-[#ECECFF]"
+                  : "bg-[#FAFAFA]"
+              )}
+              disabled={farm?.protocol.toLowerCase() == "curve"}
+              onClick={() => setRemoveMethodId(RemoveMethod.ALL)}
+            >
+              {tokens.map((token, index) => (
+                <p key={index} className="inline-flex items-center space-x-3">
+                  <Image
+                    src={farm!.asset.logos[index]}
+                    alt={token?.address}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                  <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                    {token?.symbol}
+                  </span>
+                  {index !== tokens.length - 1 && (
+                    <span className="text-lg font-medium leading-5">+</span>
+                  )}
+                </p>
+              ))}
+            </button>
           </div>
         </div>
         {/* Estimate Gas and Slippage Tolerance */}
@@ -345,7 +437,7 @@ const RemoveSectionStable = () => {
           </div>
         </div>
         <div className="flex flex-row mt-6 gap-2">
-          {!isLpApprovedData && !approveLpSuccessTxn && (
+          {!isLpApprovedSuccess && !approveLpSuccessTxn && (
             <MButton
               type="secondary"
               isLoading={approveLpLoading || approveLpLoadingTxn}
@@ -364,9 +456,7 @@ const RemoveSectionStable = () => {
                 parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
               }
               onClick={async () => {
-                const txn = await approveLpToken?.({
-                  args: [farm?.router, BigInt("0")],
-                });
+                const txn = await approveLpToken?.();
                 console.log("Approve0 Result", txn);
               }}
             />
@@ -378,7 +468,7 @@ const RemoveSectionStable = () => {
               (methodId == 0
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
-              !approveLpSuccessTxn ||
+              (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
               parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
             }
             text="Confirm Removing Liquidity"
@@ -410,13 +500,13 @@ const RemoveSectionStable = () => {
         </h3>
         <div className="p-6 border border-[#BEBEBE] rounded-lg">
           <div className="inline-flex gap-x-4">
-            {farm?.asset.underlyingAssets.map((token, index) => (
+            {tokens.map((token, index) => (
               <div
                 key={index}
                 className="inline-flex items-center space-x-3 rounded-xl bg-[#F1F1F1] px-6 py-[14px]"
               >
                 <Image
-                  src={farm.asset.logos[index]}
+                  src={farm!.asset.logos[index]}
                   alt={token?.address}
                   width={24}
                   height={24}
@@ -433,31 +523,6 @@ const RemoveSectionStable = () => {
           isLoading={false}
           text="Confirm Withdrawal"
           onClick={() => {
-            console.log("Remove Liquidity setting args:", {
-              tokenA: farmAsset0?.address, // tokenA Address
-              tokenB: farmAsset1?.address, // tokenB Address
-              liquidity:
-                methodId == 0
-                  ? parseUnits(
-                      `${
-                        (parseFloat(lpBalance!) *
-                          parseFloat(percentage == "" ? "0" : percentage)) /
-                        100
-                      }`,
-                      18
-                    )
-                  : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-              amountAMin: parseUnits(
-                `${minUnderlyingAsset1}`,
-                farmAsset0?.decimals
-              ), // amountAMin, // amountAMin
-              amountBMin: parseUnits(
-                `${minUnderlyingAsset1}`,
-                farmAsset1?.decimals
-              ), // amountAMin, // amountBMin
-              to: address, // to
-              timestamp: "calc at runtime", // deadline (uint256)
-            });
             handleRemoveLiquidity();
             setIsProcessStep(true);
           }}
@@ -596,10 +661,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
             !!lpBal && (
               <div className="flex flex-col items-end">
                 <span>Balance</span>
-                <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
-                </span>
+                <span>{parseFloat(lpBal).toLocaleString("en-US")}</span>
               </div>
             )
           )}

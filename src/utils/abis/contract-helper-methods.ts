@@ -97,6 +97,21 @@ export function getRemoveLiquidFunctionName(protocol: string) {
   }
 }
 
+export const getRemoveLiqStableFunctionName = (
+  removalId: number,
+  protocol: string
+) => {
+  if (removalId === 1) {
+    if (protocol.toLowerCase() == "curve") {
+      return "remove_liquidity_one_coin";
+    } else {
+      return "removeLiquidityOneToken";
+    }
+  } else {
+    return "removeLiquidity";
+  }
+};
+
 export function getClaimRewardsFunctionName(protocol: string) {
   if (!protocol) return "";
   switch (protocol.toLowerCase()) {
