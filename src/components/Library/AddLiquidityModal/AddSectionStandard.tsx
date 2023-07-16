@@ -480,10 +480,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <p className="flex flex-col items-end">
             <span>
-              {(totalSupply !== 0
-                ? (minLpTokens / totalSupply) * 100
+              {(totalSupply !== 0 && minLpTokens > 0
+                ? (minLpTokens / totalSupply) * 100 < 0.001
+                  ? "<0.001"
+                  : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
+              %
             </span>
             <span>Share of pool</span>
           </p>
@@ -704,10 +707,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <p className="flex flex-col items-end">
             <span>
-              {(totalSupply !== 0
-                ? (minLpTokens / totalSupply) * 100
+              {(totalSupply !== 0 && minLpTokens > 0
+                ? (minLpTokens / totalSupply) * 100 < 0.001
+                  ? "<0.001"
+                  : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
+              %
             </span>
             <span>Share of pool</span>
           </p>

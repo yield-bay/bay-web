@@ -30,6 +30,8 @@ import Image from "next/image";
 import useMinLPTokensStable from "@hooks/useMinLPTokensStable";
 import useStableAmounts from "./useStableAmounts";
 import toUnits from "@utils/toUnits";
+import useTotalSupply from "@hooks/useTotalSupply";
+import { estimateContractGas } from "viem/dist/types/actions/public/estimateContractGas";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -55,6 +57,8 @@ const AddSectionStable: FC = () => {
   const [inputMapAmount, setInputMapAmount] = useState<{
     [address: `0x${string}`]: number;
   }>({});
+
+  const totalSupply = useTotalSupply(farm?.asset.address!, farm?.protocol!);
 
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
@@ -203,13 +207,21 @@ const AddSectionStable: FC = () => {
         ))}
 
         {/* Relative Conversion and Share of Pool */}
-        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          <div className="flex flex-col gap-y-2">
+        <div className="p-3 flex flex-row w-full justify-end text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
+          {/* <div className="flex flex-col gap-y-2">
             <p>0.1234 GLMR per STELLA</p>
             <p>0.1234 STELLA per GLMR</p>
-          </div>
+          </div> */}
           <p className="flex flex-col items-end">
-            <span>{"<0.001%"}</span>
+            <span>
+              {(totalSupply !== 0 && estLpAmount > 0
+                ? (estLpAmount / totalSupply) * 100 < 0.001
+                  ? "<0.001"
+                  : (estLpAmount / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")}
+              %
+            </span>
             <span>Share of pool</span>
           </p>
         </div>
@@ -343,22 +355,30 @@ const AddSectionStable: FC = () => {
           </div>
           <p>{farm?.asset.symbol} Tokens</p>
         </div>
-        <div className="inline-flex justify-between text-sm font-bold">
+        {/* <div className="inline-flex justify-between text-sm font-bold">
           <span className="text-[#0B0B0B]">Rates</span>
           <p className="flex flex-col gap-y-2 text-[#282929]">
             <span>1 STELLA = 0.1235 GLMR</span>
             <span>1 GLMR = 7.0389 STELLA</span>
           </p>
-        </div>
+        </div> */}
         <hr className="border-t border-[#E3E3E3] min-w-full" />
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          <div className="flex flex-col gap-y-2">
+          {/* <div className="flex flex-col gap-y-2">
             <p>0.1234 GLMR per STELLA</p>
             <p>0.1234 STELLA per GLMR</p>
-          </div>
+          </div> */}
           <p className="flex flex-col items-end">
-            <span>{"<0.001%"}</span>
+            <span>
+              {(totalSupply !== 0 && estLpAmount > 0
+                ? (estLpAmount / totalSupply) * 100 < 0.001
+                  ? "<0.001"
+                  : (estLpAmount / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")}
+              %
+            </span>
             <span>Share of pool</span>
           </p>
         </div>

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { parseAbi } from "viem";
-import { useToken, useContractRead } from "wagmi";
+import { useContractRead } from "wagmi";
 import { lpAbi } from "@components/Common/Layout/evmUtils";
 
 const useMinimumLPTokens = (
@@ -24,13 +24,8 @@ const useMinimumLPTokens = (
     enabled: !!pair,
   });
 
-  const { data: tokenInfo } = useToken({
-    address: pair,
-    enabled: !!pair,
-  });
-
   const minLpToken = useMemo(() => {
-    if (!totalSupply || !tokenInfo) return BigInt(0);
+    if (!totalSupply) return BigInt(0);
 
     const _totalSupply = BigInt(Number(totalSupply));
 
@@ -41,11 +36,11 @@ const useMinimumLPTokens = (
 
     // `slippage` should be a number between 0 & 100.
     return (minLP * BigInt(Math.floor(100 - slippage))) / BigInt(100);
-  }, [totalSupply, tokenInfo, reserve0, reserve1, amount0, amount1, slippage]);
+  }, [totalSupply, reserve0, reserve1, amount0, amount1, slippage]);
 
   return {
     minLpTokens: Number(minLpToken),
-    totalSupply: Number(totalSupply) / 10 ** tokenInfo?.decimals!,
+    totalSupply: Number(totalSupply) / 10 ** 18,
   };
 };
 

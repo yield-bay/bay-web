@@ -58,21 +58,21 @@ const TokenInput: React.FC<TokenInputProps> = ({
           }}
         />
         <div className="inline-flex items-center gap-x-2">
-          <p className="flex flex-col items-end text-sm leading-5 opacity-50">
+          <div className="flex flex-col items-end text-sm leading-5 opacity-50">
             {balanceLoading ? (
               <span>loading...</span>
             ) : (
               !!balance && (
-                <div className="flex flex-col items-end">
+                <p className="flex flex-col items-end">
                   <span>Balance</span>
                   <span>
                     {parseFloat(balance?.formatted).toLocaleString("en-US")}{" "}
                     {balance?.symbol}
                   </span>
-                </div>
+                </p>
               )
             )}
-          </p>
+          </div>
           <button
             className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
             onClick={() => {
