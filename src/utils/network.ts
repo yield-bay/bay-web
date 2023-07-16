@@ -67,3 +67,31 @@ export const getSupportedChains = () => {
     },
   ];
 };
+
+export const getNativeTokenAddress = (
+  network: string
+): { tokenSymbol: string; tokenAddress: `0x${string}` } => {
+  const chain = network.toLowerCase();
+  switch (chain) {
+    case "moonbeam": // GLMR
+      return {
+        tokenSymbol: "WGLMR",
+        tokenAddress: "0xAcc15dC74880C9944775448304B263D191c6077F",
+      };
+    case "moonriver": // MOVR
+      return {
+        tokenSymbol: "WMOVR",
+        tokenAddress: "0x98878B06940aE243284CA214f92Bb71a2b032B8A", // MOVR,
+      };
+    case "astar": // ASTR
+      return {
+        tokenSymbol: "WASTR",
+        tokenAddress: "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720", // MOVR,
+      };
+    default:
+      return {
+        tokenSymbol: "WASTR",
+        tokenAddress: "0xAeaaf0e2c81Af264101B9129C00F4440cCF0F720", // MOVR,
+      };
+  }
+};

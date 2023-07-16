@@ -4,7 +4,11 @@ import Footer from "@components/Common/Footer";
 import Header from "@components/Common/Header";
 import { satoshiFont } from "@utils/localFont";
 import { useAtom } from "jotai";
-import { positionsAtom } from "@store/atoms";
+import {
+  lpTokenPricesAtom,
+  positionsAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";
 import { FarmType, TokenPriceType } from "@utils/types";
 import {
@@ -67,6 +71,7 @@ const Layout: FC<Props> = ({ children }) => {
   const [claimModalOpen] = useAtom(claimModalOpenAtom);
 
   useEffect(() => {
+    // check internet connection and redirect to 500 page if not connected
     if (!isOnline) {
       router.push("/500");
     }
@@ -74,12 +79,8 @@ const Layout: FC<Props> = ({ children }) => {
 
   // States
   const [positions, setPositions] = useAtom(positionsAtom);
-  const [lpTokenPricesMap, setLpTokenPricesMap] = useState<{
-    [key: string]: number;
-  }>({});
-  const [tokenPricesMap, setTokenPricesMap] = useState<{
-    [key: string]: number;
-  }>({});
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [tokenPricesMap, setTokenPricesMap] = useAtom(tokenPricesAtom);
 
   useEffect(() => {
     console.log("---- Updated Positions ----\n", positions);
@@ -171,6 +172,14 @@ const Layout: FC<Props> = ({ children }) => {
       setTokenPricesMap(tokenPricesMap);
     }
   }, [isTPricesLoading]);
+
+  useEffect(() => {
+    console.log("lpTokenPrices useeffect", lpTokenPricesMap);
+  }, [lpTokenPricesMap]);
+
+  useEffect(() => {
+    console.log("tokenPrices useeffect", tokenPricesMap);
+  }, [tokenPricesMap]);
 
   /**
    * Substrate Chains Setup
@@ -440,9 +449,6 @@ const Layout: FC<Props> = ({ children }) => {
                   tokenPricesMap[
                     `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ]
-                  // tokenPricesMap[
-                  //   `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                  // ]
                 );
                 ucrews.push({
                   token: ucrewSymbols[i],

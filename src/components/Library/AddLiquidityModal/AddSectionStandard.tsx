@@ -11,13 +11,14 @@ import {
   useContractWrite,
   useWaitForTransaction,
   usePublicClient,
+  useToken,
 } from "wagmi";
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
 import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
-import { selectedFarmAtom, slippageAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import {
   getAddLiqFunctionName,
   getRouterAbi,
@@ -30,6 +31,8 @@ import useMinimumLPTokens from "@hooks/useMinLPTokens";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import Link from "next/link";
+import useGasEstimation from "@hooks/useGasEstimation";
+import { getNativeTokenAddress } from "@utils/network";
 
 enum InputType {
   Off = -1,
@@ -43,6 +46,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [txnHash, setTxnHash] = useState<string>("");
 
@@ -69,6 +73,21 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
+
+  const { data: tokenInfo } = useToken({
+    address: selectedFarm?.asset.address!,
+    chainId: chain?.id!,
+    enabled: !!chain && !!selectedFarm,
+  });
+
+  // Gas estimate
+  const { gasEstimate } = useGasEstimation(
+    address!,
+    SLIPPAGE,
+    selectedFarm!,
+    parseFloat(firstTokenAmount == "" ? "0" : firstTokenAmount),
+    parseFloat(secondTokenAmount == "" ? "0" : secondTokenAmount)
+  );
 
   const { reserve0, reserve1 } = useTokenReserves(
     selectedFarm?.asset.address!,
@@ -105,8 +124,26 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     chainId: chain?.id,
     enabled: !!address,
   });
+  const [nativePrice, setNativePrice] = useState<number>(0);
 
-  const GAS_FEES = 0.0014; // In STELLA
+  useEffect(() => {
+    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(
+      selectedFarm?.chain!
+    );
+    const tokenPrice =
+      tokenPricesMap[
+        `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+      ];
+    console.log(
+      "tokenkey",
+      `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    );
+    console.log("token", tokenPrice);
+    if (!!tokenPrice && typeof tokenPrice == "number") {
+      console.log("...setting tokenprice", tokenPrice);
+      setNativePrice(tokenPrice);
+    }
+  }, [selectedFarm, tokenPricesMap]);
 
   // Balance Token0
   const { data: token0Balance, isLoading: token0BalanceLoading } = useBalance({
@@ -334,7 +371,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             autoFocus={focusedInput === InputType.First}
           />
           <div className="inline-flex items-center gap-x-2">
-            <p className="flex flex-col items-end text-sm leading-5 opacity-50">
+            <div className="flex flex-col items-end text-sm leading-5 opacity-50">
               {token0BalanceLoading ? (
                 <span>loading...</span>
               ) : (
@@ -350,7 +387,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   </div>
                 )
               )}
-            </p>
+            </div>
             <button
               className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
               onClick={() => {
@@ -456,7 +493,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         <div
           className={clsx(
             "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
               ? "bg-[#C0F9C9]"
               : "bg-[#FFB7B7]"
           )}
@@ -464,20 +501,20 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "bg-[#ECFFEF]"
                 : "bg-[#FFE8E8]"
             )}
           >
-            {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
-              <p>
+              <p className="inline-flex">
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} STELLA
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
                 </span>
-                <span>$1234</span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
               </p>
-            </div> */}
+            </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
@@ -492,7 +529,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "Sufficient"
                 : "Insufficient"}{" "}
               Wallet Balance
@@ -531,7 +568,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     approveToken0Loading ||
                     approveToken0TxnLoading ||
                     typeof approveToken0 == "undefined" ||
-                    parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+                    parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
                   }
                   onClick={async () => {
                     try {
@@ -561,7 +598,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       approveToken1Loading ||
                       approveToken1TxnLoading ||
                       typeof approveToken1 == "undefined" ||
-                      parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+                      parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
                     }
                     onClick={async () => {
                       const txn = await approveToken1?.();
@@ -577,7 +614,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   secondTokenAmount == "" ||
                   (parseFloat(firstTokenAmount) <= 0 &&
                     parseFloat(secondTokenAmount) <= 0) ||
-                  parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+                  parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
                 }
                 text="Confirm Adding Liquidity"
                 onClick={() => {

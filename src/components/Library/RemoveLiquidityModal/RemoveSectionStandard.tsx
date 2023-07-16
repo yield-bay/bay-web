@@ -171,11 +171,11 @@ const RemoveSectionStandard = () => {
     hash: removeLiqData?.hash,
   });
 
-  useEffect(() => {
-    if (!isLpApprovedLoading) {
-      console.log("isTokenLpApproved", !!Number(isLpApprovedData));
-    }
-  }, [isLpApprovedLoading]);
+  // useEffect(() => {
+  //   if (!isLpApprovedLoading) {
+  //     console.log("isTokenLpApproved", !!Number(isLpApprovedData));
+  //   }
+  // }, [isLpApprovedLoading]);
 
   useEffect(() => {
     if (isLoadingRemoveLiqTxn) {
