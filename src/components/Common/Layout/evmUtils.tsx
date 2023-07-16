@@ -79,7 +79,43 @@ export const chains = [
       {
         name: "sirius",
         chef: "0xdCfFa5a92ef31DCc8979Ab44A0406859d7763c45",
-      }
+      },
+      {
+        name: "sirius",
+        chef: "0xCfd15008Df89D961611071BfC36e220204E9A3a8",
+      },
+      {
+        name: "sirius",
+        chef: "0xe1762b802Cf306C60b0C2C1af991646eFc8B5C6b",
+      },
+      {
+        name: "sirius",
+        chef: "0x8dBcd190e325d141E7698f0791792FFBb310A10e",
+      },
+      {
+        name: "sirius",
+        chef: "0x9e56b431AA4Bc8B8D04057977e3606A9110E479f",
+      },
+      {
+        name: "sirius",
+        chef: "0x5FF4735274b0C7ADf7de52768645aA08AE4bcB20",
+      },
+      {
+        name: "sirius",
+        chef: "0x7f2fbBa3dd14Ef24aFA22E92796791D9a38bFBE0",
+      },
+      {
+        name: "sirius",
+        chef: "0xa6B91ddDca40137B9442b4aD7076bF319eacC59E",
+      },
+      {
+        name: "sirius",
+        chef: "0xBbabf2184FbC4DFB17207E74cdB6B1587Dc158a4",
+      },
+      {
+        name: "sirius",
+        chef: "0x941e9BEF5b558D7Ca97aBC98e0664E804A9C4B7b",
+      },
     ],
   },
 ];
