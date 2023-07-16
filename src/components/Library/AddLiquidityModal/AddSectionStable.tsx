@@ -169,7 +169,7 @@ const AddSectionStable: FC = () => {
         farm?.protocol.toLowerCase() == "curve"
           ? [
               amounts, // amounts (uint256[])
-              1, // minToMint (uint256)
+              parseUnits(`${(estLpAmount * (100 - SLIPPAGE)) / 100}`, 18), // minToMint (uint256)
             ]
           : [
               amounts, // amounts (uint256[])
