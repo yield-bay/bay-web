@@ -76,6 +76,10 @@ export const chains = [
         name: "arthswap",
         chef: "0xc5b016c5597D298Fe9eD22922CE290A048aA5B75",
       },
+      {
+        name: "sirius",
+        chef: "0xdCfFa5a92ef31DCc8979Ab44A0406859d7763c45",
+      }
     ],
   },
 ];
@@ -167,28 +171,23 @@ export const arthswapChefAbi = [
   "function harvest(uint256, address) external",
 ];
 
+// LiquidityGauge - sirius
 export const siriusChefAbi = [
-  "function lpToken() view returns (address)",
-  "function name() view returns (string)",
-  "function owner() view returns (address)",
-  "function decimals() view returns (uint8)",
-  "function symbol() view returns (string)",
-  "function totalSupply() view returns (uint256)",
+  // "function name() external view returns (string)",
+  // "function owner() external view returns (address)",
+  // "function decimals() external view returns (uint8)",
+  // "function symbol() external view returns (string)",
+  // "function totalSupply() external view returns (uint256)",
 
-  "function balanceOf(address account) view returns (uint256)",
-  "function claimableTokens(address _addr) view returns (uint256)",
-  "function claimableReward(address _user, address _rewardToken) view returns (uint256)",
+  "function lpToken() external view returns (address)",
+  "function claimableTokens(address) external view returns (uint256)",
+  "function claimableReward(address, address) external view returns (uint256)",
+  "function rewardCount() external view returns (uint256)",
+  "function rewardTokens(uint256) external view returns (address)",
+  "function balanceOf(address) external view returns (uint256)",
   "function deposit(uint256, address, bool) external",
   "function withdraw(uint256, bool) external",
   "function claimRewards(address, address) external",
-];
-
-export const solarbeamRouterAbi = [
-  "function addLiquidity(address, address, uint256, uint256, uint256, uint256, address, uint256) external returns (uint256, uint256, uint256)",
-  "function removeLiquidity(address, address, uint256, uint256, uint256, address, uint256) external returns (uint256, uint256)",
-  "function removeLiquidityOneToken(uint256, uint8, uint256, uint256) external returns (uint256)",
-  "function calculateRemoveLiquidity(uint256) external view returns (uint256[])",
-  "function getTokens() external view returns (address[])",
 ];
 
 // standard router for stellaswap, solarbeam, solarflare, beamswap, sushiswap, arthswap, zenlink
@@ -219,6 +218,17 @@ export const curveLpAbi = [
 // stable router for stellaswap, solarbeam, zenlink (4pool). (no stable farms for beamswap, sushiswap, solarflare, arthswap)
 export const swapFlashLoanAbi = [
   "function getTokens() external view returns (address[])",
+  "function calculateTokenAmount(uint256[], bool) external view returns (uint256)",
+  "function calculateRemoveLiquidity(uint256) external view returns (uint256[])",
+  "function calculateRemoveLiquidityOneToken(uint256, uint8) external view returns (uint256)",
+  "function addLiquidity(uint256[], uint256, uint256) external returns (uint256)",
+  "function removeLiquidity(uint256, uint256[], uint256) external returns (uint256[])",
+  "function removeLiquidityOneToken(uint256, uint8, uint256, uint256) external returns (uint256)",
+];
+
+// metaSwap - sirius router
+export const siriusRouterAbi = [
+  "function getToken(uint8) external view returns (address)",
   "function calculateTokenAmount(uint256[], bool) external view returns (uint256)",
   "function calculateRemoveLiquidity(uint256) external view returns (uint256[])",
   "function calculateRemoveLiquidityOneToken(uint256, uint8) external view returns (uint256)",
