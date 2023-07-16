@@ -282,7 +282,7 @@ const AddSectionStable: FC = () => {
             type="primary"
             isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
             disabled={
-              Object.keys(approvalMap).length !== tokens.length ||
+              // Object.keys(approvalMap).length !== tokens.length ||
               typeof addLiquidity == "undefined" ||
               isLoadingAddLiqCall ||
               isLoadingAddLiqTxn
