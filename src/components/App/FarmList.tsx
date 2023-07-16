@@ -14,7 +14,7 @@ import {
   checkIfPoolSupported,
 } from "@utils/farmListMethods";
 import { FarmType } from "@utils/types";
-import { dotAccountAtom, isConnectedDotAtom } from "@store/accountAtoms";
+import { isConnectedDotAtom } from "@store/accountAtoms";
 
 // Component Imports
 import Button from "@components/Library/Button";
@@ -25,6 +25,7 @@ import Rewards from "@components/Library/Rewards";
 import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
 import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
+import SelectLiquidityModal from "@components/Library/LiquidityMenu";
 
 interface Props {
   farms: FarmType[];
@@ -52,6 +53,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
         const currentPosition =
           position?.unstaked.amountUSD + position?.staked.amountUSD ??
           undefined;
+        const isSupported = checkIfPoolSupported(farm);
 
         return (
           <tr
@@ -68,10 +70,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                     alt="supported farm"
                     height={20}
                     width={20}
-                    className={clsx(
-                      "mr-2",
-                      !checkIfPoolSupported(farm) && "saturate-0"
-                    )}
+                    className={clsx("mr-2", !isSupported && "saturate-0")}
                   />
                 </div>
                 <div className="text-[#101828] font-medium text-sm leading-5">
@@ -182,16 +181,23 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
               )}
             </td>
             <td className="whitespace-nowrap max-w-[288px] py-4 pr-0 md:pr-6 xl:pr-12 text-right text-sm font-medium rounded-br-xl">
-              <div className="flex flex-row gap-x-6 items-center justify-start lg:justify-end">
+              <div className="flex flex-row gap-x-5 items-center justify-start lg:justify-end">
                 <ShareFarm farm={farm} />
-                <Button
-                  size="large"
-                  onButtonClick={() => {
-                    router.push(`/farm/${farm.id}/?addr=${farm.asset.address}`);
-                  }}
-                >
-                  View Farm
-                </Button>
+                <div className="inline-flex items-center gap-x-2">
+                  {isSupported && (
+                    <SelectLiquidityModal farm={farm} position={position} />
+                  )}
+                  <Button
+                    size="large"
+                    onButtonClick={() => {
+                      router.push(
+                        `/farm/${farm.id}/?addr=${farm.asset.address}`
+                      );
+                    }}
+                  >
+                    View Farm
+                  </Button>
+                </div>
               </div>
             </td>
           </tr>

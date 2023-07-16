@@ -86,7 +86,6 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
       <Menu.Button className="p-3 cursor-pointer transition-all duration-200">
         <Image src="/icons/ShareIcon.svg" alt="share" height={24} width={24} />
       </Menu.Button>
-
       <Transition
         as={Fragment}
         enter="transition ease-out duration-100"
@@ -96,7 +95,7 @@ const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="z-20 origin-top-left absolute left-0 mt-2 min-w-[240px] rounded-lg shadow-lg bg-white ring-1 ring-[#EAECF0] divide-y text-sm font-medium leading-5 divide-[#EAECF0] focus:outline-none">
+        <Menu.Items className="z-20 origin-top-right absolute right-0 mt-2 w-60 rounded-lg shadow-lg bg-white ring-1 ring-[#EAECF0] divide-y text-sm font-medium leading-5 divide-[#EAECF0] focus:outline-none">
           <Menu.Item>
             {({ active }) => (
               <button
