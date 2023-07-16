@@ -29,6 +29,7 @@ import Link from "next/link";
 import Image from "next/image";
 import useMinLPTokensStable from "@hooks/useMinLPTokensStable";
 import useStableAmounts from "./useStableAmounts";
+import toUnits from "@utils/toUnits";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -282,23 +283,13 @@ const AddSectionStable: FC = () => {
             type="primary"
             isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
             disabled={
-              // Object.keys(approvalMap).length !== tokens.length ||
+              Object.keys(approvalMap).length !== tokens.length ||
               typeof addLiquidity == "undefined" ||
-              isLoadingAddLiqCall ||
-              isLoadingAddLiqTxn
+              amounts.length < 1
             }
             text={isLoadingAddLiqCall ? "Processing..." : "Confirm"}
-            onClick={async () => {
-              if (amounts.length < 1) {
-                console.log("Atleast one token amount is required!");
-              } else {
-                console.log("addLiquidity @args", {
-                  amounts: amounts,
-                  minToMint: 1,
-                  deadline: "Calc at runtime",
-                });
-                handleAddLiquidity();
-              }
+            onClick={() => {
+              setIsConfirmStep(true);
             }}
           />
         </div>
@@ -332,7 +323,7 @@ const AddSectionStable: FC = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{10100}</span>
+            <span>{toUnits(estLpAmount, 3)}</span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={farm?.asset.logos[0] as string}
@@ -350,7 +341,7 @@ const AddSectionStable: FC = () => {
               />
             </div>
           </div>
-          <p>{farm?.asset.symbol} Pool Tokens</p>
+          <p>{farm?.asset.symbol} Tokens</p>
         </div>
         <div className="inline-flex justify-between text-sm font-bold">
           <span className="text-[#0B0B0B]">Rates</span>
@@ -422,9 +413,19 @@ const AddSectionStable: FC = () => {
         ) : !isErrorAddLiqTxn && !isErrorAddLiqCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">
-              {/* Supplying {firstTokenAmount} {farmAsset0?.symbol} and{" "}
-              {secondTokenAmount} {farmAsset1?.symbol} */}
+            <h2 className="inline-flex items-center gap-x-1 text-xl">
+              <p>Supplying</p>
+              <p>
+                {amounts.map((amount, index) => (
+                  <span key={index}>
+                    {toUnits(Number(amount) / 10 ** tokens[index]?.decimals, 3)}{" "}
+                    {tokens[index]?.symbol}{" "}
+                    {index !== tokens.length - 1 && (
+                      <span className="mr-1">and</span>
+                    )}
+                  </span>
+                ))}
+              </p>
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
