@@ -204,6 +204,7 @@ export const standardRouterAbi = [
 
 // router and lp for curve
 export const curveLpAbi = [
+  "function coins(uint256) external view returns (address)",
   "function allowance(address, address) external view returns (uint256)",
   "function get_balances() external view returns (uint256, uint256)",
   "function totalSupply() external view returns (uint256)",
