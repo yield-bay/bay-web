@@ -1501,7 +1501,7 @@ const Layout: FC<Props> = ({ children }) => {
           );
           allPromises.push(...solar);
           // });
-        } else if (protocol.name == "sirius") {// && protocol.chef == "0xdCfFa5a92ef31DCc8979Ab44A0406859d7763c45") {
+        } else if (protocol.name == "sirius") {
           let chef = new ethers.Contract(
             protocol.chef,
             siriusChefAbi,
@@ -1639,7 +1639,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after curve positions", positions);
             }
           );
-          allPromises.push(...cur);
+          allPromises.push(...sir);
         }
       });
     });
