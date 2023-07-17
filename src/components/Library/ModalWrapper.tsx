@@ -1,14 +1,17 @@
 import { Fragment, ReactNode, FC } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
+import clsx from "clsx";
+import { ModalType } from "@utils/types";
 
 interface Props {
   open: boolean;
   setOpen: (value: boolean) => void;
   children: ReactNode | ReactNode[];
+  type: ModalType;
 }
 
-const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
+const ModalWrapper: FC<Props> = ({ open, setOpen, children, type }) => {
   return (
     <Transition
       appear
@@ -44,8 +47,17 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-6 align-middle shadow transform transition-all bg-liquidity-modal">
-                <div className="absolute top-0 right-0 pt-6 pr-9">
+              <Dialog.Panel
+                className={clsx(
+                  "flex flex-col gap-y-6 w-full max-w-[600px] font-inter font-medium text-xl leading-5 bg-white text-[#101828] rounded-lg p-6 align-middle shadow transform transition-all",
+                  type === ModalType.BLUE
+                    ? "bg-liquidity-blue"
+                    : type === ModalType.RED
+                    ? "bg-liquidity-red"
+                    : ""
+                )}
+              >
+                {/* <div className="absolute top-0 right-0 pt-6 pr-9">
                   <div className="flex items-center rounded-full p-1 hover:bg-gray-100 transition-all duration-200">
                     <button
                       type="button"
@@ -56,7 +68,7 @@ const ModalWrapper: FC<Props> = ({ open, setOpen, children }) => {
                       <XIcon className="w-6 h-6" aria-hidden="true" />
                     </button>
                   </div>
-                </div>
+                </div> */}
                 {children}
               </Dialog.Panel>
             </Transition.Child>

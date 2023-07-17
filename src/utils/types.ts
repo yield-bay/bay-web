@@ -110,3 +110,9 @@ export interface WalletConnectEventType {
   walletProvider: string;
   timestamp: string;
 }
+
+export enum ModalType {
+  DEFAULT = "default",
+  BLUE = "blue",
+  RED = "red",
+}

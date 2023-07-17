@@ -52,7 +52,9 @@ module.exports = {
         "linear-gradient(224.04deg, #36364D -48.59%, rgba(54, 54, 77, 0) 105.16%)",
       "rewards-card":
         "linear-gradient(172.15deg, #6DA695 -104.57%, rgba(54, 54, 77, 0) 261.47%);",
-      "liquidity-modal":
+      "liquidity-red":
+        "radial-gradient(298.23% 157.58% at -22.67% -89.82%, #D08181 0%, #FFF 100%);",
+      "liquidity-blue":
         "radial-gradient(183.00% 161.70% at -17.83% -110.99%, #8181D0 0%, #FFF 100%);",
     },
   },

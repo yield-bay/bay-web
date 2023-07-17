@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import MButton from "./MButton";
 import Tooltip from "./Tooltip";
+import { ModalType } from "@utils/types";
 
 const SlippageModal = () => {
   const [isOpen, setIsOpen] = useAtom(slippageModalOpenAtom);
@@ -25,7 +26,7 @@ const SlippageModal = () => {
   };
 
   return (
-    <ModalWrapper open={isOpen} setOpen={setIsOpen}>
+    <ModalWrapper open={isOpen} setOpen={setIsOpen} type={ModalType.BLUE}>
       <div className="inline-flex items-center justify-start gap-x-4 text-base leading-5 text-[#1D2939]">
         <button
           className="max-w-fit hover:translate-x-1 active:-translate-x-0 transition-all duration-200 ease-in-out"

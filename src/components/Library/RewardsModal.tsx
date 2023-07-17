@@ -5,7 +5,11 @@ import {
   formatTokenSymbols,
   getLpTokenSymbol,
 } from "@utils/farmListMethods";
-import { PortfolioPositionType, UnclaimedRewardType } from "@utils/types";
+import {
+  ModalType,
+  PortfolioPositionType,
+  UnclaimedRewardType,
+} from "@utils/types";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { claimModalOpenAtom } from "@store/commonAtoms";
@@ -21,7 +25,7 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
   const [, setOpenClaimRewardsModal] = useAtom(claimModalOpenAtom);
   const [, setSelectedPosition] = useAtom(selectedPositionAtom);
   return (
-    <ModalWrapper open={open} setOpen={setOpen}>
+    <ModalWrapper open={open} setOpen={setOpen} type={ModalType.DEFAULT}>
       <div className="flex flex-col items-center gap-y-4 mx-auto">
         <Image
           src="/icons/RewardsIcon.svg"
