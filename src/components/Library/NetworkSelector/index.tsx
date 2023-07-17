@@ -1,66 +1,74 @@
-import type { FC } from "react";
-import { ChevronDownIcon } from "@heroicons/react/outline";
-import { Popover } from "@headlessui/react";
-import { useConnect, useNetwork, useSwitchNetwork } from "wagmi";
+import { Menu, Transition } from "@headlessui/react";
+import { FC, Fragment, memo } from "react";
+import Image from "next/image";
 import clsx from "clsx";
+import { useNetwork, useSwitchNetwork } from "wagmi";
 import { getSupportedChains } from "@utils/network";
-import ClientOnly from "@components/Common/ClientOnly";
+import { formatFirstLetter } from "@utils/farmListMethods";
 
-export const NetworkSelector: FC = () => {
+const NetworkSelector: FC = () => {
   const { chain: evmChain } = useNetwork();
-  const { pendingConnector } = useConnect();
   const { switchNetwork } = useSwitchNetwork();
-
-  const panel = (
-    <Popover.Panel className="flex flex-col w-full sm:w-[320px] fixed bottom-0 left-0 right-0 sm:absolute sm:bottom-[unset] sm:left-[unset] mt-4 sm:rounded-xl rounded-b-none shadow-sm overflow-hidden shadow-black/[0.3] bg-white dark:bg-slate-800 border border-slate-500/20 dark:border-slate-200/20">
-      <div className="text-white p-2 border-b border-b-gray-600 bg-white bg-opacity-10">
-        Select Chain
-      </div>
-      <div className="p-2 max-h-[300px] scroll">
-        {getSupportedChains().map((chain) => (
-          <div
-            onClick={() => {
-              switchNetwork?.(chain.id);
-            }}
-            key={chain.id}
-            className="hover:bg-gray-200 hover:dark:bg-slate-700 px-2 h-[40px] flex rounded-lg gap-2 items-center cursor-pointer transform-all"
-          >
-            <div className="flex items-center gap-2">
-              <p className="text-gray-700 dark:text-slate-300">{chain?.name}</p>
-            </div>
-            {!!evmChain && evmChain.id == chain.id && (
-              <div className="w-2 h-2 mr-1 rounded-full bg-green-500" />
-            )}
-          </div>
-        ))}
-      </div>
-    </Popover.Panel>
-  );
-
   return (
-    <Popover className="relative">
-      {({ open }) => {
-        return (
-          <ClientOnly>
-            <Popover.Button
-              className={clsx(
-                "flex items-center gap-1 md:gap-2 !bg-black/[0.04] dark:!bg-white/[0.04] hover:!bg-black/[0.08] hover:!dark:bg-white/[0.08] hover:text-black hover:dark:text-white h-[38px] rounded-xl px-2 !font-semibold !text-sm text-slate-800 dark:text-slate-200"
-              )}
-            >
-              <div className="hidden sm:block">{evmChain?.name}</div>
-              <ChevronDownIcon
-                width={20}
-                height={20}
+    <Menu
+      as="div"
+      className="relative w-full sm:w-fit inline-block text-left text-[#344054]"
+    >
+      <Menu.Button className="flex flex-row justify-center sm:justify-start items-center gap-x-2 font-semibold bg-[#36364D] rounded-lg p-3 px-4 sm:py-[10px] sm:px-4 focus:outline-none transition-all duration-300">
+        <Image
+          src={`/icons/${evmChain?.name.toLowerCase()}.svg`}
+          alt={`${evmChain?.name}`}
+          height={24}
+          width={24}
+        />
+        {/* <div className="hidden sm:block">{evmChain?.name}</div> */}
+        <Image
+          src="/icons/ArrowsLeftRight.svg"
+          width={20}
+          height={20}
+          alt="Network"
+        />
+      </Menu.Button>
+      <Transition
+        as={Fragment}
+        // show={show}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Menu.Items className="absolute z-20 flex flex-col w-full overflow-hidden sm:w-60 -right-px top-14 sm:top-12 origin-top-right rounded-lg bg-white text-[##344054] border border-[#EAECF0] font-medium text-sm leading-5 focus:outline-none">
+          <div className="px-4 bg-white text-[#7E899C] text-[11px] font-medium leading-4 pt-3 pb-2 text-left">
+            <span>Select Chain</span>
+          </div>
+          {getSupportedChains().map((chain) => (
+            <Menu.Item key={chain.id}>
+              <button
+                onClick={() => {
+                  switchNetwork?.(chain.id);
+                }}
+                key={chain.id}
                 className={clsx(
-                  open ? "rotate-180" : "rotate-0",
-                  "transition-transform"
+                  "inline-flex items-center p-4 gap-x-2",
+                  evmChain?.id == chain.id && "bg-[#EBEBEC]"
                 )}
-              />
-            </Popover.Button>
-            {panel}
-          </ClientOnly>
-        );
-      }}
-    </Popover>
+              >
+                <Image
+                  src={`/icons/${chain?.name.toLowerCase()}.svg`}
+                  alt={`${chain?.name}`}
+                  height={24}
+                  width={24}
+                />
+                <p>{formatFirstLetter(chain?.name)}</p>
+              </button>
+            </Menu.Item>
+          ))}
+        </Menu.Items>
+      </Transition>
+    </Menu>
   );
 };
+
+export default memo(NetworkSelector);

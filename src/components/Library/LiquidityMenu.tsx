@@ -12,7 +12,6 @@ import {
 import { useAtom } from "jotai";
 import { selectedFarmAtom } from "@store/atoms";
 import { FarmType } from "@utils/types";
-import Tooltip from "./Tooltip";
 
 interface Props {
   farm: FarmType;

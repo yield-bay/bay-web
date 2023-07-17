@@ -7,13 +7,15 @@ import ConnectWallet from "@components/Library/ConnectWallet";
 import { MenuIcon } from "@heroicons/react/outline";
 import useScreenSize from "@hooks/useScreenSize";
 import MobileMenu from "./MobileMenu";
-import { NetworkSelector } from "@components/Library/NetworkSelector";
-import BalanceBar from "@components/Library/BalanceBar";
+import NetworkSelector from "@components/Library/NetworkSelector";
+// import BalanceBar from "@components/Library/BalanceBar";
+import { useNetwork } from "wagmi";
 
 export default function Header() {
   const router = useRouter();
   const [currentPath, setCurrentPath] = useState("");
   const screenSize = useScreenSize();
+  const { chain } = useNetwork();
 
   useEffect(() => {
     setCurrentPath(router.asPath);
@@ -77,8 +79,8 @@ export default function Header() {
               </Link>
             </div>
             <div className="inline-flex items-center gap-x-2">
-              <BalanceBar />
-              <NetworkSelector />
+              {/* <BalanceBar /> */}
+              {!!chain && <NetworkSelector />}
               <div className="hidden sm:inline-flex items-center gap-x-4">
                 <ConnectWallet />
               </div>
