@@ -11,7 +11,7 @@ import {
   useContractWrite,
   useWaitForTransaction,
   usePublicClient,
-  useToken,
+  // useToken,
 } from "wagmi";
 
 // Component, Util and Hook Imports
@@ -34,6 +34,7 @@ import { CogIcon } from "@heroicons/react/solid";
 import Link from "next/link";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 enum InputType {
   Off = -1,
@@ -42,11 +43,15 @@ enum InputType {
 }
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+  const publicClient = usePublicClient();
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [selectedFarm] = useAtom(selectedFarmAtom);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
+
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [txnHash, setTxnHash] = useState<string>("");
@@ -55,10 +60,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [focusedInput, setFocusedInput] = useState<InputType>(InputType.First);
   const firstInputRef = useRef<HTMLInputElement>(null);
   const secondInputRef = useRef<HTMLInputElement>(null);
-
-  const { address } = useAccount();
-  const { chain } = useNetwork();
-  const publicClient = usePublicClient();
 
   const [farmAsset0, farmAsset1] =
     selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
@@ -75,11 +76,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
 
-  const { data: tokenInfo } = useToken({
-    address: selectedFarm?.asset.address!,
-    chainId: chain?.id!,
-    enabled: !!chain && !!selectedFarm,
-  });
+  // const { data: tokenInfo } = useToken({
+  //   address: selectedFarm?.asset.address!,
+  //   chainId: chain?.id!,
+  //   enabled: !!chain && !!selectedFarm,
+  // });
 
   // Gas estimate
   const { gasEstimate } = useGasEstimation(
@@ -525,7 +526,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         <div
           className={clsx(
             "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+            fixedAmtNum(nativeBal?.formatted) > gasEstimate
               ? "bg-[#C0F9C9]"
               : "bg-[#FFB7B7]"
           )}
@@ -533,7 +534,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+              fixedAmtNum(nativeBal?.formatted) > gasEstimate
                 ? "bg-[#ECFFEF]"
                 : "bg-[#FFE8E8]"
             )}
@@ -561,7 +562,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+              {fixedAmtNum(nativeBal?.formatted) > gasEstimate
                 ? "Sufficient"
                 : "Insufficient"}{" "}
               Wallet Balance
@@ -600,7 +601,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     approveToken0Loading ||
                     approveToken0TxnLoading ||
                     typeof approveToken0 == "undefined" ||
-                    parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                    fixedAmtNum(nativeBal?.formatted) <= gasEstimate
                   }
                   onClick={async () => {
                     try {
@@ -630,7 +631,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       approveToken1Loading ||
                       approveToken1TxnLoading ||
                       typeof approveToken1 == "undefined" ||
-                      parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                      fixedAmtNum(nativeBal?.formatted) <= gasEstimate
                     }
                     onClick={async () => {
                       const txn = await approveToken1?.();
@@ -648,11 +649,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   !(isToken1ApprovedSuccess || approveToken1Success) ||
                   parseFloat(firstTokenAmount) <= 0 ||
                   parseFloat(secondTokenAmount) <= 0 ||
-                  parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate ||
-                  parseFloat(firstTokenAmount ?? "0") >
-                    parseFloat(token0Balance?.formatted ?? "0") ||
-                  parseFloat(secondTokenAmount ?? "0") >
-                    parseFloat(token1Balance?.formatted ?? "0")
+                  fixedAmtNum(nativeBal?.formatted) <= gasEstimate ||
+                  fixedAmtNum(firstTokenAmount) >
+                    fixedAmtNum(token0Balance?.formatted) ||
+                  fixedAmtNum(secondTokenAmount) >
+                    fixedAmtNum(token1Balance?.formatted)
                 }
                 text="Confirm Adding Liquidity"
                 onClick={() => {
@@ -852,6 +853,16 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     isLoadingAddLiqCall ||
     isLoadingAddLiqTxn ||
     isSlippageModalOpen;
+
+  if (selectedFarm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={selectedFarm?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return (
     !!selectedFarm && (
