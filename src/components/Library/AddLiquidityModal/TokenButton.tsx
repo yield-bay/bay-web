@@ -3,9 +3,11 @@ import { FarmType, UnderlyingAssets } from "@utils/types";
 import MButton from "../MButton";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import { Address } from "viem";
+import clsx from "clsx";
 
 interface Props {
   token: UnderlyingAssets;
+  inputMapAmount: { [address: Address]: number };
   selectedFarm: FarmType;
   approvalMap: { [address: Address]: boolean };
   setApprovalMap: React.Dispatch<
@@ -17,6 +19,7 @@ interface Props {
 
 const TokenButton: React.FC<Props> = ({
   token,
+  inputMapAmount,
   selectedFarm,
   approvalMap,
   setApprovalMap,
@@ -48,30 +51,36 @@ const TokenButton: React.FC<Props> = ({
     }
   }, [isSuccessApproveTxn, isApprovedSuccess]);
 
+  if (
+    !inputMapAmount[token?.address] ||
+    isApprovedSuccess ||
+    isSuccessApproveTxn
+  ) {
+    return <></>;
+  }
+
   return (
-    !isApprovedSuccess &&
-    !isSuccessApproveTxn && (
-      <MButton
-        type="secondary"
-        isLoading={isLoadingApproveCall || isLoadingApproveTxn}
-        text={
-          isLoadingApproveCall
-            ? "Sign the Txn in Wallet"
-            : isLoadingApproveTxn
-            ? "Waiting for Approval"
-            : `Approve ${token?.symbol} Token`
-        }
-        disabled={
-          isLoadingApproveCall ||
-          isLoadingApproveTxn ||
-          typeof approveToken == "undefined"
-        }
-        onClick={async () => {
-          const txn = await approveToken?.();
-          console.log("Approve Result", txn);
-        }}
-      />
-    )
+    <MButton
+      type="secondary"
+      className={clsx(!inputMapAmount[token?.address] && "hidden")}
+      isLoading={isLoadingApproveCall || isLoadingApproveTxn}
+      text={
+        isLoadingApproveCall
+          ? "Sign the Txn in Wallet"
+          : isLoadingApproveTxn
+          ? "Waiting for Approval"
+          : `Approve ${token?.symbol} Token`
+      }
+      disabled={
+        isLoadingApproveCall ||
+        isLoadingApproveTxn ||
+        typeof approveToken == "undefined"
+      }
+      onClick={async () => {
+        const txn = await approveToken?.();
+        console.log("Approve Result", txn);
+      }}
+    />
   );
 };
 

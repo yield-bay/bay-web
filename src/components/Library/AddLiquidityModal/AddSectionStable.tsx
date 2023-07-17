@@ -93,7 +93,7 @@ const AddSectionStable: FC = () => {
   const tokensArr = farm?.asset.underlyingAssets ?? [];
   const tokens = useMemo(() => {
     if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
-    if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
+    if (!tokensSeq) return tokensArr;
     if (tokensArr.length !== tokensSeq.length) return tokensArr;
     console.log("tokensSeq", tokensSeq);
     console.log("underlying tokens inside", tokensArr);
@@ -154,6 +154,20 @@ const AddSectionStable: FC = () => {
   } = useWaitForTransaction({
     hash: addLiquidityData?.hash,
   });
+
+  const isRequirementApproved = useMemo(() => {
+    if (Object.keys(inputMapAmount).length == 0) return false;
+    return Object.entries(inputMapAmount).every(([tokenAddress, amount]) => {
+      const isApproved = !!approvalMap[tokenAddress as Address];
+      return amount > 0 ? isApproved === true : true;
+    });
+  }, [approvalMap, inputMapAmount]);
+
+  useEffect(() => {
+    console.log("isRequirementApproved", isRequirementApproved);
+    console.log("approvalMap", approvalMap);
+    console.log("inputMapAmount", inputMapAmount);
+  }, [isRequirementApproved]);
 
   const handleAddLiquidity = async () => {
     try {
@@ -277,31 +291,34 @@ const AddSectionStable: FC = () => {
         </div>
 
         {/* Buttons */}
-        <div className="flex flex-row items-center w-full gap-x-3">
-          <div className="flex flex-col gap-y-3">
+        <div className="w-full">
+          <div className="flex flex-col gap-y-3 w-full">
             {tokens.map((token, index) => (
               <TokenButton
                 key={`${token?.symbol}-${index}`}
                 token={token}
+                inputMapAmount={inputMapAmount}
                 selectedFarm={farm!}
                 approvalMap={approvalMap}
                 setApprovalMap={setApprovalMap}
               />
             ))}
           </div>
-          <MButton
-            type="primary"
-            isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
-            disabled={
-              Object.keys(approvalMap).length !== tokens.length ||
-              typeof addLiquidity == "undefined" ||
-              amounts.length < 1
-            }
-            text={isLoadingAddLiqCall ? "Processing..." : "Confirm"}
-            onClick={() => {
-              setIsConfirmStep(true);
-            }}
-          />
+          {isRequirementApproved && (
+            <MButton
+              type="primary"
+              isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
+              disabled={
+                !isRequirementApproved ||
+                typeof addLiquidity == "undefined" ||
+                amounts.length < 1
+              }
+              text={isLoadingAddLiqCall ? "Processing..." : "Confirm"}
+              onClick={() => {
+                setIsConfirmStep(true);
+              }}
+            />
+          )}
         </div>
       </div>
     );

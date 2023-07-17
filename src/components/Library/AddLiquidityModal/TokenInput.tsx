@@ -37,8 +37,8 @@ const TokenInput: React.FC<TokenInputProps> = ({
         <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
           <div className="z-10 flex overflow-hidden rounded-full">
             <Image
-              src={selectedFarm?.asset.logos[0] as string}
-              alt={selectedFarm?.asset.logos[0] as string}
+              src={selectedFarm?.asset.logos[index] as string}
+              alt={selectedFarm?.asset.logos[index] as string}
               width={24}
               height={24}
             />
