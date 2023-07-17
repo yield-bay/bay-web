@@ -53,8 +53,7 @@ const TokenButton: React.FC<Props> = ({
 
   if (
     !inputMapAmount[token?.address] ||
-    isApprovedSuccess ||
-    isSuccessApproveTxn
+    Object.keys(approvalMap).find((key) => key === token?.address)
   ) {
     return <></>;
   }

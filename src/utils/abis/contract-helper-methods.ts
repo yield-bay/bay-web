@@ -160,3 +160,8 @@ export function getClaimRewardsArgs(
       return [];
   }
 }
+
+export function fixedAmtNum(amount: string | undefined) {
+  const amt = parseFloat(amount!);
+  return isNaN(amt) ? 0 : amt;
+}

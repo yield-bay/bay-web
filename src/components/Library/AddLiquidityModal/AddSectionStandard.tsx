@@ -20,6 +20,7 @@ import Spinner from "@components/Library/Spinner";
 import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import {
+  fixedAmtNum,
   getAddLiqFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
@@ -162,11 +163,17 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   });
 
   // Check Approval Token0 & Token1
-  const { data: isToken0Approved, isLoading: isToken0ApprovedLoading } =
-    useIsApprovedToken(farmAsset0?.address, selectedFarm?.router!);
+  const {
+    // data: isToken0Approved,
+    isLoading: isToken0ApprovedLoading,
+    isSuccess: isToken0ApprovedSuccess,
+  } = useIsApprovedToken(farmAsset0?.address, selectedFarm?.router!);
 
-  const { data: isToken1Approved, isLoading: isToken1ApprovedLoading } =
-    useIsApprovedToken(farmAsset1?.address, selectedFarm?.router!);
+  const {
+    // data: isToken1Approved,
+    isLoading: isToken1ApprovedLoading,
+    isSuccess: isToken1ApprovedSuccess,
+  } = useIsApprovedToken(farmAsset1?.address, selectedFarm?.router!);
 
   // To approve token0 and token1
   const {
@@ -257,7 +264,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     const expectedFirstTokenAmount = poolRatio;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
       ? "0"
-      : expectedFirstTokenAmount.toFixed(5);
+      : expectedFirstTokenAmount.toFixed(3);
     return firstTokenAmount;
   };
 
@@ -266,7 +273,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     const expectedSecondTokenAmount = 1 / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
-      : expectedSecondTokenAmount.toFixed(5);
+      : expectedSecondTokenAmount.toFixed(3);
     return secondTokenAmount;
   };
 
@@ -309,10 +316,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      console.log("isToken0Approved", !!Number(isToken0Approved));
-      console.log("isToken1Approved", !!Number(isToken1Approved));
+      console.log("isToken0ApprovedSuccess", isToken0ApprovedSuccess);
+      console.log("isToken1ApprovedSuccess", isToken1ApprovedSuccess);
     }
-  }, [isToken1Approved, isToken0Approved]);
+  }, [isToken1ApprovedSuccess, isToken0ApprovedSuccess]);
 
   // Remove after testing
   useEffect(() => {
@@ -401,6 +408,17 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             </button>
           </div>
         </div>
+        {fixedAmtNum(firstTokenAmount) >
+          fixedAmtNum(token0Balance?.formatted) && (
+          <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
+            You need{" "}
+            {fixedAmtNum(firstTokenAmount) -
+              fixedAmtNum(token0Balance?.formatted)}{" "}
+            {farmAsset0?.symbol} for creating an LP token with{" "}
+            {fixedAmtNum(secondTokenAmount)}
+            {farmAsset1?.symbol}
+          </div>
+        )}
         {/* Plus Icon */}
         <div className="bg-[#e0dcdc] flex justify-center p-3 max-w-fit items-center rounded-full text-base select-none mx-auto">
           <Image src="/icons/PlusIcon.svg" alt="Plus" width={16} height={16} />
@@ -465,10 +483,21 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             </button>
           </div>
         </div>
+        {fixedAmtNum(secondTokenAmount) >
+          fixedAmtNum(token1Balance?.formatted) && (
+          <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
+            You need{" "}
+            {fixedAmtNum(secondTokenAmount) -
+              fixedAmtNum(token1Balance?.formatted)}{" "}
+            {farmAsset1?.symbol} for creating an LP token with{" "}
+            {fixedAmtNum(firstTokenAmount)}
+            {farmAsset0?.symbol}
+          </div>
+        )}
 
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          <div className="flex flex-col gap-y-2">
+          <div className="flex flex-col items-start gap-y-2">
             <p>
               {getFirstTokenRelation()} {farmAsset0?.symbol} per{" "}
               {farmAsset1?.symbol}
@@ -555,7 +584,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             />
           ) : (
             <div className="flex flex-row w-full gap-x-3">
-              {!isToken0Approved && !approveToken0TxnSuccess && (
+              {!isToken0ApprovedSuccess && !approveToken0TxnSuccess && (
                 <MButton
                   type="secondary"
                   isLoading={approveToken0Loading || approveToken0TxnLoading}
@@ -583,9 +612,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   }}
                 />
               )}
-              {!isToken1Approved &&
+              {!isToken1ApprovedSuccess &&
                 !approveToken1TxnSuccess &&
-                (isToken0Approved || approveToken0TxnSuccess) && (
+                (isToken0ApprovedSuccess || approveToken0TxnSuccess) && (
                   <MButton
                     type="secondary"
                     isLoading={approveToken1Loading || approveToken1TxnLoading}
@@ -615,9 +644,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 disabled={
                   firstTokenAmount == "" ||
                   secondTokenAmount == "" ||
-                  (parseFloat(firstTokenAmount) <= 0 &&
-                    parseFloat(secondTokenAmount) <= 0) ||
-                  parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                  !(isToken0ApprovedSuccess || approveToken0Success) ||
+                  !(isToken1ApprovedSuccess || approveToken1Success) ||
+                  parseFloat(firstTokenAmount) <= 0 ||
+                  parseFloat(secondTokenAmount) <= 0 ||
+                  parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate ||
+                  parseFloat(firstTokenAmount ?? "0") >
+                    parseFloat(token0Balance?.formatted ?? "0") ||
+                  parseFloat(secondTokenAmount ?? "0") >
+                    parseFloat(token1Balance?.formatted ?? "0")
                 }
                 text="Confirm Adding Liquidity"
                 onClick={() => {
