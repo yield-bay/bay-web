@@ -25,6 +25,7 @@ import { FarmType } from "@utils/types";
 import Spinner from "../Spinner";
 import Link from "next/link";
 import { getChefAbi } from "@utils/abis/contract-helper-methods";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -435,6 +436,16 @@ const StakingModal = () => {
       </div>
     );
   };
+
+  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={farm?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return (
     !!farm && (

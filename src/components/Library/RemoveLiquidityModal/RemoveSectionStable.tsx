@@ -33,6 +33,7 @@ import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import useCalcMinAmount from "@utils/useCalcMinAmount";
 import toUnits from "@utils/toUnits";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -626,6 +627,16 @@ const RemoveSectionStable = () => {
     isLoadingRemoveLiqCall ||
     isLoadingRemoveLiqTxn ||
     isSlippageModalOpen;
+
+  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={farm?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return (
     !!farm && (

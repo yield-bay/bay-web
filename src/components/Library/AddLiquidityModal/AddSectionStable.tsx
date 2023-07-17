@@ -32,6 +32,7 @@ import useStableAmounts from "./useStableAmounts";
 import toUnits from "@utils/toUnits";
 import useTotalSupply from "@hooks/useTotalSupply";
 import { estimateContractGas } from "viem/dist/types/actions/public/estimateContractGas";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -484,6 +485,16 @@ const AddSectionStable: FC = () => {
       </div>
     );
   };
+
+  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={farm?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return (
     !!farm && (

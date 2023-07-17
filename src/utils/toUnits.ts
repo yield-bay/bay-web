@@ -5,6 +5,7 @@
  * @returns Converted amounts in Dollars
  */
 export default function toUnits(num: number, decimals: number): string {
+  if (!num) return "0";
   if (num >= 1000000) {
     return (
       Number((num / 1000000).toFixed(decimals)).toLocaleString("en-US") + "M"

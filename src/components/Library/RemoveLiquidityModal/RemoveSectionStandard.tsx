@@ -33,6 +33,7 @@ import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import toUnits from "@utils/toUnits";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -512,6 +513,16 @@ const RemoveSectionStandard = () => {
     isLoadingRemoveLiqCall ||
     isLoadingRemoveLiqTxn ||
     isSlippageModalOpen;
+
+  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={farm?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return (
     !!farm && (

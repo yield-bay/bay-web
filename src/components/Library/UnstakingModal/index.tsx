@@ -23,6 +23,7 @@ import Spinner from "../Spinner";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import { getChefAbi } from "@utils/abis/contract-helper-methods";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -396,6 +397,16 @@ const UnstakingModal = () => {
 
   const isOpenModalCondition =
     isLoadingUnstakingCall || isLoadingUnstakingTxn || isSlippageModalOpen;
+
+  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={farm?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return (
     !!farm && (
