@@ -3,8 +3,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import NextNProgress from "nextjs-progressbar";
 import { APP_NAME } from "@utils/constants";
-import { ChakraProvider, extendBaseTheme } from "@chakra-ui/react";
-import chakraTheme from "@chakra-ui/theme";
+// import { ChakraProvider, extendBaseTheme } from "@chakra-ui/react";
+// import chakraTheme from "@chakra-ui/theme";
 
 // Chain interactions
 import { WagmiConfig } from "wagmi";
@@ -16,12 +16,12 @@ import { dotWalletAccountsAtom } from "@store/accountAtoms";
 // Creating React-Query Client
 const queryClient = new QueryClient();
 
-const { Tooltip } = chakraTheme.components;
-const theme = extendBaseTheme({
-  components: {
-    Tooltip,
-  },
-});
+// const { Tooltip } = chakraTheme.components;
+// const theme = extendBaseTheme({
+//   components: {
+//     Tooltip,
+//   },
+// });
 
 const Providers = ({ children }: { children: ReactNode }) => {
   const [, setWallets] = useAtom(dotWalletsAtom);
@@ -77,14 +77,12 @@ const Providers = ({ children }: { children: ReactNode }) => {
   }, [wallet]);
 
   return (
-    <ChakraProvider theme={theme}>
-      <WagmiConfig config={config}>
-        <QueryClientProvider client={queryClient}>
-          <NextNProgress color="#0073B7" />
-          {children}
-        </QueryClientProvider>
-      </WagmiConfig>
-    </ChakraProvider>
+    <WagmiConfig config={config}>
+      <QueryClientProvider client={queryClient}>
+        <NextNProgress color="#0073B7" />
+        {children}
+      </QueryClientProvider>
+    </WagmiConfig>
   );
 };
 
