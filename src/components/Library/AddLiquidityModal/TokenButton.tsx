@@ -59,7 +59,7 @@ const TokenButton: React.FC<Props> = ({
             ? "Sign the Txn in Wallet"
             : isLoadingApproveTxn
             ? "Waiting for Approval"
-            : `Approve ${token.symbol} Token`
+            : `Approve ${token?.symbol} Token`
         }
         disabled={
           isLoadingApproveCall ||

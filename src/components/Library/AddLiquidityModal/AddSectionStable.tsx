@@ -94,6 +94,9 @@ const AddSectionStable: FC = () => {
   const tokens = useMemo(() => {
     if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
     if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
+    if (tokensArr.length !== tokensSeq.length) return tokensArr;
+    console.log("tokensSeq", tokensSeq);
+    console.log("underlying tokens inside", tokensArr);
     return tokensSeq.map(
       (address) => tokensArr.find((token) => token.address == address)!
     );
@@ -331,6 +334,7 @@ const AddSectionStable: FC = () => {
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
             <span>{toUnits(estLpAmount, 3)}</span>
+            {/* Make a mapping here */}
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={farm?.asset.logos[0] as string}

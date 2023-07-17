@@ -7,15 +7,16 @@ const useStableAmounts = (
   tokens: UnderlyingAssets[]
 ) => {
   console.log("inputMap", inputMapAmount);
+  console.log("token", tokens);
 
   const updatedTokens = useMemo(() => {
     const newtokens = tokens
       .map((token) => {
         // console.log("waota", token);
-        const inputAmount = !isNaN(inputMapAmount[token.address])
-          ? inputMapAmount[token.address]
+        const inputAmount = !isNaN(inputMapAmount[token?.address])
+          ? inputMapAmount[token?.address]
           : 0;
-        return parseUnits(`${inputAmount}`, token.decimals);
+        return parseUnits(`${inputAmount}`, token?.decimals);
       })
       .filter((amount) => {
         return !isNaN(Number(amount));
