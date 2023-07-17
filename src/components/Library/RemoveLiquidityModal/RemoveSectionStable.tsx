@@ -19,7 +19,7 @@ import {
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseUnits } from "viem";
+import { Address, parseAbi, parseUnits } from "viem";
 import {
   getRemoveLiqStableFunctionName,
   getRemoveLiquidFunctionName,
@@ -86,7 +86,7 @@ const RemoveSectionStable = () => {
     chainId: chain?.id,
     enabled: !!chain && !!farm,
   });
-  const tokensSeq = tokensSeqArr as `0x${string}`[];
+  const tokensSeq = tokensSeqArr as Address[];
 
   // Balance of LP Token
   const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);

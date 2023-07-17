@@ -217,7 +217,7 @@ const FarmTable: FC<Props> = ({
                   </th>
                   <th
                     scope="col"
-                    className="pl-6 py-[13px] cursor-pointer font-medium"
+                    className="hidden xl:table-cell pl-6 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("tvl", true);
                     }}
@@ -250,7 +250,7 @@ const FarmTable: FC<Props> = ({
                   </th>
                   <th
                     scope="col"
-                    className="flex justify-start items-center pl-6 pr-3 py-[13px] cursor-pointer font-medium"
+                    className="hidden base:flex justify-start items-center pl-6 pr-3 py-[13px] cursor-pointer font-medium"
                     onClick={() => {
                       handleSort("yield", true);
                     }}

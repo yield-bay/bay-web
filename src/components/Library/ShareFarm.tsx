@@ -82,7 +82,7 @@ const ShareFarm = ({ farm }: ShareFarmPropsType) => {
 // Share menu for desktop view
 const ShareMenu = ({ farm, url, tweetUrl }: ShareMenuPropsType) => {
   return (
-    <Menu as="div" className="relative hidden sm:inline-block">
+    <Menu as="div" className="relative hidden base:inline-block">
       <Menu.Button className="p-3 cursor-pointer transition-all duration-200">
         <Image src="/icons/ShareIcon.svg" alt="share" height={24} width={24} />
       </Menu.Button>

@@ -15,7 +15,7 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
-import { parseAbi, parseUnits } from "viem";
+import { Address, parseAbi, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
 import { FarmType } from "@utils/types";
@@ -85,20 +85,30 @@ const UnstakingModal = () => {
   const GAS_FEES = 0.0014; // In STELLA
 
   const chefAbi = useMemo(() => {
-    return getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`);
+    return getChefAbi(farm?.protocol!, farm?.chef as Address);
   }, [farm]);
 
   // Deriving Staked balance
   const { data: userInfo, isLoading: isLoadingUserInfo } = useContractRead({
-    address: farm?.chef as `0x${string}`,
+    address: farm?.chef as Address,
     abi: parseAbi(chefAbi),
-    functionName: "userInfo" as any,
-    args: [farm?.id, address],
+    functionName: farm?.protocol == "curve" ? "balanceOf" : "userInfo",
+    args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
     enabled: !!farm && !!address,
   });
+
+  console.log("userInfo", userInfo, "\nargs", {
+    address: farm?.chef as Address,
+    abi: parseAbi(chefAbi),
+    functionName: farm?.protocol == "curve" ? "balanceOf" : "userInfo",
+    args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
+    enabled: !!farm && !!address,
+  });
+
   const staked: number = useMemo(() => {
     console.log("userInfo", userInfo);
     if (!userInfo) return 0;
+    if (farm?.protocol == "curve") return Number(userInfo) / 10 ** 18;
     const ui = userInfo as bigint[];
     return Number(ui[0]) / 10 ** 18;
   }, [userInfo]);
@@ -111,7 +121,7 @@ const UnstakingModal = () => {
     // isSuccess: isSuccessUnstakingCall,
     writeAsync: unstaking,
   } = useContractWrite({
-    address: farm?.chef as `0x${string}`,
+    address: farm?.chef as Address,
     abi: parseAbi(chefAbi),
     functionName: "withdraw" as any,
     chainId: chain?.id,
@@ -447,12 +457,10 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
           {isLoadingStaked ? (
             <span>loading...</span>
           ) : (
-            !!staked && (
-              <div className="flex flex-col items-end">
-                <span>Balance</span>
-                <span>{staked.toLocaleString("en-US")}</span>
-              </div>
-            )
+            <div className="flex flex-col items-end">
+              <span>Balance</span>
+              <span>{staked.toLocaleString("en-US")}</span>
+            </div>
           )}
         </p>
         <button

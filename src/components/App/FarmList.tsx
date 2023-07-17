@@ -87,7 +87,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                 </div>
               </div>
             </td>
-            <td className="whitespace-nowrap py-4 text-left sm:pr-3 sm:pl-6 font-medium text-sm leading-5">
+            <td className="hidden xl:table-cell whitespace-nowrap py-4 text-left sm:pr-3 sm:pl-6 font-medium text-sm leading-5">
               {toDollarUnits(farm?.tvl, 1)}
             </td>
             <td className="hidden base:table-cell whitespace-nowrap py-4 pl-6 pr-3 text-base leading-5">
@@ -120,7 +120,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
             <td className="hidden lg:table-cell whitespace-nowrap max-w-[130px] h-full py-0 pl-0 lg:pl-6 pr-3 font-bold text-sm leading-5">
               <SafetyScorePill score={safetyScore} />
             </td>
-            <td className="hidden md:table-cell whitespace-nowrap h-full py-0 pl-0 lg:pl-6 pr-3">
+            <td className="hidden base:table-cell whitespace-nowrap h-full py-0 pl-0 lg:pl-6 pr-3">
               <Rewards rewards={farm?.rewards} />
             </td>
             <td

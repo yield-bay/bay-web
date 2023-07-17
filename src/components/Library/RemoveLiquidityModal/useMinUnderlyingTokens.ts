@@ -1,6 +1,6 @@
 import { curveLpAbi, lpAbi } from "@components/Common/Layout/evmUtils";
 import { useMemo } from "react";
-import { parseAbi } from "viem";
+import { Address, parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 
 /**
@@ -11,7 +11,7 @@ import { useContractRead } from "wagmi";
  * @returns Minimum amount of underlying tokens to be removed
  */
 export default function useMinimumUnderlyingTokens(
-  pair: `0x${string}`,
+  pair: Address,
   protocol: string,
   lpAmount: number,
   slippage: number

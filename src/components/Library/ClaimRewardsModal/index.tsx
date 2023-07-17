@@ -20,7 +20,7 @@ import {
   getClaimRewardsArgs,
   getClaimRewardsFunctionName,
 } from "@utils/abis/contract-helper-methods";
-import { parseAbi } from "viem";
+import { Address, parseAbi } from "viem";
 
 const GAS_FEES = 0.0014; // In STELLA
 
@@ -47,7 +47,7 @@ const ClaimRewardsModal = () => {
   });
 
   const chefAbi = useMemo(() => {
-    return getChefAbi(position?.protocol!, position?.chef as `0x${string}`);
+    return getChefAbi(position?.protocol!, position?.chef as Address);
   }, [position]);
 
   const contractFnName = useMemo(() => {
@@ -61,7 +61,7 @@ const ClaimRewardsModal = () => {
     isError: isErrorClaimRewardsCall,
     writeAsync: claimRewards,
   } = useContractWrite({
-    address: position?.chef as `0x${string}`,
+    address: position?.chef as Address,
     abi: parseAbi(chefAbi),
     functionName: contractFnName as any,
     chainId: chain?.id,
@@ -85,9 +85,9 @@ const ClaimRewardsModal = () => {
       );
 
       console.log("CLAIMREWARDS contract @params", {
-        address: position?.chef as `0x${string}`,
+        address: position?.chef as Address,
         abi: parseAbi(
-          getChefAbi(position?.protocol!, position?.chef as `0x${string}`)
+          getChefAbi(position?.protocol!, position?.chef as Address)
         ),
         functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
         chainId: chain?.id,

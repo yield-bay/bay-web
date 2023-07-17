@@ -1,5 +1,6 @@
 import { RPC_URL } from "@utils/constants";
 import { ChainId, Network } from "@utils/types";
+import { Address } from "viem";
 
 // Astar Network Configuration
 export const astar = {
@@ -33,7 +34,7 @@ export const astar = {
   },
   contracts: {
     multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11" as `0x${string}`,
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11" as Address,
       blockCreated: 1597904,
     },
   },
@@ -71,7 +72,7 @@ export const hardhat = {
   },
   contracts: {
     multicall3: {
-      address: "0xcA11bde05977b3631167028862bE2a173976CA11" as `0x${string}`,
+      address: "0xcA11bde05977b3631167028862bE2a173976CA11" as Address,
       blockCreated: 1597904,
     },
   },

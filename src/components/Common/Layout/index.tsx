@@ -86,7 +86,7 @@ const Layout: FC<Props> = ({ children }) => {
     console.log("---- Updated Positions ----\n", positions);
   }, [positions]);
 
-  const { isConnected, address, connector } = useAccount();
+  const { isConnected, connector } = useAccount();
   const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   const [account] = useAtom(dotAccountAtom);
@@ -95,7 +95,7 @@ const Layout: FC<Props> = ({ children }) => {
   const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
 
   // Accounts for testing
-  // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
+  const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
   // const account = {
   //   address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
   // };

@@ -15,8 +15,7 @@ import {
   arthswapChefAbi,
   siriusChefAbi,
 } from "@components/Common/Layout/evmUtils";
-import { PortfolioPositionType } from "@utils/types";
-import { parseUnits } from "viem";
+import { Address } from "viem";
 
 export function getChefAbi(protocol: string, chef: string): string[] {
   // console.log("this -- protocol", protocol, "\nchef", chef);
@@ -138,8 +137,8 @@ export function getClaimRewardsArgs(
   // position: PortfolioPositionType,
   farmId: number,
   protocol: string,
-  signer: `0x${string}`
-  // lpAddress: `0x${string}`
+  signer: Address
+  // lpAddress: Address
 ) {
   console.log("this -- farmid", [farmId], typeof farmId);
   switch (protocol.toLowerCase()) {

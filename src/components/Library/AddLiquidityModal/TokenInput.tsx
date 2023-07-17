@@ -1,13 +1,13 @@
 import { UnderlyingAssets } from "@utils/types";
 import Image from "next/image";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { Address, useAccount, useBalance, useNetwork } from "wagmi";
 
 interface TokenInputProps {
   token: UnderlyingAssets;
   index: number;
   handleInput: (token: UnderlyingAssets, value: string) => void;
   inputMap: {
-    [address: `0x${string}`]: string;
+    [address: Address]: string;
   };
   selectedFarm: any;
   tokensLength: number;

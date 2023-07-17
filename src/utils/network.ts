@@ -1,3 +1,4 @@
+import { Address } from "viem";
 import { RPC_URL } from "./constants";
 import { ChainId, Network } from "./types";
 
@@ -70,7 +71,7 @@ export const getSupportedChains = () => {
 
 export const getNativeTokenAddress = (
   network: string
-): { tokenSymbol: string; tokenAddress: `0x${string}` } => {
+): { tokenSymbol: string; tokenAddress: Address } => {
   const chain = network.toLowerCase();
   switch (chain) {
     case "moonbeam": // GLMR

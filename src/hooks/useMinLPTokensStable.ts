@@ -1,9 +1,9 @@
-import { parseAbi } from "viem";
+import { Address, parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 import { getRouterAbi } from "@utils/abis/contract-helper-methods";
 
 const useMinLPTokensStable = (
-  router: `0x${string}`,
+  router: Address,
   protocol: string,
   amounts: bigint[]
 ) => {

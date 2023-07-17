@@ -1,8 +1,8 @@
 import { curveLpAbi, lpAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbi } from "viem";
+import { Address, parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 
-const useTotalSupply = (pair: `0x${string}`, protocol: string) => {
+const useTotalSupply = (pair: Address, protocol: string) => {
   const { data: totalSupply } = useContractRead({
     address: pair,
     abi: parseAbi(protocol.toLowerCase() === "curve" ? curveLpAbi : lpAbi),

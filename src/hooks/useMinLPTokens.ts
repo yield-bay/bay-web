@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { parseAbi } from "viem";
+import { Address, parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 import { lpAbi } from "@components/Common/Layout/evmUtils";
 
 const useMinimumLPTokens = (
-  pair: `0x${string}`,
+  pair: Address,
   slippage: number,
   reserve0: number,
   reserve1: number,

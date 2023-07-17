@@ -2,14 +2,15 @@ import { useEffect } from "react";
 import { FarmType, UnderlyingAssets } from "@utils/types";
 import MButton from "../MButton";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
+import { Address } from "viem";
 
 interface Props {
   token: UnderlyingAssets;
   selectedFarm: FarmType;
-  approvalMap: { [address: `0x${string}`]: boolean };
+  approvalMap: { [address: Address]: boolean };
   setApprovalMap: React.Dispatch<
     React.SetStateAction<{
-      [address: `0x${string}`]: boolean;
+      [address: Address]: boolean;
     }>
   >;
 }

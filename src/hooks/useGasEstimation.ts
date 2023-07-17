@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { usePublicClient } from "wagmi";
-import { PublicClient, parseAbi, parseUnits } from "viem";
+import { Address, PublicClient, parseAbi, parseUnits } from "viem";
 import {
   getAddLiqFunctionName,
   getRouterAbi,
@@ -9,7 +9,7 @@ import { FarmType } from "@utils/types";
 
 const estimateGas = async (
   publicClient: PublicClient,
-  address: `0x${string}`,
+  address: Address,
   farm: FarmType,
   slippage: number,
   amountA: number,
@@ -48,7 +48,7 @@ const getGasPrice = async (publicClient: PublicClient): Promise<bigint> => {
 };
 
 const useGasEstimation = (
-  address: `0x${string}`,
+  address: Address,
   slippage: number,
   farm: FarmType,
   amountA: number,

@@ -1,9 +1,9 @@
 import { UnderlyingAssets } from "@utils/types";
 import { useMemo } from "react";
-import { parseUnits } from "viem";
+import { Address, parseUnits } from "viem";
 
 const useStableAmounts = (
-  inputMapAmount: { [address: `0x${string}`]: number },
+  inputMapAmount: { [address: Address]: number },
   tokens: UnderlyingAssets[]
 ) => {
   console.log("inputMap", inputMapAmount);

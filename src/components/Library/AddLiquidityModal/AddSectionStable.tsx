@@ -19,7 +19,7 @@ import {
 } from "@utils/abis/contract-helper-methods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
-import { parseAbi, parseUnits } from "viem";
+import { Address, parseAbi, parseUnits } from "viem";
 // import useTokenReserves from "@hooks/useTokenReserves";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
@@ -49,13 +49,13 @@ const AddSectionStable: FC = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
   const [approvalMap, setApprovalMap] = useState<{
-    [address: `0x${string}`]: boolean;
+    [address: Address]: boolean;
   }>({});
   const [inputMap, setInputMap] = useState<{
-    [address: `0x${string}`]: string;
+    [address: Address]: string;
   }>({});
   const [inputMapAmount, setInputMapAmount] = useState<{
-    [address: `0x${string}`]: number;
+    [address: Address]: number;
   }>({});
 
   const totalSupply = useTotalSupply(farm?.asset.address!, farm?.protocol!);
@@ -83,7 +83,7 @@ const AddSectionStable: FC = () => {
     chainId: chain?.id,
     enabled: !!chain && !!farm,
   });
-  const tokensSeq = tokensSeqArr as `0x${string}`[];
+  const tokensSeq = tokensSeqArr as Address[];
 
   useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
 
@@ -123,11 +123,6 @@ const AddSectionStable: FC = () => {
     farm?.protocol!,
     amounts
   );
-
-  // This method returns true if all tokens are approved
-  // const isAllTokensApproved = useMemo(() => {
-  //   return Object.values(approvalMap).reduce((acc, curr) => acc && curr, true);
-  // }, [approvalMap]);
 
   const {
     data: addLiquidityData,

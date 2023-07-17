@@ -1,6 +1,6 @@
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { Address, useAccount, useBalance, useNetwork } from "wagmi";
 
-const useLPBalance = (lpAddress: `0x${string}`) => {
+const useLPBalance = (lpAddress: Address) => {
   const { chain } = useNetwork();
   const { address } = useAccount();
 

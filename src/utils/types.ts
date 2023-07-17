@@ -1,6 +1,8 @@
+import { Address } from "viem";
+
 export type UnderlyingAssets = {
   symbol: string;
-  address: `0x${string}`;
+  address: Address;
   decimals: number;
 };
 
@@ -21,12 +23,12 @@ export interface FarmType {
   chef: string;
   chain: string;
   protocol: string;
-  router: `0x${string}`;
+  router: Address;
   farmType: string;
   farmImpl: string;
   asset: {
     symbol: string;
-    address: `0x${string}`;
+    address: Address;
     price: number;
     logos: string[];
     underlyingAssets: UnderlyingAssets[];
@@ -42,7 +44,7 @@ export interface TokenPriceType {
   chain: string;
   protocol: string;
   symbol: string;
-  address: `0x${string}`;
+  address: Address;
   decimals: number;
   price: number;
   underlyingAssets: UnderlyingAssets[];
@@ -78,7 +80,7 @@ export interface PortfolioPositionType {
   unclaimedRewards: UnclaimedRewardType[];
   chain: string;
   protocol: string;
-  chef: `0x${string}`;
+  chef: Address;
   id: number;
   lpSymbol: string;
 }

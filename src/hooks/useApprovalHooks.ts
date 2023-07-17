@@ -1,4 +1,4 @@
-import { parseAbi } from "viem";
+import { Address, parseAbi } from "viem";
 import {
   useAccount,
   useContractRead,
@@ -15,10 +15,7 @@ import { useMemo } from "react";
  * @param spender spender Contract Address
  * @returns data, isLoading, isError, isSuccess
  */
-const useIsApprovedToken = (
-  tokenAddress: `0x${string}`,
-  spender: `0x${string}`
-) => {
+const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
   const { address } = useAccount();
   const { data, isLoading, isError } = useContractRead({
     address: tokenAddress,
@@ -47,10 +44,7 @@ const useIsApprovedToken = (
  * @param spender spender Contract Address
  * @returns data, isLoading, isError, isSuccess, writeAsync
  */
-const useApproveToken = (
-  tokenAddress: `0x${string}`,
-  spender: `0x${string}`
-) => {
+const useApproveToken = (tokenAddress: Address, spender: Address) => {
   const { chain } = useNetwork();
   const {
     data,

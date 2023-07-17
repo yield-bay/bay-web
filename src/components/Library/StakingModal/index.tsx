@@ -15,8 +15,8 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom } from "@store/atoms";
-import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
-import { parseAbi, parseUnits } from "viem";
+// import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
+import { Address, parseAbi, parseUnits } from "viem";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
@@ -107,14 +107,14 @@ const StakingModal = () => {
     data: isApprovedData,
     isLoading: isApprovedLoading,
     isSuccess: isApprovedSuccess,
-  } = useIsApprovedToken(farm?.asset.address!, farm?.chef as `0x${string}`);
+  } = useIsApprovedToken(farm?.asset.address!, farm?.chef as Address);
 
   const {
     isLoadingApproveCall,
     isLoadingApproveTxn,
     isSuccessApproveTxn,
     writeAsync: approveLpToken,
-  } = useApproveToken(farm?.asset.address!, farm?.chef as `0x${string}`);
+  } = useApproveToken(farm?.asset.address!, farm?.chef as Address);
 
   // Stake LP Tokens
   const {
@@ -124,8 +124,8 @@ const StakingModal = () => {
     isSuccess: isSuccessStakingCall,
     writeAsync: staking,
   } = useContractWrite({
-    address: farm?.chef as `0x${string}`,
-    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as `0x${string}`)),
+    address: farm?.chef as Address,
+    abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as Address)),
     functionName: "deposit" as any,
     chainId: chain?.id,
   });

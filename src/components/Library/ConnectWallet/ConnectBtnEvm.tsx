@@ -1,13 +1,13 @@
 import { type FC, Fragment, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Transition, Menu } from "@headlessui/react";
-import { useAccount, useDisconnect } from "wagmi";
+import { Address, useAccount, useDisconnect } from "wagmi";
 import { CheckCircleIcon, ChevronDownIcon } from "@heroicons/react/outline";
 import ClientOnly from "../../Common/ClientOnly";
 import clsx from "clsx";
 
 interface Props {
-  address: `0x${string}` | undefined;
+  address: Address | undefined;
 }
 
 const ConnectBtnEvm: FC<Props> = ({ address }) => {
