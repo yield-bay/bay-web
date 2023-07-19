@@ -3,15 +3,29 @@ import { FC, useRef, PropsWithChildren, useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
+import _ from "lodash";
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
-import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
-import { UnderlyingAssets } from "@utils/types";
+import {
+  accountInitAtom,
+  addLiqModalOpenAtom,
+  isInitialisedAtom,
+  mangataAddressAtom,
+  mangataHelperAtom,
+  mangataPoolsAtom,
+  slippageModalOpenAtom,
+} from "@store/commonAtoms";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import { formatTokenSymbols } from "@utils/farmListMethods";
+import { getDecimalBN } from "@utils/xcm/common/utils";
+import BN from "bn.js";
+import { dotAccountAtom } from "@store/accountAtoms";
+import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
+import toUnits from "@utils/toUnits";
 
 enum InputType {
   Off = -1,
@@ -21,12 +35,23 @@ enum InputType {
 
 const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
-  const [selectedFarm] = useAtom(selectedFarmAtom);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lpBalance, setLpBalance] = useState<number>(0);
+  const [fees, setFees] = useState<number>(0);
+
+  const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
+  const [account] = useAtom(dotAccountAtom);
+  const [mangataHelper] = useAtom(mangataHelperAtom);
+  const [account1] = useAtom(accountInitAtom);
+  const [pools] = useAtom(mangataPoolsAtom);
+  const [pool, setPool] = useState<any>(null);
+  const [mangataAddress] = useAtom(mangataAddressAtom);
+  const [isInitialised] = useAtom(isInitialisedAtom);
+  const [mgxBalance, setMgxBalance] = useState<number>(0);
 
-  // const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [SLIPPAGE] = useAtom(slippageAtom);
 
   // Input focus states
@@ -34,20 +59,30 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const firstInputRef = useRef<HTMLInputElement>(null);
   const secondInputRef = useRef<HTMLInputElement>(null);
 
-  const [farmAsset0, farmAsset1] =
-    selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
+  const [token0, token1] = formatTokenSymbols(
+    // IS_PRODUCTION
+    selectedFarm?.asset.symbol!
+    // : replaceTokenSymbols(farm?.asset.symbol!)
+  );
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
 
-  useEffect(() => {
-    console.log("selectedFarm", selectedFarm);
-  }, [selectedFarm]);
-
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
+
+  const [firstTokenBalance, setFirstTokenBalance] = useState<number | null>(
+    null
+  );
+  const [secondTokenBalance, setSecondTokenBalance] = useState<number | null>(
+    null
+  );
+  const [lpTotalBalance, setLpTotalBalance] = useState<number>(0);
+  const [estimateLpMinted, setEstimateLpMinted] = useState<number | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (firstInputRef.current && secondInputRef.current) {
@@ -65,94 +100,373 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     setSecondTokenAmount("");
   }, [isOpen]);
 
+  useEffect(() => {
+    // Fetching & setting Total balance of the LP Token
+    if (pool == null) return;
+    (async () => {
+      let assetsInfo = await mangataHelper.mangata.getAssetsInfo();
+      const balances = await mangataHelper.getBalances();
+      for (const key in balances) {
+        if (Object.hasOwnProperty.call(balances, key)) {
+          const element = balances[key];
+          if (assetsInfo[key] !== undefined) {
+            const e =
+              Number(BigInt(element).toString(10)) /
+              10 ** assetsInfo[key]["decimals"];
+            if (pool.liquidityTokenId == key) {
+              console.log("--> bal:", e, "\n----------");
+              console.log("match id");
+              setLpTotalBalance(e);
+            }
+          }
+        }
+      }
+    })();
+  }, [pool]);
+
+  // Fetching MGX balance
+  useEffect(() => {
+    (async () => {
+      if (mangataHelper == null) return;
+      try {
+        const bal = await mangataHelper.mangata?.getTokenBalance(
+          0,
+          account1?.address
+        );
+        const balFree = parseFloat(BigInt(bal.free).toString(10)) / 10 ** 18; // MGX decimals == 18
+        console.log("fetched mgxbalance", balFree);
+        setMgxBalance(balFree);
+      } catch (error) {
+        console.log("error fetching mgx balance", error);
+      }
+    })();
+  }, [account1]);
+
+  const initialiseHelperSetup = async () => {
+    if (pools == null) return;
+    const [token0, token1] = formatTokenSymbols(selectedFarm?.asset.symbol!);
+    const poolName = `${token0}-${token1}`;
+    console.log("selected poolname", poolName);
+    // console.log("balance in componding tab", allLpBalances[poolName]);
+
+    // Make a state for this
+    const pool = _.find(pools, {
+      firstTokenId: mangataHelper.getTokenIdBySymbol(token0),
+      secondTokenId: mangataHelper.getTokenIdBySymbol(token1),
+    });
+    console.log(`Found a pool of ${poolName}`, pool);
+    setPool(pool);
+
+    if (_.isUndefined(pool)) {
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => (
+      //     <ToastWrapper
+      //       title={`Couldn’t find a liquidity pool for ${poolName} ...`}
+      //       status="error"
+      //     />
+      //   ),
+      // });
+      setIsOpen(false);
+      setSelectedFarm(null);
+      throw new Error(`Couldn’t find a liquidity pool for ${poolName} ...`);
+    }
+
+    // Calculate rwards amount in pool
+    const { liquidityTokenId } = pool;
+
+    console.log(
+      `Checking how much reward available in ${poolName} pool, tokenId: ${liquidityTokenId} ...`
+    );
+
+    // Issue: current we couldn’t read this rewards value correct by always getting 0 on the claimable rewards.
+    // The result is different from that in src/mangata.js
+    const rewardAmount = await mangataHelper.calculateRewardsAmount(
+      mangataAddress,
+      liquidityTokenId
+    );
+    console.log(`Claimable reward in ${poolName}: `, rewardAmount);
+
+    const liquidityBalance = await mangataHelper.mangata?.getTokenBalance(
+      liquidityTokenId,
+      mangataAddress
+    );
+    const poolNameDecimalBN = getDecimalBN(
+      mangataHelper.getDecimalsBySymbol(poolName)
+    );
+    console.log(
+      "liquidity balance",
+      liquidityBalance?.reserved,
+      "poolName DecimalBN",
+      poolNameDecimalBN,
+      "decimal",
+      mangataHelper.getDecimalsBySymbol(poolName)
+    );
+
+    const numReserved = new BN(liquidityBalance.reserved).div(
+      poolNameDecimalBN
+    );
+
+    console.log(
+      `Before auto-compound, ${
+        account?.name
+      } reserved "${poolName}": ${numReserved.toString()} ... lb ${liquidityBalance.reserved.toString()}`
+    );
+
+    console.log("num reserved", numReserved);
+
+    // setting selected pool's LP token balance
+    const lpBalance = await mangataHelper.mangata.getTokenBalance(
+      pool.liquidityTokenId,
+      account?.address
+    );
+    const decimal = mangataHelper.getDecimalsBySymbol(`${token0}-${token1}`);
+    const lpBalanceNum =
+      parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** decimal +
+      parseFloat(BigInt(lpBalance.free).toString(10)) / 10 ** decimal;
+    console.log("LP Balance lpBalanceNum: ", lpBalanceNum);
+    setLpBalance(lpBalanceNum);
+
+    // Required setup finished
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    if (isInitialised && selectedFarm !== null) {
+      initialiseHelperSetup();
+    }
+  }, [selectedFarm, isInitialised]);
+
+  // Fetch Balances of both tokens on Mangata Chain
+  useEffect(() => {
+    (async () => {
+      if (account1 && pool) {
+        const [token0, token1] = formatTokenSymbols(
+          selectedFarm?.asset.symbol!
+        );
+        const token0Bal = await mangataHelper.mangata?.getTokenBalance(
+          pool.firstTokenId,
+          account1.address
+        );
+        const token1Bal = await mangataHelper.mangata?.getTokenBalance(
+          pool.secondTokenId,
+          account1.address
+        );
+
+        const token0Decimal = mangataHelper.getDecimalsBySymbol(token0);
+        const token1Decimal = mangataHelper.getDecimalsBySymbol(token1);
+
+        const token0BalanceFree =
+          parseFloat(BigInt(token0Bal.free).toString(10)) / 10 ** token0Decimal;
+        const token1BalanceFree =
+          parseFloat(BigInt(token1Bal.free).toString(10)) / 10 ** token1Decimal;
+
+        setFirstTokenBalance(token0BalanceFree);
+        setSecondTokenBalance(token1BalanceFree);
+      } else {
+        // toast({
+        //   position: "top",
+        //   duration: 3000,
+        //   render: () => (
+        //     <ToastWrapper title="Please connect wallet!" status="error" />
+        //   ),
+        // });
+        console.log("Account1 is empty");
+      }
+    })();
+  }, [account1, pool]);
+
   const handleAddLiquidity = async () => {
     console.log("So, you want to Add Liquidity!");
   };
 
-  const getFirstTokenRelation = () => {};
+  const getFirstTokenRelation = () => {
+    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    const expFirstTokenAmount = poolRatio;
+    const firstTokenAmount = isNaN(expFirstTokenAmount)
+      ? "0"
+      : expFirstTokenAmount;
+    return firstTokenAmount;
+  };
 
-  const getSecondTokenRelation = () => {};
+  const getSecondTokenRelation = () => {
+    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    const expSecondTokenAmount = 1 / poolRatio;
+    const secondTokenAmount = isNaN(expSecondTokenAmount)
+      ? "0"
+      : expSecondTokenAmount;
+    return secondTokenAmount;
+  };
 
-  // Updated tokenAmounts based on value of other token
-  const updateSecondTokenAmount = (firstTokenAmount: number) => {};
+  // Estimate of fees; no need to be accurate
+  // Method to fetch trnx fees based on token Amounts
+  const handleFees = async (firstTokenAmt: number, secondTokenAmt: string) => {
+    console.log("Calculating fees...");
+    console.log("first token in feemint: ", firstTokenAmt);
+    console.log("second token in feemint: ", secondTokenAmt);
+    try {
+      // Estimate of fees; no need to be accurate
+      const fees = await mangataHelper.getMintLiquidityFee({
+        pair: account1?.address,
+        firstTokenId: pool.firstTokenId,
+        firstTokenAmount: firstTokenAmt,
+        secondTokenId: pool.secondTokenId,
+        expectedSecondTokenAmount: secondTokenAmt,
+      });
+      console.log("fees:", fees, parseFloat(fees));
+      setFees(parseFloat(fees));
+    } catch (error) {
+      console.log("Error while fetching Fees", error);
+    }
+  };
 
-  const updateFirstTokenAmount = (secondTokenAmount: number) => {};
+  const updateFirstTokenAmount = (secondTokenAmount: number): string => {
+    // Ratio of tokens in the pool
+    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    console.log("poolRatio", poolRatio, secondTokenAmount);
+
+    // Estimated LP to be minted
+    const lpAmount =
+      (secondTokenAmount * lpTotalBalance) /
+      (parseFloat(pool.secondTokenAmountFloat.toString()) * (1 + SLIPPAGE));
+    console.log("lpAmount via secondToken", lpAmount);
+    setEstimateLpMinted(lpAmount);
+
+    // Calculate first token amount
+    const expFirstTokenAmount =
+      (poolRatio * secondTokenAmount) / (1 + SLIPPAGE);
+    console.log("First Token Amount:", expFirstTokenAmount);
+    const firstTokenAmount = isNaN(expFirstTokenAmount)
+      ? "0"
+      : expFirstTokenAmount.toFixed(5);
+    setFirstTokenAmount(firstTokenAmount);
+    return firstTokenAmount;
+  };
+
+  // Method to update second token amount based on first token amount
+  const updateSecondTokenAmount = (firstTokenAmount: number): string => {
+    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    // Calculates estimate LP minted
+    const lpAmount =
+      (firstTokenAmount * lpTotalBalance) /
+      parseFloat(pool.firstTokenAmountFloat.toString());
+    console.log("lpAmount via first token", lpAmount);
+    setEstimateLpMinted(lpAmount);
+
+    // Calculate second token amount
+    const expSecondTokenAmount =
+      (firstTokenAmount / poolRatio) * (1 + SLIPPAGE);
+    console.log("Second Token Amount:", expSecondTokenAmount);
+    const secondTokenAmount = isNaN(expSecondTokenAmount)
+      ? "0"
+      : expSecondTokenAmount.toFixed(5);
+
+    setSecondTokenAmount(secondTokenAmount);
+    return secondTokenAmount;
+  };
 
   // update first token values
   const handleChangeFirstTokenAmount = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFirstTokenAmount(e.target.value);
-    // update first amount based on second
-    updateSecondTokenAmount(parseFloat(e.target.value));
+    const inputAmount = e.target.value;
+    const firstTokenAmount = fixedAmtNum(inputAmount);
+    setFirstTokenAmount(inputAmount);
+
+    const expSecondTokenAmount = updateSecondTokenAmount(firstTokenAmount);
+
+    if (isNaN(parseFloat(inputAmount))) {
+      setFees(0);
+    }
+    await handleFees(firstTokenAmount, expSecondTokenAmount);
   };
 
   // update token values
   const handleChangeSecondTokenAmount = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSecondTokenAmount(e.target.value);
-    // update first amount based on second
-    updateFirstTokenAmount(parseFloat(e.target.value));
+    const inputAmount = e.target.value;
+    const secondTokenAmount = fixedAmtNum(inputAmount);
+    setSecondTokenAmount(inputAmount);
+
+    const expFirstTokenAmount = updateFirstTokenAmount(secondTokenAmount);
+
+    if (isNaN(parseFloat(inputAmount))) {
+      setFees(0);
+    }
+    await handleFees(secondTokenAmount, expFirstTokenAmount);
   };
 
   // Method to handle max button for first token
-  // const handleMaxFirstToken = () => {
-  //   if (farmAsset0?.symbol == "MGX") {
-  //     // toast({
-  //     //   position: "top",
-  //     //   duration: 3000,
-  //     //   render: () => (
-  //     //     <ToastWrapper
-  //     //       title="Insufficient balance to pay gas fees!"
-  //     //       status="warning"
-  //     //     />
-  //     //   ),
-  //     // });
-  //   } else if (farmAsset1?.symbol == "MGX") {
-  //     setFirstTokenAmount(
-  //       firstTokenBalance
-  //         ? (firstTokenBalance - (fees ?? 0) - 20).toString()
-  //         : ""
-  //     );
-  //   } else {
-  //     setFirstTokenAmount(
-  //       firstTokenBalance ? firstTokenBalance.toString() : ""
-  //     );
-  //   }
-  //   updateSecondTokenAmount(firstTokenBalance as number);
-  // };
+  const handleMaxFirstToken = () => {
+    if (token0 == "MGX") {
+      if ((firstTokenBalance as number) < 20) {
+        alert("Insufficient balance to pay gas fees!");
+        // toast({
+        //   position: "top",
+        //   duration: 3000,
+        //   render: () => (
+        //     <ToastWrapper
+        //       title="Insufficient balance to pay gas fees!"
+        //       status="warning"
+        //     />
+        //   ),
+        // });
+      } else {
+        setFirstTokenAmount(
+          firstTokenBalance
+            ? (firstTokenBalance - (fees ?? 0) - 20).toString()
+            : ""
+        );
+      }
+    } else {
+      setFirstTokenAmount(
+        !!firstTokenBalance ? firstTokenBalance.toString() : ""
+      );
+    }
+    updateSecondTokenAmount(firstTokenBalance ?? 0);
+  };
 
   // // Method to handle max button for second token
-  // const handleMaxSecondToken = () => {
-  //   // Checking if user has enough balance to pay gas fees
-  //   if (
-  //     (secondTokenBalance as number) < 20 &&
-  //     (token1 == "MGR" || token1 == "MGX")
-  //   ) {
-  //     // toast({
-  //     //   position: "top",
-  //     //   duration: 3000,
-  //     //   render: () => (
-  //     //     <ToastWrapper
-  //     //       title="Insufficient balance to pay gas fees!"
-  //     //       status="warning"
-  //     //     />
-  //     //   ),
-  //     // });
-  //   } else if (token1 == "MGR" || token1 == "MGX") {
-  //     setSecondTokenAmount(
-  //       secondTokenBalance
-  //         ? (secondTokenBalance - (fees ?? 0) - 20).toString()
-  //         : ""
-  //     );
-  //   } else {
-  //     setSecondTokenAmount(
-  //       secondTokenBalance ? secondTokenBalance.toString() : ""
-  //     );
-  //   }
-  //   updateFirstTokenAmount(secondTokenBalance as number);
-  // };
+  const handleMaxSecondToken = () => {
+    // Checking if user has enough balance to pay gas fees
+    if (
+      token1 == "MGX"
+      // (token1 == "MGR" || token1 == "MGX")
+    ) {
+      if ((secondTokenBalance as number) < 20) {
+        alert("Insufficient balance to pay gas fees!");
+        // toast({
+        //   position: "top",
+        //   duration: 3000,
+        //   render: () => (
+        //     <ToastWrapper
+        //       title="Insufficient balance to pay gas fees!"
+        //       status="warning"
+        //     />
+        //   ),
+        // });
+      } else {
+        setSecondTokenAmount(
+          secondTokenBalance
+            ? (secondTokenBalance - (fees ?? 0) - 20).toString()
+            : ""
+        );
+      }
+    } else {
+      setSecondTokenAmount(
+        secondTokenBalance ? secondTokenBalance.toString() : ""
+      );
+    }
+    updateFirstTokenAmount(secondTokenBalance ?? 0);
+  };
+
+  // conditions
+  const token_0_not_enough =
+    parseFloat(firstTokenAmount) > (firstTokenBalance ?? 0);
+  const token_1_not_enought =
+    parseFloat(secondTokenAmount) > (secondTokenBalance ?? 0);
 
   const InputStep = () => {
     return (
@@ -169,7 +483,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               />
             </div>
             <span className="text-[#344054 text-[14px] font-medium leading-5">
-              {farmAsset0?.symbol}
+              {token0}
             </span>
           </div>
           <input
@@ -188,16 +502,14 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           />
           <div className="inline-flex items-center gap-x-2">
             <div className="flex flex-col items-end text-sm leading-5 opacity-50">
-              {/* {token0BalanceLoading ? ( */}
-              {false ? (
+              {firstTokenBalance == null ? (
                 <span>loading...</span>
               ) : (
-                // !!token0Balance && (
                 <div className="flex flex-col items-end">
                   <span>Balance</span>
                   <span>
-                    10
-                    {farmAsset0?.symbol}
+                    {firstTokenBalance.toLocaleString("en-US")}
+                    {token0}
                   </span>
                 </div>
               )}
@@ -211,17 +523,14 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           </div>
         </div>
         {/* Low Balance */}
-        {/* {fixedAmtNum(firstTokenAmount) >
-          fixedAmtNum(token0Balance?.formatted) && (
+        {token_0_not_enough && (
           <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            You need{" "}
-            {fixedAmtNum(firstTokenAmount) -
-              fixedAmtNum(token0Balance?.formatted)}{" "}
-            {farmAsset0?.symbol} for creating an LP token with{" "}
+            You need {fixedAmtNum(firstTokenAmount) - (firstTokenBalance ?? 0)}{" "}
+            {token0} for creating an LP token with{" "}
             {fixedAmtNum(secondTokenAmount)}
-            {farmAsset1?.symbol}
+            {token1}
           </div>
-        )} */}
+        )}
         {/* Plus Icon */}
         <div className="bg-[#e0dcdc] flex justify-center p-3 max-w-fit items-center rounded-full text-base select-none mx-auto">
           <Image src="/icons/PlusIcon.svg" alt="Plus" width={16} height={16} />
@@ -238,7 +547,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               />
             </div>
             <span className="text-[#344054 text-[14px] font-medium leading-5">
-              {farmAsset1?.symbol}
+              {token1}
             </span>
           </div>
           <input
@@ -256,22 +565,20 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             autoFocus={focusedInput === InputType.Second}
           />
           <div className="inline-flex items-center gap-x-2">
-            <p className="flex flex-col items-end text-sm leading-5 opacity-50">
-              {false ? ( // Loading variable
+            <div className="flex flex-col items-end text-sm leading-5 opacity-50">
+              {secondTokenBalance == null ? (
                 <span>loading...</span>
               ) : (
-                // !!token1Balance && (
                 true && (
-                  <div className="flex flex-col items-end">
+                  <p className="flex flex-col items-end">
                     <span>Balance</span>
                     <span>
-                      {parseFloat("10.02").toLocaleString("en-US")}{" "}
-                      {farmAsset1?.symbol}
+                      {secondTokenBalance.toLocaleString("en-US")} {token1}
                     </span>
-                  </div>
+                  </p>
                 )
               )}
-            </p>
+            </div>
             <button
               className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
               onClick={handleMaxSecondToken}
@@ -280,45 +587,34 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             </button>
           </div>
         </div>
-        {/* {fixedAmtNum(secondTokenAmount) >
-          fixedAmtNum(token1Balance?.formatted) && (
+        {token_1_not_enought && (
           <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
             You need{" "}
-            {fixedAmtNum(secondTokenAmount) -
-              fixedAmtNum(token1Balance?.formatted)}{" "}
-            {farmAsset1?.symbol} for creating an LP token with{" "}
+            {fixedAmtNum(secondTokenAmount) - (secondTokenBalance ?? 0)}{" "}
+            {token1} for creating an LP token with{" "}
             {fixedAmtNum(firstTokenAmount)}
-            {farmAsset0?.symbol}
+            {token0}
           </div>
-        )} */}
+        )}
 
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col items-start gap-y-2">
             <p>
-              {12} {farmAsset0?.symbol} per {farmAsset1?.symbol}
+              {getFirstTokenRelation()} {token0} per {token1}
             </p>
             <p>
-              {24} {farmAsset1?.symbol} per {farmAsset0?.symbol}
+              {getSecondTokenRelation()} {token1} per {token0}
             </p>
-            {/* <p>
-              {getFirstTokenRelation()} {farmAsset0?.symbol} per{" "}
-              {farmAsset1?.symbol}
-            </p>
-            <p>
-              {getSecondTokenRelation()} {farmAsset1?.symbol} per{" "}
-              {farmAsset0?.symbol}
-            </p> */}
           </div>
           <p className="flex flex-col items-end">
             <span>
-              0.02
-              {/* {(totalSupply !== 0 && minLpTokens > 0
-                ? (minLpTokens / totalSupply) * 100 < 0.001
+              {(lpTotalBalance !== 0 && (estimateLpMinted ?? 0) > 0
+                ? ((estimateLpMinted ?? 0) / lpTotalBalance) * 100 < 0.001
                   ? "<0.001"
-                  : (minLpTokens / totalSupply) * 100
+                  : ((estimateLpMinted ?? 0) / lpTotalBalance) * 100
                 : 0
-              ).toLocaleString("en-US")} */}
+              ).toLocaleString("en-US")}
               %
             </span>
             <span>Share of pool</span>
@@ -329,27 +625,22 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div
           className={clsx(
             "rounded-xl",
-            // fixedAmtNum(nativeBal?.formatted) > gasEstimate
-            "bg-[#C0F9C9]"
-            // : "bg-[#FFB7B7]"
+            lpBalance > fees ? "bg-[#C0F9C9]" : "bg-[#FFB7B7]"
           )}
         >
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              // fixedAmtNum(nativeBal?.formatted) > gasEstimate
-              "bg-[#ECFFEF]"
-              // : "bg-[#FFE8E8]"
+              lpBalance > fees ? "bg-[#ECFFEF]" : "bg-[#FFE8E8]"
             )}
           >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p className="inline-flex">
                 <span className="opacity-40 mr-2 font-semibold">
-                  {/* {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol} */}
-                  {(24.043243).toFixed(3) ?? 0} {"KSM"}
+                  {mgxBalance} MGX
                 </span>
-                <span>${(24.54245).toFixed(5)}</span>
+                <span>${mgxBalance} x MGX Price</span>
                 {/* <span>${(gasEstimate * nativePrice).toFixed(5)}</span> */}
               </p>
             </div>
@@ -367,15 +658,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {/* {fixedAmtNum(nativeBal?.formatted) > gasEstimate */}
-              Sufficient
-              {/* : "Insufficient"}{" "} */}
-              Wallet Balance
+              {lpBalance > fees ? "Sufficient" : "Insufficient"} Wallet Balance
             </h3>
-            {/* <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span> */}
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {lpBalance.toLocaleString("en-US")} {"MGX"}
+            </span>
           </div>
         </div>
 
@@ -385,17 +672,15 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             <MButton
               type="primary"
               isLoading={false}
-              disabled={
-                firstTokenAmount == "" ||
-                secondTokenAmount == "" ||
-                parseFloat(firstTokenAmount) <= 0 ||
-                parseFloat(secondTokenAmount) <= 0
-                // fixedAmtNum(nativeBal?.formatted) <= gasEstimate ||
-                // fixedAmtNum(firstTokenAmount) >
-                //   fixedAmtNum(token0Balance?.formatted) ||
-                // fixedAmtNum(secondTokenAmount) >
-                //   fixedAmtNum(token1Balance?.formatted)
-              }
+              // disabled={
+              //   firstTokenAmount == "" ||
+              //   secondTokenAmount == "" ||
+              //   parseFloat(firstTokenAmount) <= 0 ||
+              //   parseFloat(secondTokenAmount) <= 0 ||
+              //   lpBalance <= fees ||
+              //   fixedAmtNum(firstTokenAmount) > (firstTokenBalance ?? 0) ||
+              //   fixedAmtNum(secondTokenAmount) > (secondTokenBalance ?? 0)
+              // }
               text="Confirm Adding Liquidity"
               onClick={() => {
                 if (
@@ -433,8 +718,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{3}</span>
-            {/* <span>{minLpTokens}</span> */}
+            <span>{toUnits(estimateLpMinted ?? 0, 3)}</span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={selectedFarm?.asset.logos[0] as string}
@@ -453,26 +737,18 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             </div>
           </div>
           <p>
-            {farmAsset0?.symbol}/{farmAsset1?.symbol} Pool Tokens
+            {token0}/{token1} Pool Tokens
           </p>
         </div>
         <div className="inline-flex justify-between text-sm font-bold">
           <span className="text-[#0B0B0B]">Rates</span>
           <p className="flex flex-col gap-y-2 text-[#282929]">
             <span>
-              1 {farmAsset0?.symbol} = {24} {farmAsset1?.symbol}
+              1 {token0} = {getSecondTokenRelation()} {token1}
             </span>
             <span>
-              1 {farmAsset1?.symbol} = {30} {farmAsset0?.symbol}
+              1 {token1} = {getFirstTokenRelation()} {token0}
             </span>
-            {/* <span>
-              1 {farmAsset0?.symbol} = {getSecondTokenRelation()}{" "}
-              {farmAsset1?.symbol}
-            </span>
-            <span>
-              1 {farmAsset1?.symbol} = {getFirstTokenRelation()}{" "}
-              {farmAsset0?.symbol}
-            </span> */}
           </p>
         </div>
         <hr className="border-t border-[#E3E3E3] min-w-full" />
@@ -480,21 +756,21 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col gap-y-2">
             <p>
-              {24} {farmAsset0?.symbol} per {farmAsset1?.symbol}
+              {getFirstTokenRelation()} {token0} per {token1}
             </p>
             <p>
-              {25} {farmAsset1?.symbol} per {farmAsset0?.symbol}
+              {getSecondTokenRelation()} {token1} per {token0}
             </p>
           </div>
           <p className="flex flex-col items-end">
             <span>
-              {/* {(totalSupply !== 0 && minLpTokens > 0
-                ? (minLpTokens / totalSupply) * 100 < 0.001
+              {(lpTotalBalance !== 0 && (estimateLpMinted ?? 0) > 0
+                ? ((estimateLpMinted ?? 0) / lpTotalBalance) * 100 < 0.001
                   ? "<0.001"
-                  : (minLpTokens / totalSupply) * 100
+                  : ((estimateLpMinted ?? 0) / lpTotalBalance) * 100
                 : 0
-              ).toLocaleString("en-US")} */}
-              4%
+              ).toLocaleString("en-US")}
+              %
             </span>
             <span>Share of pool</span>
           </p>
@@ -542,8 +818,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Supplying {firstTokenAmount} {farmAsset0?.symbol} and{" "}
-              {secondTokenAmount} {farmAsset1?.symbol}
+              Supplying {firstTokenAmount} {token0} and {secondTokenAmount}{" "}
+              {token1}
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
@@ -584,7 +860,12 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Add Liquidity"
       >
-        {isProcessStep ? (
+        {isLoading ? (
+          <div className="w-full h-full flex flex-col items-center justify-center">
+            <span>Preparing Pool for you...</span>
+            <Spinner />
+          </div>
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

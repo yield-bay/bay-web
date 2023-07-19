@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import { decodeAddress } from '@polkadot/util-crypto';
-import { u8aToHex } from '@polkadot/util';
-import BN from 'bn.js';
+import _ from "lodash";
+import { decodeAddress } from "@polkadot/util-crypto";
+import { u8aToHex } from "@polkadot/util";
+import BN from "bn.js";
 // import fs from 'fs';
-import path from 'path';
-import moment from 'moment';
+import path from "path";
+import moment from "moment";
 
 const LISTEN_EVENT_DELAY = 3 * 60;
 
@@ -17,7 +17,7 @@ export const sendExtrinsic = async (
   new Promise((resolve) => {
     const newExtrinsic = isSudo ? api.tx.sudo.sudo(extrinsic) : extrinsic;
     newExtrinsic.signAndSend(keyPair, { nonce: -1 }, ({ status, events }) => {
-      console.log('status.type', status.type);
+      console.log("status.type", status.type);
 
       if (status.isInBlock || status.isFinalized) {
         events
@@ -35,7 +35,7 @@ export const sendExtrinsic = async (
                 // for module errors, we have the section indexed, lookup
                 const decoded = api.registry.findMetaError(error.asModule);
                 const { docs, method, section } = decoded;
-                console.log(`${section}.${method}: ${docs.join(' ')}`);
+                console.log(`${section}.${method}: ${docs.join(" ")}`);
               } else {
                 // Other, CannotLookup, BadOrigin, no extra info
                 console.log(error.toString());
@@ -113,11 +113,11 @@ export function formatNumberThousands(num) {
   }
 
   const numStr = num.toString();
-  const parts = numStr.split('.');
+  const parts = numStr.split(".");
 
-  const decimalStr = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  const period = _.isUndefined(parts[1]) ? '' : '.';
-  const floatStr = _.isUndefined(parts[1]) ? '' : parts[1];
+  const decimalStr = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const period = _.isUndefined(parts[1]) ? "" : ".";
+  const floatStr = _.isUndefined(parts[1]) ? "" : parts[1];
 
   return `${decimalStr}${period}${floatStr}`;
 }
@@ -132,7 +132,7 @@ export const getProxyAccount = (api, sourceParaId, address) => {
         { Parachain: sourceParaId },
         {
           AccountId32: {
-            network: 'Any',
+            network: "Any",
             id: u8aToHex(decodedAddress),
           },
         },
@@ -140,11 +140,11 @@ export const getProxyAccount = (api, sourceParaId, address) => {
     },
   };
 
-  const multilocation = api.createType('XcmV1MultiLocation', location);
+  const multilocation = api.createType("XcmV1MultiLocation", location);
 
   const toHash = new Uint8Array([
     ...new Uint8Array([32]),
-    ...new TextEncoder().encode('multiloc'),
+    ...new TextEncoder().encode("multiloc"),
     ...multilocation.toU8a(),
   ]);
 

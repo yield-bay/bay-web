@@ -5,10 +5,10 @@ const assets = {
 };
 
 const Config = {
-  name: 'Rococo',
-  key: 'rococo',
-  endpoint: 'wss://rococo-rpc.polkadot.io',
-  relayChain: 'rococo',
+  name: "Rococo",
+  key: "rococo",
+  endpoint: "wss://rococo-rpc.polkadot.io",
+  relayChain: "rococo",
   paraId: undefined,
   ss58: 42,
   assets,

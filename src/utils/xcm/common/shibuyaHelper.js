@@ -1,10 +1,10 @@
-import _ from 'lodash';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { BN } from 'bn.js';
-import Keyring from '@polkadot/keyring';
+import _ from "lodash";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import { BN } from "bn.js";
+import Keyring from "@polkadot/keyring";
 
-import { getProxies, getProxyAccount } from './utils';
-import { Shibuya } from '../config';
+import { getProxies, getProxyAccount } from "./utils";
+import { Shibuya } from "../config";
 
 // frame_support::weights::constants::WEIGHT_PER_SECOND
 // https://github.com/paritytech/substrate/blob/2dff067e9f7f6f3cc4dbfdaaa97753eccc407689/frame/support/src/weights.rs#L39
@@ -23,7 +23,7 @@ class ShibuyaHelper {
     this.api = api;
     this.assets = this.config.assets;
     this.keyring = new Keyring({
-      type: 'sr25519',
+      type: "sr25519",
       ss58Format: this.config.ss58,
     });
   };
@@ -97,23 +97,23 @@ class ShibuyaHelper {
           },
           {
             Transact: {
-              originType: 'SovereignAccount',
+              originType: "SovereignAccount",
               requireWeightAtMost,
               call: { encoded: encodedCall },
             },
           },
           {
-            RefundSurplus: '',
+            RefundSurplus: "",
           },
           {
             DepositAsset: {
-              assets: { Wild: 'All' },
+              assets: { Wild: "All" },
               maxAssets: 1,
               beneficiary: {
                 parents: 1,
                 interior: {
                   X1: {
-                    AccountId32: { network: { Any: '' }, id: proxyAccount },
+                    AccountId32: { network: { Any: "" }, id: proxyAccount },
                   },
                 },
               },
@@ -140,7 +140,7 @@ class ShibuyaHelper {
       {
         V1: {
           interior: {
-            X1: { AccountId32: { network: { Any: '' }, id: proxyAccount } },
+            X1: { AccountId32: { network: { Any: "" }, id: proxyAccount } },
           },
           parents: 0,
         },
@@ -151,7 +151,7 @@ class ShibuyaHelper {
             fun: { Fungible: amount },
             id: {
               Concrete: {
-                interior: { Here: '' },
+                interior: { Here: "" },
                 parents: 0,
               },
             },

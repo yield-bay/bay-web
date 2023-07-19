@@ -1,5 +1,5 @@
-import AutoCompound from './common';
-import { Mangata, Turing } from '../config';
+import AutoCompound from "./common";
+import { Mangata, Turing } from "../config";
 
 /**
  * README!
@@ -21,6 +21,6 @@ async function main() {
 main()
   .catch(console.error)
   .finally(() => {
-    console.log('Reached end of main() ...');
+    console.log("Reached end of main() ...");
     process.exit();
   });

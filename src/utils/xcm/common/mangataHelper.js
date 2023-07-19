@@ -1,10 +1,10 @@
 /* eslint-disable no-throw-literal */
-import BN from 'bn.js';
-import _ from 'lodash';
-import { Mangata } from '@mangata-finance/sdk';
-import Keyring from '@polkadot/keyring';
+import BN from "bn.js";
+import _ from "lodash";
+import { Mangata } from "@mangata-finance/sdk";
+import Keyring from "@polkadot/keyring";
 
-import { sendExtrinsic, getProxyAccount, getDecimalBN } from './utils';
+import { sendExtrinsic, getProxyAccount, getDecimalBN } from "./utils";
 
 class MangataHelper {
   constructor(config) {
@@ -18,7 +18,7 @@ class MangataHelper {
     this.mangata = mangata;
     this.api = mangataApi;
     this.keyring = new Keyring({
-      type: 'sr25519',
+      type: "sr25519",
       ss58Format: this.config.ss58,
     });
 
@@ -37,12 +37,12 @@ class MangataHelper {
     this.assets = _.values(
       _.filter(assetsResp, (asset) => !_.isEmpty(asset.symbol))
     );
-    console.log('Assets on Mangata chain: ', this.assets);
+    console.log("Assets on Mangata chain: ", this.assets);
   };
 
   getBalances = async () => {
     return await this.mangata.getBalances();
-  }
+  };
 
   getBalance = async (address, symbol) => {
     const tokenId = _.find(this.assets, { symbol }).id;
@@ -79,9 +79,9 @@ class MangataHelper {
 
   transferTur = async (amount, address) => {
     const publicKey = new Keyring().decodeAddress(address);
-    const publicKeyHex = `0x${Buffer.from(publicKey).toString('hex')}`;
+    const publicKeyHex = `0x${Buffer.from(publicKey).toString("hex")}`;
 
-    const currencyId = this.getTokenIdBySymbol('TUR');
+    const currencyId = this.getTokenIdBySymbol("TUR");
 
     const dest = {
       V1: {
@@ -91,7 +91,7 @@ class MangataHelper {
             { Parachain: 2114 },
             {
               AccountId32: {
-                network: 'Any',
+                network: "Any",
                 id: publicKeyHex,
               },
             },
@@ -99,7 +99,7 @@ class MangataHelper {
         },
       },
     };
-    console.log('currencyId', currencyId, 'amount', amount);
+    console.log("currencyId", currencyId, "amount", amount);
 
     const amt = 4000000000;
     const extrinsic = this.api.tx.xTokens.transfer(
@@ -237,7 +237,6 @@ class MangataHelper {
       firstAmount,
       expectedSecondAmount
     );
-
     return fees;
   };
   burnLiquidityTx = async (
@@ -287,7 +286,7 @@ class MangataHelper {
     );
 
     console.log(
-      'lastmile',
+      "lastmile",
       new BN(
         BigInt(
           Math.round(firstTokenAmount * 10 ** firstToken.decimals)
@@ -356,14 +355,14 @@ class MangataHelper {
         const lastEvent = _.last(events);
 
         if (
-          lastEvent.section === 'system' &&
-          lastEvent.method === 'ExtrinsicFailed'
+          lastEvent.section === "system" &&
+          lastEvent.method === "ExtrinsicFailed"
         ) {
           const txPaymentEvent = _.find(events, (event) => {
             const { section, method } = event;
             return (
-              section === 'transactionPayment' &&
-              method === 'TransactionFeePaid'
+              section === "transactionPayment" &&
+              method === "TransactionFeePaid"
             );
           });
 
@@ -373,11 +372,11 @@ class MangataHelper {
           };
         }
         if (
-          lastEvent.section === 'system' &&
-          lastEvent.method === 'ExtrinsicSuccess'
+          lastEvent.section === "system" &&
+          lastEvent.method === "ExtrinsicSuccess"
         ) {
           const matchedEvent = _.find(events, (event) => {
-            if (event.section === 'xyk' && event.method === 'LiquidityMinted') {
+            if (event.section === "xyk" && event.method === "LiquidityMinted") {
               return event;
             }
 
@@ -392,7 +391,7 @@ class MangataHelper {
             const secondAmount = new BN(matchedEvent.eventData[4]?.data);
 
             return {
-              module: 'xyk.LiquidityMinted',
+              module: "xyk.LiquidityMinted",
               address,
               firstId: firstId.toNumber(),
               firstAmount: firstAmount.toString(),
@@ -427,12 +426,12 @@ class MangataHelper {
   /**
    * Swap sellSymol for buySymbol
    */
-  async swap(sellSymbol, buySymbol, keyPair, amount = '1000000000000') {
+  async swap(sellSymbol, buySymbol, keyPair, amount = "1000000000000") {
     const sellTokenId = this.getTokenIdBySymbol(sellSymbol);
     const buyTokenId = this.getTokenIdBySymbol(buySymbol);
 
-    console.log('selltokenId', sellTokenId);
-    console.log('buytokenId', buyTokenId);
+    console.log("selltokenId", sellTokenId);
+    console.log("buytokenId", buyTokenId);
 
     // The last param is the max amount; setting it a very large number for now
     await this.mangata.buyAsset(
@@ -440,7 +439,7 @@ class MangataHelper {
       sellTokenId,
       buyTokenId,
       new BN(amount),
-      new BN('100000000000000000000000000')
+      new BN("100000000000000000000000000")
     );
   }
 
@@ -452,7 +451,7 @@ class MangataHelper {
   ) => {
     const soldAssetId = this.getTokenIdBySymbol(sellSymbol);
     const boughtAssetId = this.getTokenIdBySymbol(buySymbol);
-    console.log('soldAssetId', soldAssetId, 'boughtAssetId', boughtAssetId);
+    console.log("soldAssetId", soldAssetId, "boughtAssetId", boughtAssetId);
     return this.api.tx.xyk.buyAsset(
       soldAssetId,
       boughtAssetId,
@@ -600,14 +599,14 @@ class MangataHelper {
         const lastEvent = _.last(events);
 
         if (
-          lastEvent.section === 'system' &&
-          lastEvent.method === 'ExtrinsicFailed'
+          lastEvent.section === "system" &&
+          lastEvent.method === "ExtrinsicFailed"
         ) {
           const txPaymentEvent = _.find(events, (event) => {
             const { section, method } = event;
             return (
-              section === 'transactionPayment' &&
-              method === 'TransactionFeePaid'
+              section === "transactionPayment" &&
+              method === "TransactionFeePaid"
             );
           });
 
@@ -618,11 +617,11 @@ class MangataHelper {
           };
         }
         if (
-          lastEvent.section === 'system' &&
-          lastEvent.method === 'ExtrinsicSuccess'
+          lastEvent.section === "system" &&
+          lastEvent.method === "ExtrinsicSuccess"
         ) {
           const transferEvent = _.find(events, (event) => {
-            if (event.section === 'tokens' && event.method === 'Transfer') {
+            if (event.section === "tokens" && event.method === "Transfer") {
               return event;
             }
 
@@ -638,7 +637,7 @@ class MangataHelper {
           }
 
           return {
-            module: 'tokens.Transfer',
+            module: "tokens.Transfer",
             sender: sentSource,
             recipient: sentDest,
             amount: sentAmountBN.toNumber(),

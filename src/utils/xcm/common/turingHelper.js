@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import { rpc, types, runtime } from '@oak-network/types';
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import Keyring from '@polkadot/keyring';
-import ToastWrapper from '@components/Library/ToastWrapper';
-import { getProxies, getProxyAccount } from './utils';
+import _ from "lodash";
+import { rpc, types, runtime } from "@oak-network/types";
+import { ApiPromise, WsProvider } from "@polkadot/api";
+import Keyring from "@polkadot/keyring";
+import ToastWrapper from "@components/Library/ToastWrapper";
+import { getProxies, getProxyAccount } from "./utils";
 
 class TuringHelper {
   constructor(config) {
@@ -21,7 +21,7 @@ class TuringHelper {
     this.api = api;
     this.assets = this.config.assets;
     this.keyring = new Keyring({
-      type: 'sr25519',
+      type: "sr25519",
       ss58Format: this.config.ss58,
     });
   };
@@ -85,19 +85,19 @@ class TuringHelper {
             { signer: signer, nonce: -1 },
             async ({ status }) => {
               if (status.isInBlock) {
-                console.log('Transaction is in Block now!');
+                console.log("Transaction is in Block now!");
                 console.log(`Successful with hash ${status.asInBlock.toHex()}`);
-                console.log('kpaddr', keyPair, 'task', taskId);
+                console.log("kpaddr", keyPair, "task", taskId);
                 // Get Task
                 const task = await this.api.query.automationTime.accountTasks(
                   keyPair,
                   taskId
                 );
-                console.log('Task:', task);
+                console.log("Task:", task);
                 // unsub();
                 // resolve();
               } else if (status.isFinalized) {
-                console.log('Transaction is Finalized!');
+                console.log("Transaction is Finalized!");
                 console.log(
                   `Finalized block hash ${status.asFinalized.toHex()}`
                 );
@@ -111,14 +111,14 @@ class TuringHelper {
             }
           )
           .catch((error) => {
-            console.log('sendXcmExtrinsic Err --\n', error);
+            console.log("sendXcmExtrinsic Err --\n", error);
             let errorString = `${error}`;
             setIsInProcess(false);
             setIsSigning(false);
             setIsSuccess(false);
             setIsFailed(true);
             toast({
-              position: 'top',
+              position: "top",
               duration: 3000,
               render: () => <ToastWrapper title={errorString} status="error" />,
             });
