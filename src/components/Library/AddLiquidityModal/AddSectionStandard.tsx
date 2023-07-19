@@ -88,7 +88,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     SLIPPAGE,
     selectedFarm!,
     parseFloat(firstTokenAmount == "" ? "0" : firstTokenAmount),
-    parseFloat(secondTokenAmount == "" ? "0" : secondTokenAmount)
+    parseFloat(secondTokenAmount == "" ? "0" : secondTokenAmount),
+    []
   );
 
   const { reserve0, reserve1 } = useTokenReserves(

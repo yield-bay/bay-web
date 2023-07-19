@@ -13,33 +13,35 @@ const estimateGas = async (
   farm: FarmType,
   slippage: number,
   amountA: number,
-  amountB: number
+  amountB: number,
+  args: Array<any>
 ): Promise<bigint> => {
-  const farmAsset0 = farm.asset.underlyingAssets[0];
-  const farmAsset1 = farm.asset.underlyingAssets[1];
+  // const farmAsset0 = farm.asset.underlyingAssets[0];
+  // const farmAsset1 = farm.asset.underlyingAssets[1];
 
-  const gasEstimate = await publicClient.estimateContractGas({
-    address: farm?.router as any,
-    abi: parseAbi(
-      getRouterAbi(
-        farm?.protocol!,
-        farm?.farmType == "StandardAmm" ? false : true
-      )
-    ),
-    functionName: getAddLiqFunctionName(farm?.protocol as string) as any,
-    account: address as any,
-    args: [
-      farmAsset0?.address, // TokenA Address
-      farmAsset1?.address, // TokenB Address
-      parseUnits(`${amountA}`, farmAsset0?.decimals),
-      parseUnits(`${amountB}`, farmAsset1?.decimals),
-      parseUnits(`${(amountA * (100 - slippage)) / 100}`, farmAsset0?.decimals), // amountAMin
-      parseUnits(`${(amountB * (100 - slippage)) / 100}`, farmAsset1?.decimals), // amountBMin
-      address, // To
-      1784096161000, // deadline (uint256)
-    ],
-  });
-  return gasEstimate;
+  // const gasEstimate = await publicClient.estimateContractGas({
+  //   address: farm?.router as any,
+  //   abi: parseAbi(
+  //     getRouterAbi(
+  //       farm?.protocol!,
+  //       farm?.farmType == "StandardAmm" ? false : true
+  //     )
+  //   ),
+  //   functionName: getAddLiqFunctionName(farm?.protocol as string) as any,
+  //   account: address as any,
+  //   args: [
+  //     farmAsset0?.address, // TokenA Address
+  //     farmAsset1?.address, // TokenB Address
+  //     parseUnits(`${amountA}`, farmAsset0?.decimals),
+  //     parseUnits(`${amountB}`, farmAsset1?.decimals),
+  //     parseUnits(`${(amountA * (100 - slippage)) / 100}`, farmAsset0?.decimals), // amountAMin
+  //     parseUnits(`${(amountB * (100 - slippage)) / 100}`, farmAsset1?.decimals), // amountBMin
+  //     address, // To
+  //     1784096161000, // deadline (uint256)
+  //   ],
+  // });
+  // return gasEstimate;
+  return BigInt(0);
 };
 
 const getGasPrice = async (publicClient: PublicClient): Promise<bigint> => {
@@ -52,24 +54,31 @@ const useGasEstimation = (
   slippage: number,
   farm: FarmType,
   amountA: number,
-  amountB: number
+  amountB: number,
+  args: Array<any>
 ) => {
   const publicClient = usePublicClient();
   const [gasEstimateAmount, setGasEstimateAmount] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<number>(0);
 
-  if (amountA == 0 || amountB == 0) return { gasEstimate: 0 };
+  // if (amountA == 0 || amountB == 0) return { gasEstimate: 0 };
 
-  try {
-    estimateGas(publicClient, address, farm, slippage, amountA, amountB).then(
-      (res) => {
-        setGasEstimateAmount(Number(res));
-      }
-    );
-  } catch (error) {
-    setGasEstimateAmount(0);
-    console.log("Error: Estimating Gas", error);
-  }
+  // try {
+  //   estimateGas(
+  //     publicClient,
+  //     address,
+  //     farm,
+  //     slippage,
+  //     amountA,
+  //     amountB,
+  //     args
+  //   ).then((res) => {
+  //     setGasEstimateAmount(Number(res));
+  //   });
+  // } catch (error) {
+  //   setGasEstimateAmount(0);
+  //   console.log("Error: Estimating Gas", error);
+  // }
 
   try {
     getGasPrice(publicClient).then((res) => {
