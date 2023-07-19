@@ -598,8 +598,11 @@ const RemoveSectionStable = () => {
               Withdrawing{" "}
               {methodId == Method.PERCENTAGE
                 ? toUnits(
-                    parseFloat(percentage !== "" ? percentage : "0") *
-                      parseFloat(lpBalance ?? "0"),
+                    parseFloat(
+                      percentage !== ""
+                        ? (parseFloat(percentage) / 100).toString()
+                        : "0"
+                    ) * parseFloat(lpBalance ?? "0"),
                     3
                   )
                 : toUnits(parseFloat(lpTokens !== "" ? lpTokens : "0"), 3)}{" "}
