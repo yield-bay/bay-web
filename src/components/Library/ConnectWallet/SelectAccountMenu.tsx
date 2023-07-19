@@ -184,7 +184,6 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
                 )}
                 key={account.name}
                 onClick={() => {
-                  console.log("selected account", account);
                   setAccount(account);
                 }}
               >
