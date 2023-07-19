@@ -12,8 +12,8 @@ const useTokenReserves = (pair: Address, protocol: string) => {
   });
   const totalReserves = reserves as bigint[];
   const [reserve0, reserve1] = !!totalReserves
-    ? totalReserves.map((r) => Number(r))
-    : [0, 0];
+    ? totalReserves.map((r) => r.toString())
+    : ["0", "0"];
   return { reserve0, reserve1 };
 };
 

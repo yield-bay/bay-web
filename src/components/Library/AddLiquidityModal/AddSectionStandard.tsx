@@ -35,12 +35,20 @@ import Link from "next/link";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
+import { ethers } from "ethers";
 
 enum InputType {
   Off = -1,
   First = 0,
   Second = 1,
 }
+
+const getPoolRatio = (r0: string, r1: string, d0: number, d1: number) => {
+  const amount0 = parseFloat(ethers.formatUnits(r0, d0));
+  const amount1 = parseFloat(ethers.formatUnits(r1, d1));
+  const pr = amount0 / amount1;
+  return pr;
+};
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const { address } = useAccount();
@@ -103,7 +111,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     reserve0,
     reserve1,
     isNaN(parseInt(firstTokenAmount)) ? 0 : parseInt(firstTokenAmount),
-    isNaN(parseInt(secondTokenAmount)) ? 0 : parseInt(secondTokenAmount)
+    isNaN(parseInt(secondTokenAmount)) ? 0 : parseInt(secondTokenAmount),
+    farmAsset0.decimals,
+    farmAsset1.decimals
   );
 
   useEffect(() => {
@@ -262,7 +272,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   };
 
   const getFirstTokenRelation = () => {
-    const poolRatio = reserve0 / reserve1;
+    const poolRatio = getPoolRatio(
+      reserve0,
+      reserve1,
+      farmAsset0.decimals,
+      farmAsset1.decimals
+    );
     const expectedFirstTokenAmount = poolRatio;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
       ? "0"
@@ -271,7 +286,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   };
 
   const getSecondTokenRelation = () => {
-    const poolRatio = reserve0 / reserve1;
+    const poolRatio = getPoolRatio(
+      reserve0,
+      reserve1,
+      farmAsset0.decimals,
+      farmAsset1.decimals
+    );
     const expectedSecondTokenAmount = 1 / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
@@ -281,20 +301,30 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   // Updated tokenAmounts based on value of other token
   const updateSecondTokenAmount = (firstTokenAmount: number) => {
-    const poolRatio = reserve0 / reserve1;
+    const poolRatio = getPoolRatio(
+      reserve0,
+      reserve1,
+      farmAsset0.decimals,
+      farmAsset1.decimals
+    );
     const expectedSecondTokenAmount = firstTokenAmount / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
-      : expectedSecondTokenAmount.toFixed(5);
+      : expectedSecondTokenAmount.toFixed(3).toString();
     setSecondTokenAmount(secondTokenAmount);
   };
 
   const updateFirstTokenAmount = (secondTokenAmount: number) => {
-    const poolRatio = reserve0 / reserve1;
+    const poolRatio = getPoolRatio(
+      reserve0,
+      reserve1,
+      farmAsset0.decimals,
+      farmAsset1.decimals
+    );
     const expectedFirstTokenAmount = poolRatio * secondTokenAmount;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
       ? "0"
-      : expectedFirstTokenAmount.toFixed(5);
+      : expectedFirstTokenAmount.toFixed(3).toString();
     setFirstTokenAmount(firstTokenAmount);
   };
 
@@ -417,8 +447,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             {fixedAmtNum(firstTokenAmount) -
               fixedAmtNum(token0Balance?.formatted)}{" "}
             {farmAsset0?.symbol} for creating an LP token with{" "}
-            {fixedAmtNum(secondTokenAmount)}
-            {farmAsset1?.symbol}
+            {fixedAmtNum(secondTokenAmount)} {farmAsset1?.symbol}
           </div>
         )}
         {/* Plus Icon */}
@@ -492,8 +521,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             {fixedAmtNum(secondTokenAmount) -
               fixedAmtNum(token1Balance?.formatted)}{" "}
             {farmAsset1?.symbol} for creating an LP token with{" "}
-            {fixedAmtNum(firstTokenAmount)}
-            {farmAsset0?.symbol}
+            {fixedAmtNum(firstTokenAmount)} {farmAsset0?.symbol}
           </div>
         )}
 
@@ -511,13 +539,17 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <p className="flex flex-col items-end">
             <span>
+              {/* {(totalSupply !== 0 && minLpTokens > 0
+                ? (minLpTokens / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")} */}
               {(totalSupply !== 0 && minLpTokens > 0
                 ? (minLpTokens / totalSupply) * 100 < 0.001
                   ? "<0.001"
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              %
+              % {/*= {minLpTokens} {totalSupply}*/}
             </span>
             <span>Share of pool</span>
           </p>
@@ -744,13 +776,17 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <p className="flex flex-col items-end">
             <span>
+              {/* {(totalSupply !== 0 && minLpTokens > 0
+                ? (minLpTokens / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")} */}
               {(totalSupply !== 0 && minLpTokens > 0
                 ? (minLpTokens / totalSupply) * 100 < 0.001
                   ? "<0.001"
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              %
+              % {/*= {minLpTokens} {totalSupply}*/}
             </span>
             <span>Share of pool</span>
           </p>

@@ -2,14 +2,17 @@ import { useMemo } from "react";
 import { Address, parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 import { lpAbi } from "@components/Common/Layout/evmUtils";
+import { ethers } from "ethers";
 
 const useMinimumLPTokens = (
   pair: Address,
   slippage: number,
-  reserve0: number,
-  reserve1: number,
+  reserve0: string,
+  reserve1: string,
   amount0: number,
-  amount1: number
+  amount1: number,
+  d0: number,
+  d1: number
 ) => {
   /**
    * LP Tokens received ->
@@ -26,21 +29,49 @@ const useMinimumLPTokens = (
 
   const minLpToken = useMemo(() => {
     if (!totalSupply) return BigInt(0);
+    const r0 = ethers.formatUnits(reserve0, d0);
+    const r1 = ethers.formatUnits(reserve1, d1);
+    console.log("d0", ethers.parseUnits(r0, d0));
+    console.log("d1", ethers.parseUnits(r1, d1));
+    console.log(
+      "totalsupply lp",
+      totalSupply,
+      Number(totalSupply),
+      "amount0",
+      amount0,
+      "amount1",
+      amount1,
+      "reserve0",
+      reserve0,
+      r0,
+      "reserve1",
+      reserve1,
+      r1
+    );
+
+    console.log(
+      "bigtt",
+      (amount0 * Number(totalSupply)) / parseFloat(r0),
+      (amount1 * Number(totalSupply)) / parseFloat(r1)
+    );
 
     const _totalSupply = BigInt(Number(totalSupply));
 
-    const value0 = (BigInt(amount0) * _totalSupply) / BigInt(reserve0);
-    const value1 = (BigInt(amount1) * _totalSupply) / BigInt(reserve1);
+    // const value0 = (BigInt(amount0) * _totalSupply) / BigInt(reserve0);
+    // const value1 = (BigInt(amount1) * _totalSupply) / BigInt(reserve1);
+    const value0 = (amount0 * Number(totalSupply)) / parseFloat(r0);
+    const value1 = (amount1 * Number(totalSupply)) / parseFloat(r1);
 
     const minLP = value0 < value1 ? value0 : value1;
+    console.log("minLPhere", minLP, value0, value1);
 
     // `slippage` should be a number between 0 & 100.
-    return (minLP * BigInt(Math.floor(100 - slippage))) / BigInt(100);
+    return (minLP * (100 - slippage)) / 100;
   }, [totalSupply, reserve0, reserve1, amount0, amount1, slippage]);
 
   return {
     minLpTokens: Number(minLpToken),
-    totalSupply: Number(totalSupply) / 10 ** 18,
+    totalSupply: Number(totalSupply), // / 10 ** 18,
   };
 };
 
