@@ -93,7 +93,10 @@ const UnstakingModal = () => {
   const { data: userInfo, isLoading: isLoadingUserInfo } = useContractRead({
     address: farm?.chef as Address,
     abi: parseAbi(chefAbi),
-    functionName: farm?.protocol == "curve" ? "balanceOf" : "userInfo",
+    functionName:
+      farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
+        ? "balanceOf"
+        : "userInfo",
     args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
     enabled: !!farm && !!address,
   });
@@ -101,7 +104,10 @@ const UnstakingModal = () => {
   console.log("userInfo", userInfo, "\nargs", {
     address: farm?.chef as Address,
     abi: parseAbi(chefAbi),
-    functionName: farm?.protocol == "curve" ? "balanceOf" : "userInfo",
+    functionName:
+      farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
+        ? "balanceOf"
+        : "userInfo",
     args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
     enabled: !!farm && !!address,
   });
@@ -126,17 +132,6 @@ const UnstakingModal = () => {
     abi: parseAbi(chefAbi),
     functionName: "withdraw" as any,
     chainId: chain?.id,
-    args: [
-      farm?.id, // pid
-      methodId == 0
-        ? parseUnits(
-            `${
-              (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
-            }`,
-            18
-          )
-        : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
-    ],
   });
 
   // Wait unstaking Txn
@@ -150,9 +145,8 @@ const UnstakingModal = () => {
 
   const handleUnstaking = async () => {
     try {
-      console.log("unstaking contract @params", {
-        pid: farm?.id, // pid
-        amount:
+      const args = (() => {
+        const amt =
           methodId == 0
             ? parseUnits(
                 `${
@@ -161,9 +155,21 @@ const UnstakingModal = () => {
                 }`,
                 18
               )
-            : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
+            : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
+        if (farm?.protocol.toLowerCase() == "curve") {
+          return [amt];
+        } else if (farm?.protocol.toLowerCase() == "sirius") {
+          return [amt, 1];
+        } else {
+          return [farm?.id, amt];
+        }
+      })();
+
+      console.log("unstake args", args);
+
+      const txnRes = await unstaking?.({
+        args: args,
       });
-      const txnRes = await unstaking?.();
       if (!!txnRes) {
         setTrxnHash(txnRes.hash);
       }
@@ -305,7 +311,7 @@ const UnstakingModal = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{unstakeAmount}</span>
+            <span>{unstakeAmount.toLocaleString("en-US")}</span>
             {farm?.asset.underlyingAssets.map((token, index) => (
               <div key={index} className="rounded-full overflow-hidden">
                 <Image

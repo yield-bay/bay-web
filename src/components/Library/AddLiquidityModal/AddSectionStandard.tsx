@@ -549,7 +549,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              % {/*= {minLpTokens} {totalSupply}*/}
+              % = {minLpTokens} {totalSupply}
             </span>
             <span>Share of pool</span>
           </p>
@@ -786,7 +786,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              % {/*= {minLpTokens} {totalSupply}*/}
+              % = {minLpTokens} {totalSupply}
             </span>
             <span>Share of pool</span>
           </p>

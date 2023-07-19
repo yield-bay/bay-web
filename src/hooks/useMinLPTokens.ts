@@ -46,7 +46,10 @@ const useMinimumLPTokens = (
       r0,
       "reserve1",
       reserve1,
-      r1
+      r1,
+      "decimals",
+      d0,
+      d1
     );
 
     console.log(

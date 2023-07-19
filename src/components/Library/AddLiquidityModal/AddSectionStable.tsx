@@ -72,22 +72,22 @@ const AddSectionStable: FC = () => {
 
   useEffect(() => console.log("selectedfarm", farm), [farm]);
 
-  const { data: tokensSeqArr } = useContractRead({
-    address:
-      farm?.protocol.toLowerCase() == "curve"
-        ? farm?.asset.address
-        : farm?.router,
-    abi: parseAbi(
-      getRouterAbi(
-        farm?.protocol!,
-        farm?.farmType == "StandardAmm" ? false : true
-      )
-    ),
-    functionName: "getTokens",
-    chainId: chain?.id,
-    enabled: !!chain && !!farm,
-  });
-  const tokensSeq = tokensSeqArr as Address[];
+  // const { data: tokensSeqArr } = useContractRead({
+  //   address:
+  //     farm?.protocol.toLowerCase() == "curve"
+  //       ? farm?.asset.address
+  //       : farm?.router,
+  //   abi: parseAbi(
+  //     getRouterAbi(
+  //       farm?.protocol!,
+  //       farm?.farmType == "StandardAmm" ? false : true
+  //     )
+  //   ),
+  //   functionName: "getTokens",
+  //   chainId: chain?.id,
+  //   enabled: !!chain && !!farm,
+  // });
+  // const tokensSeq = tokensSeqArr as Address[];
 
   useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
 
@@ -96,15 +96,14 @@ const AddSectionStable: FC = () => {
   // Correct sequence of tokens!
   const tokensArr = farm?.asset.underlyingAssets ?? [];
   const tokens = useMemo(() => {
-    if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
-    if (!tokensSeq) return tokensArr;
-    if (tokensArr.length !== tokensSeq.length) return tokensArr;
-    console.log("tokensSeq", tokensSeq);
-    console.log("underlying tokens inside", tokensArr);
-    return tokensSeq.map(
-      (address) => tokensArr.find((token) => token.address == address)!
-    );
-  }, [tokensArr, tokensSeq]);
+    // if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
+    // if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
+    if (!tokensArr) return new Array<UnderlyingAssets>();
+    // return tokensSeq.map(
+    //   (address) => tokensArr.find((token) => token.address == address)!
+    // );
+    return tokensArr;
+  }, [tokensArr]);
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
     // Setting inputMap for Input fields
@@ -238,7 +237,7 @@ const AddSectionStable: FC = () => {
                   : (estLpAmount / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              %
+              {/* % = {estLpAmount} {totalSupply} */}%
             </span>
             <span>Share of pool</span>
           </p>
@@ -399,7 +398,7 @@ const AddSectionStable: FC = () => {
                   : (estLpAmount / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              %
+              {/* % = {estLpAmount} {totalSupply} */}%
             </span>
             <span>Share of pool</span>
           </p>

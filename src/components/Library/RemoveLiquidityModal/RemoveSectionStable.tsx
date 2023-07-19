@@ -74,22 +74,22 @@ const RemoveSectionStable = () => {
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
-  const { data: tokensSeqArr } = useContractRead({
-    address:
-      farm?.protocol.toLowerCase() == "curve"
-        ? farm?.asset.address
-        : farm?.router,
-    abi: parseAbi(
-      getRouterAbi(
-        farm?.protocol!,
-        farm?.farmType == "StandardAmm" ? false : true
-      )
-    ),
-    functionName: "getTokens",
-    chainId: chain?.id,
-    enabled: !!chain && !!farm,
-  });
-  const tokensSeq = tokensSeqArr as Address[];
+  // const { data: tokensSeqArr } = useContractRead({
+  //   address:
+  //     farm?.protocol.toLowerCase() == "curve"
+  //       ? farm?.asset.address
+  //       : farm?.router,
+  //   abi: parseAbi(
+  //     getRouterAbi(
+  //       farm?.protocol!,
+  //       farm?.farmType == "StandardAmm" ? false : true
+  //     )
+  //   ),
+  //   functionName: "getTokens",
+  //   chainId: chain?.id,
+  //   enabled: !!chain && !!farm,
+  // });
+  // const tokensSeq = tokensSeqArr as Address[];
 
   // Balance of LP Token
   const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
@@ -106,12 +106,14 @@ const RemoveSectionStable = () => {
 
   const tokensArr = farm?.asset.underlyingAssets ?? [];
   const tokens = useMemo(() => {
-    if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
-    if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
-    return tokensSeq.map(
-      (address) => tokensArr.find((token) => token.address == address)!
-    );
-  }, [tokensArr, tokensSeq]);
+    // if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
+    // if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
+    if (!tokensArr) return new Array<UnderlyingAssets>();
+    // return tokensSeq.map(
+    //   (address) => tokensArr.find((token) => token.address == address)!
+    // );
+    return tokensArr;
+  }, [tokensArr]);
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
@@ -360,37 +362,41 @@ const RemoveSectionStable = () => {
                 </span>
               </button>
             ))}
-            <button
-              className={clsx(
-                "mt-3 inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
-                removeMethodId == RemoveMethod.ALL
-                  ? "border border-[#8F8FFC] bg-[#ECECFF]"
-                  : "bg-[#FAFAFA]"
-              )}
-              disabled={farm?.protocol.toLowerCase() == "curve"}
-              onClick={() => setRemoveMethodId(RemoveMethod.ALL)}
-            >
-              {tokens.map((token, index) => (
-                <p key={index} className="inline-flex items-center space-x-3">
-                  <Image
-                    src={farm!.asset.logos[index]}
-                    alt={token?.address}
-                    width={24}
-                    height={24}
-                    className="rounded-full"
-                  />
-                  <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                    {removeMethodId === RemoveMethod.ALL
-                      ? toUnits((minAmount as number[])[index], 3)
-                      : 0}{" "}
-                    {token?.symbol}
-                  </span>
-                  {index !== tokens.length - 1 && (
-                    <span className="text-lg font-medium leading-5">+</span>
-                  )}
-                </p>
-              ))}
-            </button>
+            {farm?.protocol !== "curve" ? (
+              <button
+                className={clsx(
+                  "mt-3 inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                  removeMethodId == RemoveMethod.ALL
+                    ? "border border-[#8F8FFC] bg-[#ECECFF]"
+                    : "bg-[#FAFAFA]"
+                )}
+                disabled={farm?.protocol.toLowerCase() == "curve"}
+                onClick={() => setRemoveMethodId(RemoveMethod.ALL)}
+              >
+                {tokens.map((token, index) => (
+                  <p key={index} className="inline-flex items-center space-x-3">
+                    <Image
+                      src={farm!.asset.logos[index]}
+                      alt={token?.address}
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                    <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                      {removeMethodId === RemoveMethod.ALL
+                        ? toUnits((minAmount as number[])[index], 3)
+                        : 0}{" "}
+                      {token?.symbol}
+                    </span>
+                    {index !== tokens.length - 1 && (
+                      <span className="text-lg font-medium leading-5">+</span>
+                    )}
+                  </p>
+                ))}
+              </button>
+            ) : (
+              ""
+            )}
           </div>
         </div>
         {/* Estimate Gas and Slippage Tolerance */}

@@ -142,37 +142,31 @@ const StakingModal = () => {
 
   const handleStaking = async () => {
     try {
-      const argument = [
-        farm?.id, // pid
-        methodId == 0
-          ? parseUnits(
-              `${
-                (lpBalanceNum *
-                  parseFloat(percentage == "" ? "0" : percentage)) /
-                100
-              }`,
-              18
-            )
-          : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18), // amount
-      ];
+      const args = (() => {
+        const amt =
+          methodId == 0
+            ? parseUnits(
+                `${
+                  (lpBalanceNum *
+                    parseFloat(percentage == "" ? "0" : percentage)) /
+                  100
+                }`,
+                18
+              )
+            : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
+        if (farm?.protocol.toLowerCase() == "curve") {
+          return [amt];
+        } else if (farm?.protocol.toLowerCase() == "sirius") {
+          return [amt, farm?.asset.address, 1];
+        } else {
+          return [farm?.id, amt];
+        }
+      })();
 
-      console.log(
-        "method0 arg",
-        parseUnits(
-          `${
-            (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
-            100
-          }`,
-          18
-        )
-      );
-      console.log(
-        "method1 arg",
-        parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18)
-      );
+      console.log("stake args", args);
 
       const txnRes = await staking?.({
-        args: argument,
+        args: args,
       });
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
@@ -413,7 +407,8 @@ const StakingModal = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Staking {stakeAmount} {farm?.asset.symbol} Tokens
+              Staking {stakeAmount.toLocaleString("en-US")} {farm?.asset.symbol}{" "}
+              Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
