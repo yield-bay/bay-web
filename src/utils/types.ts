@@ -116,3 +116,8 @@ export enum ModalType {
   BLUE = "blue",
   RED = "red",
 }
+
+export type TokenType = {
+  symbol: string;
+  amount: number;
+};
