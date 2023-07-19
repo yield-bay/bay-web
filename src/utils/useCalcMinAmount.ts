@@ -60,6 +60,8 @@ const useCalcMinAmount = (
       enabled: !!farm && !!lpToken && !!amount,
     });
 
+  console.log("rssminamtdata", minAmountData, amount, tokens);
+
   const minAmountBigInt = minAmountData as bigint[];
 
   const minAmount = useMemo(() => {

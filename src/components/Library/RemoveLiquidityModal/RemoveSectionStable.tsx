@@ -53,6 +53,11 @@ enum RemoveMethod {
   INDIVIDUAL = 1,
 }
 
+enum Method {
+  PERCENTAGE = 0,
+  LP = 1,
+}
+
 const RemoveSectionStable = () => {
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
@@ -91,7 +96,7 @@ const RemoveSectionStable = () => {
 
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
-  const [methodId, setMethodId] = useState<number>(0);
+  const [methodId, setMethodId] = useState<Method>(Method.PERCENTAGE);
   const [removeMethodId, setRemoveMethodId] = useState<RemoveMethod>(
     RemoveMethod.ALL
   );
@@ -159,9 +164,10 @@ const RemoveSectionStable = () => {
 
   const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
     tokens,
-    methodId == 0
-      ? parseFloat(percentage !== "" ? percentage : "0") *
-          parseFloat(lpBalance ?? "0")
+    methodId == Method.PERCENTAGE
+      ? parseFloat(
+          percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
+        ) * parseFloat(lpBalance ?? "0")
       : parseFloat(lpTokens !== "" ? lpTokens : "0"),
     farm!,
     removeMethodId,
@@ -227,7 +233,7 @@ const RemoveSectionStable = () => {
     timestamp: number
   ) => {
     const tokenAmount =
-      methodId == 0
+      methodId == Method.PERCENTAGE
         ? parseUnits(
             `${
               (parseFloat(lpBalance!) *
@@ -468,7 +474,7 @@ const RemoveSectionStable = () => {
             type="primary"
             isLoading={false}
             disabled={
-              (methodId == 0
+              (methodId == Method.PERCENTAGE
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
               (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
@@ -590,7 +596,7 @@ const RemoveSectionStable = () => {
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
               Withdrawing{" "}
-              {methodId == 0
+              {methodId == Method.PERCENTAGE
                 ? toUnits(
                     parseFloat(percentage !== "" ? percentage : "0") *
                       parseFloat(lpBalance ?? "0"),
