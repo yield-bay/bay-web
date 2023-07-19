@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { UnderlyingAssets } from "@utils/types";
 import Image from "next/image";
 import { Address, useAccount, useBalance, useNetwork } from "wagmi";
@@ -11,6 +12,8 @@ interface TokenInputProps {
   };
   selectedFarm: any;
   tokensLength: number;
+  focusedInput: number;
+  setFocusedInput: (input: number) => void;
 }
 
 const TokenInput: React.FC<TokenInputProps> = ({
@@ -20,9 +23,12 @@ const TokenInput: React.FC<TokenInputProps> = ({
   inputMap,
   selectedFarm,
   tokensLength,
+  focusedInput,
+  setFocusedInput,
 }) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
+  const inputRef = useRef<HTMLInputElement>(null);
   // Balance Token
   const { data: balance, isLoading: balanceLoading } = useBalance({
     address: address,
@@ -56,6 +62,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
             event.preventDefault();
             handleInput(token, event.target.value);
           }}
+          ref={inputRef}
+          onFocus={() => setFocusedInput(index)}
+          autoFocus={focusedInput === index}
         />
         <div className="inline-flex items-center gap-x-2">
           <div className="flex flex-col items-end text-sm leading-5 opacity-50">

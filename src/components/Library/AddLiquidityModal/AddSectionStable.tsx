@@ -59,6 +59,9 @@ const AddSectionStable: FC = () => {
     [address: Address]: number;
   }>({});
 
+  // Input focus states
+  const [focusedInput, setFocusedInput] = useState<number>(0);
+
   const totalSupply = useTotalSupply(farm?.asset.address!, farm?.protocol!);
 
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
@@ -216,6 +219,8 @@ const AddSectionStable: FC = () => {
             inputMap={inputMap}
             selectedFarm={farm}
             tokensLength={tokens.length}
+            focusedInput={focusedInput}
+            setFocusedInput={setFocusedInput}
           />
         ))}
 
