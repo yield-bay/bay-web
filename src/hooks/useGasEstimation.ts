@@ -1,45 +1,66 @@
 import { useState } from "react";
-import { usePublicClient } from "wagmi";
-import { Address, PublicClient, parseAbi, parseUnits } from "viem";
+import { useNetwork, usePublicClient } from "wagmi";
+import {
+  Address,
+  PublicClient,
+  parseAbi,
+  parseUnits,
+  createPublicClient,
+  http,
+} from "viem";
 import {
   getAddLiqFunctionName,
+  getChefAbi,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
 import { FarmType } from "@utils/types";
+import { mainnet, moonbeam, moonriver } from "viem/chains";
 
 const estimateGas = async (
   publicClient: PublicClient,
   address: Address,
+  contractType: number, // 0: chef, 1: router, 2: lp
+  functionType: number, // 0: addliq, 1: removeliq, 2: stake, 3: unstake, 4: claimrewards
+  functionName: string,
   farm: FarmType,
-  slippage: number,
-  amountA: number,
-  amountB: number,
+  account: Address,
   args: Array<any>
 ): Promise<bigint> => {
-  // const farmAsset0 = farm.asset.underlyingAssets[0];
-  // const farmAsset1 = farm.asset.underlyingAssets[1];
+  console.log(
+    "egparams",
+    address,
+    contractType,
+    functionType,
+    functionName,
+    farm,
+    account,
+    args,
+    contractType == 0
+      ? parseAbi(getChefAbi(farm?.protocol!, farm?.chef))
+      : parseAbi(
+          getRouterAbi(
+            farm?.protocol!,
+            farm?.farmType == "StandardAmm" ? false : true
+          )
+        )
+  );
 
-  // const gasEstimate = await publicClient.estimateContractGas({
-  //   address: farm?.router as any,
-  //   abi: parseAbi(
-  //     getRouterAbi(
-  //       farm?.protocol!,
-  //       farm?.farmType == "StandardAmm" ? false : true
-  //     )
-  //   ),
-  //   functionName: getAddLiqFunctionName(farm?.protocol as string) as any,
-  //   account: address as any,
-  //   args: [
-  //     farmAsset0?.address, // TokenA Address
-  //     farmAsset1?.address, // TokenB Address
-  //     parseUnits(`${amountA}`, farmAsset0?.decimals),
-  //     parseUnits(`${amountB}`, farmAsset1?.decimals),
-  //     parseUnits(`${(amountA * (100 - slippage)) / 100}`, farmAsset0?.decimals), // amountAMin
-  //     parseUnits(`${(amountB * (100 - slippage)) / 100}`, farmAsset1?.decimals), // amountBMin
-  //     address, // To
-  //     1784096161000, // deadline (uint256)
-  //   ],
-  // });
+  const gasEstimate = await publicClient.estimateContractGas({
+    address: address as any,
+    abi:
+      contractType == 0
+        ? parseAbi(getChefAbi(farm?.protocol!, farm?.chef))
+        : parseAbi(
+            getRouterAbi(
+              farm?.protocol!,
+              farm?.farmType == "StandardAmm" ? false : true
+            )
+          ),
+    functionName: functionName as any,
+    account: account as any,
+    args: args,
+  });
+  console.log("gasssss", gasEstimate);
   // return gasEstimate;
   return BigInt(0);
 };
@@ -51,26 +72,32 @@ const getGasPrice = async (publicClient: PublicClient): Promise<bigint> => {
 
 const useGasEstimation = (
   address: Address,
-  slippage: number,
+  contractType: number, // 0: chef, 1: router, 2: lp
+  functionType: number, // 0: addliq, 1: removeliq, 2: stake, 3: unstake, 4: claimrewards
+  functionName: string,
   farm: FarmType,
-  amountA: number,
-  amountB: number,
+  account: Address,
   args: Array<any>
 ) => {
-  const publicClient = usePublicClient();
+  const { chain } = useNetwork();
+  const publicClient = usePublicClient({ chainId: chain?.id });
+  // const publicClient = usePublicClient();
+  // const publicClient = createPublicClient({
+  //   chain: mainnet,
+  //   transport: http(),
+  // });
   const [gasEstimateAmount, setGasEstimateAmount] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<number>(0);
-
-  // if (amountA == 0 || amountB == 0) return { gasEstimate: 0 };
 
   // try {
   //   estimateGas(
   //     publicClient,
   //     address,
+  //     contractType,
+  //     functionType,
+  //     functionName,
   //     farm,
-  //     slippage,
-  //     amountA,
-  //     amountB,
+  //     account,
   //     args
   //   ).then((res) => {
   //     setGasEstimateAmount(Number(res));
