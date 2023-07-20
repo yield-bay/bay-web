@@ -1,9 +1,10 @@
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import clsx from "clsx";
 import Footer from "@components/Common/Footer";
 import Header from "@components/Common/Header";
 import { satoshiFont } from "@utils/localFont";
 import { useAtom } from "jotai";
+import _ from "lodash";
 import {
   lpTokenPricesAtom,
   positionsAtom,
@@ -37,9 +38,14 @@ import {
   stellaswapV1ChefAbi,
 } from "./evmUtils";
 import {
+  accountInitAtom,
   addLiqModalOpenAtom,
   claimModalOpenAtom,
   evmPosLoadingAtom,
+  isInitialisedAtom,
+  mangataAddressAtom,
+  mangataHelperAtom,
+  mangataPoolsAtom,
   removeLiqModalOpenAtom,
   stakingModalOpenAtom,
   subPosLoadingAtom,
@@ -54,6 +60,10 @@ import { useConnection } from "@hooks/useConnection";
 import { useRouter } from "next/router";
 import ClaimRewardsModal from "@components/Library/ClaimRewardsModal";
 import SlippageModal from "@components/Library/SlippageModal";
+import { MangataRococo, Mangata as MangataConfig } from "@utils/xcm/config";
+import { IS_PRODUCTION } from "@utils/constants";
+import MangataHelper from "@utils/xcm/common/mangataHelper";
+import Account from "@utils/xcm/common/account";
 
 interface Props {
   children: ReactNode;
@@ -64,11 +74,18 @@ const Layout: FC<Props> = ({ children }) => {
   const router = useRouter();
 
   // Modal States
-  const [addliqModalOpen] = useAtom(addLiqModalOpenAtom);
+  // const [addliqModalOpen] = useAtom(addLiqModalOpenAtom);
   const [removeLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
   const [stakingModalOpen] = useAtom(stakingModalOpenAtom);
   const [unstakingModalOpen] = useAtom(unstakingModalOpenAtom);
   const [claimModalOpen] = useAtom(claimModalOpenAtom);
+
+  // Managat Setup
+  const [mangataHelperx, setMangataHelper] = useAtom(mangataHelperAtom);
+  const [, setMangataAddress] = useAtom(mangataAddressAtom);
+  const [, setPools] = useAtom(mangataPoolsAtom);
+  const [accountInit, setAccountInit] = useAtom(accountInitAtom);
+  const [, setIsInitialised] = useAtom(isInitialisedAtom);
 
   useEffect(() => {
     // check internet connection and redirect to 500 page if not connected
@@ -323,6 +340,94 @@ const Layout: FC<Props> = ({ children }) => {
       )
     );
     setPositions(tempPositions);
+  };
+
+  const setupMangataHelper = async (accountInit: Account | null) => {
+    if (account?.address == null) {
+      console.log("Connect wallet to use App!");
+      return;
+    }
+
+    if (mangataHelperx != null && accountInit?.address === account.address) {
+      console.log("accountinit", accountInit?.address);
+      console.log("account address", account.address);
+      console.log("Already initialised!");
+      return;
+    }
+
+    console.log("Initializing APIs of both chains ...");
+
+    // Helper setup for Mangata on Rococo Testnet
+    let mangataConfig = MangataRococo;
+    if (IS_PRODUCTION) {
+      mangataConfig = MangataConfig;
+    }
+
+    const mangataHelper = new MangataHelper(mangataConfig);
+    console.log("initiliazing mangata helper...");
+    await mangataHelper.initialize();
+    console.log("✅ mangata helper initialized\n", mangataHelper);
+    setMangataHelper(mangataHelper);
+
+    const mangataChainName = mangataHelper.config.key;
+
+    console.log("mangata Assets", mangataHelper.config.assets);
+
+    const mangataNativeToken = _.first(mangataHelper.config.assets);
+
+    console.log(
+      `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
+        mangataNativeToken
+      )}\n`
+    );
+
+    console.log("1. Reading token and balance of account ...");
+
+    // New account instance from connected account
+    const account1 = new Account({
+      address: account?.address,
+      meta: {
+        name: account?.name,
+      },
+    });
+    await account1.init([mangataHelper]);
+    console.log("account1", account1);
+    // It is setting Account1 here, and this fn runs only once in starting
+    // it should re-run when an account is updated.
+    setAccountInit(account1);
+
+    const mangataAddress = account1.getChainByName(mangataChainName)?.address;
+    setMangataAddress(mangataAddress);
+
+    const pools = await mangataHelper.getPools({ isPromoted: true });
+    console.log("Promoted Pools", pools);
+    setPools(pools);
+
+    // LP Balance
+    // pools.forEach(async (pool: any) => {
+    //   const token0 = mangataHelper.getTokenSymbolById(pool.firstTokenId);
+    //   const token1 = mangataHelper.getTokenSymbolById(pool.secondTokenId);
+    //   if (token0 == "ZLK") return;
+
+    //   const lpBalance = await mangataHelper.mangata?.getTokenBalance(
+    //     pool.liquidityTokenId,
+    //     account?.address
+    //   );
+    //   const decimal = mangataHelper.getDecimalsBySymbol(`${token0}-${token1}`);
+
+    //   // Checks if the user's account has proxy setup
+    //   if (account1) {
+    //     const proxies = await mangataHelper.api?.query.proxy.proxies(
+    //       account1?.address
+    //     );
+    //     proxies.toHuman()[0].forEach((p: any) => {
+    //       if (p.proxyType == "AutoCompound") {
+    //         setUserHasProxy(true);
+    //       }
+    //     });
+    //   }
+    // });
+    setIsInitialised(true);
   };
 
   /**
@@ -1703,6 +1808,7 @@ const Layout: FC<Props> = ({ children }) => {
       walletEvent();
       console.log("running mangata setup");
       fetchSubstratePositions();
+      setupMangataHelper(accountInit);
     } else if (!isConnectedDot && farms.length > 0) {
       console.log("emptying mangata positions");
       emptySubstratePositions();
@@ -1754,8 +1860,8 @@ const Layout: FC<Props> = ({ children }) => {
       )}
     >
       <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
-      {addliqModalOpen && <AddLiquidityModal />}
-      {removeLiqModalOpen && <RemoveLiquidityModal />}
+      <AddLiquidityModal />
+      <RemoveLiquidityModal />
       {stakingModalOpen && <StakingModal />}
       {unstakingModalOpen && <UnstakingModal />}
       {claimModalOpen && <ClaimRewardsModal />}

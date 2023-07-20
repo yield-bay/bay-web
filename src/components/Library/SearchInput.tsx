@@ -11,13 +11,13 @@ export default function SearchInput({ term, setTerm }: SearchInputProps) {
   const [inputFocus, setInputFocus] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
 
-  useKeyPress(["/"], (event: any) => {
+  useKeyPress(["/"], () => {
     if (ref.current != null) {
       ref.current.focus();
     }
   });
 
-  useKeyPress(["Escape"], (event: any) => {
+  useKeyPress(["Escape"], () => {
     if (ref.current != null) {
       ref.current.blur();
     }

@@ -92,13 +92,10 @@ const FarmPage: NextPage = () => {
     unstakingModalOpenAtom
   );
   const [claimModalOpen, setClaimModalOpen] = useAtom(claimModalOpenAtom);
-  const [, setSelectedFarm] = useAtom(selectedFarmAtom);
-
-  // const [calcOpen, setCalcOpen] = useState<boolean>(false);
   const [selectedROIBtn, setSelectedROIBtn] = useState<1 | 7 | 30 | 365>(30);
-
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState<boolean>(false);
 
+  const [, setSelectedFarm] = useAtom(selectedFarmAtom);
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
   const [farmPosition, hasPosition] = useSpecificPosition(positions, farm);
   const [unclaimedReward, setUnclaimedReward] = useState(0);
@@ -191,12 +188,27 @@ const FarmPage: NextPage = () => {
                 size="custom"
                 style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
                 onButtonClick={() => {
-                  setAddLiqModalOpen(true);
+                  console.log("farm in farmpage", farm);
                   setSelectedFarm(farm);
+                  setAddLiqModalOpen(true);
                 }}
               >
                 <span>Add Liquidity</span>
                 <PlusIcon className="text-black h-4 w-4" />
+              </Button>
+            )}
+            {!hasPosition && (
+              <Button
+                size="custom"
+                style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
+                onButtonClick={() => {
+                  setRemoveLiqModalOpen(true);
+                  setSelectedFarm(farm);
+                }}
+                tooltipText="You need to have liquidity first"
+              >
+                <span>Remove Liquidity</span>
+                <MinusIcon className="text-black h-4 w-4" />
               </Button>
             )}
           </div>

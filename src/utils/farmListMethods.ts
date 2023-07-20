@@ -62,6 +62,7 @@ export function formatFarmType(farmType: string): string {
 
 export function formatTokenSymbols(farmName: string): string[] {
   let tokenSymbols = farmName;
+  if (farmName == "" || !farmName) return ["", ""];
   if (farmName.includes("LP")) {
     tokenSymbols = tokenSymbols.replace("LP", "").trimEnd();
   }

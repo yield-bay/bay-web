@@ -20,7 +20,7 @@ const useKeyPress = (
 
   // handle keypress down event
   const handleKeyPress = useCallback(
-    (event: any) => {
+    (event: KeyboardEvent) => {
       if (keys.some((key: string) => event.key === key)) {
         callbackRef.current(event);
       }
