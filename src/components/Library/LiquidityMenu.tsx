@@ -73,7 +73,8 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
             }}
             disabled={
               !!position
-                ? position.unstaked.amount + position.staked.amount <= 0.01
+                ? position.unstaked.amountUSD + position.staked.amountUSD <=
+                  0.01
                 : true
             }
             tooltipText="You need to have liquidity first"
@@ -88,7 +89,8 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
             }}
             disabled={
               !!position
-                ? position.unstaked.amount + position.staked.amount <= 0.01
+                ? position.unstaked.amountUSD + position.staked.amountUSD <=
+                  0.01
                 : true
             }
             tooltipText="You need to have liquidity first"
@@ -108,8 +110,8 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
             }}
             disabled={
               !!position
-                ? position.unstaked.amount > 0.01 &&
-                  position.staked.amount <= 0.01
+                ? position.unstaked.amountUSD > 0.01 &&
+                  position.staked.amountUSD <= 0.01
                 : true
             }
             tooltipText="You need to stake tokens first"

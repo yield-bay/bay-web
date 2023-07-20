@@ -265,6 +265,7 @@ export const swapFlashLoanAbi = [
 // metaSwap - sirius router
 export const siriusRouterAbi = [
   "function getToken(uint8) external view returns (address)",
+  "function getTokenBalance(uint8) external view returns (uint256)",
   "function calculateTokenAmount(uint256[], bool) external view returns (uint256)",
   "function calculateRemoveLiquidity(uint256) external view returns (uint256[])",
   "function calculateRemoveLiquidityOneToken(uint256, uint8) external view returns (uint256)",
@@ -279,6 +280,7 @@ export const lpAbi = [
   "function decimals() view returns (uint8)",
   "function getReserves() external view returns (uint112, uint112, uint32)",
   "function totalSupply() external view returns (uint256)",
+  "function token0() external view returns (address)",
 ];
 
 export const tokenAbi = [

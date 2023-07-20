@@ -92,6 +92,11 @@ export const fetchLpTokenPrices = async (): Promise<{
           { chain: "moonriver", protocol: "solarbeam" },
           { chain: "moonriver", protocol: "zenlink" },
           { chain: "astar", protocol: "zenlink" },
+          { chain: "moonbeam", protocol: "beamswap" },
+          { chain: "moonbeam", protocol: "solarflare" },
+          { chain: "moonriver", protocol: "sushiswap" },
+          { chain: "astar", protocol: "arthswap" },
+          { chain: "astar", protocol: "Sirius" },
         ],
       }
     )
@@ -133,6 +138,11 @@ export const fetchTokenPrices = async (): Promise<{
           { chain: "moonbeam", protocol: "zenlink" },
           { chain: "moonriver", protocol: "zenlink" },
           { chain: "astar", protocol: "zenlink" },
+          { chain: "moonbeam", protocol: "beamswap" },
+          { chain: "moonbeam", protocol: "solarflare" },
+          { chain: "moonriver", protocol: "sushiswap" },
+          { chain: "astar", protocol: "arthswap" },
+          { chain: "astar", protocol: "Sirius" },
         ],
       }
     )

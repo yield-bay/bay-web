@@ -952,7 +952,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          const solar = filteredFarms.map(
+          const beam = filteredFarms.map(
             async (ff: {
               chain: any;
               protocol: any;
@@ -1080,7 +1080,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after beamswap positions", positions);
             }
           );
-          allPromises.push(...solar);
+          allPromises.push(...beam);
           // });
         } else if (protocol.name == "solarflare") {
           const chef = new ethers.Contract(
@@ -1089,7 +1089,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          const solar = filteredFarms.map(
+          const solarf = filteredFarms.map(
             async (ff: {
               chain: any;
               protocol: any;
@@ -1217,7 +1217,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after solarflare positions", positions);
             }
           );
-          allPromises.push(...solar);
+          allPromises.push(...solarf);
           // });
         } else if (protocol.name == "sushiswap") {
           const chef = new ethers.Contract(
@@ -1226,7 +1226,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          const solar = filteredFarms.map(
+          const sushi = filteredFarms.map(
             async (ff: {
               chain: any;
               protocol: any;
@@ -1358,7 +1358,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after sushiswap positions", positions);
             }
           );
-          allPromises.push(...solar);
+          allPromises.push(...sushi);
           // });
         } else if (protocol.name == "arthswap") {
           const chef = new ethers.Contract(
@@ -1367,7 +1367,7 @@ const Layout: FC<Props> = ({ children }) => {
             provider
           );
           // provider.on("block", async () => {
-          const solar = filteredFarms.map(
+          const arth = filteredFarms.map(
             async (ff: {
               chain: any;
               protocol: any;
@@ -1384,11 +1384,17 @@ const Layout: FC<Props> = ({ children }) => {
                 ff.asset.symbol
               );
 
+              // const lpa = new ethers.Contract(
+              //   ff.asset.address,
+              //   lpAbi,
+              //   provider
+              // );
+              // console.log("artlpa", await lpa.balanceOf(address));
               // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
-              const lpToken = await chef.lpTokens(ff.id);
-              const poolInfo = await chef.poolInfo(ff.id);
-              const userInfo = await chef.userInfo(ff.id, address);
-              console.log("arthswapInfo0", Object.keys(poolInfo), lpToken);
+              // const lpToken = await chef.lpTokens(ff.id);
+              const poolInfo = await chef.poolInfos(ff.id);
+              const userInfo = await chef.userInfos(ff.id, address);
+              // console.log("arthswapInfo0", Object.keys(poolInfo));
               console.log("arthswappoolInfo", poolInfo);
               console.log("arthswapuserInfo", userInfo);
               const stakedLpAmount =
@@ -1396,11 +1402,7 @@ const Layout: FC<Props> = ({ children }) => {
               const rewardDebt = Object.values(userInfo)[1];
               // const rewardLockedUp = Object.values(userInfo)[2];
               // const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
-              const lp = new ethers.Contract(
-                lpToken as string,
-                lpAbi,
-                provider
-              );
+              const lp = new ethers.Contract(ff.asset.address, lpAbi, provider);
               const unstakedLpAmount =
                 Number(await lp.balanceOf(address)) / 10 ** 18;
               console.log(
@@ -1418,8 +1420,8 @@ const Layout: FC<Props> = ({ children }) => {
               let ucrewDecimals: any;
               let ucrewAmounts: any;
               pending = await chef.pendingARSW(ff.id, address);
-              ucrewAddrs = ["0xf390830DF829cf22c53c8840554B98eafC5dCBc2"];
-              ucrewSymbols = ["SUSHI"];
+              ucrewAddrs = ["0xDe2578Edec4669BA7F41c5d5D2386300bcEA4678"];
+              ucrewSymbols = ["ARSW"];
               ucrewDecimals = [18];
               ucrewAmounts = [pending];
 
@@ -1461,7 +1463,7 @@ const Layout: FC<Props> = ({ children }) => {
               if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
                 const tempPositions = { ...positions };
 
-                console.log("before creating temp positions obejct:\n", {
+                console.log("arthbefore creating temp positions obejct:\n", {
                   unstakedAmount: unstakedLpAmount,
                   stakedLpAmount: stakedLpAmount,
                   lpTokenPricesMap: lpTokenPricesMap,
@@ -1470,6 +1472,11 @@ const Layout: FC<Props> = ({ children }) => {
                       `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                   lpSymbol: ff.asset.symbol,
+                  hmm:
+                    unstakedLpAmount *
+                    lpTokenPricesMap[
+                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    ],
                 });
 
                 tempPositions[name] = {
@@ -1499,7 +1506,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log("after arthswap positions", positions);
             }
           );
-          allPromises.push(...solar);
+          allPromises.push(...arth);
           // });
         } else if (protocol.name == "sirius") {
           let chef = new ethers.Contract(

@@ -310,7 +310,8 @@ const FarmPage: NextPage = () => {
                     setSelectedFarm(farm);
                   }}
                   disabled={
-                    farmPosition.unstaked.amount + farmPosition.staked.amount <=
+                    farmPosition.unstaked.amountUSD +
+                      farmPosition.staked.amountUSD <=
                     0.01
                   }
                   tooltipText="You need to have liquidity first"
@@ -327,8 +328,8 @@ const FarmPage: NextPage = () => {
                       setSelectedFarm(farm);
                     }}
                     disabled={
-                      farmPosition.unstaked.amount +
-                        farmPosition.staked.amount <=
+                      farmPosition.unstaked.amountUSD +
+                        farmPosition.staked.amountUSD <=
                       0.01
                     }
                     tooltipText="You need to have liquidity first"
@@ -349,8 +350,8 @@ const FarmPage: NextPage = () => {
                       setSelectedFarm(farm);
                     }}
                     disabled={
-                      farmPosition.unstaked.amount > 0.01 &&
-                      farmPosition.staked.amount <= 0.01
+                      farmPosition.unstaked.amountUSD > 0.01 &&
+                      farmPosition.staked.amountUSD <= 0.01
                     }
                     tooltipText="You need to stake tokens first"
                   >
