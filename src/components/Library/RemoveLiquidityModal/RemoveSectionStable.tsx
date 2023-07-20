@@ -583,7 +583,13 @@ const RemoveSectionStable = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
               <Link
-                href={`https://moonscan.io/tx/${txnHash}}`}
+                href={
+                  farm?.chain == "moonbeam"
+                    ? `https://moonscan.io/tx/${txnHash}`
+                    : farm?.chain == "moonriver"
+                    ? `https://moonriver.moonscan.io/tx/${txnHash}`
+                    : `https://blockscout.com/astar/tx/${txnHash}`
+                }
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"
                 rel="noreferrer"
