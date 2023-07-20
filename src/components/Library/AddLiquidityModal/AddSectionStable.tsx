@@ -2,7 +2,6 @@ import { type FC, useState, useCallback, useMemo, useEffect } from "react";
 import {
   useAccount,
   useBalance,
-  useContractRead,
   useContractWrite,
   useNetwork,
   usePublicClient,
@@ -119,10 +118,6 @@ const AddSectionStable: FC = () => {
   }, []);
 
   const amounts = useStableAmounts(inputMapAmount, tokens);
-
-  const approvalArray = useMemo(() => {
-    return approvalMap ? Object.values(approvalMap) : [];
-  }, [approvalMap]);
 
   const estLpAmount = useMinLPTokensStable(
     farm?.router!,
@@ -376,20 +371,9 @@ const AddSectionStable: FC = () => {
           </div>
           <p>{farm?.asset.symbol} Tokens</p>
         </div>
-        {/* <div className="inline-flex justify-between text-sm font-bold">
-          <span className="text-[#0B0B0B]">Rates</span>
-          <p className="flex flex-col gap-y-2 text-[#282929]">
-            <span>1 STELLA = 0.1235 GLMR</span>
-            <span>1 GLMR = 7.0389 STELLA</span>
-          </p>
-        </div> */}
         <hr className="border-t border-[#E3E3E3] min-w-full" />
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          {/* <div className="flex flex-col gap-y-2">
-            <p>0.1234 GLMR per STELLA</p>
-            <p>0.1234 STELLA per GLMR</p>
-          </div> */}
           <p className="flex flex-col items-end">
             <span>
               {(totalSupply !== 0 && estLpAmount > 0

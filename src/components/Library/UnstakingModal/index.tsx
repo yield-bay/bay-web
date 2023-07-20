@@ -29,12 +29,12 @@ interface ChosenMethodProps {
   farm: FarmType;
   percentage: string;
   setPercentage: (value: string) => void;
-  handlePercChange: (event: any) => void;
+  handlePercChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   staked: number;
   isLoadingStaked: boolean;
   lpTokens: string;
   setLpTokens: (value: string) => void;
-  handleLpTokensChange: (event: any) => void;
+  handleLpTokensChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   methodId: number;
 }
 
@@ -59,13 +59,13 @@ const UnstakingModal = () => {
   const [txnHash, setTrxnHash] = useState<string>("");
 
   // When InputType.Percentage
-  const handlePercChange = (event: any) => {
+  const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     setPercentage(event.target.value);
   };
 
   // When InputType.Token
-  const handleLpTokensChange = (event: any) => {
+  const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     setLpTokens(event.target.value);
   };

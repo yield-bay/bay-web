@@ -9,7 +9,6 @@ import { formatTokenSymbols, getLpTokenSymbol } from "@utils/farmListMethods";
 import {
   useAccount,
   useBalance,
-  useContractRead,
   // useContractRead,
   useContractWrite,
   useNetwork,
@@ -39,12 +38,12 @@ interface ChosenMethodProps {
   farm: FarmType;
   percentage: string;
   setPercentage: (value: string) => void;
-  handlePercChange: (event: any) => void;
+  handlePercChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   lpBal: string;
   lpBalLoading: boolean;
   lpTokens: string;
   setLpTokens: (value: string) => void;
-  handleLpTokensChange: (event: any) => void;
+  handleLpTokensChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   methodId: number;
 }
 
@@ -120,7 +119,7 @@ const RemoveSectionStable = () => {
   const [isProcessStep, setIsProcessStep] = useState(false);
 
   // When InputType.Percentage
-  const handlePercChange = (event: any) => {
+  const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = parseFloat(event.target.value);
     if ((value >= 0 && value <= 100) || event.target.value == "") {
@@ -131,7 +130,7 @@ const RemoveSectionStable = () => {
   };
 
   // When InputType.Token
-  const handleLpTokensChange = (event: any) => {
+  const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
     if (parseFloat(value) >= 0 || value == "") {
