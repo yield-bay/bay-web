@@ -21,11 +21,14 @@ import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import { formatTokenSymbols } from "@utils/farmListMethods";
-import { getDecimalBN } from "@utils/xcm/common/utils";
+import { delay, getDecimalBN } from "@utils/xcm/common/utils";
 import BN from "bn.js";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import toUnits from "@utils/toUnits";
+import ToastWrapper from "../ToastWrapper";
+import { useToast } from "@chakra-ui/react";
+import { MangataPool } from "@utils/types";
 
 enum InputType {
   Off = -1,
@@ -39,6 +42,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [lpBalance, setLpBalance] = useState<number>(0);
   const [fees, setFees] = useState<number>(0);
 
+  const [lpUpdated, setLpUpdated] = useState<number>(0);
+
+  const toast = useToast();
+
   const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -47,7 +54,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [mangataHelper] = useAtom(mangataHelperAtom);
   const [account1] = useAtom(accountInitAtom);
   const [pools] = useAtom(mangataPoolsAtom);
-  const [pool, setPool] = useState<any>(null);
+  const [pool, setPool] = useState<MangataPool>();
   const [mangataAddress] = useAtom(mangataAddressAtom);
   const [isInitialised] = useAtom(isInitialisedAtom);
   const [mgxBalance, setMgxBalance] = useState<number>(0);
@@ -64,6 +71,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     selectedFarm?.asset.symbol!
     // : replaceTokenSymbols(farm?.asset.symbol!)
   );
+
+  // Process states
+  const [isInProcess, setIsInProcess] = useState(false);
+  const [isSigning, setIsSigning] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
@@ -158,16 +170,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     setPool(pool);
 
     if (_.isUndefined(pool)) {
-      // toast({
-      //   position: "top",
-      //   duration: 3000,
-      //   render: () => (
-      //     <ToastWrapper
-      //       title={`Couldn’t find a liquidity pool for ${poolName} ...`}
-      //       status="error"
-      //     />
-      //   ),
-      // });
+      toast({
+        position: "top",
+        duration: 3000,
+        render: () => (
+          <ToastWrapper
+            title={`Couldn’t find a liquidity pool for ${poolName} ...`}
+            status="error"
+          />
+        ),
+      });
       setIsOpen(false);
       setSelectedFarm(null);
       throw new Error(`Couldn’t find a liquidity pool for ${poolName} ...`);
@@ -265,24 +277,22 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         setFirstTokenBalance(token0BalanceFree);
         setSecondTokenBalance(token1BalanceFree);
       } else {
-        // toast({
-        //   position: "top",
-        //   duration: 3000,
-        //   render: () => (
-        //     <ToastWrapper title="Please connect wallet!" status="error" />
-        //   ),
-        // });
+        toast({
+          position: "top",
+          duration: 3000,
+          render: () => (
+            <ToastWrapper title="Please connect wallet!" status="error" />
+          ),
+        });
         console.log("Account1 is empty");
       }
     })();
   }, [account1, pool]);
 
-  const handleAddLiquidity = async () => {
-    console.log("So, you want to Add Liquidity!");
-  };
-
   const getFirstTokenRelation = () => {
-    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    const poolRatio =
+      Number(pool?.firstTokenAmountFloat) /
+      Number(pool?.secondTokenAmountFloat);
     const expFirstTokenAmount = poolRatio;
     const firstTokenAmount = isNaN(expFirstTokenAmount)
       ? "0"
@@ -291,7 +301,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   };
 
   const getSecondTokenRelation = () => {
-    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    const poolRatio =
+      Number(pool?.firstTokenAmountFloat) /
+      Number(pool?.secondTokenAmountFloat);
     const expSecondTokenAmount = 1 / poolRatio;
     const secondTokenAmount = isNaN(expSecondTokenAmount)
       ? "0"
@@ -309,9 +321,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       // Estimate of fees; no need to be accurate
       const fees = await mangataHelper.getMintLiquidityFee({
         pair: account1?.address,
-        firstTokenId: pool.firstTokenId,
+        firstTokenId: pool?.firstTokenId,
         firstTokenAmount: firstTokenAmt,
-        secondTokenId: pool.secondTokenId,
+        secondTokenId: pool?.secondTokenId,
         expectedSecondTokenAmount: secondTokenAmt,
       });
       console.log("fees:", fees, parseFloat(fees));
@@ -323,13 +335,15 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
 
   const updateFirstTokenAmount = (secondTokenAmount: number): string => {
     // Ratio of tokens in the pool
-    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    const poolRatio =
+      Number(pool?.firstTokenAmountFloat) /
+      Number(pool?.secondTokenAmountFloat);
     console.log("poolRatio", poolRatio, secondTokenAmount);
 
     // Estimated LP to be minted
     const lpAmount =
       (secondTokenAmount * lpTotalBalance) /
-      (parseFloat(pool.secondTokenAmountFloat.toString()) * (1 + SLIPPAGE));
+      (parseFloat(pool?.secondTokenAmountFloat.toString()!) * (1 + SLIPPAGE));
     console.log("lpAmount via secondToken", lpAmount);
     setEstimateLpMinted(lpAmount);
 
@@ -346,11 +360,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
 
   // Method to update second token amount based on first token amount
   const updateSecondTokenAmount = (firstTokenAmount: number): string => {
-    const poolRatio = pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
+    const poolRatio =
+      Number(pool?.firstTokenAmountFloat) /
+      Number(pool?.secondTokenAmountFloat);
     // Calculates estimate LP minted
     const lpAmount =
       (firstTokenAmount * lpTotalBalance) /
-      parseFloat(pool.firstTokenAmountFloat.toString());
+      parseFloat(pool?.firstTokenAmountFloat.toString()!);
     console.log("lpAmount via first token", lpAmount);
     setEstimateLpMinted(lpAmount);
 
@@ -403,16 +419,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     if (token0 == "MGX") {
       if ((firstTokenBalance as number) < 20) {
         alert("Insufficient balance to pay gas fees!");
-        // toast({
-        //   position: "top",
-        //   duration: 3000,
-        //   render: () => (
-        //     <ToastWrapper
-        //       title="Insufficient balance to pay gas fees!"
-        //       status="warning"
-        //     />
-        //   ),
-        // });
+        toast({
+          position: "top",
+          duration: 3000,
+          render: () => (
+            <ToastWrapper
+              title="Insufficient balance to pay gas fees!"
+              status="warning"
+            />
+          ),
+        });
       } else {
         setFirstTokenAmount(
           firstTokenBalance
@@ -428,7 +444,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     updateSecondTokenAmount(firstTokenBalance ?? 0);
   };
 
-  // // Method to handle max button for second token
+  // Method to handle max button for second token
   const handleMaxSecondToken = () => {
     // Checking if user has enough balance to pay gas fees
     if (
@@ -437,16 +453,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     ) {
       if ((secondTokenBalance as number) < 20) {
         alert("Insufficient balance to pay gas fees!");
-        // toast({
-        //   position: "top",
-        //   duration: 3000,
-        //   render: () => (
-        //     <ToastWrapper
-        //       title="Insufficient balance to pay gas fees!"
-        //       status="warning"
-        //     />
-        //   ),
-        // });
+        toast({
+          position: "top",
+          duration: 3000,
+          render: () => (
+            <ToastWrapper
+              title="Insufficient balance to pay gas fees!"
+              status="warning"
+            />
+          ),
+        });
       } else {
         setSecondTokenAmount(
           secondTokenBalance
@@ -460,6 +476,170 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       );
     }
     updateFirstTokenAmount(secondTokenBalance ?? 0);
+  };
+
+  // Method to call to Add Liquidity confirmation
+  const handleAddLiquidity = async () => {
+    setIsInProcess(true);
+    const signer = account?.wallet?.signer;
+
+    console.log(
+      "pool.firstTokenAmountFloat",
+      pool?.firstTokenAmountFloat,
+      "pool.secondTokenAmountFloat",
+      pool?.secondTokenAmountFloat,
+      "firstTokenAmount",
+      firstTokenAmount,
+      "expectedSecondTokenAmount",
+      secondTokenAmount
+    );
+
+    try {
+      console.log(
+        "liquidityTokenId",
+        pool?.liquidityTokenId,
+        "estimatedLpMinted",
+        estimateLpMinted
+      );
+
+      // Method to Add Liquidity
+      const mintLiquidityTxn = await mangataHelper.mintLiquidityTx(
+        pool?.firstTokenId,
+        pool?.secondTokenId,
+        firstTokenAmount,
+        secondTokenAmount
+      );
+
+      await mintLiquidityTxn
+        .signAndSend(
+          account1?.address,
+          { signer: signer },
+          ({ status }: any) => {
+            if (status.isInBlock) {
+              console.log(
+                `Mint liquidity trxn is in Block with hash ${status.asInBlock.toHex()}`
+              );
+              // unsub();
+            } else if (status.isFinalized) {
+              (async () => {
+                const tranHash = status.asFinalized.toString();
+                console.log(
+                  `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
+                );
+                await delay(20000);
+                console.log("after delay");
+                const block = await mangataHelper.api.rpc.chain.getBlock(
+                  tranHash
+                );
+                console.log("block", block);
+                console.log("block", JSON.stringify(block));
+                const bhn = parseInt(block.block.header.number) + 1;
+                console.log("num", bhn);
+                const blockHash =
+                  await mangataHelper.api.rpc.chain.getBlockHash(bhn);
+                console.log(`blockHash ${blockHash}`);
+                console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
+                // const blockEvents =
+                //   await mangataHelper.api.query.system.events.at(tranHash);
+                const at = await mangataHelper.api.at(blockHash);
+                const blockEvents = await at.query.system.events();
+                console.log("blockEvents", blockEvents);
+                let allSuccess = true;
+                blockEvents.forEach((d: any) => {
+                  const {
+                    phase,
+                    event: { data, method, section },
+                  } = d;
+                  console.info("method");
+                  console.info(method);
+                  if (
+                    method === "BatchInterrupted" ||
+                    method === "ExtrinsicFailed"
+                  ) {
+                    console.log("failed is true");
+                    // failed = true;
+                    console.log("Error in addliq Tx:");
+                    allSuccess = false;
+                    setIsSuccess(false);
+                    setIsSigning(false);
+                    setIsInProcess(false);
+                    toast({
+                      position: "top",
+                      duration: 3000,
+                      render: () => (
+                        <ToastWrapper
+                          title="Error while minting Liquidity!"
+                          status="error"
+                        />
+                      ),
+                    });
+                  }
+                });
+                if (allSuccess) {
+                  console.log("allSuccess", allSuccess);
+                  setIsSuccess(true);
+                  setIsInProcess(false);
+                  setIsSigning(false);
+                  setLpUpdated(lpUpdated + 1);
+                  console.log("Mint liquidity trxn finalised.");
+                  toast({
+                    position: "top",
+                    duration: 3000,
+                    render: () => (
+                      <ToastWrapper
+                        title={`Liquidity successfully added in ${token0}-${token1} pool.`}
+                        status="info"
+                      />
+                    ),
+                  });
+                  // unsub();
+                  // Calling the ADD_LIQUIDITY tracker in isFinalised status
+                  // createLiquidityEventHandler(
+                  //   turingAddress as string,
+                  //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
+                  //   { symbol: token0, amount: config.firstTokenAmount },
+                  //   { symbol: token1, amount: config.secondTokenAmount },
+                  //   { symbol: `${token0}-${token1}`, amount: 0 },
+                  //   getTimestamp(),
+                  //   config.fees,
+                  //   "ADD_LIQUIDITY"
+                  // );
+                }
+              })();
+            } else {
+              console.log("Status:", status.type);
+              // setIsSigning(false);
+              setIsSigning(true);
+            }
+          }
+        )
+        .catch((err: any) => {
+          console.log("Error while minting liquidity: ", err);
+          setIsInProcess(false);
+          setIsSigning(false);
+          setIsSuccess(false);
+          toast({
+            position: "top",
+            duration: 3000,
+            render: () => (
+              <ToastWrapper
+                title="Error while minting Liquidity!"
+                status="error"
+              />
+            ),
+          });
+        });
+    } catch (error) {
+      let errorString = `${error}`;
+      console.log("error while adding liquidity:", errorString);
+      toast({
+        position: "top",
+        duration: 3000,
+        render: () => <ToastWrapper title={errorString} status="error" />,
+      });
+      setIsInProcess(false);
+      setIsSigning(false);
+    }
   };
 
   // conditions
@@ -782,6 +962,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           onClick={() => {
             handleAddLiquidity();
             setIsProcessStep(true);
+            setIsSigning(true);
           }}
         />
       </div>
@@ -791,7 +972,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const ProcessStep = () => {
     return (
       <div className="flex flex-col items-center gap-y-8 text-left font-semibold leading-5">
-        {true ? (
+        {isSuccess ? (
           <>
             <Image
               src="/icons/ArrowCircleUp.svg"
@@ -814,7 +995,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             </div>
           </>
         ) : // ) : !isErrorAddLiqTxn && !isErrorAddLiqCall ? (
-        false ? (
+        isSigning ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
@@ -823,12 +1004,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
-              Confirmation Transaction in your Wallet
-              {/* {isLoadingAddLiqTxn
+              {isSigning
                 ? "Waiting for Completion"
-                : isLoadingAddLiqCall
-                ? "Confirmation Transaction in your Wallet"
-                : ""} */}
+                : // : isLoadingAddLiqCall
+                  // ? "Confirmation Transaction in your Wallet"
+                  ""}
             </p>
             <Spinner />
           </>

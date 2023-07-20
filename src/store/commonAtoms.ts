@@ -1,5 +1,6 @@
 import { atom } from "jotai";
 import Account from "@utils/xcm/common/account";
+import { MangataPool } from "@utils/types";
 
 // Positions loading
 export const evmPosLoadingAtom = atom<boolean>(false);
@@ -15,6 +16,6 @@ export const slippageModalOpenAtom = atom<boolean>(false);
 
 export const mangataHelperAtom = atom<any>(null);
 export const mangataAddressAtom = atom<string>("");
-export const mangataPoolsAtom = atom<any | null>(null);
+export const mangataPoolsAtom = atom<MangataPool[] | null>(null);
 export const accountInitAtom = atom<Account | null>(null);
 export const isInitialisedAtom = atom<boolean>(false);

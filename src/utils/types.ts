@@ -1,3 +1,4 @@
+import BN from "bn.js";
 import { Address } from "viem";
 
 export type UnderlyingAssets = {
@@ -120,4 +121,17 @@ export enum ModalType {
 export type TokenType = {
   symbol: string;
   amount: number;
+};
+
+export type MangataPool = {
+  firstTokenAmount: BN;
+  firstTokenAmountFloat: BN;
+  firstTokenId: string;
+  firstTokenRatio: BN;
+  isPromoted: boolean;
+  liquidityTokenId: string;
+  secondTokenAmount: BN;
+  secondTokenAmountFloat: BN;
+  secondTokenId: string;
+  secondTokenRatio: BN;
 };
