@@ -130,7 +130,8 @@ const UnstakingModal = () => {
   } = useContractWrite({
     address: farm?.chef as Address,
     abi: parseAbi(chefAbi),
-    functionName: "withdraw" as any,
+    functionName:
+      farm?.protocol == "zenlink" ? ("redeem" as any) : ("withdraw" as any),
     chainId: chain?.id,
   });
 
@@ -160,6 +161,13 @@ const UnstakingModal = () => {
           return [amt];
         } else if (farm?.protocol.toLowerCase() == "sirius") {
           return [amt, 1];
+        } else if (farm?.protocol.toLowerCase() == "zenlink") {
+          return [farm?.id, farm?.asset.address, amt];
+        } else if (
+          farm?.protocol.toLowerCase() == "sushiswap" ||
+          farm?.protocol.toLowerCase() == "arthswap"
+        ) {
+          return [farm?.id, amt, address];
         } else {
           return [farm?.id, amt];
         }

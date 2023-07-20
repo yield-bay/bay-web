@@ -85,7 +85,9 @@ const RemoveSectionStandard = () => {
           parseFloat(percentage == "" ? "0" : percentage)) /
           100
       : parseFloat(lpTokens),
-    SLIPPAGE
+    SLIPPAGE,
+    farm?.asset.underlyingAssets[0].decimals!,
+    farm?.asset.underlyingAssets[1].decimals!
   );
 
   // Transaction Process Steps
@@ -197,10 +199,34 @@ const RemoveSectionStandard = () => {
     try {
       // Fetch latest block's timestamp
       const block = await publicClient.getBlock();
-      const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
+      const blocktimestamp =
+        Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
       console.log("timestamp fetched //", blocktimestamp);
 
-      console.log("calling removeliquidity method...");
+      console.log(
+        "calling removeliquidity method...",
+        lpTokens,
+        lpBalance,
+        methodId == 0
+          ? parseUnits(
+              `${
+                ((parseFloat(lpBalance!) *
+                  parseFloat(percentage == "" ? "0" : percentage)) /
+                  100) *
+                10 ** 18
+              }`,
+              18
+            )
+          : parseUnits(`${parseFloat(lpTokens) * 10 ** 18}`, 18),
+        parseUnits(
+          `${minUnderlyingAssets[0].toString() as any}`,
+          farmAsset0?.decimals
+        ), // amountAMin
+        parseUnits(
+          `${minUnderlyingAssets[1].toString() as any}`,
+          farmAsset1?.decimals
+        ) // amountBMin
+      );
 
       const removeArgs = [
         farmAsset0?.address, // tokenA Address
@@ -215,8 +241,16 @@ const RemoveSectionStandard = () => {
               18
             )
           : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-        parseUnits(`${minUnderlyingAssets[0]}`, farmAsset0?.decimals), // amountAMin
-        parseUnits(`${minUnderlyingAssets[1]}`, farmAsset1?.decimals), // amountBMin
+        // 1,
+        // 1,
+        parseUnits(
+          `${minUnderlyingAssets[0].toString() as any}`,
+          farmAsset0?.decimals
+        ), // amountAMin
+        parseUnits(
+          `${minUnderlyingAssets[1].toString() as any}`,
+          farmAsset1?.decimals
+        ), // amountBMin
         address, // to
         blocktimestamp, // deadline (uint256)
       ];
@@ -437,8 +471,8 @@ const RemoveSectionStandard = () => {
           type="primary"
           isLoading={false}
           text="Confirm Withdrawal"
-          onClick={() => {
-            handleRemoveLiquidity();
+          onClick={async () => {
+            await handleRemoveLiquidity();
             setIsProcessStep(true);
           }}
         />

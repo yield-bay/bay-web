@@ -137,7 +137,9 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
               setRemoveLiqModalOpen(true);
               setSelectedFarm(thisFarm);
             }}
-            disabled={position.unstaked.amount + position.staked.amount <= 0.01}
+            disabled={
+              position.unstaked.amountUSD + position.staked.amountUSD <= 0.01
+            }
             tooltipText="You need to have liquidity first"
           >
             <span>Remove Liquidity</span>
@@ -152,7 +154,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
                 setSelectedFarm(thisFarm);
               }}
               disabled={
-                position.unstaked.amount + position.staked.amount <= 0.01
+                position.unstaked.amountUSD + position.staked.amountUSD <= 0.01
               }
               tooltipText="You need to have liquidity first"
             >
@@ -172,8 +174,8 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
                 setSelectedFarm(thisFarm);
               }}
               disabled={
-                position.unstaked.amount > 0.01 &&
-                position.staked.amount <= 0.01
+                position.unstaked.amountUSD > 0.01 &&
+                position.staked.amountUSD <= 0.01
               }
               tooltipText="You need to stake tokens first"
             >

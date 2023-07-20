@@ -267,7 +267,8 @@ const RemoveSectionStable = () => {
     try {
       // Fetch latest block's timestamp
       const block = await publicClient.getBlock();
-      const blocktimestamp = Number(block.timestamp.toString() + "000") + 60000; // Adding 60 seconds
+      const blocktimestamp =
+        Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
       console.log("timestamp fetched //", blocktimestamp);
 
       console.log("calling removeliquidity method...");

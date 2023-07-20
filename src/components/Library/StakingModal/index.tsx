@@ -127,7 +127,8 @@ const StakingModal = () => {
   } = useContractWrite({
     address: farm?.chef as Address,
     abi: parseAbi(getChefAbi(farm?.protocol!, farm?.chef as Address)),
-    functionName: "deposit" as any,
+    functionName:
+      farm?.protocol == "zenlink" ? ("stake" as any) : ("deposit" as any),
     chainId: chain?.id,
   });
 
@@ -158,6 +159,13 @@ const StakingModal = () => {
           return [amt];
         } else if (farm?.protocol.toLowerCase() == "sirius") {
           return [amt, farm?.asset.address, 1];
+        } else if (farm?.protocol.toLowerCase() == "zenlink") {
+          return [farm?.id, farm?.asset.address, amt];
+        } else if (
+          farm?.protocol.toLowerCase() == "sushiswap" ||
+          farm?.protocol.toLowerCase() == "arthswap"
+        ) {
+          return [farm?.id, amt, address];
         } else {
           return [farm?.id, amt];
         }
