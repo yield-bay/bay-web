@@ -197,6 +197,20 @@ const FarmPage: NextPage = () => {
                 <PlusIcon className="text-black h-4 w-4" />
               </Button>
             )}
+            {!hasPosition && (
+              <Button
+                size="custom"
+                style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
+                onButtonClick={() => {
+                  setRemoveLiqModalOpen(true);
+                  setSelectedFarm(farm);
+                }}
+                tooltipText="You need to have liquidity first"
+              >
+                <span>Remove Liquidity</span>
+                <MinusIcon className="text-black h-4 w-4" />
+              </Button>
+            )}
           </div>
         </div>
         {/* Positions Row */}

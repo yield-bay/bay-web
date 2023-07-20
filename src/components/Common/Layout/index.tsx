@@ -74,7 +74,7 @@ const Layout: FC<Props> = ({ children }) => {
   const router = useRouter();
 
   // Modal States
-  const [addliqModalOpen] = useAtom(addLiqModalOpenAtom);
+  // const [addliqModalOpen] = useAtom(addLiqModalOpenAtom);
   const [removeLiqModalOpen] = useAtom(removeLiqModalOpenAtom);
   const [stakingModalOpen] = useAtom(stakingModalOpenAtom);
   const [unstakingModalOpen] = useAtom(unstakingModalOpenAtom);
@@ -1853,8 +1853,8 @@ const Layout: FC<Props> = ({ children }) => {
       )}
     >
       <div className="hidden md:block absolute -left-2 top-16 bg-main-flare blur-[22.5px] w-[1853px] h-[295px] transform rotate-[-156deg]" />
-      {addLiqModalOpenAtom && <AddLiquidityModal />}
-      {removeLiqModalOpen && <RemoveLiquidityModal />}
+      <AddLiquidityModal />
+      <RemoveLiquidityModal />
       {stakingModalOpen && <StakingModal />}
       {unstakingModalOpen && <UnstakingModal />}
       {claimModalOpen && <ClaimRewardsModal />}

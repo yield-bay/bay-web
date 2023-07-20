@@ -14,7 +14,7 @@ export const unstakingModalOpenAtom = atom<boolean>(false);
 export const claimModalOpenAtom = atom<boolean>(false);
 export const slippageModalOpenAtom = atom<boolean>(false);
 
-export const mangataHelperAtom = atom<any>(null);
+export const mangataHelperAtom = atom<any | null>(null);
 export const mangataAddressAtom = atom<string>("");
 export const mangataPoolsAtom = atom<MangataPool[] | null>(null);
 export const accountInitAtom = atom<Account | null>(null);

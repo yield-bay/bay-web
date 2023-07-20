@@ -39,6 +39,7 @@ enum InputType {
 const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [isLoading, setIsLoading] = useState(true);
+  // const [lpBalance, setLpBalance] = useState<any | null>(null);
   const [lpBalance, setLpBalance] = useState<number>(0);
   const [fees, setFees] = useState<number>(0);
 
@@ -97,6 +98,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   );
 
   useEffect(() => {
+    // Resetting all states to default on open/close
+    setIsInProcess(false);
+    setIsSigning(false);
+    setIsSuccess(false);
+  }, [isOpen]);
+
+  useEffect(() => {
     if (firstInputRef.current && secondInputRef.current) {
       if (focusedInput == InputType.First) {
         firstInputRef.current.focus();
@@ -116,12 +124,12 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     // Fetching & setting Total balance of the LP Token
     if (pool == null) return;
     (async () => {
-      let assetsInfo = await mangataHelper.mangata.getAssetsInfo();
-      const balances = await mangataHelper.getBalances();
+      let assetsInfo = await mangataHelper?.mangata?.getAssetsInfo();
+      const balances = await mangataHelper?.getBalances();
       for (const key in balances) {
         if (Object.hasOwnProperty.call(balances, key)) {
           const element = balances[key];
-          if (assetsInfo[key] !== undefined) {
+          if (assetsInfo![key] !== undefined) {
             const e =
               Number(BigInt(element).toString(10)) /
               10 ** assetsInfo[key]["decimals"];
@@ -495,6 +503,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     );
 
     try {
+      setIsSigning(true);
+
       console.log(
         "liquidityTokenId",
         pool?.liquidityTokenId,
@@ -608,8 +618,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               })();
             } else {
               console.log("Status:", status.type);
-              // setIsSigning(false);
-              setIsSigning(true);
+              setIsSigning(false);
             }
           }
         )

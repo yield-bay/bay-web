@@ -3,14 +3,23 @@ import { useAtom } from "jotai";
 import { selectedFarmAtom } from "@store/atoms";
 import RemoveSectionStandard from "./RemoveSectionStandard";
 import RemoveSectionStable from "./RemoveSectionStable";
+import RemoveSectionMangata from "./RemoveSectionMangata";
+import { removeLiqModalOpenAtom } from "@store/commonAtoms";
 
 const RemoveLiquidityModal: FC = () => {
-  const [selectedFarm] = useAtom(selectedFarmAtom);
+  const [farm] = useAtom(selectedFarmAtom);
+  const [isOpen] = useAtom(removeLiqModalOpenAtom);
 
-  if (!!selectedFarm) {
-    if (selectedFarm?.farmType == "StandardAmm") {
+  if (!!farm && isOpen) {
+    if (
+      farm?.chain.toLowerCase() == "mangata kusama" &&
+      farm?.protocol.toLowerCase() == "mangata x"
+    ) {
+      return <RemoveSectionMangata />;
+    }
+    if (farm?.farmType == "StandardAmm") {
       return <RemoveSectionStandard />;
-    } else if (selectedFarm?.farmType == "StableAmm") {
+    } else if (farm?.farmType == "StableAmm") {
       return <RemoveSectionStable />;
     } else {
       return <div></div>;
