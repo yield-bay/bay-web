@@ -23,6 +23,7 @@ import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import {
   fixedAmtNum,
+  fixedAmtNumAdj,
   getAddLiqFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
@@ -103,6 +104,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     return blocktimestamp;
   };
   // const m = await a();
+
+  const { reserve0, reserve1 } = useTokenReserves(
+    selectedFarm?.asset.address!,
+    selectedFarm?.protocol!,
+    selectedFarm?.router!
+  );
+
   // Gas estimate
   const { gasEstimate } = useGasEstimation(
     selectedFarm!.router,
@@ -114,32 +122,55 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     [
       farmAsset0?.address, // TokenA Address
       farmAsset1?.address, // TokenB Address
-      // parseUnits(`${parseFloat("111")}`, farmAsset0?.decimals),
-      // parseUnits(`${parseFloat("1.83534")}`, farmAsset1?.decimals),
-      // 1,
-      // 1,
-      parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
-      parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
-      1,
-      1,
-      // parseUnits(
-      //   `${(parseFloat("111") * (100 - SLIPPAGE)) / 100}`,
-      //   farmAsset0?.decimals
-      // ), // amountAMin
-      // parseUnits(
-      //   `${(parseFloat("1.7") * (100 - SLIPPAGE)) / 100}`,
-      //   farmAsset1?.decimals
-      // ), // amountBMin
+      parseUnits(
+        `${
+          firstTokenAmount == "" || firstTokenAmount == "0"
+            ? 1
+            : parseFloat(firstTokenAmount)
+        }`,
+        farmAsset0?.decimals
+      ),
+      parseUnits(
+        `${
+          secondTokenAmount == "" || secondTokenAmount == "0"
+            ? 1 /
+              getPoolRatio(
+                reserve0,
+                reserve1,
+                farmAsset0.decimals,
+                farmAsset1.decimals
+              )
+            : parseFloat(secondTokenAmount)
+        }`,
+        farmAsset1?.decimals
+      ),
+      parseUnits(
+        `${
+          (firstTokenAmount == "" || firstTokenAmount == "0"
+            ? 1
+            : parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100
+        }`,
+        farmAsset0?.decimals
+      ), // amountAMin
+      parseUnits(
+        `${
+          (secondTokenAmount == "" || secondTokenAmount == "0"
+            ? 1 /
+              getPoolRatio(
+                reserve0,
+                reserve1,
+                farmAsset0.decimals,
+                farmAsset1.decimals
+              )
+            : parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100
+        }`,
+        farmAsset1?.decimals
+      ), // amountBMin
       address, // To
       1784096161000, // deadline (uint256)
     ]
   );
 
-  const { reserve0, reserve1 } = useTokenReserves(
-    selectedFarm?.asset.address!,
-    selectedFarm?.protocol!,
-    selectedFarm?.router!
-  );
   // useEffect(function siriusReserves() {
   //   if (selectedFarm?.protocol!.toLowerCase() == "sirius") {
   //     const { data: bal0 } = useContractRead({

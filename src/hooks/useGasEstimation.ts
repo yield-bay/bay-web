@@ -25,7 +25,7 @@ const estimateGas = async (
   farm: FarmType,
   account: Address,
   args: Array<any>
-): Promise<bigint> => {
+) => {
   console.log(
     "egparams",
     address,
@@ -57,12 +57,12 @@ const estimateGas = async (
             )
           ),
     functionName: functionName as any,
-    account: account as any,
     args: args,
+    account: account as any,
   });
   console.log("gasssss", gasEstimate);
-  // return gasEstimate;
-  return BigInt(0);
+  return gasEstimate;
+  // return BigInt(0);
 };
 
 const getGasPrice = async (publicClient: PublicClient): Promise<bigint> => {
@@ -80,32 +80,32 @@ const useGasEstimation = (
   args: Array<any>
 ) => {
   const { chain } = useNetwork();
-  const publicClient = usePublicClient({ chainId: chain?.id });
+  // const publicClient = usePublicClient({ chainId: 1284 });
   // const publicClient = usePublicClient();
-  // const publicClient = createPublicClient({
-  //   chain: mainnet,
-  //   transport: http(),
-  // });
+  const publicClient = createPublicClient({
+    chain: moonbeam,
+    transport: http(),
+  });
   const [gasEstimateAmount, setGasEstimateAmount] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<number>(0);
 
-  // try {
-  //   estimateGas(
-  //     publicClient,
-  //     address,
-  //     contractType,
-  //     functionType,
-  //     functionName,
-  //     farm,
-  //     account,
-  //     args
-  //   ).then((res) => {
-  //     setGasEstimateAmount(Number(res));
-  //   });
-  // } catch (error) {
-  //   setGasEstimateAmount(0);
-  //   console.log("Error: Estimating Gas", error);
-  // }
+  try {
+    estimateGas(
+      publicClient,
+      address,
+      contractType,
+      functionType,
+      functionName,
+      farm,
+      account,
+      args
+    ).then((res) => {
+      setGasEstimateAmount(Number(res));
+    });
+  } catch (error) {
+    setGasEstimateAmount(0);
+    console.log("Error: Estimating Gas", error);
+  }
 
   try {
     getGasPrice(publicClient).then((res) => {

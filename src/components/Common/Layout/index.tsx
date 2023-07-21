@@ -792,8 +792,8 @@ const Layout: FC<Props> = ({ children }) => {
                 Object.keys(poolInfo),
                 Object.values(poolInfo)[0]
               );
-              console.log("poolInfo", poolInfo);
-              console.log("userInfo", userInfo);
+              console.log("zlkpoolInfo", poolInfo);
+              console.log(ff.asset.symbol, "zlkuserInfo", userInfo);
               const stakedLpAmount =
                 Number(Object.values(userInfo)[0] as number) / 10 ** 18;
               const rewardDebt = Object.values(userInfo)[1];
@@ -809,7 +809,7 @@ const Layout: FC<Props> = ({ children }) => {
               console.log(
                 "stakedLpAmount",
                 stakedLpAmount,
-                "unstakedLpAmount",
+                "zlkunstakedLpAmount",
                 unstakedLpAmount
               );
               const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
