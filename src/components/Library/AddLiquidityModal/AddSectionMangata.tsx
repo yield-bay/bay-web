@@ -1005,8 +1005,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               </button>
             </div>
           </>
-        ) : // ) : !isErrorAddLiqTxn && !isErrorAddLiqCall ? (
-        isSigning ? (
+        ) : isSigning || isInProcess ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
@@ -1015,11 +1014,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
-              {isSigning
+              {isInProcess && !isSigning
                 ? "Waiting for Completion"
-                : // : isLoadingAddLiqCall
-                  // ? "Confirmation Transaction in your Wallet"
-                  ""}
+                : isSigning
+                ? "Confirm Transaction in your Wallet"
+                : ""}
             </p>
             <Spinner />
           </>

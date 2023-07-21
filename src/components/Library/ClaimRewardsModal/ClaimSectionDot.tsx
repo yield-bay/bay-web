@@ -59,10 +59,10 @@ const ClaimSectionDot = () => {
   // fetchMGXBalance();
 
   const handleClaimRewards = async () => {
+    setIsSigning(true);
     try {
       console.log("clpool", pool, position);
       const signer = account?.wallet?.signer;
-      setIsSigning(true);
       const claimRewardsTxn = await mangataHelper.claimRewardsAll(position?.id);
       claimRewardsTxn
         .signAndSend(
@@ -149,28 +149,10 @@ const ClaimSectionDot = () => {
                   });
                   // unsub();
                   // resolve();
-                  // createLiquidityEventHandler(
-                  //   turingAddress as string,
-                  //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
-                  //   { symbol: token0, amount: firstTokenNumber },
-                  //   { symbol: token1, amount: secondTokenNumber },
-                  //   {
-                  //     symbol: `${token0}-${token1}`,
-                  //     amount:
-                  //       method == 0
-                  //         ? ((lpBalanceNum as number) *
-                  //             parseFloat(percentage)) /
-                  //           100
-                  //         : parseFloat(lpAmount),
-                  //   }, // Amount of Liquidity burnt
-                  //   getTimestamp(),
-                  //   0.0,
-                  //   "REMOVE_LIQUIDITY"
-                  // );
                 }
               })();
             } else {
-              // setIsSigning(false);
+              setIsSigning(false);
               console.log(`Status: ${status.type}`);
             }
           }
@@ -237,7 +219,7 @@ const ClaimSectionDot = () => {
             // : "bg-[#FFB7B7]"
           )}
         >
-          <div
+          {/* <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
               // parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
@@ -249,12 +231,12 @@ const ClaimSectionDot = () => {
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} STELLA
+                  {GAS_FEES} MGX
                 </span>
                 <span>$1234</span>
               </p>
             </div>
-          </div>
+          </div> */}
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
               {/* {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES */}
@@ -269,7 +251,6 @@ const ClaimSectionDot = () => {
             ) : (
               <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
                 {"24"} {"MGX"}
-                {/* {nativeBal?.formatted} {nativeBal?.symbol} */}
               </span>
             )}
           </div>
@@ -292,7 +273,7 @@ const ClaimSectionDot = () => {
     return (
       <div className="flex flex-col items-center gap-y-8 text-left font-semibold leading-5">
         {/* {isSuccessClaimRewardsTxn ? ( */}
-        {false ? (
+        {isSuccess ? (
           <>
             <Image
               src="/icons/ArrowCircleUp.svg"
@@ -314,8 +295,7 @@ const ClaimSectionDot = () => {
               </button>
             </div>
           </>
-        ) : // ) : !isErrorClaimRewardsTxn && !isErrorClaimRewardsCall ? (
-        true ? (
+        ) : isInProcess || isSigning ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
@@ -329,12 +309,11 @@ const ClaimSectionDot = () => {
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
-              {/* {isLoadingClaimRewardsTxn
+              {!isSigning && isInProcess
                 ? "Waiting for Transaction to cComplete"
-                : isLoadingClaimRewardsCall
+                : isSigning
                 ? "Confirm Transaction in your Wallet"
-                : ""} */}
-              Waiting for Transaction to Complete
+                : ""}
             </p>
             <Spinner />
           </>

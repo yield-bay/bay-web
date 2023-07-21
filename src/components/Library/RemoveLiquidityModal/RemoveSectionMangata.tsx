@@ -804,20 +804,19 @@ const RemoveSectionMangata = () => {
               </button>
             </div>
           </>
-        ) : isInProcess ? (
+        ) : isInProcess || isSigning ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Withdrawing {removeAmount} STELLA/GLMR LP Tokens
+              Withdrawing {removeAmount} {token0}/{token1} LP Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
-              {/* {isLoadingRemoveLiqTxn
+              {isInProcess && !isSigning
                 ? "Waiting for Completion"
-                : isLoadingRemoveLiqCall
+                : isSigning
                 ? "Confirm Transaction in your Wallet"
-                : ""} */}
-              Confirm Transaction in your Wallet
+                : ""}
             </p>
             <Spinner />
           </>
