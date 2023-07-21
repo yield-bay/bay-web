@@ -13,7 +13,6 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { FarmType, TokenPriceType } from "@utils/types";
 import {
-  createWalletConnectEvent,
   fetchListicleFarms,
   fetchLpTokenPrices,
   fetchTokenPrices,
@@ -51,7 +50,6 @@ import {
   subPosLoadingAtom,
   unstakingModalOpenAtom,
 } from "@store/commonAtoms";
-import getTimestamp from "@utils/getTimestamp";
 import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
 import StakingModal from "@components/Library/StakingModal";
@@ -60,8 +58,7 @@ import { useConnection } from "@hooks/useConnection";
 import { useRouter } from "next/router";
 import ClaimRewardsModal from "@components/Library/ClaimRewardsModal";
 import SlippageModal from "@components/Library/SlippageModal";
-import { MangataRococo, Mangata as MangataConfig } from "@utils/xcm/config";
-import { IS_PRODUCTION } from "@utils/constants";
+import { Mangata as MangataConfig } from "@utils/xcm/config";
 import MangataHelper from "@utils/xcm/common/mangataHelper";
 import Account from "@utils/xcm/common/account";
 import { walletConnectEvent } from "@utils/tracking";
@@ -114,7 +111,9 @@ const Layout: FC<Props> = ({ children }) => {
 
   // Accounts for testing
   // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
+  // const [dotAccount] = useAtom(dotAccountAtom);
   // const account = {
+  //   ...dotAccount,
   //   address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
   // };
 

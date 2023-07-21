@@ -59,6 +59,7 @@ import clsx from "clsx";
 import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
+import { InformationCircleIcon } from "@heroicons/react/solid";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -197,25 +198,11 @@ const FarmPage: NextPage = () => {
                 <PlusIcon className="text-black h-4 w-4" />
               </Button>
             )}
-            {!hasPosition && (
-              <Button
-                size="custom"
-                style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
-                onButtonClick={() => {
-                  setRemoveLiqModalOpen(true);
-                  setSelectedFarm(farm);
-                }}
-                tooltipText="You need to have liquidity first"
-              >
-                <span>Remove Liquidity</span>
-                <MinusIcon className="text-black h-4 w-4" />
-              </Button>
-            )}
           </div>
         </div>
         {/* Positions Row */}
         {hasPosition && (
-          <div className="w-full flex flex-col lg:flex-row gap-y-6 rounded-xl sm:rounded-none shadow-md sm:shadow-none sm:gap-x-3">
+          <div className="w-full flex flex-col lg:flex-row gap-y-6 rounded-xl sm:rounded-none sm:gap-x-3">
             <InfoContainer variant="default" className="w-full sm:w-1/2">
               <div className="flex flex-col gap-y-6 sm:flex-row justify-between">
                 <div className="flex flex-col items-end sm:items-start gap-y-2">
@@ -237,54 +224,57 @@ const FarmPage: NextPage = () => {
                     LP
                   </p>
                 </div>
-                <div className="flex flex-row justify-around sm:justify-start max-w-full sm:max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
-                  <div className="flex flex-col justify-between items-end">
-                    <p className="inline-flex items-center text-sm leading-5">
-                      <Tooltip
-                        label={<span>Not Staked in a Farm</span>}
-                        placement="top"
-                      >
-                        <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
-                      </Tooltip>
-                      Idle
-                    </p>
-                    <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                      {toDollarUnits(farmPosition?.unstaked?.amountUSD, 2)}
-                    </p>
-                    <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                      <span className="font-bold">
-                        {farmPosition?.unstaked?.amount.toFixed(2)}
-                      </span>{" "}
-                      LP
-                    </p>
+                {(farm?.chain.toLowerCase() != "mangata kusama" ||
+                  farm?.protocol.toLowerCase() !== "mangata x") && (
+                  <div className="flex flex-row justify-around sm:justify-start max-w-full sm:max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
+                    <div className="flex flex-col justify-between items-end">
+                      <p className="inline-flex items-center text-sm leading-5">
+                        <Tooltip
+                          label={<span>Not Staked in a Farm</span>}
+                          placement="top"
+                        >
+                          <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
+                        </Tooltip>
+                        Idle
+                      </p>
+                      <p className="text-[#4D6089] font-semibold text-xl leading-7">
+                        {toDollarUnits(farmPosition?.unstaked?.amountUSD, 2)}
+                      </p>
+                      <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                        <span className="font-bold">
+                          {farmPosition?.unstaked?.amount.toFixed(2)}
+                        </span>{" "}
+                        LP
+                      </p>
+                    </div>
+                    <div className="flex flex-col justify-between items-end">
+                      <p className="inline-flex items-center text-sm leading-5">
+                        <Tooltip
+                          label={<span>Staked in a Farm</span>}
+                          placement="top"
+                        >
+                          <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
+                        </Tooltip>
+                        Staked
+                      </p>
+                      <p className="text-[#4D6089] font-semibold text-xl leading-7">
+                        {toDollarUnits(farmPosition?.staked?.amountUSD, 2)}
+                      </p>
+                      <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
+                        <span className="font-bold">
+                          {farmPosition?.staked?.amount.toFixed(2)}
+                        </span>{" "}
+                        LP
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex flex-col justify-between items-end">
-                    <p className="inline-flex items-center text-sm leading-5">
-                      <Tooltip
-                        label={<span>Staked in a Farm</span>}
-                        placement="top"
-                      >
-                        <QuestionMarkCircleIcon className="w-4 h-4 text-[#C0CBDC] mr-1" />
-                      </Tooltip>
-                      Staked
-                    </p>
-                    <p className="text-[#4D6089] font-semibold text-xl leading-7">
-                      {toDollarUnits(farmPosition?.staked?.amountUSD, 2)}
-                    </p>
-                    <p className="p-2 bg-[#F5F5F5] rounded-lg text-base leading-5">
-                      <span className="font-bold">
-                        {farmPosition?.staked?.amount.toFixed(2)}
-                      </span>{" "}
-                      LP
-                    </p>
-                  </div>
-                </div>
+                )}
               </div>
             </InfoContainer>
             <div className="w-full lg:w-1/2 flex flex-col sm:flex-row gap-3">
               <InfoContainer
                 variant={unclaimedReward > 0 ? "tirtiary" : "secondary"}
-                className="flex flex-row justify-between w-full sm:min-w-[252px]"
+                className="flex flex-row justify-between w-full sm:min-w-[300px]"
               >
                 <div className="flex flex-col text-sm leading-5">
                   <p>Unclaimed</p>
@@ -302,7 +292,7 @@ const FarmPage: NextPage = () => {
                   Claim
                 </Button>
               </InfoContainer>
-              <div className="flex flex-col gap-y-3 justify-between w-full">
+              <div className="flex flex-col gap-y-3 justify-start w-full">
                 <Button
                   size="large"
                   style="inline-flex justify-between items-center"
@@ -331,52 +321,62 @@ const FarmPage: NextPage = () => {
                   <span>Remove Liquidity</span>
                   <MinusIcon className="text-black h-4 w-4" />
                 </Button>
-                <div className="inline-flex items-center gap-x-2">
-                  <Button
-                    size="large"
-                    style="inline-flex justify-between items-center w-1/2"
-                    onButtonClick={() => {
-                      setStakingModalOpen(true);
-                      setSelectedFarm(farm);
-                    }}
-                    disabled={
-                      farmPosition.unstaked.amountUSD +
-                        farmPosition.staked.amountUSD <=
-                      0.01
-                    }
-                    tooltipText="You need to have liquidity first"
-                  >
-                    <span>Stake</span>
-                    <Image
-                      src="/icons/ArrowLineUpIcon.svg"
-                      alt="Stake"
-                      height="16"
-                      width="16"
-                    />
-                  </Button>
-                  <Button
-                    size="large"
-                    style="inline-flex justify-between items-center w-1/2"
-                    onButtonClick={() => {
-                      setUnstakingModalOpen(true);
-                      setSelectedFarm(farm);
-                    }}
-                    disabled={
-                      farmPosition.unstaked.amountUSD > 0.01 &&
-                      farmPosition.staked.amountUSD <= 0.01
-                    }
-                    tooltipText="You need to stake tokens first"
-                  >
-                    <span>Unstake</span>
-                    <Image
-                      className="transform rotate-180"
-                      src="/icons/ArrowLineUpIcon.svg"
-                      alt="Stake"
-                      height="16"
-                      width="16"
-                    />
-                  </Button>
-                </div>
+                {farm?.chain.toLowerCase() != "mangata kusama" ||
+                farm?.protocol.toLowerCase() != "mangata x" ? (
+                  <div className="inline-flex items-center gap-x-2">
+                    <Button
+                      size="large"
+                      style="inline-flex justify-between items-center w-1/2"
+                      onButtonClick={() => {
+                        setStakingModalOpen(true);
+                        setSelectedFarm(farm);
+                      }}
+                      disabled={
+                        farmPosition.unstaked.amountUSD +
+                          farmPosition.staked.amountUSD <=
+                        0.01
+                      }
+                      tooltipText="You need to have liquidity first"
+                    >
+                      <span>Stake</span>
+                      <Image
+                        src="/icons/ArrowLineUpIcon.svg"
+                        alt="Stake"
+                        height="16"
+                        width="16"
+                      />
+                    </Button>
+                    <Button
+                      size="large"
+                      style="inline-flex justify-between items-center w-1/2"
+                      onButtonClick={() => {
+                        setUnstakingModalOpen(true);
+                        setSelectedFarm(farm);
+                      }}
+                      disabled={
+                        farmPosition.unstaked.amountUSD > 0.01 &&
+                        farmPosition.staked.amountUSD <= 0.01
+                      }
+                      tooltipText="You need to stake tokens first"
+                    >
+                      <span>Unstake</span>
+                      <Image
+                        className="transform rotate-180"
+                        src="/icons/ArrowLineUpIcon.svg"
+                        alt="Stake"
+                        height="16"
+                        width="16"
+                      />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="inline-flex gap-x-2 text-[#4545A6] rounded-[7px] text-xs leading-5 font-semibold bg-[#E8E8FF] items-center px-5 py-[10px] w-full">
+                    <InformationCircleIcon className="h-[18px] w-[18px]" />
+                    <span className="text-xs">
+                      Mangata LPs are staked by default
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
