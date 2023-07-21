@@ -51,7 +51,6 @@ import {
   subPosLoadingAtom,
   unstakingModalOpenAtom,
 } from "@store/commonAtoms";
-import getTimestamp from "@utils/getTimestamp";
 import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
 import StakingModal from "@components/Library/StakingModal";
@@ -64,6 +63,7 @@ import { MangataRococo, Mangata as MangataConfig } from "@utils/xcm/config";
 import { IS_PRODUCTION } from "@utils/constants";
 import MangataHelper from "@utils/xcm/common/mangataHelper";
 import Account from "@utils/xcm/common/account";
+import { walletConnectEvent } from "@utils/tracking";
 
 interface Props {
   children: ReactNode;
@@ -80,7 +80,7 @@ const Layout: FC<Props> = ({ children }) => {
   const [unstakingModalOpen] = useAtom(unstakingModalOpenAtom);
   const [claimModalOpen] = useAtom(claimModalOpenAtom);
 
-  // Managat Setup
+  // Managata Setup
   const [mangataHelperx, setMangataHelper] = useAtom(mangataHelperAtom);
   const [, setMangataAddress] = useAtom(mangataAddressAtom);
   const [, setPools] = useAtom(mangataPoolsAtom);
@@ -113,7 +113,9 @@ const Layout: FC<Props> = ({ children }) => {
 
   // Accounts for testing
   // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
+  // const [dotAccount] = useAtom(dotAccountAtom);
   // const account = {
+  //   ...dotAccount,
   //   address: "5D2d7gtBrGXw8BmcwenaiDWWEnvwVRm5MUx7FMcR8C88QgGw",
   // };
 
@@ -348,7 +350,7 @@ const Layout: FC<Props> = ({ children }) => {
       return;
     }
 
-    if (mangataHelperx != null && accountInit?.address === account.address) {
+    if (mangataHelperx !== null && accountInit?.address === account.address) {
       console.log("accountinit", accountInit?.address);
       console.log("account address", account.address);
       console.log("Already initialised!");
@@ -364,7 +366,7 @@ const Layout: FC<Props> = ({ children }) => {
     }
 
     const mangataHelper = new MangataHelper(mangataConfig);
-    console.log("initiliazing mangata helper...");
+    console.log("⏳ initiliazing mangata helper...");
     await mangataHelper.initialize();
     console.log("✅ mangata helper initialized\n", mangataHelper);
     setMangataHelper(mangataHelper);
@@ -376,12 +378,10 @@ const Layout: FC<Props> = ({ children }) => {
     const mangataNativeToken = _.first(mangataHelper.config.assets);
 
     console.log(
-      `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
+      `🧞‍♂️ Mangata chain name: ${mangataChainName},\nnative token: ${JSON.stringify(
         mangataNativeToken
       )}\n`
     );
-
-    console.log("1. Reading token and balance of account ...");
 
     // New account instance from connected account
     const account1 = new Account({
@@ -391,42 +391,14 @@ const Layout: FC<Props> = ({ children }) => {
       },
     });
     await account1.init([mangataHelper]);
-    console.log("account1", account1);
-    // It is setting Account1 here, and this fn runs only once in starting
     // it should re-run when an account is updated.
+    console.log("🕺🏻 AccountInit", account1);
     setAccountInit(account1);
-
     const mangataAddress = account1.getChainByName(mangataChainName)?.address;
     setMangataAddress(mangataAddress);
-
     const pools = await mangataHelper.getPools({ isPromoted: true });
-    console.log("Promoted Pools", pools);
+    console.log("🏊🏻‍♀️ Promoted Pools", pools);
     setPools(pools);
-
-    // LP Balance
-    // pools.forEach(async (pool: any) => {
-    //   const token0 = mangataHelper.getTokenSymbolById(pool.firstTokenId);
-    //   const token1 = mangataHelper.getTokenSymbolById(pool.secondTokenId);
-    //   if (token0 == "ZLK") return;
-
-    //   const lpBalance = await mangataHelper.mangata?.getTokenBalance(
-    //     pool.liquidityTokenId,
-    //     account?.address
-    //   );
-    //   const decimal = mangataHelper.getDecimalsBySymbol(`${token0}-${token1}`);
-
-    //   // Checks if the user's account has proxy setup
-    //   if (account1) {
-    //     const proxies = await mangataHelper.api?.query.proxy.proxies(
-    //       account1?.address
-    //     );
-    //     proxies.toHuman()[0].forEach((p: any) => {
-    //       if (p.proxyType == "AutoCompound") {
-    //         setUserHasProxy(true);
-    //       }
-    //     });
-    //   }
-    // });
     setIsInitialised(true);
   };
 
@@ -1783,22 +1755,13 @@ const Layout: FC<Props> = ({ children }) => {
 
   // Side-effect for Substrate Chains
   useEffect(() => {
-    async function walletEvent() {
-      try {
-        const connectWalletEvent = await createWalletConnectEvent(
-          account?.address!,
-          "DOT",
-          account?.wallet?.extensionName!,
-          getTimestamp()
-        );
-        console.log("connectWalletEvent: DOT", connectWalletEvent);
-      } catch (error) {
-        console.log("Error: CreateWalletEvent DOT", error);
-      }
-    }
-
     if (isConnectedDot && farms.length > 0) {
-      walletEvent();
+      walletConnectEvent({
+        address: account?.address!,
+        walletType: "DOT",
+        connector: account?.wallet?.extensionName!,
+      });
+      console.log("connected dot account", account);
       console.log("running mangata setup");
       fetchSubstratePositions();
       setupMangataHelper(accountInit);
@@ -1806,26 +1769,12 @@ const Layout: FC<Props> = ({ children }) => {
       console.log("emptying mangata positions");
       emptySubstratePositions();
     }
-  }, [isConnectedDot, farms, account]);
+  }, [isConnectedDot, farms]);
 
   // Side-effect for EVM Chains
   useEffect(() => {
     const lpTokensPricesLength = Object.keys(lpTokenPricesMap).length;
     const tokenPricesLength = Object.keys(tokenPricesMap).length;
-
-    async function walletEvent() {
-      try {
-        const connectWalletEvent = await createWalletConnectEvent(
-          address!,
-          "EVM",
-          connector?.name!,
-          getTimestamp()
-        );
-        console.log("connectWalletEvent: EVM", connectWalletEvent);
-      } catch (error) {
-        console.log("Error: CreateWalletEvent EVM", error);
-      }
-    }
 
     if (
       isConnected &&
@@ -1833,7 +1782,11 @@ const Layout: FC<Props> = ({ children }) => {
       lpTokensPricesLength > 0 &&
       tokenPricesLength > 0
     ) {
-      walletEvent();
+      walletConnectEvent({
+        address: address!,
+        walletType: "EVM",
+        connector: connector?.name!,
+      });
       fetchEvmPositions(); // Run setup when wallet connected
     } else if (
       !isConnected &&
@@ -1857,7 +1810,7 @@ const Layout: FC<Props> = ({ children }) => {
       <RemoveLiquidityModal />
       {stakingModalOpen && <StakingModal />}
       {unstakingModalOpen && <UnstakingModal />}
-      {claimModalOpen && <ClaimRewardsModal />}
+      <ClaimRewardsModal />
       <SlippageModal />
       <Header />
       {children}
