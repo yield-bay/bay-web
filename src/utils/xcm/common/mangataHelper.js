@@ -225,17 +225,66 @@ class MangataHelper {
     const secondToken = _.find(this.assets, { id: secondTokenId });
     const secondDecimalBN = getDecimalBN(secondToken.decimals);
 
-    const firstAmount = new BN(firstTokenAmount, 10).mul(firstDecimalBN);
-    const expectedSecondAmount = new BN(expectedSecondTokenAmount, 10).mul(
-      secondDecimalBN
+    console.log(
+      "gmlf",
+      firstToken,
+      firstDecimalBN,
+      secondToken,
+      secondDecimalBN,
+      firstTokenAmount,
+      expectedSecondTokenAmount,
+      "pa",
+      pair,
+      firstTokenId,
+      secondTokenId
+    );
+
+    // const firstAmount = new BN(firstTokenAmount, 10) * firstDecimalBN;
+    // const expectedSecondAmount =
+    //   new BN(expectedSecondTokenAmount, 10) * secondDecimalBN;
+    // console.log(
+    //   "gmfa",
+    //   firstAmount,
+    //   expectedSecondAmount,
+    //   "pa",
+    //   pair,
+    //   firstTokenId,
+    //   secondTokenId
+    // );
+    console.log(
+      "rounds",
+      new BN(
+        BigInt(
+          Math.round(firstTokenAmount * 10 ** firstToken.decimals)
+        ).toString(10),
+        10
+      ),
+      new BN(
+        BigInt(
+          Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
+        ).toString(10),
+        10
+      )
     );
 
     const fees = await this.mangata.mintLiquidityFee(
       pair,
       firstTokenId,
       secondTokenId,
-      firstAmount,
-      expectedSecondAmount
+      // firstAmount,
+      // expectedSecondAmount
+      new BN(
+        BigInt(
+          Math.round(firstTokenAmount * 10 ** firstToken.decimals)
+        ).toString(10),
+        10
+      ),
+      new BN(
+        BigInt(
+          Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
+        ).toString(10),
+        10
+      )
     );
     return fees;
   };
@@ -280,10 +329,10 @@ class MangataHelper {
     const secondToken = _.find(this.assets, { id: secondTokenId });
     const secondDecimalBN = getDecimalBN(secondToken.decimals);
 
-    const amountBN = new BN(firstTokenAmount, 10).mul(firstDecimalBN);
-    const expectedSecondAmountBN = new BN(expectedSecondTokenAmount, 10).mul(
-      secondDecimalBN
-    );
+    // const amountBN = new BN(firstTokenAmount, 10).mul(firstDecimalBN);
+    // const expectedSecondAmountBN = new BN(expectedSecondTokenAmount, 10).mul(
+    //   secondDecimalBN
+    // );
 
     console.log(
       "lastmile",
@@ -301,8 +350,8 @@ class MangataHelper {
       ),
       firstTokenId,
       secondTokenId,
-      amountBN,
-      expectedSecondAmountBN,
+      // amountBN,
+      // expectedSecondAmountBN,
       Math.round(firstTokenAmount * 10 ** firstToken.decimals),
       Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
     );
