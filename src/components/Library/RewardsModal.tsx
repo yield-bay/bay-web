@@ -43,7 +43,6 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
           0
         );
         const tokenNames = formatTokenSymbols(position?.lpSymbol);
-
         return (
           <div
             key={index}
