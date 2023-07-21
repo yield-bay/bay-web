@@ -618,7 +618,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               })();
             } else {
               console.log("Status:", status.type);
-              setIsSigning(false);
+              // setIsSigning(false);
             }
           }
         )

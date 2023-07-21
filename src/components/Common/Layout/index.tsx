@@ -259,8 +259,9 @@ const Layout: FC<Props> = ({ children }) => {
           ff.id, // token id
           account?.address as string // user's address
         );
-        const freeBal = BigInt(bal.free).toString(10);
-        10 ** assetsInfo[`${ff.id}`]["decimals"];
+        const freeBal =
+          parseFloat(BigInt(bal.free).toString(10)) /
+          10 ** assetsInfo[`${ff.id}`]["decimals"];
         const reservedBal =
           parseFloat(BigInt(bal.reserved).toString(10)) /
           10 ** assetsInfo[`${ff.id}`]["decimals"];
@@ -282,12 +283,12 @@ const Layout: FC<Props> = ({ children }) => {
         // Position key
         const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
 
-        if (parseFloat(freeBal) > 0 || reservedBal > 0) {
+        if (freeBal > 0 || reservedBal > 0) {
           const tempPositions = { ...positions };
           tempPositions[name] = {
             unstaked: {
-              amount: parseFloat(freeBal),
-              amountUSD: (parseFloat(freeBal) * ff.tvl) / mangataAsset[ff.id],
+              amount: freeBal,
+              amountUSD: (freeBal * ff.tvl) / mangataAsset[ff.id],
             },
             staked: {
               amount: reservedBal,

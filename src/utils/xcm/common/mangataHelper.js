@@ -206,7 +206,7 @@ class MangataHelper {
     const amountBN = new BN(amount, 10).mul(decimalBN);
     // console.log("albn", amountBN, amountBN.toNumber() ?? -1);
 
-    return this.api.tx.xyk.deactivateLiquidityV2(
+    return this.api.tx.proofOfStake.deactivateLiquidity(
       tokenId,
       new BN(amount.toString(10), 10)
     );
@@ -294,6 +294,7 @@ class MangataHelper {
     liquidityAssetAmount,
     percentage
   ) => {
+    console.log("burnliquidityAssetAmount", liquidityAssetAmount);
     // const firstToken = _.find(this.assets, { id: firstTokenId });
     // const firstDecimalBN = getDecimalBN(firstToken.decimals);
 

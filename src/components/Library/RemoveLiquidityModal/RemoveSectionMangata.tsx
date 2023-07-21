@@ -155,16 +155,17 @@ const RemoveSectionMangata = () => {
     console.log("num reserved", numReserved);
 
     // setting selected pool's LP token balance
-    const lpBalance = await mangataHelper.mangata.getTokenBalance(
+    const lpBalanceh = await mangataHelper.mangata.getTokenBalance(
       pool.liquidityTokenId,
       account?.address
     );
     const decimal = mangataHelper.getDecimalsBySymbol(`${token0}-${token1}`);
     const lpBalanceNum =
-      parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** decimal +
-      parseFloat(BigInt(lpBalance.free).toString(10)) / 10 ** decimal;
-    console.log("LP Balance lpBalanceNum: ", lpBalanceNum);
+      parseFloat(BigInt(lpBalanceh.reserved).toString(10)) / 10 ** decimal +
+      parseFloat(BigInt(lpBalanceh.free).toString(10)) / 10 ** decimal;
+    console.log("LP Balance lpBalanceNum: ", lpBalanceNum, lpBalanceh);
     setLpBalanceNum(lpBalanceNum);
+    setLpBalance(lpBalanceh);
     // Required setup finished
     setIsLoading(false);
   };
@@ -249,6 +250,8 @@ const RemoveSectionMangata = () => {
     try {
       const signer = account?.wallet?.signer;
       setIsSigning(true);
+      console.log("hrllpBalance", lpBalance);
+
       const lpBalReserved =
         parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** 18;
       const lpBalFree =
@@ -274,15 +277,15 @@ const RemoveSectionMangata = () => {
         "free+res",
         lpBalReserved + lpBalFree
       );
-      // if (BigInt(lpBalance.reserved) == BigInt(0)) {
-      //   console.log("resbal is zero");
-      // } else {
-      //   const deactx = await mangataHelper.deactivateLiquidityV2(
-      //     pool?.liquidityTokenId,
-      //     BigInt(lpBalance.reserved)
-      //   );
-      //   txns.push(deactx);
-      // }
+      if (BigInt(lpBalance.reserved) == BigInt(0)) {
+        console.log("resbal is zero");
+      } else {
+        const deactx = await mangataHelper.deactivateLiquidityV2(
+          pool?.liquidityTokenId,
+          BigInt(lpBalance.reserved)
+        );
+        txns.push(deactx);
+      }
 
       console.log("blstuff", lpBalance, "percentage", perc);
       if (
@@ -294,6 +297,8 @@ const RemoveSectionMangata = () => {
         console.log("totalburnbal is zero");
       } else {
         let bltx;
+        console.log("mehod", methodId, perc, lpTokens, lpBalance);
+
         if (methodId == 0) {
           bltx = await mangataHelper.burnLiquidityTx(
             pool?.firstTokenId,
@@ -312,265 +317,265 @@ const RemoveSectionMangata = () => {
             parseInt(perc, 10) // Not used in burnLiquidityTx
           );
         }
-        // txns.push(bltx);
-        await bltx
-          .signAndSend(
-            account1?.address,
-            { signer: signer },
-            async ({ status }: any) => {
-              if (status.isInBlock) {
-                console.log("Burn Liquidity in block now!");
-                // unsub();
-                // resolve();
-              } else if (status.isFinalized) {
-                (async () => {
-                  const tranHash = status.asFinalized.toString();
-                  console.log(
-                    `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
-                  );
-                  await delay(20000);
-                  console.log("after delay");
-                  const block = await mangataHelper.api.rpc.chain.getBlock(
-                    tranHash
-                  );
-                  console.log("block", block);
-                  console.log("block", JSON.stringify(block));
-                  const bhn = parseInt(block.block.header.number) + 1;
-                  console.log("num", bhn);
-                  const blockHash =
-                    await mangataHelper.api.rpc.chain.getBlockHash(bhn);
-                  console.log(`blockHash ${blockHash}`);
-                  console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
-                  // const blockEvents =
-                  //   await mangataHelper.api.query.system.events.at(tranHash);
-                  const at = await mangataHelper.api.at(blockHash);
-                  const blockEvents = await at.query.system.events();
-                  console.log("blockEvents", blockEvents);
-                  let allSuccess = true;
-                  blockEvents.forEach((d: any) => {
-                    const {
-                      phase,
-                      event: { data, method, section },
-                    } = d;
-                    console.info("method");
-                    console.info(method);
-                    if (
-                      method === "BatchInterrupted" ||
-                      method === "ExtrinsicFailed"
-                    ) {
-                      console.log("failed is true");
-                      // failed = true;
-                      console.log("Error in addliq Tx:");
-                      allSuccess = false;
-                      setIsSuccess(false);
-                      setIsSigning(false);
-                      setIsInProcess(false);
-                      toast({
-                        position: "top",
-                        duration: 3000,
-                        render: () => (
-                          <ToastWrapper
-                            title="Error while minting Liquidity!"
-                            status="error"
-                          />
-                        ),
-                      });
-                    }
-                  });
-                  if (allSuccess) {
-                    console.log("allSuccess", allSuccess);
-                    setIsSuccess(true);
-                    setIsInProcess(false);
+        txns.push(bltx);
+        // await bltx
+        //   .signAndSend(
+        //     account1?.address,
+        //     { signer: signer },
+        //     async ({ status }: any) => {
+        //       if (status.isInBlock) {
+        //         console.log("Burn Liquidity in block now!");
+        //         // unsub();
+        //         // resolve();
+        //       } else if (status.isFinalized) {
+        //         (async () => {
+        //           const tranHash = status.asFinalized.toString();
+        //           console.log(
+        //             `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
+        //           );
+        //           await delay(20000);
+        //           console.log("after delay");
+        //           const block = await mangataHelper.api.rpc.chain.getBlock(
+        //             tranHash
+        //           );
+        //           console.log("block", block);
+        //           console.log("block", JSON.stringify(block));
+        //           const bhn = parseInt(block.block.header.number) + 1;
+        //           console.log("num", bhn);
+        //           const blockHash =
+        //             await mangataHelper.api.rpc.chain.getBlockHash(bhn);
+        //           console.log(`blockHash ${blockHash}`);
+        //           console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
+        //           // const blockEvents =
+        //           //   await mangataHelper.api.query.system.events.at(tranHash);
+        //           const at = await mangataHelper.api.at(blockHash);
+        //           const blockEvents = await at.query.system.events();
+        //           console.log("blockEvents", blockEvents);
+        //           let allSuccess = true;
+        //           blockEvents.forEach((d: any) => {
+        //             const {
+        //               phase,
+        //               event: { data, method, section },
+        //             } = d;
+        //             console.info("method");
+        //             console.info(method);
+        //             if (
+        //               method === "BatchInterrupted" ||
+        //               method === "ExtrinsicFailed"
+        //             ) {
+        //               console.log("failed is true");
+        //               // failed = true;
+        //               console.log("Error in addliq Tx:");
+        //               allSuccess = false;
+        //               setIsSuccess(false);
+        //               setIsSigning(false);
+        //               setIsInProcess(false);
+        //               toast({
+        //                 position: "top",
+        //                 duration: 3000,
+        //                 render: () => (
+        //                   <ToastWrapper
+        //                     title="Error while minting Liquidity!"
+        //                     status="error"
+        //                   />
+        //                 ),
+        //               });
+        //             }
+        //           });
+        //           if (allSuccess) {
+        //             console.log("allSuccess", allSuccess);
+        //             setIsSuccess(true);
+        //             setIsInProcess(false);
+        //             setIsSigning(false);
+        //             setLpUpdated(lpUpdated + 1);
+        //             console.log(
+        //               `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
+        //             );
+        //             toast({
+        //               position: "top",
+        //               duration: 3000,
+        //               render: () => (
+        //                 <ToastWrapper
+        //                   title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
+        //                   status="success"
+        //                 />
+        //               ),
+        //             });
+        //             // unsub();
+        //             // resolve();
+        //             // createLiquidityEventHandler(
+        //             //   turingAddress as string,
+        //             //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
+        //             //   { symbol: token0, amount: firstTokenNumber },
+        //             //   { symbol: token1, amount: secondTokenNumber },
+        //             //   {
+        //             //     symbol: `${token0}-${token1}`,
+        //             //     amount:
+        //             //       method == 0
+        //             //         ? ((lpBalanceNum as number) *
+        //             //             parseFloat(percentage)) /
+        //             //           100
+        //             //         : parseFloat(lpAmount),
+        //             //   }, // Amount of Liquidity burnt
+        //             //   getTimestamp(),
+        //             //   0.0,
+        //             //   "REMOVE_LIQUIDITY"
+        //             // );
+        //           }
+        //         })();
+        //       } else {
+        //         setIsSigning(false);
+        //         console.log(`Status: ${status.type}`);
+        //       }
+        //     }
+        //   )
+        //   .catch((e: any) => {
+        //     console.log("Error in burnLiquidityTx", e);
+        //     setIsInProcess(false);
+        //     setIsSigning(false);
+        //     setIsSuccess(false);
+        //     toast({
+        //       position: "top",
+        //       duration: 3000,
+        //       render: () => (
+        //         <ToastWrapper
+        //           title="Error while removing Liquidity. Please try again later."
+        //           status="error"
+        //         />
+        //       ),
+        //     });
+        //   });
+      }
+
+      const removeLiqBatchTx = mangataHelper.api.tx.utility.batchAll(txns);
+
+      await removeLiqBatchTx
+        .signAndSend(
+          account1?.address,
+          { signer: signer },
+          async ({ status }: any) => {
+            if (status.isInBlock) {
+              console.log("Burn Liquidity in block now!");
+              // unsub();
+              // resolve();
+            } else if (status.isFinalized) {
+              (async () => {
+                const tranHash = status.asFinalized.toString();
+                console.log(
+                  `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
+                );
+                await delay(20000);
+                console.log("after delay");
+                const block = await mangataHelper.api.rpc.chain.getBlock(
+                  tranHash
+                );
+                console.log("block", block);
+                console.log("block", JSON.stringify(block));
+                const bhn = parseInt(block.block.header.number) + 1;
+                console.log("num", bhn);
+                const blockHash =
+                  await mangataHelper.api.rpc.chain.getBlockHash(bhn);
+                console.log(`blockHash ${blockHash}`);
+                console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
+                // const blockEvents =
+                //   await mangataHelper.api.query.system.events.at(tranHash);
+                const at = await mangataHelper.api.at(blockHash);
+                const blockEvents = await at.query.system.events();
+                console.log("blockEvents", blockEvents);
+                let allSuccess = true;
+                blockEvents.forEach((d: any) => {
+                  const {
+                    phase,
+                    event: { data, method, section },
+                  } = d;
+                  console.info("method");
+                  console.info(method);
+                  if (
+                    method === "BatchInterrupted" ||
+                    method === "ExtrinsicFailed"
+                  ) {
+                    console.log("failed is true");
+                    // failed = true;
+                    console.log("Error in addliq Tx:");
+                    allSuccess = false;
+                    setIsSuccess(false);
                     setIsSigning(false);
-                    setLpUpdated(lpUpdated + 1);
-                    console.log(
-                      `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
-                    );
+                    setIsInProcess(false);
                     toast({
                       position: "top",
                       duration: 3000,
                       render: () => (
                         <ToastWrapper
-                          title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
-                          status="success"
+                          title="Error while minting Liquidity!"
+                          status="error"
                         />
                       ),
                     });
-                    // unsub();
-                    // resolve();
-                    // createLiquidityEventHandler(
-                    //   turingAddress as string,
-                    //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
-                    //   { symbol: token0, amount: firstTokenNumber },
-                    //   { symbol: token1, amount: secondTokenNumber },
-                    //   {
-                    //     symbol: `${token0}-${token1}`,
-                    //     amount:
-                    //       method == 0
-                    //         ? ((lpBalanceNum as number) *
-                    //             parseFloat(percentage)) /
-                    //           100
-                    //         : parseFloat(lpAmount),
-                    //   }, // Amount of Liquidity burnt
-                    //   getTimestamp(),
-                    //   0.0,
-                    //   "REMOVE_LIQUIDITY"
-                    // );
                   }
-                })();
-              } else {
-                setIsSigning(false);
-                console.log(`Status: ${status.type}`);
-              }
+                });
+                if (allSuccess) {
+                  console.log("allSuccess", allSuccess);
+                  setIsSuccess(true);
+                  setIsInProcess(false);
+                  setIsSigning(false);
+                  setLpUpdated(lpUpdated + 1);
+                  console.log(
+                    `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
+                  );
+                  toast({
+                    position: "top",
+                    duration: 3000,
+                    render: () => (
+                      <ToastWrapper
+                        title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
+                        status="success"
+                      />
+                    ),
+                  });
+                  // unsub();
+                  // resolve();
+                  // createLiquidityEventHandler(
+                  //   turingAddress as string,
+                  //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
+                  //   { symbol: token0, amount: firstTokenNumber },
+                  //   { symbol: token1, amount: secondTokenNumber },
+                  //   {
+                  //     symbol: `${token0}-${token1}`,
+                  //     amount:
+                  //       method == 0
+                  //         ? ((lpBalanceNum as number) *
+                  //             parseFloat(percentage)) /
+                  //           100
+                  //         : parseFloat(lpAmount),
+                  //   }, // Amount of Liquidity burnt
+                  //   getTimestamp(),
+                  //   0.0,
+                  //   "REMOVE_LIQUIDITY"
+                  // );
+                }
+              })();
+            } else {
+              // setIsSigning(false);
+              console.log(`Status: ${status.type}`);
             }
-          )
-          .catch((e: any) => {
-            console.log("Error in burnLiquidityTx", e);
-            setIsInProcess(false);
-            setIsSigning(false);
-            setIsSuccess(false);
-            toast({
-              position: "top",
-              duration: 3000,
-              render: () => (
-                <ToastWrapper
-                  title="Error while removing Liquidity. Please try again later."
-                  status="error"
-                />
-              ),
-            });
+          }
+        )
+        .catch((e: any) => {
+          console.log("Error in burnLiquidityTx", e);
+          setIsInProcess(false);
+          setIsSigning(false);
+          setIsSuccess(false);
+          toast({
+            position: "top",
+            duration: 3000,
+            render: () => (
+              <ToastWrapper
+                title="Error while removing Liquidity. Please try again later."
+                status="error"
+              />
+            ),
           });
-      }
-
-      // const removeLiqBatchTx = mangataHelper.api.tx.utility.batchAll(txns);
-
-      // await removeLiqBatchTx
-      //   .signAndSend(
-      //     account1?.address,
-      //     { signer: signer },
-      //     async ({ status }: any) => {
-      //       if (status.isInBlock) {
-      //         console.log("Burn Liquidity in block now!");
-      //         // unsub();
-      //         // resolve();
-      //       } else if (status.isFinalized) {
-      //         (async () => {
-      //           const tranHash = status.asFinalized.toString();
-      //           console.log(
-      //             `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
-      //           );
-      //           await delay(20000);
-      //           console.log("after delay");
-      //           const block = await mangataHelper.api.rpc.chain.getBlock(
-      //             tranHash
-      //           );
-      //           console.log("block", block);
-      //           console.log("block", JSON.stringify(block));
-      //           const bhn = parseInt(block.block.header.number) + 1;
-      //           console.log("num", bhn);
-      //           const blockHash =
-      //             await mangataHelper.api.rpc.chain.getBlockHash(bhn);
-      //           console.log(`blockHash ${blockHash}`);
-      //           console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
-      //           // const blockEvents =
-      //           //   await mangataHelper.api.query.system.events.at(tranHash);
-      //           const at = await mangataHelper.api.at(blockHash);
-      //           const blockEvents = await at.query.system.events();
-      //           console.log("blockEvents", blockEvents);
-      //           let allSuccess = true;
-      //           blockEvents.forEach((d: any) => {
-      //             const {
-      //               phase,
-      //               event: { data, method, section },
-      //             } = d;
-      //             console.info("method");
-      //             console.info(method);
-      //             if (
-      //               method === "BatchInterrupted" ||
-      //               method === "ExtrinsicFailed"
-      //             ) {
-      //               console.log("failed is true");
-      //               // failed = true;
-      //               console.log("Error in addliq Tx:");
-      //               allSuccess = false;
-      //               setIsSuccess(false);
-      //               setIsSigning(false);
-      //               setIsInProcess(false);
-      //               toast({
-      //                 position: "top",
-      //                 duration: 3000,
-      //                 render: () => (
-      //                   <ToastWrapper
-      //                     title="Error while minting Liquidity!"
-      //                     status="error"
-      //                   />
-      //                 ),
-      //               });
-      //             }
-      //           });
-      //           if (allSuccess) {
-      //             console.log("allSuccess", allSuccess);
-      //             setIsSuccess(true);
-      //             setIsInProcess(false);
-      //             setIsSigning(false);
-      //             setLpUpdated(lpUpdated + 1);
-      //             console.log(
-      //               `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
-      //             );
-      //             toast({
-      //               position: "top",
-      //               duration: 3000,
-      //               render: () => (
-      //                 <ToastWrapper
-      //                   title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
-      //                   status="success"
-      //                 />
-      //               ),
-      //             });
-      //             // unsub();
-      //             // resolve();
-      //             // createLiquidityEventHandler(
-      //             //   turingAddress as string,
-      //             //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
-      //             //   { symbol: token0, amount: firstTokenNumber },
-      //             //   { symbol: token1, amount: secondTokenNumber },
-      //             //   {
-      //             //     symbol: `${token0}-${token1}`,
-      //             //     amount:
-      //             //       method == 0
-      //             //         ? ((lpBalanceNum as number) *
-      //             //             parseFloat(percentage)) /
-      //             //           100
-      //             //         : parseFloat(lpAmount),
-      //             //   }, // Amount of Liquidity burnt
-      //             //   getTimestamp(),
-      //             //   0.0,
-      //             //   "REMOVE_LIQUIDITY"
-      //             // );
-      //           }
-      //         })();
-      //       } else {
-      //         setIsSigning(false);
-      //         console.log(`Status: ${status.type}`);
-      //       }
-      //     }
-      //   )
-      //   .catch((e: any) => {
-      //     console.log("Error in burnLiquidityTx", e);
-      //     setIsInProcess(false);
-      //     setIsSigning(false);
-      //     setIsSuccess(false);
-      //     toast({
-      //       position: "top",
-      //       duration: 3000,
-      //       render: () => (
-      //         <ToastWrapper
-      //           title="Error while removing Liquidity. Please try again later."
-      //           status="error"
-      //         />
-      //       ),
-      //     });
-      //   });
+        });
     } catch (error) {
       let errorString = `${error}`;
       console.log("error while handling remove liquidity:", errorString);
@@ -752,8 +757,8 @@ const RemoveSectionMangata = () => {
           type="primary"
           isLoading={false}
           text="Confirm Withdrawal"
-          onClick={() => {
-            handleRemoveLiquidity();
+          onClick={async () => {
+            await handleRemoveLiquidity();
             setIsProcessStep(true);
           }}
         />
