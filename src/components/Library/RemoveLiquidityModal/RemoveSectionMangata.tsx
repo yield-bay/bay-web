@@ -160,9 +160,11 @@ const RemoveSectionMangata = () => {
       account?.address
     );
     const decimal = mangataHelper.getDecimalsBySymbol(`${token0}-${token1}`);
+    // const lpBalanceNum =
+    //   parseFloat(BigInt(lpBalanceh.reserved).toString(10)) / 10 ** decimal +
+    //   parseFloat(BigInt(lpBalanceh.free).toString(10)) / 10 ** decimal;
     const lpBalanceNum =
-      parseFloat(BigInt(lpBalanceh.reserved).toString(10)) / 10 ** decimal +
-      parseFloat(BigInt(lpBalanceh.free).toString(10)) / 10 ** decimal;
+      parseFloat(BigInt(lpBalanceh.reserved).toString(10)) / 10 ** decimal;
     console.log("LP Balance lpBalanceNum: ", lpBalanceNum, lpBalanceh);
     setLpBalanceNum(lpBalanceNum);
     setLpBalance(lpBalanceh);
@@ -280,10 +282,21 @@ const RemoveSectionMangata = () => {
       if (BigInt(lpBalance.reserved) == BigInt(0)) {
         console.log("resbal is zero");
       } else {
-        const deactx = await mangataHelper.deactivateLiquidityV2(
-          pool?.liquidityTokenId,
-          BigInt(lpBalance.reserved)
-        );
+        let deactx;
+
+        if (methodId == 0) {
+          deactx = await mangataHelper.deactivateLiquidityV2(
+            pool?.liquidityTokenId,
+            (BigInt(lpBalance.reserved) * BigInt(parseInt(perc, 10))) /
+              BigInt(100)
+          );
+        } else if (methodId == 1) {
+          deactx = await mangataHelper.deactivateLiquidityV2(
+            pool?.liquidityTokenId,
+            BigInt(parseInt((parseFloat(lpTokens) * 10 ** 18).toString(), 10))
+          );
+        }
+
         txns.push(deactx);
       }
 
@@ -303,10 +316,10 @@ const RemoveSectionMangata = () => {
           bltx = await mangataHelper.burnLiquidityTx(
             pool?.firstTokenId,
             pool?.secondTokenId,
-            (BigInt(lpBalance.free) * BigInt(parseInt(perc, 10))) /
-              BigInt(100) +
-              (BigInt(lpBalance.reserved) * BigInt(parseInt(perc, 10))) /
-                BigInt(100),
+            // (BigInt(lpBalance.free) * BigInt(parseInt(perc, 10))) /
+            //   BigInt(100) +
+            (BigInt(lpBalance.reserved) * BigInt(parseInt(perc, 10))) /
+              BigInt(100),
             parseInt(perc, 10)
           );
         } else if (methodId == 1) {

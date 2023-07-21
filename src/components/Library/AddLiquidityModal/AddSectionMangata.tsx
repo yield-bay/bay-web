@@ -242,9 +242,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       account?.address
     );
     const decimal = mangataHelper.getDecimalsBySymbol(`${token0}-${token1}`);
+    // const lpBalanceNum =
+    //   parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** decimal +
+    //   parseFloat(BigInt(lpBalance.free).toString(10)) / 10 ** decimal;
     const lpBalanceNum =
-      parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** decimal +
-      parseFloat(BigInt(lpBalance.free).toString(10)) / 10 ** decimal;
+      parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** decimal;
     console.log("LP Balance lpBalanceNum: ", lpBalanceNum);
     setLpBalance(lpBalanceNum);
 
