@@ -358,10 +358,11 @@ const Layout: FC<Props> = ({ children }) => {
     console.log("Initializing APIs of both chains ...");
 
     // Helper setup for Mangata on Rococo Testnet
-    let mangataConfig = MangataRococo;
-    if (IS_PRODUCTION) {
-      mangataConfig = MangataConfig;
-    }
+    // let mangataConfig = MangataRococo;
+    // if (IS_PRODUCTION) {
+    //   mangataConfig = MangataConfig;
+    // }
+    let mangataConfig = MangataConfig;
 
     const mangataHelper = new MangataHelper(mangataConfig);
     console.log("initiliazing mangata helper...");
