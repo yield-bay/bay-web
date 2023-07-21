@@ -212,6 +212,10 @@ class MangataHelper {
     );
   };
 
+  claimRewardsAll = async (tokenId) => {
+    return this.api.tx.proofOfStake.claimRewardsAll(tokenId);
+  };
+
   getMintLiquidityFee = async ({
     pair,
     firstTokenId,
