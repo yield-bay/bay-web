@@ -1,10 +1,12 @@
 // Library Imports
 import { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
 import { NextPage } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useAtom } from "jotai";
 import { useQuery } from "@tanstack/react-query";
+import { isConnectedDotAtom } from "@store/accountAtoms";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useToast } from "@chakra-ui/react";
@@ -64,6 +66,8 @@ import { InformationCircleIcon } from "@heroicons/react/solid";
 const FarmPage: NextPage = () => {
   const router = useRouter();
   const toast = useToast();
+  const { isConnected } = useAccount();
+  const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
   // Hooks
   const { isLoading, data: farmsList } = useQuery({
@@ -184,20 +188,24 @@ const FarmPage: NextPage = () => {
             >
               Test Toast
             </Button>
-            {!hasPosition && (
-              <Button
-                size="custom"
-                style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
-                onButtonClick={() => {
-                  console.log("farm in farmpage", farm);
-                  setSelectedFarm(farm);
-                  setAddLiqModalOpen(true);
-                }}
-              >
-                <span>Add Liquidity</span>
-                <PlusIcon className="text-black h-4 w-4" />
-              </Button>
-            )}
+            {!hasPosition &&
+              (farm?.chain.toLowerCase() == "mangata kusama" ||
+              farm?.protocol.toLowerCase() == "mangata x"
+                ? isConnectedDot
+                : isConnected) && (
+                <Button
+                  size="custom"
+                  style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
+                  onButtonClick={() => {
+                    console.log("farm in farmpage", farm);
+                    setSelectedFarm(farm);
+                    setAddLiqModalOpen(true);
+                  }}
+                >
+                  <span>Add Liquidity</span>
+                  <PlusIcon className="text-black h-4 w-4" />
+                </Button>
+              )}
           </div>
         </div>
         {/* Positions Row */}

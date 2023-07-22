@@ -184,9 +184,13 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
               <div className="flex flex-row gap-x-5 items-center justify-start lg:justify-end">
                 <ShareFarm farm={farm} />
                 <div className="inline-flex items-center gap-x-2">
-                  {isSupported && (
-                    <SelectLiquidityModal farm={farm} position={position} />
-                  )}
+                  {isSupported &&
+                    (farm?.chain.toLowerCase() == "mangata kusama" ||
+                    farm?.protocol.toLowerCase() == "mangata x"
+                      ? isConnectedDot
+                      : isConnected) && (
+                      <SelectLiquidityModal farm={farm} position={position} />
+                    )}
                   <Button
                     size="large"
                     onButtonClick={() => {
