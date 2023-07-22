@@ -20,6 +20,8 @@ import { mangataHelperAtom } from "@store/commonAtoms";
 import { MangataPool } from "@utils/types";
 import { delay, getDecimalBN } from "@utils/xcm/common/utils";
 import { formatTokenSymbols } from "@utils/farmListMethods";
+import Link from "next/link";
+import { MANGATA_EXPLORER_URL } from "@utils/constants";
 
 const GAS_FEES = 0.0014; // In STELLA
 
@@ -76,6 +78,7 @@ const ClaimSectionDot = () => {
             } else if (status.isFinalized) {
               (async () => {
                 const tranHash = status.asFinalized.toString();
+                setTxnHash(tranHash);
                 console.log(
                   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
                 );
@@ -287,6 +290,14 @@ const ClaimSectionDot = () => {
             </h1>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
+              <Link
+                href={`${MANGATA_EXPLORER_URL}/${txnHash}`}
+                className="text-[#9999FF] underline underline-offset-4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on Explorer
+              </Link>
               <button
                 className="text-[#A3A3A3]"
                 onClick={() => setIsOpen(false)}

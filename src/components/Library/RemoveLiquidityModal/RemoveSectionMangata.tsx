@@ -25,6 +25,8 @@ import _ from "lodash";
 import { delay, getDecimalBN } from "@utils/xcm/common/utils";
 import { BN } from "bn.js";
 import toUnits from "@utils/toUnits";
+import Link from "next/link";
+import { MANGATA_EXPLORER_URL } from "@utils/constants";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -58,6 +60,7 @@ const RemoveSectionMangata = () => {
   const [mangataAddress] = useAtom(mangataAddressAtom);
   const [isInitialised] = useAtom(isInitialisedAtom);
   const [mgxBalance, setMgxBalance] = useState<number>(0);
+  const [txnHash, setTxnHash] = useState<string>("");
 
   const [lpUpdated, setLpUpdated] = useState<number>(0);
 
@@ -331,7 +334,6 @@ const RemoveSectionMangata = () => {
           );
         }
         txns.push(bltx);
-        // await bltx
         //   .signAndSend(
         //     account1?.address,
         //     { signer: signer },
@@ -477,6 +479,7 @@ const RemoveSectionMangata = () => {
                 console.log(
                   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
                 );
+                setTxnHash(tranHash);
                 await delay(20000);
                 console.log("after delay");
                 const block = await mangataHelper.api.rpc.chain.getBlock(
@@ -795,7 +798,15 @@ const RemoveSectionMangata = () => {
               Transaction Submitted
             </h1>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <div className="text-base font-semibold leading-5">
+            <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
+              <Link
+                href={`${MANGATA_EXPLORER_URL}/${txnHash}`}
+                className="text-[#9999FF] underline underline-offset-4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on Explorer
+              </Link>
               <button
                 className="text-[#A3A3A3]"
                 onClick={() => setIsOpen(false)}

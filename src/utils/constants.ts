@@ -25,3 +25,5 @@ export const RPC_URL = {
   astar: "https://evm.astar.network",
   hardhat: "http://localhost:8545",
 };
+
+export const MANGATA_EXPLORER_URL = "https://mangatax.subscan.io/block";

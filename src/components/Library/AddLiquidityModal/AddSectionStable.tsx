@@ -44,6 +44,7 @@ const AddSectionStable: FC = () => {
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
+  const [txnHash, setTxnHash] = useState<string>("");
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
@@ -70,38 +71,11 @@ const AddSectionStable: FC = () => {
 
   useEffect(() => console.log("selectedfarm", farm), [farm]);
 
-  // const { data: tokensSeqArr } = useContractRead({
-  //   address:
-  //     farm?.protocol.toLowerCase() == "curve"
-  //       ? farm?.asset.address
-  //       : farm?.router,
-  //   abi: parseAbi(
-  //     getRouterAbi(
-  //       farm?.protocol!,
-  //       farm?.farmType == "StandardAmm" ? false : true
-  //     )
-  //   ),
-  //   functionName: "getTokens",
-  //   chainId: chain?.id,
-  //   enabled: !!chain && !!farm,
-  // });
-  // const tokensSeq = tokensSeqArr as Address[];
-
   useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
 
   const GAS_FEES = 0.0014; // In STELLA
 
-  // Correct sequence of tokens!
-  const tokensArr = farm?.asset.underlyingAssets ?? [];
-  const tokens = useMemo(() => {
-    // if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
-    // if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
-    if (!tokensArr) return new Array<UnderlyingAssets>();
-    // return tokensSeq.map(
-    //   (address) => tokensArr.find((token) => token.address == address)!
-    // );
-    return tokensArr;
-  }, [tokensArr]);
+  const tokens = farm?.asset.underlyingAssets ?? [];
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
     // Setting inputMap for Input fields
@@ -191,6 +165,7 @@ const AddSectionStable: FC = () => {
         args: args_to_pass,
       });
       console.log("called addliquidity method.", txnRes);
+      setTxnHash(txnRes?.hash);
     } catch (error) {
       console.error(error);
     }
@@ -421,10 +396,10 @@ const AddSectionStable: FC = () => {
               <Link
                 href={
                   farm?.chain == "moonbeam"
-                    ? `https://moonscan.io/tx/${addLiquidityData?.hash}`
+                    ? `https://moonscan.io/tx/${txnHash}`
                     : farm?.chain == "moonriver"
-                    ? `https://moonriver.moonscan.io/tx/${addLiquidityData?.hash}`
-                    : `https://blockscout.com/astar/tx/${addLiquidityData?.hash}`
+                    ? `https://moonriver.moonscan.io/tx/${txnHash}`
+                    : `https://blockscout.com/astar/tx/${txnHash}`
                 }
                 className="text-[#9999FF] underline underline-offset-4"
                 target="_blank"

@@ -29,6 +29,8 @@ import toUnits from "@utils/toUnits";
 import ToastWrapper from "../ToastWrapper";
 import { useToast } from "@chakra-ui/react";
 import { MangataPool } from "@utils/types";
+import Link from "next/link";
+import { MANGATA_EXPLORER_URL } from "@utils/constants";
 
 enum InputType {
   Off = -1,
@@ -66,6 +68,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [focusedInput, setFocusedInput] = useState<InputType>(InputType.First);
   const firstInputRef = useRef<HTMLInputElement>(null);
   const secondInputRef = useRef<HTMLInputElement>(null);
+
+  const [txnHash, setTxnHash] = useState<string>("");
 
   const [token0, token1] = formatTokenSymbols(
     // IS_PRODUCTION
@@ -535,6 +539,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             } else if (status.isFinalized) {
               (async () => {
                 const tranHash = status.asFinalized.toString();
+                setTxnHash(txnHash);
                 console.log(
                   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
                 );
@@ -996,7 +1001,15 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               Transaction Submitted
             </h1>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <div className="text-base font-semibold leading-5">
+            <div className="inline-flex gap-x-8 text-base font-semibold leading-5">
+              <Link
+                href={`${MANGATA_EXPLORER_URL}/${txnHash}`}
+                className="text-[#9999FF] underline underline-offset-4"
+                target="_blank"
+                rel="noreferrer"
+              >
+                View on Explorer
+              </Link>
               <button
                 className="text-[#A3A3A3]"
                 onClick={() => setIsOpen(false)}
