@@ -42,6 +42,7 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import { ethers } from "ethers";
 import { siriusRouterAbi } from "@components/Common/Layout/evmUtils";
 import router from "next/router";
+import estimateGas from "@hooks/useEthersGas";
 
 enum InputType {
   Off = -1,
@@ -110,18 +111,26 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     selectedFarm?.protocol!,
     selectedFarm?.router!
   );
-
-  // Gas estimate
-  const { gasEstimate } = useGasEstimation(
-    selectedFarm!.router,
-    1,
-    0,
+  let iface = new ethers.Interface(
+    getRouterAbi(
+      selectedFarm?.protocol!,
+      selectedFarm?.farmType == "StandardAmm" ? false : true
+    )
+  );
+  const fdata = new ethers.Interface(
+    getRouterAbi(
+      selectedFarm?.protocol!,
+      selectedFarm?.farmType == "StandardAmm" ? false : true
+    )
+  ).encodeFunctionData(
     getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
-    selectedFarm!,
-    address!,
     [
       farmAsset0?.address, // TokenA Address
       farmAsset1?.address, // TokenB Address
+      // 1,
+      // 1,
+      // 1,
+      // 1,
       parseUnits(
         `${
           firstTokenAmount == "" || firstTokenAmount == "0"
@@ -166,6 +175,77 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         }`,
         farmAsset1?.decimals
       ), // amountBMin
+      address, // To
+      1784096161000, // deadline (uint256)
+    ]
+  );
+  // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
+
+  // Gas estimate
+  const { gasEstimate } = useGasEstimation(
+    selectedFarm!.router,
+    1,
+    0,
+    getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
+    selectedFarm!,
+    address!,
+    [
+      farmAsset0?.address, // TokenA Address
+      farmAsset1?.address, // TokenB Address
+      parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
+      parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
+      parseUnits(
+        `${(fixedAmtNum(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+        farmAsset0?.decimals
+      ), // amountAMin
+      parseUnits(
+        `${(fixedAmtNum(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+        farmAsset1?.decimals
+      ), // amountBMin
+      // parseUnits(
+      //   `${
+      //     firstTokenAmount == "" || firstTokenAmount == "0"
+      //       ? 1
+      //       : parseFloat(firstTokenAmount)
+      //   }`,
+      //   farmAsset0?.decimals
+      // ),
+      // parseUnits(
+      //   `${
+      //     secondTokenAmount == "" || secondTokenAmount == "0"
+      //       ? 1 /
+      //         getPoolRatio(
+      //           reserve0,
+      //           reserve1,
+      //           farmAsset0.decimals,
+      //           farmAsset1.decimals
+      //         )
+      //       : parseFloat(secondTokenAmount)
+      //   }`,
+      //   farmAsset1?.decimals
+      // ),
+      // parseUnits(
+      //   `${
+      //     (firstTokenAmount == "" || firstTokenAmount == "0"
+      //       ? 1
+      //       : parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100
+      //   }`,
+      //   farmAsset0?.decimals
+      // ), // amountAMin
+      // parseUnits(
+      //   `${
+      //     (secondTokenAmount == "" || secondTokenAmount == "0"
+      //       ? 1 /
+      //         getPoolRatio(
+      //           reserve0,
+      //           reserve1,
+      //           farmAsset0.decimals,
+      //           farmAsset1.decimals
+      //         )
+      //       : parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100
+      //   }`,
+      //   farmAsset1?.decimals
+      // ), // amountBMin
       address, // To
       1784096161000, // deadline (uint256)
     ]

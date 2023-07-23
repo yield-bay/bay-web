@@ -45,6 +45,12 @@ const estimateGas = async (
         )
   );
 
+  // if any arg is 0
+  // if (args.some((a) => a == 0)) {
+  //   console.log("arg0");
+  //   return BigInt(0);
+  // }
+
   const gasEstimate = await publicClient.estimateContractGas({
     address: address as any,
     abi:
@@ -81,53 +87,62 @@ const useGasEstimation = (
 ) => {
   const { chain } = useNetwork();
   // const publicClient = usePublicClient({ chainId: 1284 });
-  // const publicClient = usePublicClient();
-  const publicClient = createPublicClient({
-    chain: moonbeam,
-    transport: http(),
-  });
+  const publicClient = usePublicClient();
+  // const publicClient = createPublicClient({
+  //   chain: moonbeam,
+  //   transport: http(),
+  // });
   const [gasEstimateAmount, setGasEstimateAmount] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<number>(0);
 
-  try {
-    estimateGas(
-      publicClient,
-      address,
-      contractType,
-      functionType,
-      functionName,
-      farm,
-      account,
-      args
-    ).then((res) => {
-      setGasEstimateAmount(Number(res));
-    });
-  } catch (error) {
-    setGasEstimateAmount(0);
-    console.log("Error: Estimating Gas", error);
+  // if any arg is 0
+  if (args.some((a) => a == 0)) {
+    console.log("arg0");
+    return {
+      gasEstimate: 0,
+    };
+  } else {
+    try {
+      estimateGas(
+        publicClient,
+        address,
+        contractType,
+        functionType,
+        functionName,
+        farm,
+        account,
+        args
+      ).then((res) => {
+        setGasEstimateAmount(Number(res));
+      });
+    } catch (error) {
+      setGasEstimateAmount(0);
+      console.log("Error: Estimating Gas", error);
+    }
+    // const eg = estimateGas()
+
+    try {
+      getGasPrice(publicClient).then((res) => {
+        setGasPrice(Number(res));
+      });
+    } catch (error) {
+      setGasPrice(0);
+      console.log("Error: Getting Gas Price", error);
+    }
+
+    console.log(
+      "gasEstimateAmount",
+      gasEstimateAmount,
+      "gasPrice",
+      gasPrice,
+      "gas",
+      (gasEstimateAmount * gasPrice) / 10 ** 18
+    );
+
+    return {
+      gasEstimate: (gasEstimateAmount * gasPrice) / 10 ** 18,
+    };
   }
-
-  try {
-    getGasPrice(publicClient).then((res) => {
-      setGasPrice(Number(res));
-    });
-  } catch (error) {
-    setGasPrice(0);
-    console.log("Error: Getting Gas Price", error);
-  }
-
-  console.log(
-    "gasEstimateAmount",
-    gasEstimateAmount,
-    "gasPrice",
-    gasPrice,
-    "gas",
-    (gasEstimateAmount * gasPrice) / 10 ** 18
-  );
-
-  return {
-    gasEstimate: (gasEstimateAmount * gasPrice) / 10 ** 18,
-  };
 };
 
 export default useGasEstimation;
