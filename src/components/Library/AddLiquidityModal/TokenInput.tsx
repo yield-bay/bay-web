@@ -10,7 +10,8 @@ interface TokenInputProps {
   inputMap: {
     [address: Address]: string;
   };
-  selectedFarm: any;
+  // selectedFarm: any;
+  logos: string | string[];
   tokensLength: number;
   focusedInput: number;
   setFocusedInput: (input: number) => void;
@@ -21,7 +22,8 @@ const TokenInput: React.FC<TokenInputProps> = ({
   index,
   handleInput,
   inputMap,
-  selectedFarm,
+  // selectedFarm,
+  logos,
   tokensLength,
   focusedInput,
   setFocusedInput,
@@ -34,20 +36,32 @@ const TokenInput: React.FC<TokenInputProps> = ({
     address: address,
     chainId: chain?.id,
     token: token?.address,
-    enabled: !!address && !!selectedFarm,
+    enabled: !!address && !!logos,
+    // enabled: !!address && !!selectedFarm,
   });
+
+  // const logosArr = Array.isArray(logos) ? logos
+  console.log(`logos in ${token?.symbol} is`, logos);
 
   return (
     <div>
       <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
         <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-          <div className="z-10 flex overflow-hidden rounded-full">
-            <Image
-              src={selectedFarm?.asset.logos[index] as string}
-              alt={selectedFarm?.asset.logos[index] as string}
-              width={24}
-              height={24}
-            />
+          <div className="flex flex-row items-center justify-center -space-x-2">
+            {Array.isArray(logos) ? (
+              logos.map((logo: string, index: number) => (
+                <div
+                  key={index}
+                  className="z-10 flex overflow-hidden rounded-full"
+                >
+                  <Image src={logo} alt={logo} width={24} height={24} />
+                </div>
+              ))
+            ) : (
+              <div className="z-10 flex overflow-hidden rounded-full">
+                <Image src={logos} alt={logos} width={24} height={24} />
+              </div>
+            )}
           </div>
           <span className="text-[#344054 text-[14px] font-medium leading-5">
             {token?.symbol}

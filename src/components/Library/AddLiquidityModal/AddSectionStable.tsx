@@ -35,6 +35,7 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import { ethers } from "ethers";
+import { formatTokenSymbols } from "@utils/farmListMethods";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -62,6 +63,30 @@ const AddSectionStable: FC = () => {
     [address: Address]: number;
   }>({});
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
+
+  // Checking if farm assets have a lp-token pair
+  const logos = useMemo(() => {
+    const symbol = farm?.asset.symbol;
+    const assetLogos = farm?.asset.logos;
+    let logos: (string | string[])[];
+    if (
+      symbol == "MAI-tripool" ||
+      symbol == "FRAX-3pool" ||
+      symbol == "MIM-3pool" ||
+      symbol == "MAI-3pool"
+    ) {
+      // eg. FRAX-tripool -- logos = [FRAX, [USDC, BUSD, USDT]]
+      logos = [
+        assetLogos?.[0]!,
+        [assetLogos?.[1]!, assetLogos?.[2]!, assetLogos?.[3]!],
+      ];
+    } else {
+      logos = assetLogos ?? [];
+    }
+    return logos;
+  }, [farm]);
+
+  const tokens = farm?.asset.underlyingAssets ?? [];
 
   // Input focus states
   const [focusedInput, setFocusedInput] = useState<number>(0);
@@ -97,7 +122,7 @@ const AddSectionStable: FC = () => {
 
   useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
 
-  const tokens = farm?.asset.underlyingAssets ?? [];
+  // const tokens = farm?.asset.underlyingAssets ?? [];
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
     // Setting inputMap for Input fields
@@ -266,7 +291,8 @@ const AddSectionStable: FC = () => {
             index={index}
             handleInput={handleInput}
             inputMap={inputMap}
-            selectedFarm={farm}
+            // selectedFarm={farm}
+            logos={logos[index]}
             tokensLength={tokens.length}
             focusedInput={focusedInput}
             setFocusedInput={setFocusedInput}

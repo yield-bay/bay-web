@@ -2,6 +2,7 @@
 import { useEffect, memo, type FC } from "react";
 import { useAtom } from "jotai";
 import { ArrowSmDownIcon } from "@heroicons/react/outline";
+import { useIsClient } from "usehooks-ts";
 
 // Utility and Component Imports
 import {
@@ -55,6 +56,8 @@ const FarmTable: FC<Props> = ({
   // Users wallet
   const { isConnected } = useAccount();
   const [account] = useAtom(dotAccountAtom);
+
+  const isClient = useIsClient();
 
   useEffect(() => {
     if (farms.length > 0) handleSort(sortStatus.key, false);
@@ -317,7 +320,9 @@ const FarmTable: FC<Props> = ({
                     scope="col"
                     className={clsx(
                       "py-[13px] pr-3 pl-4 sm:px-6 text-center font-medium cursor-pointer",
-                      (isConnected || account !== null) && "bg-[#F0F0FF]"
+                      isClient
+                        ? (isConnected || account !== null) && "bg-[#F0F0FF]"
+                        : ""
                     )}
                     onClick={() => {
                       handleSort("pos", true);
