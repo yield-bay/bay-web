@@ -24,8 +24,6 @@ import { Address, parseAbi } from "viem";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 
-const gasEstimate = 0.0014; // In STELLA
-
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
   const { address } = useAccount();
@@ -199,9 +197,9 @@ const ClaimSectionEvm = () => {
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate} STELLA
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
                 </span>
-                <span>$1234</span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
               </p>
             </div>
           </div>

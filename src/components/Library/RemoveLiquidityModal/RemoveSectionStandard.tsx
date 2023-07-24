@@ -144,41 +144,41 @@ const RemoveSectionStandard = () => {
     }
   }, [farm, tokenPricesMap]);
 
-  // Gas estimate
-  const { gasEstimate } = useGasEstimation(
-    farm!.router,
-    1,
-    1,
-    getRemoveLiquidFunctionName(farm?.protocol as string) as any,
-    farm!,
-    address!,
-    [
-      farmAsset0?.address, // tokenA Address
-      farmAsset1?.address, // tokenB Address
-      methodId == 0
-        ? parseUnits(
-            `${
-              (fixedAmtNum(lpBalance!) *
-                parseFloat(percentage == "" ? "0" : percentage)) /
-              100
-            }`,
-            18
-          )
-        : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-      // 1,
-      // 1,
-      parseUnits(
-        `${minUnderlyingAssets[0].toString() as any}`,
-        farmAsset0?.decimals
-      ), // amountAMin
-      parseUnits(
-        `${minUnderlyingAssets[1].toString() as any}`,
-        farmAsset1?.decimals
-      ), // amountBMin
-      address, // to
-      1784096161000, // deadline (uint256)
-    ]
-  );
+  // // Gas estimate
+  // const { gasEstimate } = useGasEstimation(
+  //   farm!.router,
+  //   1,
+  //   1,
+  //   getRemoveLiquidFunctionName(farm?.protocol as string) as any,
+  //   farm!,
+  //   address!,
+  //   [
+  //     farmAsset0?.address, // tokenA Address
+  //     farmAsset1?.address, // tokenB Address
+  //     methodId == 0
+  //       ? parseUnits(
+  //           `${
+  //             (fixedAmtNum(lpBalance!) *
+  //               parseFloat(percentage == "" ? "0" : percentage)) /
+  //             100
+  //           }`,
+  //           18
+  //         )
+  //       : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+  //     // 1,
+  //     // 1,
+  //     parseUnits(
+  //       `${minUnderlyingAssets[0].toString() as any}`,
+  //       farmAsset0?.decimals
+  //     ), // amountAMin
+  //     parseUnits(
+  //       `${minUnderlyingAssets[1].toString() as any}`,
+  //       farmAsset1?.decimals
+  //     ), // amountBMin
+  //     address, // to
+  //     1784096161000, // deadline (uint256)
+  //   ]
+  // );
 
   const removeAmount = useMemo(() => {
     return methodId == 0
@@ -381,7 +381,7 @@ const RemoveSectionStandard = () => {
         </div>
         {/* Estimate Gas and Slippage Tolerance */}
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        <div
+        {/* <div
           className={clsx(
             "rounded-xl",
             parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
@@ -430,7 +430,7 @@ const RemoveSectionStandard = () => {
               {nativeBal?.symbol}
             </span>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-row mt-6 gap-2">
           {isLpApprovedLoading ? (
             <MButton
@@ -456,8 +456,8 @@ const RemoveSectionStandard = () => {
                   approveLpSuccessTxn ||
                   isLpApprovedLoading ||
                   approveLpLoadingTxn ||
-                  typeof approveLpToken == "undefined" ||
-                  parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                  typeof approveLpToken == "undefined"
+                  // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
                 }
                 onClick={async () => {
                   const txn = await approveLpToken?.();
@@ -487,6 +487,41 @@ const RemoveSectionStandard = () => {
   };
 
   const ConfirmStep = () => {
+    // Gas estimate
+    const { gasEstimate } = useGasEstimation(
+      farm!.router,
+      1,
+      1,
+      getRemoveLiquidFunctionName(farm?.protocol as string) as any,
+      farm!,
+      address!,
+      [
+        farmAsset0?.address, // tokenA Address
+        farmAsset1?.address, // tokenB Address
+        methodId == 0
+          ? parseUnits(
+              `${
+                (fixedAmtNum(lpBalance!) *
+                  parseFloat(percentage == "" ? "0" : percentage)) /
+                100
+              }`,
+              18
+            )
+          : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+        // 1,
+        // 1,
+        parseUnits(
+          `${minUnderlyingAssets[0].toString() as any}`,
+          farmAsset0?.decimals
+        ), // amountAMin
+        parseUnits(
+          `${minUnderlyingAssets[1].toString() as any}`,
+          farmAsset1?.decimals
+        ), // amountBMin
+        address, // to
+        1784096161000, // deadline (uint256)
+      ]
+    );
     return (
       <div className="flex flex-col gap-y-8 text-left">
         <button
@@ -521,6 +556,57 @@ const RemoveSectionStandard = () => {
                 </span>
               </div>
             ))}
+          </div>
+        </div>
+        {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        <div
+          className={clsx(
+            "rounded-xl",
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+              ? "bg-[#C0F9C9]"
+              : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "bg-[#ECFFEF]"
+                : "bg-[#FFE8E8]"
+            )}
+          >
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p>
+                <span className="opacity-40 mr-2 font-semibold">
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                </span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+              </p>
+            </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button
+                onClick={() => {
+                  setIsSlippageModalOpen(true);
+                  setIsOpen(false);
+                }}
+              >
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "Sufficient"
+                : "Insufficient"}{" "}
+              Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
+            </span>
           </div>
         </div>
         <MButton

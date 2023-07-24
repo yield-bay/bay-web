@@ -96,11 +96,30 @@ const useGasEstimation = (
   const [gasPrice, setGasPrice] = useState<number>(0);
 
   // if any arg is 0
-  if (args.some((a) => a == 0)) {
+  if (
+    args.some(
+      (a) =>
+        a == 0 &&
+        functionName != "removeLiquidityOneToken" &&
+        functionName != "remove_liquidity_one_coin"
+    )
+  ) {
     console.log("arg0");
     return {
       gasEstimate: 0,
     };
+  } else if (
+    farm.farmType == "StableAmm" &&
+    functionType == 0 && // addliquidity
+    args[0].every((a: number) => a == 0) // at least 1 amounts arg should be non zero
+  ) {
+    // if (functionType == 0 &&
+    //   args.every((a) => a == 0)) {
+    console.log("arg0");
+    return {
+      gasEstimate: 0,
+    };
+    // } else {
   } else {
     try {
       estimateGas(

@@ -144,16 +144,16 @@ const StakingModal = () => {
     }
   }, [farm, tokenPricesMap]);
 
-  // Gas estimate
-  const { gasEstimate } = useGasEstimation(
-    farm!.chef,
-    0,
-    2,
-    farm?.protocol == "zenlink" ? ("stake" as any) : ("deposit" as any),
-    farm!,
-    address!,
-    getArgs()
-  );
+  // // Gas estimate
+  // const { gasEstimate } = useGasEstimation(
+  //   farm!.chef,
+  //   0,
+  //   2,
+  //   farm?.protocol == "zenlink" ? ("stake" as any) : ("deposit" as any),
+  //   farm!,
+  //   address!,
+  //   getArgs()
+  // );
 
   // Balance of LP Tokens
   const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
@@ -267,6 +267,151 @@ const StakingModal = () => {
         </div>
         {/* Estimate Gas and Slippage Tolerance */}
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        {/* <div
+          className={clsx(
+            "rounded-xl",
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+              ? "bg-[#C0F9C9]"
+              : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "bg-[#ECFFEF]"
+                : "bg-[#FFE8E8]"
+            )}
+          >
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p>
+                <span className="opacity-40 mr-2 font-semibold">
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                </span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+              </p>
+            </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button
+                onClick={() => {
+                  setIsSlippageModalOpen(true);
+                  setIsOpen(false);
+                }}
+              >
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "Sufficient"
+                : "Insufficient"}{" "}
+              Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
+            </span>
+          </div>
+        </div> */}
+        <div className="flex flex-row mt-6 gap-2">
+          {!isApprovedSuccess && !isSuccessApproveTxn && (
+            <MButton
+              type="secondary"
+              isLoading={isLoadingApproveTxn || isLoadingApproveCall}
+              text={
+                isLoadingApproveCall
+                  ? "Waiting for Approval"
+                  : isLoadingApproveTxn
+                  ? "Sign the Txn in Wallet"
+                  : `Approve ${getLpTokenSymbol(tokenNames)}`
+              }
+              disabled={
+                isSuccessApproveTxn ||
+                isLoadingApproveCall ||
+                isLoadingApproveTxn ||
+                typeof approveLpToken == "undefined"
+                // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+              }
+              onClick={async () => {
+                const txn = await approveLpToken?.();
+                console.log("Approve0 Result", txn);
+              }}
+            />
+          )}
+          <MButton
+            type="primary"
+            isLoading={false}
+            disabled={
+              methodId == 0
+                ? percentage == "" || percentage == "0"
+                : lpTokens == "" || lpTokens == "0"
+              // !isSuccessApproveTxn ||
+              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+            }
+            text="Confirm Staking"
+            onClick={() => {
+              setIsConfirmStep(true);
+            }}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  const ConfirmStep = () => {
+    // Gas estimate
+    const { gasEstimate } = useGasEstimation(
+      farm!.chef,
+      0,
+      2,
+      farm?.protocol == "zenlink" ? ("stake" as any) : ("deposit" as any),
+      farm!,
+      address!,
+      getArgs()
+    );
+    return (
+      <div className="flex flex-col gap-y-8 text-left">
+        <button
+          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
+          onClick={() => setIsConfirmStep(false)}
+        >
+          <Image
+            src="/icons/ArrowLeft.svg"
+            alt="Go back"
+            height={24}
+            width={24}
+          />
+        </button>
+        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
+          You are staking
+        </h3>
+        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
+          <div className="inline-flex items-center gap-x-2">
+            <span>{stakeAmount.toLocaleString("en-US")}</span>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={farm?.asset.logos[0] as string}
+                alt={farm?.asset.logos[0] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={farm?.asset.logos[1] as string}
+                alt={farm?.asset.logos[1] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+          </div>
+          <p>{farm?.asset.symbol} Pool Tokens</p>
+        </div>
+        {/* Gas Fees // Slippage // Suff. Wallet balance */}
         <div
           className={clsx(
             "rounded-xl",
@@ -316,90 +461,6 @@ const StakingModal = () => {
               {nativeBal?.symbol}
             </span>
           </div>
-        </div>
-        <div className="flex flex-row mt-6 gap-2">
-          {!isApprovedSuccess && !isSuccessApproveTxn && (
-            <MButton
-              type="secondary"
-              isLoading={isLoadingApproveTxn || isLoadingApproveCall}
-              text={
-                isLoadingApproveCall
-                  ? "Waiting for Approval"
-                  : isLoadingApproveTxn
-                  ? "Sign the Txn in Wallet"
-                  : `Approve ${getLpTokenSymbol(tokenNames)}`
-              }
-              disabled={
-                isSuccessApproveTxn ||
-                isLoadingApproveCall ||
-                isLoadingApproveTxn ||
-                typeof approveLpToken == "undefined" ||
-                parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
-              }
-              onClick={async () => {
-                const txn = await approveLpToken?.();
-                console.log("Approve0 Result", txn);
-              }}
-            />
-          )}
-          <MButton
-            type="primary"
-            isLoading={false}
-            disabled={
-              (methodId == 0
-                ? percentage == "" || percentage == "0"
-                : lpTokens == "" || lpTokens == "0") ||
-              // !isSuccessApproveTxn ||
-              parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
-            }
-            text="Confirm Staking"
-            onClick={() => {
-              setIsConfirmStep(true);
-            }}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  const ConfirmStep = () => {
-    return (
-      <div className="flex flex-col gap-y-8 text-left">
-        <button
-          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
-          onClick={() => setIsConfirmStep(false)}
-        >
-          <Image
-            src="/icons/ArrowLeft.svg"
-            alt="Go back"
-            height={24}
-            width={24}
-          />
-        </button>
-        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
-          You are staking
-        </h3>
-        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
-          <div className="inline-flex items-center gap-x-2">
-            <span>{stakeAmount.toLocaleString("en-US")}</span>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[0] as string}
-                alt={farm?.asset.logos[0] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[1] as string}
-                alt={farm?.asset.logos[1] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-          </div>
-          <p>{farm?.asset.symbol} Pool Tokens</p>
         </div>
         <MButton
           type="primary"

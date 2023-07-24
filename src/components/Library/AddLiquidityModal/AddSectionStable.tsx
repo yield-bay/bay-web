@@ -193,6 +193,32 @@ const AddSectionStable: FC = () => {
   // );
   // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
 
+  // // Gas estimate
+  // const { gasEstimate } = useGasEstimation(
+  //   farm!.router,
+  //   1,
+  //   0,
+  //   getAddLiqFunctionName(farm?.protocol as string) as any,
+  //   farm!,
+  //   address!,
+  //   farm?.protocol.toLowerCase() == "curve"
+  //     ? [
+  //         amounts, // amounts (uint256[])
+  //         parseUnits(
+  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
+  //           18
+  //         ), // minToMint (uint256)
+  //       ]
+  //     : [
+  //         amounts, // amounts (uint256[])
+  //         parseUnits(
+  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
+  //           18
+  //         ), // minToMint (uint256)
+  //         1784096161000, // deadline (uint256)
+  //       ]
+  // );
+
   // Wait AddLiquidity Txn
   const {
     // data: addLiquidityTxnData,
@@ -297,6 +323,58 @@ const AddSectionStable: FC = () => {
             <span>Share of pool</span>
           </p>
         </div>
+
+        {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        {/* <div
+          className={clsx(
+            "rounded-xl",
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+              ? "bg-[#C0F9C9]"
+              : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "bg-[#ECFFEF]"
+                : "bg-[#FFE8E8]"
+            )}
+          >
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p>
+                <span className="opacity-40 mr-2 font-semibold">
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                </span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+              </p>
+            </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button
+                onClick={() => {
+                  setIsSlippageModalOpen(true);
+                  setIsOpen(false);
+                }}
+              >
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "Sufficient"
+                : "Insufficient"}{" "}
+              Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
+            </span>
+          </div>
+        </div> */}
 
         {/* Buttons */}
         <div className="w-full">

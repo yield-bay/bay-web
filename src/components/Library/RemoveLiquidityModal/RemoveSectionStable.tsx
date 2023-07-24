@@ -169,6 +169,24 @@ const RemoveSectionStable = () => {
     }
   }, [farm, tokenPricesMap]);
 
+  const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
+    tokens,
+    methodId == Method.PERCENTAGE
+      ? parseFloat(
+          percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
+        ) * parseFloat(lpBalance ?? "0")
+      : parseFloat(lpTokens !== "" ? lpTokens : "0"),
+    farm!,
+    removeMethodId,
+    indiTokenId
+  );
+
+  useEffect(() => {
+    if (!isLoadingMinAmount) {
+      console.log("minamoutdata removeliq stable", minAmount);
+    }
+  }, [isLoadingMinAmount]);
+
   const getArgs = (
     removalId: number,
     protocol: string,
@@ -205,19 +223,19 @@ const RemoveSectionStable = () => {
     }
   };
 
-  // Gas estimate
-  const { gasEstimate } = useGasEstimation(
-    farm!.router,
-    1,
-    1,
-    getRemoveLiqStableFunctionName(
-      removeMethodId,
-      farm?.protocol as string
-    ) as any,
-    farm!,
-    address!,
-    getArgs(removeMethodId, farm?.protocol!, indiTokenId, 1784096161000)
-  );
+  // // Gas estimate
+  // const { gasEstimate } = useGasEstimation(
+  //   farm!.router,
+  //   1,
+  //   1,
+  //   getRemoveLiqStableFunctionName(
+  //     removeMethodId,
+  //     farm?.protocol as string
+  //   ) as any,
+  //   farm!,
+  //   address!,
+  //   getArgs(removeMethodId, farm?.protocol!, indiTokenId, 1784096161000)
+  // );
 
   // Check if already approved
   const {
@@ -233,24 +251,6 @@ const RemoveSectionStable = () => {
     isSuccessApproveTxn: approveLpSuccessTxn,
     writeAsync: approveLpToken,
   } = useApproveToken(farm?.asset.address!, farm?.router!);
-
-  const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
-    tokens,
-    methodId == Method.PERCENTAGE
-      ? parseFloat(
-          percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
-        ) * parseFloat(lpBalance ?? "0")
-      : parseFloat(lpTokens !== "" ? lpTokens : "0"),
-    farm!,
-    removeMethodId,
-    indiTokenId
-  );
-
-  useEffect(() => {
-    if (!isLoadingMinAmount) {
-      console.log("minamoutdata removeliq stable", minAmount);
-    }
-  }, [isLoadingMinAmount]);
 
   // Remove Liquidity Call
   const {
@@ -436,7 +436,7 @@ const RemoveSectionStable = () => {
         </div>
         {/* Estimate Gas and Slippage Tolerance */}
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        <div
+        {/* <div
           className={clsx(
             "rounded-xl",
             parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
@@ -485,7 +485,7 @@ const RemoveSectionStable = () => {
               {nativeBal?.symbol}
             </span>
           </div>
-        </div>
+        </div> */}
         <div className="flex flex-row mt-6 gap-2">
           {!isLpApprovedSuccess && !approveLpSuccessTxn && (
             <MButton
@@ -502,8 +502,8 @@ const RemoveSectionStable = () => {
                 approveLpSuccessTxn ||
                 approveLpLoading ||
                 approveLpLoadingTxn ||
-                typeof approveLpToken == "undefined" ||
-                parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                typeof approveLpToken == "undefined"
+                // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
               }
               onClick={async () => {
                 const txn = await approveLpToken?.();
@@ -518,8 +518,8 @@ const RemoveSectionStable = () => {
               (methodId == Method.PERCENTAGE
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
-              (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
-              parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+              (!isLpApprovedSuccess && !approveLpSuccessTxn)
+              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Removing Liquidity"
             onClick={() => {
@@ -532,6 +532,28 @@ const RemoveSectionStable = () => {
   };
 
   const ConfirmStep = () => {
+    console.log(
+      "removeMethodIdconfirm",
+      removeMethodId,
+      indiTokenId,
+      getRemoveLiqStableFunctionName(
+        removeMethodId,
+        farm?.protocol as string
+      ) as any
+    );
+    // Gas estimate
+    const { gasEstimate } = useGasEstimation(
+      farm!.router,
+      1,
+      1,
+      getRemoveLiqStableFunctionName(
+        removeMethodId,
+        farm?.protocol as string
+      ) as any,
+      farm!,
+      address!,
+      getArgs(removeMethodId, farm?.protocol!, indiTokenId, 1784096161000)
+    );
     return (
       <div className="flex flex-col gap-y-8 text-left">
         <button
@@ -584,6 +606,57 @@ const RemoveSectionStable = () => {
                 </span>
               </div>
             )}
+          </div>
+        </div>
+        {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        <div
+          className={clsx(
+            "rounded-xl",
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+              ? "bg-[#C0F9C9]"
+              : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "bg-[#ECFFEF]"
+                : "bg-[#FFE8E8]"
+            )}
+          >
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p>
+                <span className="opacity-40 mr-2 font-semibold">
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                </span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+              </p>
+            </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button
+                onClick={() => {
+                  setIsSlippageModalOpen(true);
+                  setIsOpen(false);
+                }}
+              >
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
+                ? "Sufficient"
+                : "Insufficient"}{" "}
+              Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
+            </span>
           </div>
         </div>
         <MButton
