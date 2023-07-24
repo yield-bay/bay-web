@@ -137,8 +137,8 @@ export function getClaimRewardsArgs(
   // position: PortfolioPositionType,
   farmId: number,
   protocol: string,
-  signer: Address
-  // lpAddress: Address
+  signer: Address,
+  lpAddress: Address
 ) {
   console.log("this -- farmid", [farmId], typeof farmId);
   switch (protocol.toLowerCase()) {
@@ -154,8 +154,8 @@ export function getClaimRewardsArgs(
     case "arthswap":
     case "sushiswap":
       return [farmId, signer];
-    // case "sirius":
-    //   return [lpAddress, signer];
+    case "sirius":
+      return [lpAddress, signer];
     default:
       return [];
   }

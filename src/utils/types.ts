@@ -21,7 +21,7 @@ type APR = {
 
 export interface FarmType {
   id: number;
-  chef: string;
+  chef: Address;
   chain: string;
   protocol: string;
   router: Address;
@@ -84,6 +84,8 @@ export interface PortfolioPositionType {
   chef: Address;
   id: number;
   lpSymbol: string;
+  farmType: string;
+  lpAddress: Address;
 }
 
 export enum Network {

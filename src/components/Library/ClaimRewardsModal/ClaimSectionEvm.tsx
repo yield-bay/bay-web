@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { selectedPositionAtom } from "@store/atoms";
+import { selectedPositionAtom, tokenPricesAtom } from "@store/atoms";
 import { claimModalOpenAtom } from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
@@ -21,8 +21,10 @@ import {
   getClaimRewardsFunctionName,
 } from "@utils/abis/contract-helper-methods";
 import { Address, parseAbi } from "viem";
+import useGasEstimation from "@hooks/useGasEstimation";
+import { getNativeTokenAddress } from "@utils/network";
 
-const GAS_FEES = 0.0014; // In STELLA
+const gasEstimate = 0.0014; // In STELLA
 
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
@@ -46,12 +48,50 @@ const ClaimSectionEvm = () => {
     enabled: !!address,
   });
 
-  const chefAbi = useMemo(() => {
-    return getChefAbi(position?.protocol!, position?.chef as Address);
-  }, [position]);
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+
+  const [nativePrice, setNativePrice] = useState<number>(0);
+  useEffect(() => {
+    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(
+      position?.chain!
+    );
+    const tokenPrice =
+      tokenPricesMap[
+        `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
+      ];
+    console.log(
+      "tokenkey",
+      `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    );
+    console.log("token", tokenPrice);
+    if (!!tokenPrice && typeof tokenPrice == "number") {
+      console.log("...setting tokenprice", tokenPrice);
+      setNativePrice(tokenPrice);
+    }
+  }, [position, tokenPricesMap]);
 
   const contractFnName = useMemo(() => {
     return getClaimRewardsFunctionName(position?.protocol!);
+  }, [position]);
+
+  // Gas estimate
+  const { gasEstimate } = useGasEstimation(
+    position!.chef,
+    0,
+    4,
+    contractFnName,
+    position! as any,
+    address!,
+    getClaimRewardsArgs(
+      position?.id!,
+      position?.protocol!,
+      address!,
+      position?.lpAddress!
+    )
+  );
+
+  const chefAbi = useMemo(() => {
+    return getChefAbi(position?.protocol!, position?.chef as Address);
   }, [position]);
 
   const {
@@ -81,7 +121,8 @@ const ClaimSectionEvm = () => {
       const thisArgs = getClaimRewardsArgs(
         position?.id!,
         position?.protocol!,
-        address!
+        address!,
+        position?.lpAddress!
       );
 
       console.log("CLAIMREWARDS contract @params", {
@@ -141,7 +182,7 @@ const ClaimSectionEvm = () => {
         <div
           className={clsx(
             "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
               ? "bg-[#C0F9C9]"
               : "bg-[#FFB7B7]"
           )}
@@ -149,7 +190,7 @@ const ClaimSectionEvm = () => {
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "bg-[#ECFFEF]"
                 : "bg-[#FFE8E8]"
             )}
@@ -158,7 +199,7 @@ const ClaimSectionEvm = () => {
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} STELLA
+                  {gasEstimate} STELLA
                 </span>
                 <span>$1234</span>
               </p>
@@ -166,7 +207,7 @@ const ClaimSectionEvm = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "Sufficient"
                 : "Insufficient"}{" "}
               Wallet Balance

@@ -14,7 +14,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom, slippageAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 // import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
 import { Address, parseAbi, parseUnits } from "viem";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
@@ -24,8 +24,14 @@ import Image from "next/image";
 import { FarmType } from "@utils/types";
 import Spinner from "../Spinner";
 import Link from "next/link";
-import { getChefAbi } from "@utils/abis/contract-helper-methods";
+import {
+  fixedAmtNum,
+  getChefAbi,
+  getRemoveLiquidFunctionName,
+} from "@utils/abis/contract-helper-methods";
 import WrongNetworkModal from "../WrongNetworkModal";
+import useGasEstimation from "@hooks/useGasEstimation";
+import { getNativeTokenAddress } from "@utils/network";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -91,7 +97,63 @@ const StakingModal = () => {
     enabled: !!address,
   });
 
-  const GAS_FEES = 0.0014; // In STELLA
+  const getArgs = () => {
+    const amt =
+      methodId == 0
+        ? parseUnits(
+            `${
+              (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
+              100
+            }`,
+            18
+          )
+        : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
+    if (farm?.protocol.toLowerCase() == "curve") {
+      return [amt];
+    } else if (farm?.protocol.toLowerCase() == "sirius") {
+      return [amt, farm?.asset.address, 1];
+    } else if (farm?.protocol.toLowerCase() == "zenlink") {
+      return [farm?.id, farm?.asset.address, amt];
+    } else if (
+      farm?.protocol.toLowerCase() == "sushiswap" ||
+      farm?.protocol.toLowerCase() == "arthswap"
+    ) {
+      return [farm?.id, amt, address];
+    } else {
+      return [farm?.id, amt];
+    }
+  };
+
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+
+  const [nativePrice, setNativePrice] = useState<number>(0);
+  useEffect(() => {
+    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(farm?.chain!);
+    const tokenPrice =
+      tokenPricesMap[
+        `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+      ];
+    console.log(
+      "tokenkey",
+      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    );
+    console.log("token", tokenPrice);
+    if (!!tokenPrice && typeof tokenPrice == "number") {
+      console.log("...setting tokenprice", tokenPrice);
+      setNativePrice(tokenPrice);
+    }
+  }, [farm, tokenPricesMap]);
+
+  // Gas estimate
+  const { gasEstimate } = useGasEstimation(
+    farm!.chef,
+    0,
+    2,
+    farm?.protocol == "zenlink" ? ("stake" as any) : ("deposit" as any),
+    farm!,
+    address!,
+    getArgs()
+  );
 
   // Balance of LP Tokens
   const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
@@ -143,33 +205,7 @@ const StakingModal = () => {
 
   const handleStaking = async () => {
     try {
-      const args = (() => {
-        const amt =
-          methodId == 0
-            ? parseUnits(
-                `${
-                  (lpBalanceNum *
-                    parseFloat(percentage == "" ? "0" : percentage)) /
-                  100
-                }`,
-                18
-              )
-            : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
-        if (farm?.protocol.toLowerCase() == "curve") {
-          return [amt];
-        } else if (farm?.protocol.toLowerCase() == "sirius") {
-          return [amt, farm?.asset.address, 1];
-        } else if (farm?.protocol.toLowerCase() == "zenlink") {
-          return [farm?.id, farm?.asset.address, amt];
-        } else if (
-          farm?.protocol.toLowerCase() == "sushiswap" ||
-          farm?.protocol.toLowerCase() == "arthswap"
-        ) {
-          return [farm?.id, amt, address];
-        } else {
-          return [farm?.id, amt];
-        }
-      })();
+      const args = getArgs();
 
       console.log("stake args", args);
 
@@ -234,7 +270,7 @@ const StakingModal = () => {
         <div
           className={clsx(
             "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
               ? "bg-[#C0F9C9]"
               : "bg-[#FFB7B7]"
           )}
@@ -242,20 +278,20 @@ const StakingModal = () => {
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "bg-[#ECFFEF]"
                 : "bg-[#FFE8E8]"
             )}
           >
-            {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} {nativeBal?.symbol}
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
                 </span>
-                <span>$1234</span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
               </p>
-            </div> */}
+            </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
@@ -270,7 +306,7 @@ const StakingModal = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "Sufficient"
                 : "Insufficient"}{" "}
               Wallet Balance
@@ -298,7 +334,7 @@ const StakingModal = () => {
                 isLoadingApproveCall ||
                 isLoadingApproveTxn ||
                 typeof approveLpToken == "undefined" ||
-                parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+                parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
               }
               onClick={async () => {
                 const txn = await approveLpToken?.();
@@ -314,7 +350,7 @@ const StakingModal = () => {
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
               // !isSuccessApproveTxn ||
-              parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+              parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Staking"
             onClick={() => {

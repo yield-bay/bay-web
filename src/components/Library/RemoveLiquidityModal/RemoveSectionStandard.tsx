@@ -16,10 +16,11 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom, slippageAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import {
+  fixedAmtNum,
   getRemoveLiquidFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
@@ -34,6 +35,8 @@ import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import toUnits from "@utils/toUnits";
 import WrongNetworkModal from "../WrongNetworkModal";
+import useGasEstimation from "@hooks/useGasEstimation";
+import { getNativeTokenAddress } from "@utils/network";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -121,8 +124,61 @@ const RemoveSectionStandard = () => {
     chainId: chain?.id,
     enabled: !!address,
   });
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
-  const GAS_FEES = 0.0014; // In STELLA
+  const [nativePrice, setNativePrice] = useState<number>(0);
+  useEffect(() => {
+    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(farm?.chain!);
+    const tokenPrice =
+      tokenPricesMap[
+        `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+      ];
+    console.log(
+      "tokenkey",
+      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    );
+    console.log("token", tokenPrice);
+    if (!!tokenPrice && typeof tokenPrice == "number") {
+      console.log("...setting tokenprice", tokenPrice);
+      setNativePrice(tokenPrice);
+    }
+  }, [farm, tokenPricesMap]);
+
+  // Gas estimate
+  const { gasEstimate } = useGasEstimation(
+    farm!.router,
+    1,
+    1,
+    getRemoveLiquidFunctionName(farm?.protocol as string) as any,
+    farm!,
+    address!,
+    [
+      farmAsset0?.address, // tokenA Address
+      farmAsset1?.address, // tokenB Address
+      methodId == 0
+        ? parseUnits(
+            `${
+              (fixedAmtNum(lpBalance!) *
+                parseFloat(percentage == "" ? "0" : percentage)) /
+              100
+            }`,
+            18
+          )
+        : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+      // 1,
+      // 1,
+      parseUnits(
+        `${minUnderlyingAssets[0].toString() as any}`,
+        farmAsset0?.decimals
+      ), // amountAMin
+      parseUnits(
+        `${minUnderlyingAssets[1].toString() as any}`,
+        farmAsset1?.decimals
+      ), // amountBMin
+      address, // to
+      1784096161000, // deadline (uint256)
+    ]
+  );
 
   const removeAmount = useMemo(() => {
     return methodId == 0
@@ -328,7 +384,7 @@ const RemoveSectionStandard = () => {
         <div
           className={clsx(
             "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
               ? "bg-[#C0F9C9]"
               : "bg-[#FFB7B7]"
           )}
@@ -336,20 +392,20 @@ const RemoveSectionStandard = () => {
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "bg-[#ECFFEF]"
                 : "bg-[#FFE8E8]"
             )}
           >
-            {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} STELLA
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
                 </span>
-                <span>$1234</span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
               </p>
-            </div> */}
+            </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
@@ -364,7 +420,7 @@ const RemoveSectionStandard = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "Sufficient"
                 : "Insufficient"}{" "}
               Wallet Balance
@@ -401,7 +457,7 @@ const RemoveSectionStandard = () => {
                   isLpApprovedLoading ||
                   approveLpLoadingTxn ||
                   typeof approveLpToken == "undefined" ||
-                  parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+                  parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
                 }
                 onClick={async () => {
                   const txn = await approveLpToken?.();
@@ -418,7 +474,7 @@ const RemoveSectionStandard = () => {
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
               (!isLpApprovedSuccess && !approveLpSuccessTxn)
-              // parseFloat(nativeBal?.formatted ?? "0") <= GAS_FEES
+              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Removing Liquidity"
             onClick={() => {

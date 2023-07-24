@@ -249,8 +249,9 @@ const Layout: FC<Props> = ({ children }) => {
           protocol: string;
           chef: string;
           id: any;
-          asset: { symbol: string };
+          asset: { symbol: string; address: string };
           tvl: number;
+          farmType: string;
         },
         index
       ) => {
@@ -303,6 +304,9 @@ const Layout: FC<Props> = ({ children }) => {
                   10 ** 18,
               },
             ],
+            farmType: ff.farmType,
+            lpSymbol: ff.asset.symbol,
+            lpAddress: ff.asset.address,
           };
           console.log(`positions now ---\n`, tempPositions);
           setPositions((prevState: any) => ({
@@ -327,7 +331,7 @@ const Layout: FC<Props> = ({ children }) => {
       if (
         ff.protocol == "Mangata X" &&
         ff.chain == "Mangata Kusama" &&
-        ff.chef == "xyk"
+        ff.chef == ("xyk" as any)
       ) {
         const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
         if (positions[name] !== undefined) {
@@ -453,6 +457,8 @@ const Layout: FC<Props> = ({ children }) => {
               chef: string;
               id: number;
               asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               const poolInfo = await chef.poolInfo(ff.id);
               const userInfo = await chef.userInfo(ff.id, address); // EVM address
@@ -573,6 +579,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -602,7 +611,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: { symbol: any; address: any };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "solarbeamff",
@@ -715,6 +726,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -739,10 +753,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: string;
               chef: string;
               id: any;
-              asset: {
-                symbol: string;
-                address: string;
-              };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "ff",
@@ -869,6 +882,9 @@ const Layout: FC<Props> = ({ children }) => {
                     amountUSD: stakedLpAmount * price,
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 console.log("added position", tempPositions[name]);
                 setPositions((prevState: any) => ({
@@ -894,10 +910,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: {
-                symbol: any;
-                address: any;
-              };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "ff",
@@ -1010,6 +1025,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -1034,7 +1052,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: { symbol: any; address: any };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "beamswapff",
@@ -1147,6 +1167,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -1171,7 +1194,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: { symbol: any; address: any };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "solarflareff",
@@ -1284,6 +1309,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -1308,7 +1336,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: { symbol: any; address: any };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "sushiswapff",
@@ -1425,6 +1455,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -1449,7 +1482,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: { symbol: any; address: any };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "arthswapff",
@@ -1573,6 +1608,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,
@@ -1597,10 +1635,9 @@ const Layout: FC<Props> = ({ children }) => {
               protocol: any;
               chef: any;
               id: any;
-              asset: {
-                symbol: any;
-                address: any;
-              };
+              asset: { symbol: string; address: string };
+              tvl: number;
+              farmType: string;
             }) => {
               console.log(
                 "ff",
@@ -1713,6 +1750,9 @@ const Layout: FC<Props> = ({ children }) => {
                       ],
                   },
                   unclaimedRewards: ucrews,
+                  farmType: ff.farmType,
+                  lpSymbol: ff.asset.symbol,
+                  lpAddress: ff.asset.address,
                 };
                 setPositions((prevState: any) => ({
                   ...prevState,

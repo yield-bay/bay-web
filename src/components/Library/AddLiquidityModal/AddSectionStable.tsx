@@ -9,10 +9,11 @@ import {
 } from "wagmi";
 import { useAtom } from "jotai";
 import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
-import { selectedFarmAtom, slippageAtom } from "@store/atoms";
+import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import MButton from "../MButton";
 import { UnderlyingAssets } from "@utils/types";
 import {
+  fixedAmtNum,
   getAddLiqFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
@@ -31,6 +32,9 @@ import toUnits from "@utils/toUnits";
 import useTotalSupply from "@hooks/useTotalSupply";
 import { estimateContractGas } from "viem/dist/types/actions/public/estimateContractGas";
 import WrongNetworkModal from "../WrongNetworkModal";
+import useGasEstimation from "@hooks/useGasEstimation";
+import { getNativeTokenAddress } from "@utils/network";
+import { ethers } from "ethers";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -57,6 +61,7 @@ const AddSectionStable: FC = () => {
   const [inputMapAmount, setInputMapAmount] = useState<{
     [address: Address]: number;
   }>({});
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
   // Input focus states
   const [focusedInput, setFocusedInput] = useState<number>(0);
@@ -69,11 +74,28 @@ const AddSectionStable: FC = () => {
     enabled: !!address && !!chain,
   });
 
+  const [nativePrice, setNativePrice] = useState<number>(0);
+
+  useEffect(() => {
+    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(farm?.chain!);
+    const tokenPrice =
+      tokenPricesMap[
+        `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+      ];
+    console.log(
+      "tokenkey",
+      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    );
+    console.log("token", tokenPrice);
+    if (!!tokenPrice && typeof tokenPrice == "number") {
+      console.log("...setting tokenprice", tokenPrice);
+      setNativePrice(tokenPrice);
+    }
+  }, [farm, tokenPricesMap]);
+
   useEffect(() => console.log("selectedfarm", farm), [farm]);
 
   useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
-
-  const GAS_FEES = 0.0014; // In STELLA
 
   const tokens = farm?.asset.underlyingAssets ?? [];
 
@@ -115,6 +137,64 @@ const AddSectionStable: FC = () => {
     functionName: getAddLiqFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
   });
+
+  // let iface = new ethers.Interface(
+  //   getRouterAbi(
+  //     farm?.protocol!,
+  //     farm?.farmType == "StandardAmm" ? false : true
+  //   )
+  // );
+  // const fdata = new ethers.Interface(
+  //   getRouterAbi(
+  //     farm?.protocol!,
+  //     farm?.farmType == "StandardAmm" ? false : true
+  //   )
+  // ).encodeFunctionData(
+  //   getAddLiqFunctionName(farm?.protocol as string) as any,
+  //   farm?.protocol.toLowerCase() == "curve"
+  //     ? [
+  //         amounts, // amounts (uint256[])
+  //         parseUnits(
+  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
+  //           18
+  //         ), // minToMint (uint256)
+  //       ]
+  //     : [
+  //         amounts, // amounts (uint256[])
+  //         parseUnits(
+  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
+  //           18
+  //         ), // minToMint (uint256)
+  //         1784096161000, // deadline (uint256)
+  //       ]
+  // );
+  // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
+
+  // Gas estimate
+  const { gasEstimate } = useGasEstimation(
+    farm!.router,
+    1,
+    0,
+    getAddLiqFunctionName(farm?.protocol as string) as any,
+    farm!,
+    address!,
+    farm?.protocol.toLowerCase() == "curve"
+      ? [
+          amounts, // amounts (uint256[])
+          parseUnits(
+            `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
+            18
+          ), // minToMint (uint256)
+        ]
+      : [
+          amounts, // amounts (uint256[])
+          parseUnits(
+            `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
+            18
+          ), // minToMint (uint256)
+          1784096161000, // deadline (uint256)
+        ]
+  );
 
   // Wait AddLiquidity Txn
   const {
@@ -217,7 +297,7 @@ const AddSectionStable: FC = () => {
         <div
           className={clsx(
             "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
               ? "bg-[#C0F9C9]"
               : "bg-[#FFB7B7]"
           )}
@@ -225,7 +305,7 @@ const AddSectionStable: FC = () => {
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "bg-[#ECFFEF]"
                 : "bg-[#FFE8E8]"
             )}
@@ -234,9 +314,9 @@ const AddSectionStable: FC = () => {
               <span>Estimated Gas Fees:</span>
               <p>
                 <span className="opacity-40 mr-2 font-semibold">
-                  {GAS_FEES} STELLA
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
                 </span>
-                <span>$1234</span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
               </p>
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
@@ -253,7 +333,7 @@ const AddSectionStable: FC = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
                 ? "Sufficient"
                 : "Insufficient"}{" "}
               Wallet Balance
