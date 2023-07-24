@@ -181,75 +181,31 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // );
   // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
 
-  // Gas estimate
-  const { gasEstimate } = useGasEstimation(
-    selectedFarm!.router,
-    1,
-    0,
-    getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
-    selectedFarm!,
-    address!,
-    [
-      farmAsset0?.address, // TokenA Address
-      farmAsset1?.address, // TokenB Address
-      parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
-      parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
-      parseUnits(
-        `${(fixedAmtNum(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-        farmAsset0?.decimals
-      ), // amountAMin
-      parseUnits(
-        `${(fixedAmtNum(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-        farmAsset1?.decimals
-      ), // amountBMin
-      // parseUnits(
-      //   `${
-      //     firstTokenAmount == "" || firstTokenAmount == "0"
-      //       ? 1
-      //       : parseFloat(firstTokenAmount)
-      //   }`,
-      //   farmAsset0?.decimals
-      // ),
-      // parseUnits(
-      //   `${
-      //     secondTokenAmount == "" || secondTokenAmount == "0"
-      //       ? 1 /
-      //         getPoolRatio(
-      //           reserve0,
-      //           reserve1,
-      //           farmAsset0.decimals,
-      //           farmAsset1.decimals
-      //         )
-      //       : parseFloat(secondTokenAmount)
-      //   }`,
-      //   farmAsset1?.decimals
-      // ),
-      // parseUnits(
-      //   `${
-      //     (firstTokenAmount == "" || firstTokenAmount == "0"
-      //       ? 1
-      //       : parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100
-      //   }`,
-      //   farmAsset0?.decimals
-      // ), // amountAMin
-      // parseUnits(
-      //   `${
-      //     (secondTokenAmount == "" || secondTokenAmount == "0"
-      //       ? 1 /
-      //         getPoolRatio(
-      //           reserve0,
-      //           reserve1,
-      //           farmAsset0.decimals,
-      //           farmAsset1.decimals
-      //         )
-      //       : parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100
-      //   }`,
-      //   farmAsset1?.decimals
-      // ), // amountBMin
-      address, // To
-      1784096161000, // deadline (uint256)
-    ]
-  );
+  // // Gas estimate
+  // const { gasEstimate } = useGasEstimation(
+  //   selectedFarm!.router,
+  //   1,
+  //   0,
+  //   getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
+  //   selectedFarm!,
+  //   address!,
+  //   [
+  //     farmAsset0?.address, // TokenA Address
+  //     farmAsset1?.address, // TokenB Address
+  //     parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
+  //     parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
+  //     parseUnits(
+  //       `${(fixedAmtNum(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+  //       farmAsset0?.decimals
+  //     ), // amountAMin
+  //     parseUnits(
+  //       `${(fixedAmtNum(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+  //       farmAsset1?.decimals
+  //     ), // amountBMin
+  //     address, // To
+  //     1784096161000, // deadline (uint256)
+  //   ]
+  // );
 
   // useEffect(function siriusReserves() {
   //   if (selectedFarm?.protocol!.toLowerCase() == "sirius") {
@@ -758,6 +714,224 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         </div>
 
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        {/* <div
+          className={clsx(
+            "rounded-xl",
+            fixedAmtNum(nativeBal?.formatted) > gasEstimate
+              ? "bg-[#C0F9C9]"
+              : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              fixedAmtNum(nativeBal?.formatted) > gasEstimate
+                ? "bg-[#ECFFEF]"
+                : "bg-[#FFE8E8]"
+            )}
+          >
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p className="inline-flex">
+                <span className="opacity-40 mr-2 font-semibold">
+                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                </span>
+                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+              </p>
+            </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button
+                onClick={() => {
+                  setIsSlippageModalOpen(true);
+                  setIsOpen(false);
+                }}
+              >
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              {fixedAmtNum(nativeBal?.formatted) > gasEstimate
+                ? "Sufficient"
+                : "Insufficient"}{" "}
+              Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+              {nativeBal?.symbol}
+            </span>
+          </div>
+        </div> */}
+
+        {/* Buttons */}
+        <div className="flex flex-row gap-x-3 mt-9">
+          {isToken0ApprovedLoading || isToken1ApprovedLoading ? (
+            <MButton
+              type="primary"
+              isLoading={false}
+              disabled={true}
+              text="Checking if tokens are approved..."
+            />
+          ) : (
+            <div className="flex flex-row w-full gap-x-3">
+              {!isToken0ApprovedSuccess && !approveToken0TxnSuccess && (
+                <MButton
+                  type="secondary"
+                  isLoading={approveToken0Loading || approveToken0TxnLoading}
+                  text={
+                    approveToken0Loading
+                      ? "Sign the Txn in Wallet"
+                      : approveToken0TxnLoading
+                      ? "Waiting for Approval"
+                      : `Approve ${farmAsset0.symbol}`
+                  }
+                  disabled={
+                    approveToken0TxnSuccess ||
+                    approveToken0Loading ||
+                    approveToken0TxnLoading ||
+                    typeof approveToken0 == "undefined"
+                    // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
+                  }
+                  onClick={async () => {
+                    try {
+                      const txn = await approveToken0?.();
+                      console.log("Approve0 Result", txn);
+                    } catch (error) {
+                      console.log("Error while Approving toke0", error);
+                    }
+                  }}
+                />
+              )}
+              {!isToken1ApprovedSuccess &&
+                !approveToken1TxnSuccess &&
+                (isToken0ApprovedSuccess || approveToken0TxnSuccess) && (
+                  <MButton
+                    type="secondary"
+                    isLoading={approveToken1Loading || approveToken1TxnLoading}
+                    text={
+                      approveToken1Loading
+                        ? "Sign the Txn in Wallet"
+                        : approveToken1TxnLoading
+                        ? "Waiting for Approval"
+                        : `Approve ${farmAsset1.symbol}`
+                    }
+                    disabled={
+                      approveToken1TxnSuccess ||
+                      approveToken1Loading ||
+                      approveToken1TxnLoading ||
+                      typeof approveToken1 == "undefined"
+                      // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
+                    }
+                    onClick={async () => {
+                      const txn = await approveToken1?.();
+                      console.log("Approve1 Result", txn);
+                    }}
+                  />
+                )}
+              <MButton
+                type="primary"
+                isLoading={false}
+                disabled={
+                  firstTokenAmount == "" ||
+                  secondTokenAmount == "" ||
+                  !(isToken0ApprovedSuccess || approveToken0Success) ||
+                  !(isToken1ApprovedSuccess || approveToken1Success) ||
+                  parseFloat(firstTokenAmount) <= 0 ||
+                  parseFloat(secondTokenAmount) <= 0 ||
+                  // fixedAmtNum(nativeBal?.formatted) <= gasEstimate ||
+                  fixedAmtNum(firstTokenAmount) >
+                    fixedAmtNum(token0Balance?.formatted) ||
+                  fixedAmtNum(secondTokenAmount) >
+                    fixedAmtNum(token1Balance?.formatted)
+                }
+                text="Confirm Adding Liquidity"
+                onClick={() => {
+                  if (
+                    parseFloat(firstTokenAmount) <= 0 &&
+                    parseFloat(secondTokenAmount) <= 0
+                  ) {
+                    console.log("Both token amount can't be zero");
+                  } else {
+                    setIsConfirmStep(true);
+                  }
+                }}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const ConfirmStep = () => {
+    // Gas estimate
+    const { gasEstimate } = useGasEstimation(
+      selectedFarm!.router,
+      1,
+      0,
+      getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
+      selectedFarm!,
+      address!,
+      [
+        farmAsset0?.address, // TokenA Address
+        farmAsset1?.address, // TokenB Address
+        parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
+        parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
+        parseUnits(
+          `${(fixedAmtNum(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+          farmAsset0?.decimals
+        ), // amountAMin
+        parseUnits(
+          `${(fixedAmtNum(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
+          farmAsset1?.decimals
+        ), // amountBMin
+        address, // To
+        1784096161000, // deadline (uint256)
+      ]
+    );
+
+    return (
+      <div className="flex flex-col gap-y-8 text-left">
+        <button
+          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
+          onClick={() => setIsConfirmStep(false)}
+        >
+          <Image
+            src="/icons/ArrowLeft.svg"
+            alt="Go back"
+            height={24}
+            width={24}
+          />
+        </button>
+        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
+          You will receive
+        </h3>
+        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
+          <div className="inline-flex items-center gap-x-2">
+            <span>{toUnits(minLpTokens, 3)}</span>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={selectedFarm?.asset.logos[0] as string}
+                alt={selectedFarm?.asset.logos[0] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={selectedFarm?.asset.logos[1] as string}
+                alt={selectedFarm?.asset.logos[1] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+          </div>
+          <p>
+            {farmAsset0?.symbol}/{farmAsset1?.symbol} Pool Tokens
+          </p>
+        </div>
         <div
           className={clsx(
             "rounded-xl",
@@ -807,148 +981,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               {nativeBal?.symbol}
             </span>
           </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="flex flex-row gap-x-3 mt-9">
-          {isToken0ApprovedLoading || isToken1ApprovedLoading ? (
-            <MButton
-              type="primary"
-              isLoading={false}
-              disabled={true}
-              text="Checking if tokens are approved..."
-            />
-          ) : (
-            <div className="flex flex-row w-full gap-x-3">
-              {!isToken0ApprovedSuccess && !approveToken0TxnSuccess && (
-                <MButton
-                  type="secondary"
-                  isLoading={approveToken0Loading || approveToken0TxnLoading}
-                  text={
-                    approveToken0Loading
-                      ? "Sign the Txn in Wallet"
-                      : approveToken0TxnLoading
-                      ? "Waiting for Approval"
-                      : `Approve ${farmAsset0.symbol}`
-                  }
-                  disabled={
-                    approveToken0TxnSuccess ||
-                    approveToken0Loading ||
-                    approveToken0TxnLoading ||
-                    typeof approveToken0 == "undefined" ||
-                    fixedAmtNum(nativeBal?.formatted) <= gasEstimate
-                  }
-                  onClick={async () => {
-                    try {
-                      const txn = await approveToken0?.();
-                      console.log("Approve0 Result", txn);
-                    } catch (error) {
-                      console.log("Error while Approving toke0", error);
-                    }
-                  }}
-                />
-              )}
-              {!isToken1ApprovedSuccess &&
-                !approveToken1TxnSuccess &&
-                (isToken0ApprovedSuccess || approveToken0TxnSuccess) && (
-                  <MButton
-                    type="secondary"
-                    isLoading={approveToken1Loading || approveToken1TxnLoading}
-                    text={
-                      approveToken1Loading
-                        ? "Sign the Txn in Wallet"
-                        : approveToken1TxnLoading
-                        ? "Waiting for Approval"
-                        : `Approve ${farmAsset1.symbol}`
-                    }
-                    disabled={
-                      approveToken1TxnSuccess ||
-                      approveToken1Loading ||
-                      approveToken1TxnLoading ||
-                      typeof approveToken1 == "undefined" ||
-                      fixedAmtNum(nativeBal?.formatted) <= gasEstimate
-                    }
-                    onClick={async () => {
-                      const txn = await approveToken1?.();
-                      console.log("Approve1 Result", txn);
-                    }}
-                  />
-                )}
-              <MButton
-                type="primary"
-                isLoading={false}
-                disabled={
-                  firstTokenAmount == "" ||
-                  secondTokenAmount == "" ||
-                  !(isToken0ApprovedSuccess || approveToken0Success) ||
-                  !(isToken1ApprovedSuccess || approveToken1Success) ||
-                  parseFloat(firstTokenAmount) <= 0 ||
-                  parseFloat(secondTokenAmount) <= 0 ||
-                  fixedAmtNum(nativeBal?.formatted) <= gasEstimate ||
-                  fixedAmtNum(firstTokenAmount) >
-                    fixedAmtNum(token0Balance?.formatted) ||
-                  fixedAmtNum(secondTokenAmount) >
-                    fixedAmtNum(token1Balance?.formatted)
-                }
-                text="Confirm Adding Liquidity"
-                onClick={() => {
-                  if (
-                    parseFloat(firstTokenAmount) <= 0 &&
-                    parseFloat(secondTokenAmount) <= 0
-                  ) {
-                    console.log("Both token amount can't be zero");
-                  } else {
-                    setIsConfirmStep(true);
-                  }
-                }}
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const ConfirmStep = () => {
-    return (
-      <div className="flex flex-col gap-y-8 text-left">
-        <button
-          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
-          onClick={() => setIsConfirmStep(false)}
-        >
-          <Image
-            src="/icons/ArrowLeft.svg"
-            alt="Go back"
-            height={24}
-            width={24}
-          />
-        </button>
-        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
-          You will receive
-        </h3>
-        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
-          <div className="inline-flex items-center gap-x-2">
-            <span>{toUnits(minLpTokens, 3)}</span>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={selectedFarm?.asset.logos[0] as string}
-                alt={selectedFarm?.asset.logos[0] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={selectedFarm?.asset.logos[1] as string}
-                alt={selectedFarm?.asset.logos[1] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-          </div>
-          <p>
-            {farmAsset0?.symbol}/{farmAsset1?.symbol} Pool Tokens
-          </p>
         </div>
         <div className="inline-flex justify-between text-sm font-bold">
           <span className="text-[#0B0B0B]">Rates</span>
