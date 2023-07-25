@@ -12,7 +12,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useEffect, useMemo, useState } from "react";
-import { Spinner } from "@chakra-ui/react";
+import Spinner from "../Spinner";
 import Link from "next/link";
 import MButton from "../MButton";
 import {
@@ -23,6 +23,7 @@ import {
 import { Address, parseAbi } from "viem";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
+import toUnits from "@utils/toUnits";
 
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
@@ -271,11 +272,41 @@ const ClaimSectionEvm = () => {
         ) : !isErrorClaimRewardsTxn && !isErrorClaimRewardsCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">Withdrawing 50 STELLA/GLMR LP Tokens</h2>
+            {position?.unclaimedRewards.map((reward, index) => (
+              <div
+                key={index}
+                className="inline-flex items-center space-x-3 rounded-xl bg-[#F1F1F1] px-6 py-3"
+              >
+                <Image
+                  src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.token.toUpperCase()}.png`}
+                  alt={reward.token + "_logo"}
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+                <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                  {reward.amount >= 0.01
+                    ? parseFloat(reward.amount.toFixed(2)).toLocaleString(
+                        "en-US"
+                      )
+                    : "<0.01"}{" "}
+                  {reward.token}
+                </span>
+              </div>
+            ))}
+            <p className="inline-flex items-center text-xl">
+              Claiming{" "}
+              {position?.unclaimedRewards.map((reward, index) => (
+                <span className="mr-1" key={index}>
+                  {toUnits(reward.amount, 2)} {reward.token}
+                  {index == position?.unclaimedRewards.length - 1 ? "" : " and"}
+                </span>
+              ))}
+            </p>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">
               {isLoadingClaimRewardsTxn
-                ? "Waiting for Transaction to cComplete"
+                ? "Waiting for Transaction to Complete"
                 : isLoadingClaimRewardsCall
                 ? "Confirm Transaction in your Wallet"
                 : ""}

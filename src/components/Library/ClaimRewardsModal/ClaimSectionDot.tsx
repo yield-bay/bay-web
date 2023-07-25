@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useAtom } from "jotai";
 import clsx from "clsx";
@@ -18,12 +18,11 @@ import MButton from "../MButton";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { mangataHelperAtom } from "@store/commonAtoms";
 import { MangataPool } from "@utils/types";
-import { delay, getDecimalBN } from "@utils/xcm/common/utils";
+import { delay } from "@utils/xcm/common/utils";
 import { formatTokenSymbols } from "@utils/farmListMethods";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
-
-const GAS_FEES = 0.0014; // In STELLA
+import toUnits from "@utils/toUnits";
 
 const ClaimSectionDot = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
@@ -309,19 +308,19 @@ const ClaimSectionDot = () => {
         ) : isInProcess || isSigning ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            <h2 className="text-xl">
+            <p className="inline-flex items-center text-xl">
               Claiming{" "}
-              {position?.unclaimedRewards.map(
-                (reward, index) =>
-                  `${parseFloat(reward.amount.toFixed(2)).toLocaleString(
-                    "en-US"
-                  )} ${reward.token} reward tokens`
-              )}
-            </h2>
+              {position?.unclaimedRewards.map((reward, index) => (
+                <span className="mr-1" key={index}>
+                  {toUnits(reward.amount, 2)} {reward.token}
+                  {index == position?.unclaimedRewards.length - 1 ? "" : " and"}
+                </span>
+              ))}
+            </p>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">
               {!isSigning && isInProcess
-                ? "Waiting for Transaction to cComplete"
+                ? "Waiting for Transaction to Complete"
                 : isSigning
                 ? "Confirm Transaction in your Wallet"
                 : ""}
