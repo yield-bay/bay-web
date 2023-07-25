@@ -159,6 +159,12 @@ const AddSectionStable: FC = () => {
     ),
     functionName: getAddLiqFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
+    onError: (error) => {
+      console.log(
+        `Error: Adding Liquidity in ${farm?.asset.symbol} Farm:`,
+        error
+      );
+    },
   });
 
   // let iface = new ethers.Interface(
@@ -274,10 +280,13 @@ const AddSectionStable: FC = () => {
       const txnRes = await addLiquidity?.({
         args: args_to_pass,
       });
-      console.log("called addliquidity method.", txnRes);
+      console.log(`Adding Liquidity in ${farm?.asset.symbol} Farm`, txnRes);
       setTxnHash(txnRes?.hash);
     } catch (error) {
-      console.error(error);
+      console.error(
+        `Error while adding liquidity -> ${farm?.asset.symbol} Farm\n`,
+        error
+      );
     }
   };
 

@@ -369,6 +369,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       selectedFarm?.protocol as string
     ) as any,
     chainId: chain?.id,
+    onError: (error) => {
+      console.log(
+        `Error: Adding Liquidity in ${selectedFarm?.asset.symbol} Farm:`,
+        error
+      );
+    },
   });
 
   // Wait AddLiquidity Txn
@@ -415,9 +421,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
       }
-      console.log("called addliquidity method.", txnRes);
+      console.log(
+        `Adding Liquidity in ${selectedFarm?.asset.symbol} Farm`,
+        txnRes
+      );
     } catch (error) {
-      console.error("Error in Adding liquidity", error);
+      console.error(
+        `Error while adding liquidity -> ${selectedFarm?.asset.symbol} Farm\n`,
+        error
+      );
     }
   };
 
@@ -578,8 +590,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     <span>
                       {parseFloat(token0Balance?.formatted).toLocaleString(
                         "en-US"
-                      )}{" "}
-                      {token0Balance?.symbol}
+                      )}
                     </span>
                   </div>
                 )
@@ -652,8 +663,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     <span>
                       {parseFloat(token1Balance?.formatted).toLocaleString(
                         "en-US"
-                      )}{" "}
-                      {token1Balance?.symbol}
+                      )}
                     </span>
                   </div>
                 )
@@ -707,7 +717,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              {/* % = {minLpTokens} {totalSupply} */}%
+              {/* % = minLpTokens / totalSupply */}%
             </span>
             <span>Share of pool</span>
           </p>
@@ -799,7 +809,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       const txn = await approveToken0?.();
                       console.log("Approve0 Result", txn);
                     } catch (error) {
-                      console.log("Error while Approving toke0", error);
+                      console.log(
+                        `Error while Approving ${farmAsset0?.symbol}`,
+                        error
+                      );
                     }
                   }}
                 />
@@ -825,8 +838,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
                     }
                     onClick={async () => {
-                      const txn = await approveToken1?.();
-                      console.log("Approve1 Result", txn);
+                      try {
+                        const txn = await approveToken1?.();
+                        console.log("Approve1 Result", txn);
+                      } catch (error) {
+                        console.log(
+                          `Error while Approving ${farmAsset1?.symbol}`,
+                          error
+                        );
+                      }
                     }}
                   />
                 )}

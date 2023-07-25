@@ -58,6 +58,15 @@ const TokenButton: React.FC<Props> = ({
     return <></>;
   }
 
+  const handleApproveToken = async () => {
+    try {
+      const txn = await approveToken?.();
+      console.log("Approve Result", txn);
+    } catch (error) {
+      console.log(`Error while Approving ${token.symbol}`, error);
+    }
+  };
+
   return (
     <MButton
       type="secondary"
@@ -77,10 +86,7 @@ const TokenButton: React.FC<Props> = ({
         isLoadingApproveTxn ||
         typeof approveToken == "undefined"
       }
-      onClick={async () => {
-        const txn = await approveToken?.();
-        console.log("Approve Result", txn);
-      }}
+      onClick={handleApproveToken}
     />
   );
 };
