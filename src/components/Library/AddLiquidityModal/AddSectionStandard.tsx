@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 // Library Imports
 import { FC, useRef, PropsWithChildren, useEffect, useState } from "react";
 import { useAtom } from "jotai";
@@ -23,14 +22,12 @@ import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import {
   fixedAmtNum,
-  // fixedAmtNumAdj,
   getAddLiqFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
 import { UnderlyingAssets } from "@utils/types";
 import toUnits from "@utils/toUnits";
 import useTokenReserves from "@hooks/useTokenReserves";
-// import useLPBalance from "@hooks/useLPBalance";
 import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
 import useMinimumLPTokens from "@hooks/useMinLPTokens";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
@@ -40,9 +37,6 @@ import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
 import { ethers } from "ethers";
-// import { siriusRouterAbi } from "@components/Common/Layout/evmUtils";
-// import router from "next/router";
-// import estimateGas from "@hooks/useEthersGas";
 
 enum InputType {
   Off = -1,
@@ -91,20 +85,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
   const [secondTokenAmount, setSecondTokenAmount] = useState("");
-
-  // const { data: tokenInfo } = useToken({
-  //   address: selectedFarm?.asset.address!,
-  //   chainId: chain?.id!,
-  //   enabled: !!chain && !!selectedFarm,
-  // });
-
-  const a = async () => {
-    const block = await publicClient.getBlock();
-    const blocktimestamp =
-      Number(block.timestamp.toString() + "000") + 60000 * 30;
-    return blocktimestamp;
-  };
-  // const m = await a();
 
   const { reserve0, reserve1 } = useTokenReserves(
     selectedFarm?.asset.address!,
@@ -181,32 +161,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // );
   // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
 
-  // // Gas estimate
-  // const { gasEstimate } = useGasEstimation(
-  //   selectedFarm!.router,
-  //   1,
-  //   0,
-  //   getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
-  //   selectedFarm!,
-  //   address!,
-  //   [
-  //     farmAsset0?.address, // TokenA Address
-  //     farmAsset1?.address, // TokenB Address
-  //     parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
-  //     parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
-  //     parseUnits(
-  //       `${(fixedAmtNum(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-  //       farmAsset0?.decimals
-  //     ), // amountAMin
-  //     parseUnits(
-  //       `${(fixedAmtNum(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-  //       farmAsset1?.decimals
-  //     ), // amountBMin
-  //     address, // To
-  //     1784096161000, // deadline (uint256)
-  //   ]
-  // );
-
   // useEffect(function siriusReserves() {
   //   if (selectedFarm?.protocol!.toLowerCase() == "sirius") {
   //     const { data: bal0 } = useContractRead({
@@ -258,8 +212,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     SLIPPAGE,
     reserve0,
     reserve1,
-    isNaN(parseInt(firstTokenAmount)) ? 0 : parseInt(firstTokenAmount),
-    isNaN(parseInt(secondTokenAmount)) ? 0 : parseInt(secondTokenAmount),
+    fixedAmtNum(firstTokenAmount),
+    fixedAmtNum(secondTokenAmount),
     farmAsset0.decimals,
     farmAsset1.decimals
   );
@@ -354,7 +308,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const {
     data: addLiquidityData,
     isLoading: isLoadingAddLiqCall,
-    isSuccess: isSuccessAddLiqCall,
+    // isSuccess: isSuccessAddLiqCall,
     writeAsync: addLiquidity,
     isError: isErrorAddLiqCall,
   } = useContractWrite({
@@ -707,17 +661,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <p className="flex flex-col items-end">
             <span>
-              {/* {(totalSupply !== 0 && minLpTokens > 0
-                ? (minLpTokens / totalSupply) * 100
-                : 0
-              ).toLocaleString("en-US")} */}
               {(totalSupply !== 0 && minLpTokens > 0
                 ? (minLpTokens / totalSupply) * 100 < 0.001
                   ? "<0.001"
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              {/* % = minLpTokens / totalSupply */}%
+              %
             </span>
             <span>Share of pool</span>
           </p>
@@ -875,7 +825,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{toUnits(minLpTokens, 3)}</span>
+            <span>{toUnits(minLpTokens / 10 ** 18, 3)}</span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={selectedFarm?.asset.logos[0] as string}
@@ -975,17 +925,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           </div>
           <p className="flex flex-col items-end">
             <span>
-              {/* {(totalSupply !== 0 && minLpTokens > 0
-                ? (minLpTokens / totalSupply) * 100
-                : 0
-              ).toLocaleString("en-US")} */}
               {(totalSupply !== 0 && minLpTokens > 0
                 ? (minLpTokens / totalSupply) * 100 < 0.001
                   ? "<0.001"
                   : (minLpTokens / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              {/* % = {minLpTokens} {totalSupply} */}%
+              %
             </span>
             <span>Share of pool</span>
           </p>

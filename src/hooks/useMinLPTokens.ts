@@ -34,26 +34,22 @@ const useMinimumLPTokens = (
     console.log("d0", ethers.parseUnits(r0, d0));
     console.log("d1", ethers.parseUnits(r1, d1));
     console.log(
-      "totalsupply lp",
-      totalSupply,
+      "totalsupply lp:",
       Number(totalSupply),
-      "amount0",
+      "\namount0:",
       amount0,
-      "amount1",
+      "\namount1:",
       amount1,
-      "reserve0",
+      "\nreserve0:",
       reserve0,
       r0,
-      "reserve1",
+      "\nreserve1:",
       reserve1,
       r1,
-      "decimals",
+      "\ndecimals:",
       d0,
-      d1
-    );
-
-    console.log(
-      "bigtt",
+      d1,
+      "\nbigtt",
       (amount0 * Number(totalSupply)) / parseFloat(r0),
       (amount1 * Number(totalSupply)) / parseFloat(r1)
     );
