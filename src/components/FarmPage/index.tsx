@@ -319,11 +319,7 @@ const FarmPage: NextPage = () => {
                     setRemoveLiqModalOpen(true);
                     setSelectedFarm(farm);
                   }}
-                  disabled={
-                    farmPosition.unstaked.amountUSD +
-                      farmPosition.staked.amountUSD <=
-                    0.01
-                  }
+                  disabled={farmPosition.unstaked.amountUSD < 0.01}
                   tooltipText="You need to have liquidity first"
                 >
                   <span>Remove Liquidity</span>
@@ -339,11 +335,7 @@ const FarmPage: NextPage = () => {
                         setStakingModalOpen(true);
                         setSelectedFarm(farm);
                       }}
-                      disabled={
-                        farmPosition.unstaked.amountUSD +
-                          farmPosition.staked.amountUSD <=
-                        0.01
-                      }
+                      disabled={farmPosition.unstaked.amountUSD < 0.01}
                       tooltipText="You need to have liquidity first"
                     >
                       <span>Stake</span>
@@ -361,10 +353,7 @@ const FarmPage: NextPage = () => {
                         setUnstakingModalOpen(true);
                         setSelectedFarm(farm);
                       }}
-                      disabled={
-                        farmPosition.unstaked.amountUSD > 0.01 &&
-                        farmPosition.staked.amountUSD <= 0.01
-                      }
+                      disabled={farmPosition.staked.amountUSD < 0.01}
                       tooltipText="You need to stake tokens first"
                     >
                       <span>Unstake</span>

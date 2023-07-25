@@ -120,6 +120,11 @@ export enum ModalType {
   RED = "red",
 }
 
+export enum Method {
+  PERCENTAGE = 0,
+  LP = 1,
+}
+
 export type TokenType = {
   symbol: string;
   amount: number;

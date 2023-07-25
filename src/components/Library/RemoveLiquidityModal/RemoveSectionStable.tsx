@@ -23,7 +23,7 @@ import {
   getRemoveLiqStableFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { FarmType, UnderlyingAssets } from "@utils/types";
+import { FarmType, UnderlyingAssets, Method } from "@utils/types";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
@@ -36,31 +36,14 @@ import toUnits from "@utils/toUnits";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
-import { ethers } from "ethers";
-import { BN } from "bn.js";
+// import { ethers } from "ethers";
+// import { BN } from "bn.js";
 import BigNumber from "bignumber.js";
-
-interface ChosenMethodProps {
-  farm: FarmType;
-  percentage: string;
-  setPercentage: (value: string) => void;
-  handlePercChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  lpBal: string;
-  lpBalLoading: boolean;
-  lpTokens: string;
-  setLpTokens: (value: string) => void;
-  handleLpTokensChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  methodId: number;
-}
+import ChosenMethod from "./ChosenMethod";
 
 enum RemoveMethod {
   ALL = 0,
   INDIVIDUAL = 1,
-}
-
-enum Method {
-  PERCENTAGE = 0,
-  LP = 1,
 }
 
 const RemoveSectionStable = () => {
@@ -174,11 +157,6 @@ const RemoveSectionStable = () => {
 
   const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
     tokens,
-    // methodId == Method.PERCENTAGE
-    //   ? parseFloat(
-    //       percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
-    //     ) * parseFloat(lpBalance ?? "0")
-    //   : parseFloat(lpTokens !== "" ? lpTokens : "0"),
     methodId == Method.PERCENTAGE
       ? parseFloat(
           percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
@@ -361,6 +339,17 @@ const RemoveSectionStable = () => {
             handleLpTokensChange={handleLpTokensChange}
             methodId={methodId}
           />
+          <div
+            className={clsx(
+              "text-left text-base leading-6 font-bold -mt-[2px]",
+              fixedAmtNum(lpBalance) < fixedAmtNum(lpTokens) &&
+                methodId == Method.LP
+                ? "text-[#FF9999]"
+                : "hidden"
+            )}
+          >
+            Insufficient Balance
+          </div>
           <div className="inline-flex gap-2 items-center justify-start">
             {["Percentage", "LP Tokens"].map((method, index) => (
               <button
@@ -451,58 +440,6 @@ const RemoveSectionStable = () => {
             )}
           </div>
         </div>
-        {/* Estimate Gas and Slippage Tolerance */}
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        {/* <div
-          className={clsx(
-            "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-              ? "bg-[#C0F9C9]"
-              : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "bg-[#ECFFEF]"
-                : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "Sufficient"
-                : "Insufficient"}{" "}
-              Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span>
-          </div>
-        </div> */}
         <div className="flex flex-row mt-6 gap-2">
           {!isLpApprovedSuccess && !approveLpSuccessTxn && (
             <MButton
@@ -535,7 +472,9 @@ const RemoveSectionStable = () => {
               (methodId == Method.PERCENTAGE
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
-              (!isLpApprovedSuccess && !approveLpSuccessTxn)
+              (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
+              (methodId == Method.LP &&
+                fixedAmtNum(lpTokens) > fixedAmtNum(lpBalance))
               // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Removing Liquidity"
@@ -800,117 +739,6 @@ const RemoveSectionStable = () => {
         )}
       </LiquidityModalWrapper>
     )
-  );
-};
-
-// ChosenMethod returns the type of input field
-const ChosenMethod: FC<ChosenMethodProps> = ({
-  farm,
-  percentage,
-  setPercentage,
-  handlePercChange,
-  lpBal,
-  lpBalLoading,
-  lpTokens,
-  setLpTokens,
-  handleLpTokensChange,
-  methodId,
-}) => {
-  return methodId === 0 ? (
-    <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
-      <div className="absolute text-[#344054 text-base font-medium leading-5 left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-        <span>Enter</span>
-        <div className="inline-flex items-center justify-center -space-x-2">
-          {farm?.asset.logos.map((logo, index) => (
-            <div key={index} className="flex z-0 overflow-hidden rounded-full">
-              <Image src={logo} alt={logo} width={24} height={24} />
-            </div>
-          ))}
-        </div>
-        <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>percentage of tokens to Remove</span>
-      </div>
-      <input
-        placeholder="0"
-        className={clsx(
-          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
-        )}
-        onChange={handlePercChange}
-        value={percentage}
-        autoFocus
-      />
-      <div className="inline-flex items-center gap-x-2">
-        <div className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
-          {lpBalLoading ? (
-            <span>loading...</span>
-          ) : (
-            !!lpBal && (
-              <p className="flex flex-col items-end">
-                <span>Balance</span>
-                <span>{parseFloat(lpBal).toLocaleString("en-US")}</span>
-              </p>
-            )
-          )}
-        </div>
-        <button
-          className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
-          onClick={() => {
-            setPercentage("100");
-          }}
-        >
-          MAX
-        </button>
-      </div>
-    </div>
-  ) : (
-    <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
-      <div className="absolute text-[#344054 text-base font-medium leading-5 left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-        <span>Enter</span>
-        <div className="inline-flex items-center justify-center -space-x-2">
-          {farm?.asset.logos.map((logo, index) => (
-            <div key={index} className="flex z-0 overflow-hidden rounded-full">
-              <Image src={logo} alt={logo} width={24} height={24} />
-            </div>
-          ))}
-        </div>
-        <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Remove</span>
-      </div>
-      <input
-        placeholder="0"
-        className={clsx(
-          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
-        )}
-        onChange={handleLpTokensChange}
-        value={lpTokens}
-        autoFocus
-      />
-      <div className="inline-flex items-center gap-x-2">
-        <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
-          {lpBalLoading ? (
-            <span>loading...</span>
-          ) : (
-            !!lpBal && (
-              <div className="flex flex-col items-end">
-                <span>Balance</span>
-                <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
-                </span>
-              </div>
-            )
-          )}
-        </p>
-        <button
-          className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
-          onClick={() => {
-            setLpTokens(lpBal!);
-          }}
-        >
-          MAX
-        </button>
-      </div>
-    </div>
   );
 };
 

@@ -24,7 +24,7 @@ import {
   getRemoveLiquidFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { FarmType, UnderlyingAssets } from "@utils/types";
+import { FarmType, Method, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
@@ -37,19 +37,7 @@ import toUnits from "@utils/toUnits";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
-
-interface ChosenMethodProps {
-  farm: FarmType;
-  percentage: string;
-  setPercentage: (value: string) => void;
-  handlePercChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  lpBal: string;
-  lpBalLoading: boolean;
-  lpTokens: string;
-  setLpTokens: (value: string) => void;
-  handleLpTokensChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  methodId: number;
-}
+import ChosenMethod from "./ChosenMethod";
 
 const RemoveSectionStandard = () => {
   const { address } = useAccount();
@@ -71,7 +59,7 @@ const RemoveSectionStandard = () => {
 
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
-  const [methodId, setMethodId] = useState<number>(0);
+  const [methodId, setMethodId] = useState<Method>(Method.PERCENTAGE);
 
   const { chain } = useNetwork();
 
@@ -83,7 +71,7 @@ const RemoveSectionStandard = () => {
   const minUnderlyingAssets = useMinimumUnderlyingTokens(
     farm?.asset.address!,
     farm?.protocol!,
-    methodId == 0
+    methodId == Method.PERCENTAGE
       ? (parseFloat(lpBalance!) *
           parseFloat(percentage == "" ? "0" : percentage)) /
           100
@@ -97,7 +85,7 @@ const RemoveSectionStandard = () => {
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
 
-  // When InputType.Percentage
+  // When Method.Percentage
   const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = parseFloat(event.target.value);
@@ -108,7 +96,7 @@ const RemoveSectionStandard = () => {
     }
   };
 
-  // When InputType.Token
+  // When Method.Token
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
@@ -144,44 +132,8 @@ const RemoveSectionStandard = () => {
     }
   }, [farm, tokenPricesMap]);
 
-  // // Gas estimate
-  // const { gasEstimate } = useGasEstimation(
-  //   farm!.router,
-  //   1,
-  //   1,
-  //   getRemoveLiquidFunctionName(farm?.protocol as string) as any,
-  //   farm!,
-  //   address!,
-  //   [
-  //     farmAsset0?.address, // tokenA Address
-  //     farmAsset1?.address, // tokenB Address
-  //     methodId == 0
-  //       ? parseUnits(
-  //           `${
-  //             (fixedAmtNum(lpBalance!) *
-  //               parseFloat(percentage == "" ? "0" : percentage)) /
-  //             100
-  //           }`,
-  //           18
-  //         )
-  //       : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-  //     // 1,
-  //     // 1,
-  //     parseUnits(
-  //       `${minUnderlyingAssets[0].toString() as any}`,
-  //       farmAsset0?.decimals
-  //     ), // amountAMin
-  //     parseUnits(
-  //       `${minUnderlyingAssets[1].toString() as any}`,
-  //       farmAsset1?.decimals
-  //     ), // amountBMin
-  //     address, // to
-  //     1784096161000, // deadline (uint256)
-  //   ]
-  // );
-
   const removeAmount = useMemo(() => {
-    return methodId == 0
+    return methodId == Method.PERCENTAGE
       ? (parseFloat(lpBalance!) *
           parseFloat(percentage == "" ? "0" : percentage)) /
           100
@@ -263,7 +215,7 @@ const RemoveSectionStandard = () => {
         "calling removeliquidity method...",
         lpTokens,
         lpBalance,
-        methodId == 0
+        methodId == Method.PERCENTAGE
           ? parseUnits(
               `${
                 ((parseFloat(lpBalance!) *
@@ -287,7 +239,7 @@ const RemoveSectionStandard = () => {
       const removeArgs = [
         farmAsset0?.address, // tokenA Address
         farmAsset1?.address, // tokenB Address
-        methodId == 0
+        methodId == Method.PERCENTAGE
           ? parseUnits(
               `${
                 (parseFloat(lpBalance!) *
@@ -341,6 +293,17 @@ const RemoveSectionStandard = () => {
             handleLpTokensChange={handleLpTokensChange}
             methodId={methodId}
           />
+          <div
+            className={clsx(
+              "text-left text-base leading-6 font-bold -mt-[2px]",
+              fixedAmtNum(lpBalance) < fixedAmtNum(lpTokens) &&
+                methodId == Method.LP
+                ? "text-[#FF9999]"
+                : "hidden"
+            )}
+          >
+            Insufficient Balance
+          </div>
           <div className="inline-flex gap-2 items-center justify-start">
             {["Percentage", "LP Tokens"].map((method, index) => (
               <button
@@ -460,8 +423,15 @@ const RemoveSectionStandard = () => {
                   // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
                 }
                 onClick={async () => {
-                  const txn = await approveLpToken?.();
-                  console.log("Approve0 Result", txn);
+                  try {
+                    const txn = await approveLpToken?.();
+                    console.log("Approve0 Result", txn);
+                  } catch (error) {
+                    console.log(
+                      `error while approving ${farm?.asset.symbol}`,
+                      error
+                    );
+                  }
                 }}
               />
             )
@@ -470,10 +440,12 @@ const RemoveSectionStandard = () => {
             type="primary"
             isLoading={false}
             disabled={
-              (methodId == 0
+              (methodId == Method.PERCENTAGE
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") ||
-              (!isLpApprovedSuccess && !approveLpSuccessTxn)
+              (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
+              (methodId == Method.LP &&
+                fixedAmtNum(lpTokens) > fixedAmtNum(lpBalance))
               // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Removing Liquidity"
@@ -498,7 +470,7 @@ const RemoveSectionStandard = () => {
       [
         farmAsset0?.address, // tokenA Address
         farmAsset1?.address, // tokenB Address
-        methodId == 0
+        methodId == Method.PERCENTAGE
           ? parseUnits(
               `${
                 (fixedAmtNum(lpBalance!) *
@@ -722,120 +694,6 @@ const RemoveSectionStandard = () => {
         )}
       </LiquidityModalWrapper>
     )
-  );
-};
-
-// ChosenMethod returns the type of input field
-const ChosenMethod: FC<ChosenMethodProps> = ({
-  farm,
-  percentage,
-  setPercentage,
-  handlePercChange,
-  lpBal,
-  lpBalLoading,
-  lpTokens,
-  setLpTokens,
-  handleLpTokensChange,
-  methodId,
-}) => {
-  return methodId === 0 ? (
-    <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
-      <div className="absolute text-[#344054 text-base font-medium leading-5 left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-        <span>Enter</span>
-        <div className="inline-flex items-center justify-center -space-x-2">
-          {farm?.asset.logos.map((logo, index) => (
-            <div key={index} className="flex z-0 overflow-hidden rounded-full">
-              <Image src={logo} alt={logo} width={24} height={24} />
-            </div>
-          ))}
-        </div>
-        <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>percentage of tokens to Remove</span>
-      </div>
-      <input
-        placeholder="0"
-        className={clsx(
-          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
-        )}
-        onChange={handlePercChange}
-        value={percentage}
-        autoFocus
-      />
-      <div className="inline-flex items-center gap-x-2">
-        <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
-          {lpBalLoading ? (
-            <span>loading...</span>
-          ) : (
-            !!lpBal && (
-              <div className="flex flex-col items-end">
-                <span>Balance</span>
-                <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
-                </span>
-              </div>
-            )
-          )}
-        </p>
-        <button
-          className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
-          onClick={() => {
-            setPercentage("100");
-          }}
-        >
-          MAX
-        </button>
-      </div>
-    </div>
-  ) : (
-    <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
-      <div className="absolute text-[#344054 text-base font-medium leading-5 left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-        <span>Enter</span>
-        <div className="inline-flex items-center justify-center -space-x-2">
-          {farm?.asset.logos.map((logo, index) => (
-            <div key={index} className="flex z-0 overflow-hidden rounded-full">
-              <Image src={logo} alt={logo} width={24} height={24} />
-            </div>
-          ))}
-        </div>
-        <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Remove</span>
-      </div>
-      <input
-        placeholder="0"
-        className={clsx(
-          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
-        )}
-        onChange={handleLpTokensChange}
-        value={lpTokens}
-        autoFocus
-      />
-      <div className="inline-flex items-center gap-x-2">
-        <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
-          {lpBalLoading ? (
-            <span>loading...</span>
-          ) : (
-            !!lpBal && (
-              <div className="flex flex-col items-end">
-                <span>Balance</span>
-                <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
-                </span>
-              </div>
-            )
-          )}
-        </p>
-        <button
-          className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
-          onClick={() => {
-            setLpTokens(lpBal!);
-          }}
-        >
-          MAX
-        </button>
-      </div>
-    </div>
   );
 };
 

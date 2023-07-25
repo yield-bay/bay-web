@@ -62,6 +62,10 @@ const AddSectionStable: FC = () => {
   const [inputMapAmount, setInputMapAmount] = useState<{
     [address: Address]: number;
   }>({});
+  const [balanceMap, setBalanceMap] = useState<{
+    [address: Address]: string;
+  }>({});
+
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
   // Checking if farm assets have a lp-token pair
@@ -87,6 +91,10 @@ const AddSectionStable: FC = () => {
   }, [farm]);
 
   const tokens = farm?.asset.underlyingAssets ?? [];
+
+  // useEffect(() => {
+  //   console.log("balancemap", balanceMap);
+  // }, [balanceMap]);
 
   // Input focus states
   const [focusedInput, setFocusedInput] = useState<number>(0);
@@ -251,6 +259,20 @@ const AddSectionStable: FC = () => {
   }, [approvalMap, inputMapAmount]);
 
   useEffect(() => {
+    console.log("balanceMap", balanceMap);
+  }, [balanceMap]);
+
+  const isSufficientBalance = useMemo(() => {
+    return Object.entries(balanceMap).every(([tokenAddress, balance]) => {
+      if (inputMapAmount[tokenAddress as `0x${string}`] > 0) {
+        const balanceNum = fixedAmtNum(balance);
+        return inputMapAmount[tokenAddress as `0x${string}`] <= balanceNum;
+      }
+      return true;
+    });
+  }, [inputMapAmount, balanceMap]);
+
+  useEffect(() => {
     console.log("isRequirementApproved", isRequirementApproved);
     console.log("approvalMap", approvalMap);
     console.log("inputMapAmount", inputMapAmount);
@@ -305,7 +327,8 @@ const AddSectionStable: FC = () => {
             index={index}
             handleInput={handleInput}
             inputMap={inputMap}
-            // selectedFarm={farm}
+            balanceMap={balanceMap}
+            setBalanceMap={setBalanceMap}
             logos={logos[index]}
             tokensLength={tokens.length}
             focusedInput={focusedInput}
@@ -327,63 +350,11 @@ const AddSectionStable: FC = () => {
                   : (estLpAmount / totalSupply) * 100
                 : 0
               ).toLocaleString("en-US")}
-              {/* % = {estLpAmount} {totalSupply} */}%
+              %
             </span>
             <span>Share of pool</span>
           </p>
         </div>
-
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        {/* <div
-          className={clsx(
-            "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-              ? "bg-[#C0F9C9]"
-              : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "bg-[#ECFFEF]"
-                : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "Sufficient"
-                : "Insufficient"}{" "}
-              Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span>
-          </div>
-        </div> */}
 
         {/* Buttons */}
         <div className="w-full">
@@ -406,7 +377,8 @@ const AddSectionStable: FC = () => {
               disabled={
                 !isRequirementApproved ||
                 typeof addLiquidity == "undefined" ||
-                amounts.length < 1
+                amounts.length < 1 ||
+                !isSufficientBalance
               }
               text={isLoadingAddLiqCall ? "Processing..." : "Confirm"}
               onClick={() => {

@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { UnderlyingAssets } from "@utils/types";
 import Image from "next/image";
 import { Address, useAccount, useBalance, useNetwork } from "wagmi";
+import clsx from "clsx";
+import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 
 interface TokenInputProps {
   token: UnderlyingAssets;
@@ -10,6 +12,12 @@ interface TokenInputProps {
   inputMap: {
     [address: Address]: string;
   };
+  balanceMap: { [address: `0x${string}`]: string };
+  setBalanceMap: React.Dispatch<
+    React.SetStateAction<{
+      [address: `0x${string}`]: string;
+    }>
+  >;
   logos: string | string[];
   tokensLength: number;
   focusedInput: number;
@@ -21,6 +29,8 @@ const TokenInput: React.FC<TokenInputProps> = ({
   index,
   handleInput,
   inputMap,
+  balanceMap,
+  setBalanceMap,
   logos,
   tokensLength,
   focusedInput,
@@ -30,12 +40,27 @@ const TokenInput: React.FC<TokenInputProps> = ({
   const { chain } = useNetwork();
   const inputRef = useRef<HTMLInputElement>(null);
   // Balance Token
-  const { data: balance, isLoading: balanceLoading } = useBalance({
+  const {
+    data: balance,
+    isLoading: balanceLoading,
+    isSuccess,
+  } = useBalance({
     address: address,
     chainId: chain?.id,
     token: token?.address,
     enabled: !!address && !!logos,
   });
+
+  useEffect(() => {
+    if (isSuccess && !balanceMap[token?.address]) {
+      console.log("ping");
+      setBalanceMap((prev) => ({
+        ...prev,
+        [token?.address]: balance?.formatted,
+      }));
+    }
+  }, [isSuccess]);
+
   return (
     <div>
       <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
@@ -62,7 +87,13 @@ const TokenInput: React.FC<TokenInputProps> = ({
         </div>
         <input
           placeholder="0"
-          className="text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
+          className={clsx(
+            "text-base font-bold leading-6 text-left bg-transparent focus:outline-none",
+            fixedAmtNum(inputMap[token.address]) >
+              fixedAmtNum(balance?.formatted)
+              ? "text-[#FF9999]"
+              : "text-[#4E4C4C]"
+          )}
           min={0}
           value={inputMap[token?.address] ?? ""}
           onChange={(event) => {
@@ -98,6 +129,16 @@ const TokenInput: React.FC<TokenInputProps> = ({
             MAX
           </button>
         </div>
+      </div>
+      <div
+        className={clsx(
+          "text-left text-base leading-6 font-bold mt-3",
+          fixedAmtNum(inputMap[token.address]) > fixedAmtNum(balance?.formatted)
+            ? "text-[#FF9999]"
+            : "hidden"
+        )}
+      >
+        Insufficient Balance
       </div>
       {index !== tokensLength - 1 && (
         <div className="bg-[#e0dcdc] flex justify-center p-3 mt-3 max-w-fit items-center rounded-full text-base select-none mx-auto">

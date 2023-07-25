@@ -71,12 +71,7 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
               setRemoveLiqModalOpen(true);
               setSelectedFarm(farm);
             }}
-            disabled={
-              !!position
-                ? position.unstaked.amountUSD + position.staked.amountUSD <=
-                  0.01
-                : true
-            }
+            disabled={!!position ? position.unstaked.amountUSD < 0.01 : true}
             tooltipText="You need to have liquidity first"
           >
             <span>Remove Liquidity</span>
@@ -87,12 +82,7 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
               setStakingModalOpen(true);
               setSelectedFarm(farm);
             }}
-            disabled={
-              !!position
-                ? position.unstaked.amountUSD + position.staked.amountUSD <=
-                  0.01
-                : true
-            }
+            disabled={!!position ? position.unstaked.amountUSD < 0.01 : true}
             tooltipText="You need to have liquidity first"
           >
             <span>Stake</span>
@@ -108,12 +98,7 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
               setUnstakingModalOpen(true);
               setSelectedFarm(farm);
             }}
-            disabled={
-              !!position
-                ? position.unstaked.amountUSD > 0.01 &&
-                  position.staked.amountUSD <= 0.01
-                : true
-            }
+            disabled={!!position ? position.staked.amountUSD < 0.01 : true}
             tooltipText="You need to stake tokens first"
           >
             <span>Unstake</span>
