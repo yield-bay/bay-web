@@ -337,16 +337,16 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   // To approve token0 and token1
   const {
-    isLoadingApproveCall: approveToken0Loading,
+    isLoadingApproveCall: approveToken0CallLoading,
     isLoadingApproveTxn: approveToken0TxnLoading,
-    isSuccessApproveCall: approveToken0Success,
+    // isSuccessApproveCall: approveToken0CallSuccess,
     isSuccessApproveTxn: approveToken0TxnSuccess,
     writeAsync: approveToken0,
   } = useApproveToken(farmAsset0?.address, selectedFarm?.router!);
   const {
-    isLoadingApproveCall: approveToken1Loading,
+    isLoadingApproveCall: approveToken1CallLoading,
     isLoadingApproveTxn: approveToken1TxnLoading,
-    isSuccessApproveCall: approveToken1Success,
+    // isSuccessApproveCall: approveToken1CallSuccess,
     isSuccessApproveTxn: approveToken1TxnSuccess,
     writeAsync: approveToken1,
   } = useApproveToken(farmAsset1?.address, selectedFarm?.router!);
@@ -722,59 +722,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <span>Share of pool</span>
           </p>
         </div>
-
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        {/* <div
-          className={clsx(
-            "rounded-xl",
-            fixedAmtNum(nativeBal?.formatted) > gasEstimate
-              ? "bg-[#C0F9C9]"
-              : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              fixedAmtNum(nativeBal?.formatted) > gasEstimate
-                ? "bg-[#ECFFEF]"
-                : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p className="inline-flex">
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {fixedAmtNum(nativeBal?.formatted) > gasEstimate
-                ? "Sufficient"
-                : "Insufficient"}{" "}
-              Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span>
-          </div>
-        </div> */}
-
         {/* Buttons */}
         <div className="flex flex-row gap-x-3 mt-9">
           {isToken0ApprovedLoading || isToken1ApprovedLoading ? (
@@ -789,9 +736,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               {!isToken0ApprovedSuccess && !approveToken0TxnSuccess && (
                 <MButton
                   type="secondary"
-                  isLoading={approveToken0Loading || approveToken0TxnLoading}
+                  isLoading={
+                    approveToken0CallLoading || approveToken0TxnLoading
+                  }
                   text={
-                    approveToken0Loading
+                    approveToken0CallLoading
                       ? "Sign the Txn in Wallet"
                       : approveToken0TxnLoading
                       ? "Waiting for Approval"
@@ -799,7 +748,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   }
                   disabled={
                     approveToken0TxnSuccess ||
-                    approveToken0Loading ||
+                    approveToken0CallLoading ||
                     approveToken0TxnLoading ||
                     typeof approveToken0 == "undefined"
                     // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
@@ -822,9 +771,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 (isToken0ApprovedSuccess || approveToken0TxnSuccess) && (
                   <MButton
                     type="secondary"
-                    isLoading={approveToken1Loading || approveToken1TxnLoading}
+                    isLoading={
+                      approveToken1CallLoading || approveToken1TxnLoading
+                    }
                     text={
-                      approveToken1Loading
+                      approveToken1CallLoading
                         ? "Sign the Txn in Wallet"
                         : approveToken1TxnLoading
                         ? "Waiting for Approval"
@@ -832,7 +783,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     }
                     disabled={
                       approveToken1TxnSuccess ||
-                      approveToken1Loading ||
+                      approveToken1CallLoading ||
                       approveToken1TxnLoading ||
                       typeof approveToken1 == "undefined"
                       // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
@@ -854,13 +805,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 type="primary"
                 isLoading={false}
                 disabled={
-                  firstTokenAmount == "" ||
-                  secondTokenAmount == "" ||
-                  !(isToken0ApprovedSuccess || approveToken0Success) ||
-                  !(isToken1ApprovedSuccess || approveToken1Success) ||
-                  parseFloat(firstTokenAmount) <= 0 ||
-                  parseFloat(secondTokenAmount) <= 0 ||
-                  // fixedAmtNum(nativeBal?.formatted) <= gasEstimate ||
+                  // firstTokenAmount == "" ||
+                  // secondTokenAmount == "" ||
+                  // parseFloat(firstTokenAmount) <= 0 ||
+                  // parseFloat(secondTokenAmount) <= 0 ||
+                  fixedAmtNum(firstTokenAmount) <= 0 ||
+                  fixedAmtNum(secondTokenAmount) <= 0 ||
+                  !(isToken0ApprovedSuccess || approveToken0TxnSuccess) ||
+                  !(isToken1ApprovedSuccess || approveToken1TxnSuccess) ||
                   fixedAmtNum(firstTokenAmount) >
                     fixedAmtNum(token0Balance?.formatted) ||
                   fixedAmtNum(secondTokenAmount) >
@@ -868,14 +820,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                 }
                 text="Confirm Adding Liquidity"
                 onClick={() => {
-                  if (
-                    parseFloat(firstTokenAmount) <= 0 &&
-                    parseFloat(secondTokenAmount) <= 0
-                  ) {
-                    console.log("Both token amount can't be zero");
-                  } else {
-                    setIsConfirmStep(true);
-                  }
+                  setIsConfirmStep(true);
                 }}
               />
             </div>
@@ -1143,8 +1088,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   };
 
   const isOpenModalCondition =
-    approveToken0Loading ||
-    approveToken1Loading ||
+    approveToken0CallLoading ||
+    approveToken1CallLoading ||
     approveToken0TxnLoading ||
     approveToken1TxnLoading ||
     isLoadingAddLiqCall ||
