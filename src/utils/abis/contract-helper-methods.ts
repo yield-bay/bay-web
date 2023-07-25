@@ -100,12 +100,10 @@ export const getRemoveLiqStableFunctionName = (
   removalId: number,
   protocol: string
 ) => {
-  if (removalId === 1) {
-    if (protocol.toLowerCase() == "curve") {
-      return "remove_liquidity_one_coin";
-    } else {
-      return "removeLiquidityOneToken";
-    }
+  if (protocol.toLowerCase() == "curve") {
+    return "remove_liquidity_one_coin";
+  } else if (removalId === 1) {
+    return "removeLiquidityOneToken";
   } else {
     return "removeLiquidity";
   }

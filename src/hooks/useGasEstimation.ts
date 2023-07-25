@@ -99,7 +99,7 @@ const useGasEstimation = (
   if (
     args.some(
       (a) =>
-        a == 0 &&
+        (a == 0 || a == BigInt(0)) &&
         functionName != "removeLiquidityOneToken" &&
         functionName != "remove_liquidity_one_coin"
     )
@@ -111,7 +111,7 @@ const useGasEstimation = (
   } else if (
     farm.farmType == "StableAmm" &&
     functionType == 0 && // addliquidity
-    args[0].every((a: number) => a == 0) // at least 1 amounts arg should be non zero
+    args[0].every((a: any) => a == 0 || a == BigInt(0)) // at least 1 amounts arg should be non zero
   ) {
     // if (functionType == 0 &&
     //   args.every((a) => a == 0)) {

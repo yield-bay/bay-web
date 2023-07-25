@@ -17,7 +17,7 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
-import { Address, parseAbi, parseUnits } from "viem";
+import { Address, formatUnits, parseAbi, parseUnits } from "viem";
 import {
   fixedAmtNum,
   getRemoveLiqStableFunctionName,
@@ -36,6 +36,9 @@ import toUnits from "@utils/toUnits";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
+import { ethers } from "ethers";
+import { BN } from "bn.js";
+import BigNumber from "bignumber.js";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -100,7 +103,7 @@ const RemoveSectionStable = () => {
   const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<Method>(Method.PERCENTAGE);
   const [removeMethodId, setRemoveMethodId] = useState<RemoveMethod>(
-    RemoveMethod.ALL
+    RemoveMethod.INDIVIDUAL
   );
   const [indiTokenId, setIndiTokenId] = useState<number>(0);
 
@@ -171,6 +174,11 @@ const RemoveSectionStable = () => {
 
   const { minAmount, isLoadingMinAmount } = useCalcMinAmount(
     tokens,
+    // methodId == Method.PERCENTAGE
+    //   ? parseFloat(
+    //       percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
+    //     ) * parseFloat(lpBalance ?? "0")
+    //   : parseFloat(lpTokens !== "" ? lpTokens : "0"),
     methodId == Method.PERCENTAGE
       ? parseFloat(
           percentage !== "" ? (parseFloat(percentage) / 100).toString() : "0"
@@ -193,18 +201,27 @@ const RemoveSectionStable = () => {
     tokenIndex: number,
     timestamp: number
   ) => {
+    console.log(
+      "ingalpb",
+      minAmount,
+      lpBalance,
+      parseFloat(lpBalance!),
+      lpTokens,
+      parseFloat(lpTokens)
+    );
+
+    let mm = BigNumber(lpBalance!, 10)
+      .multipliedBy(parseFloat(percentage == "" ? "0" : percentage) / 100)
+      .multipliedBy(BigNumber(10).pow(18))
+      .decimalPlaces(0, 1);
+    console.log("MMis", mm.toString(), mm);
     const tokenAmount =
       methodId == Method.PERCENTAGE
-        ? parseUnits(
-            `${
-              (parseFloat(lpBalance!) *
-                parseFloat(percentage == "" ? "0" : percentage)) /
-              100
-            }`,
-            18
-          )
-        : parseUnits(`${parseFloat(lpTokens)}`, 18); // Liquidity
-
+        ? mm.toString()
+        : BigNumber(lpTokens)
+            .multipliedBy(BigNumber(10).pow(18))
+            .decimalPlaces(0, 1)
+            .toString();
     if (removalId === 1) {
       const parsedMinAmount = parseUnits(
         `${minAmount as number}`,

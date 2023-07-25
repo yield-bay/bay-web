@@ -21,14 +21,14 @@ const useCalcMinAmount = (
     enabled: !!farm,
   });
 
+  console.log("ridddd", removalId);
+
   const functionNames = useMemo(() => {
-    if (removalId === 1) {
+    if (farm?.protocol.toLowerCase() == "curve") {
+      return "calc_withdraw_one_coin";
+    } else if (removalId === 1) {
       // SINGLE TOKEN
-      if (farm?.protocol.toLowerCase() == "curve") {
-        return "calc_withdraw_one_coin";
-      } else {
-        return "calculateRemoveLiquidityOneToken";
-      }
+      return "calculateRemoveLiquidityOneToken";
     } else {
       // MULTIPLE TOKENS
       return "calculateRemoveLiquidity";
