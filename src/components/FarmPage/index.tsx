@@ -193,18 +193,50 @@ const FarmPage: NextPage = () => {
               farm?.protocol.toLowerCase() == "mangata x"
                 ? isConnectedDot
                 : isConnected) && (
-                <Button
-                  size="custom"
-                  style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
-                  onButtonClick={() => {
-                    console.log("farm in farmpage", farm);
-                    setSelectedFarm(farm);
-                    setAddLiqModalOpen(true);
-                  }}
-                >
-                  <span>Add Liquidity</span>
-                  <PlusIcon className="text-black h-4 w-4" />
-                </Button>
+                <>
+                  <Button
+                    size="custom"
+                    style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
+                    onButtonClick={() => {
+                      console.log("farm in farmpage", farm);
+                      setSelectedFarm(farm);
+                      setAddLiqModalOpen(true);
+                    }}
+                  >
+                    <span>Add Liquidity</span>
+                    <PlusIcon className="text-black h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="large"
+                    style="inline-flex justify-between items-center"
+                    onButtonClick={() => {
+                      setRemoveLiqModalOpen(true);
+                      setSelectedFarm(farm);
+                    }}
+                    tooltipText="You need to have liquidity first"
+                  >
+                    <span>Remove Liquidity</span>
+                    <MinusIcon className="text-black h-4 w-4" />
+                  </Button>
+                  <Button
+                    size="large"
+                    style="inline-flex justify-between items-center w-1/2"
+                    onButtonClick={() => {
+                      setUnstakingModalOpen(true);
+                      setSelectedFarm(farm);
+                    }}
+                    tooltipText="You need to stake tokens first"
+                  >
+                    <span>Unstake</span>
+                    <Image
+                      className="transform rotate-180"
+                      src="/icons/ArrowLineUpIcon.svg"
+                      alt="Stake"
+                      height="16"
+                      width="16"
+                    />
+                  </Button>
+                </>
               )}
           </div>
         </div>
