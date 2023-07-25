@@ -120,8 +120,6 @@ const AddSectionStable: FC = () => {
 
   useEffect(() => console.log("selectedfarm", farm), [farm]);
 
-  useEffect(() => console.log("approvalMap", approvalMap), [approvalMap]);
-
   // const tokens = farm?.asset.underlyingAssets ?? [];
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
@@ -195,32 +193,6 @@ const AddSectionStable: FC = () => {
   // );
   // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
 
-  // Gas estimate
-  const { gasEstimate } = useGasEstimation(
-    farm!.router,
-    1,
-    0,
-    getAddLiqFunctionName(farm?.protocol as string) as any,
-    farm!,
-    address!,
-    farm?.protocol.toLowerCase() == "curve"
-      ? [
-          amounts, // amounts (uint256[])
-          parseUnits(
-            `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
-            18
-          ), // minToMint (uint256)
-        ]
-      : [
-          amounts, // amounts (uint256[])
-          parseUnits(
-            `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
-            18
-          ), // minToMint (uint256)
-          1784096161000, // deadline (uint256)
-        ]
-  );
-
   // Wait AddLiquidity Txn
   const {
     // data: addLiquidityTxnData,
@@ -232,10 +204,17 @@ const AddSectionStable: FC = () => {
   });
 
   const isRequirementApproved = useMemo(() => {
-    if (Object.keys(inputMapAmount).length == 0) return false;
+    if (Object.keys(inputMapAmount).length === 0) return false;
+    const allTokensAmountZeroOrLess = Object.values(inputMapAmount).every(
+      (amount) => amount <= 0
+    );
+    if (allTokensAmountZeroOrLess) return false;
     return Object.entries(inputMapAmount).every(([tokenAddress, amount]) => {
-      const isApproved = !!approvalMap[tokenAddress as Address];
-      return amount > 0 ? isApproved === true : true;
+      if (amount > 0) {
+        const isApproved = !!approvalMap[tokenAddress as Address];
+        return isApproved === true;
+      }
+      return true; // Ignore tokens with amount <= 0
     });
   }, [approvalMap, inputMapAmount]);
 
@@ -319,6 +298,116 @@ const AddSectionStable: FC = () => {
           </p>
         </div>
 
+        {/* Buttons */}
+        <div className="w-full">
+          <div className="flex flex-col gap-y-3 w-full">
+            {tokens.map((token, index) => (
+              <TokenButton
+                key={`${token?.symbol}-${index}`}
+                token={token}
+                inputMapAmount={inputMapAmount}
+                selectedFarm={farm!}
+                approvalMap={approvalMap}
+                setApprovalMap={setApprovalMap}
+              />
+            ))}
+          </div>
+          {isRequirementApproved && (
+            <MButton
+              type="primary"
+              isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
+              disabled={
+                !isRequirementApproved ||
+                typeof addLiquidity == "undefined" ||
+                amounts.length < 1
+              }
+              text={isLoadingAddLiqCall ? "Processing..." : "Confirm"}
+              onClick={() => {
+                setIsConfirmStep(true);
+              }}
+            />
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const isOpenModalCondition =
+    isLoadingAddLiqCall ||
+    isLoadingAddLiqTxn ||
+    isLoadingAddLiqCall ||
+    isLoadingAddLiqTxn ||
+    isSlippageModalOpen;
+
+  const ConfirmStep = () => {
+    // Gas estimate
+    const { gasEstimate } = useGasEstimation(
+      farm!.router,
+      1,
+      0,
+      getAddLiqFunctionName(farm?.protocol as string) as any,
+      farm!,
+      address!,
+      farm?.protocol.toLowerCase() == "curve"
+        ? [
+            amounts, // amounts (uint256[])
+            parseUnits(
+              `${
+                (fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100
+              }`,
+              18
+            ), // minToMint (uint256)
+          ]
+        : [
+            amounts, // amounts (uint256[])
+            parseUnits(
+              `${
+                (fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100
+              }`,
+              18
+            ), // minToMint (uint256)
+            1784096161000, // deadline (uint256)
+          ]
+    );
+    return (
+      <div className="flex flex-col gap-y-8 text-left">
+        <button
+          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
+          onClick={() => setIsConfirmStep(false)}
+        >
+          <Image
+            src="/icons/ArrowLeft.svg"
+            alt="Go back"
+            height={24}
+            width={24}
+          />
+        </button>
+        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
+          You will receive
+        </h3>
+        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
+          <div className="inline-flex items-center gap-x-2">
+            <span>{toUnits(estLpAmount, 3)}</span>
+            {/* Make a mapping here */}
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={farm?.asset.logos[0] as string}
+                alt={farm?.asset.logos[0] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+            <div className="z-10 flex overflow-hidden rounded-full">
+              <Image
+                src={farm?.asset.logos[1] as string}
+                alt={farm?.asset.logos[1] as string}
+                width={24}
+                height={24}
+              />
+            </div>
+          </div>
+          <p>{farm?.asset.symbol} Tokens</p>
+        </div>
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
         <div
           className={clsx(
@@ -369,88 +458,6 @@ const AddSectionStable: FC = () => {
               {nativeBal?.symbol}
             </span>
           </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="w-full">
-          <div className="flex flex-col gap-y-3 w-full">
-            {tokens.map((token, index) => (
-              <TokenButton
-                key={`${token?.symbol}-${index}`}
-                token={token}
-                inputMapAmount={inputMapAmount}
-                selectedFarm={farm!}
-                approvalMap={approvalMap}
-                setApprovalMap={setApprovalMap}
-              />
-            ))}
-          </div>
-          {isRequirementApproved && (
-            <MButton
-              type="primary"
-              isLoading={isLoadingAddLiqCall || isLoadingAddLiqTxn}
-              disabled={
-                !isRequirementApproved ||
-                typeof addLiquidity == "undefined" ||
-                amounts.length < 1
-              }
-              text={isLoadingAddLiqCall ? "Processing..." : "Confirm"}
-              onClick={() => {
-                setIsConfirmStep(true);
-              }}
-            />
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const isOpenModalCondition =
-    isLoadingAddLiqCall ||
-    isLoadingAddLiqTxn ||
-    isLoadingAddLiqCall ||
-    isLoadingAddLiqTxn ||
-    isSlippageModalOpen;
-
-  const ConfirmStep = () => {
-    return (
-      <div className="flex flex-col gap-y-8 text-left">
-        <button
-          className="max-w-fit hover:translate-x-2 active:-translate-x-0 transition-all duration-200 ease-in-out"
-          onClick={() => setIsConfirmStep(false)}
-        >
-          <Image
-            src="/icons/ArrowLeft.svg"
-            alt="Go back"
-            height={24}
-            width={24}
-          />
-        </button>
-        <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
-          You will receive
-        </h3>
-        <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
-          <div className="inline-flex items-center gap-x-2">
-            <span>{toUnits(estLpAmount, 3)}</span>
-            {/* Make a mapping here */}
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[0] as string}
-                alt={farm?.asset.logos[0] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[1] as string}
-                alt={farm?.asset.logos[1] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-          </div>
-          <p>{farm?.asset.symbol} Tokens</p>
         </div>
         <hr className="border-t border-[#E3E3E3] min-w-full" />
         {/* Relative Conversion and Share of Pool */}

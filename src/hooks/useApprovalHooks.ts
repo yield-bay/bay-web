@@ -42,7 +42,7 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
  *
  * @param token Underlying Asset
  * @param spender spender Contract Address
- * @returns data, isLoading, isError, isSuccess, writeAsync
+ * @returns data, isLoadingApproveCall, isLoadingApproveTxn, isError, isSuccessApproveCall, isSuccessApproveTxn, writeAsync
  */
 const useApproveToken = (tokenAddress: Address, spender: Address) => {
   const { chain } = useNetwork();

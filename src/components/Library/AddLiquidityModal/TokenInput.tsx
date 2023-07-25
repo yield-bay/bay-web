@@ -10,7 +10,6 @@ interface TokenInputProps {
   inputMap: {
     [address: Address]: string;
   };
-  // selectedFarm: any;
   logos: string | string[];
   tokensLength: number;
   focusedInput: number;
@@ -22,7 +21,6 @@ const TokenInput: React.FC<TokenInputProps> = ({
   index,
   handleInput,
   inputMap,
-  // selectedFarm,
   logos,
   tokensLength,
   focusedInput,
@@ -37,12 +35,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
     chainId: chain?.id,
     token: token?.address,
     enabled: !!address && !!logos,
-    // enabled: !!address && !!selectedFarm,
   });
-
-  // const logosArr = Array.isArray(logos) ? logos
-  console.log(`logos in ${token?.symbol} is`, logos);
-
   return (
     <div>
       <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
@@ -99,10 +92,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
           <button
             className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
             onClick={() => {
-              // setFirstTokenAmount(token0Balance?.formatted ?? "0");
-              // updateSecondTokenAmount(
-              //   parseFloat(token0Balance?.formatted ?? "0")
-              // );
+              handleInput(token, balance?.formatted ?? "0");
             }}
           >
             MAX

@@ -62,14 +62,16 @@ const TokenButton: React.FC<Props> = ({
     <MButton
       type="secondary"
       className={clsx(!inputMapAmount[token?.address] && "hidden")}
-      isLoading={isLoadingApproveCall || isLoadingApproveTxn}
       text={
-        isLoadingApproveCall
+        typeof approveToken == "undefined"
+          ? "Some error, try refreshing!"
+          : isLoadingApproveCall
           ? "Sign the Txn in Wallet"
           : isLoadingApproveTxn
           ? "Waiting for Approval"
           : `Approve ${token?.symbol} Token`
       }
+      isLoading={isLoadingApproveCall || isLoadingApproveTxn}
       disabled={
         isLoadingApproveCall ||
         isLoadingApproveTxn ||

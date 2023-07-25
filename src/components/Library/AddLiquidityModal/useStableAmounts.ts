@@ -6,8 +6,8 @@ const useStableAmounts = (
   inputMapAmount: { [address: Address]: number },
   tokens: UnderlyingAssets[]
 ) => {
-  console.log("inputMap", inputMapAmount);
-  console.log("token", tokens);
+  // console.log("inputMap", inputMapAmount);
+  // console.log("token", tokens);
 
   const updatedTokens = useMemo(() => {
     const newtokens = tokens
@@ -23,7 +23,7 @@ const useStableAmounts = (
       });
     return newtokens;
   }, [inputMapAmount]);
-  console.log("updated tokens", updatedTokens);
+  // console.log("updated tokens", updatedTokens);
   return updatedTokens;
 };
 

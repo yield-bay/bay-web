@@ -16,14 +16,14 @@ const useMinLPTokensStable = (
     args: [amounts, 1],
   });
 
-  console.log("lpAmount", Number(lpAmount) / 10 ** 18, {
-    address: router,
-    abi: parseAbi(getRouterAbi(protocol, true)),
-    functionName:
-      protocol == "curve" ? "calc_token_amount" : "calculateTokenAmount",
-    enabled: !!router && !!protocol,
-    args: [amounts, 1],
-  });
+  // console.log("lpAmount", Number(lpAmount) / 10 ** 18, {
+  //   address: router,
+  //   abi: parseAbi(getRouterAbi(protocol, true)),
+  //   functionName:
+  //     protocol == "curve" ? "calc_token_amount" : "calculateTokenAmount",
+  //   enabled: !!router && !!protocol,
+  //   args: [amounts, 1],
+  // });
 
   return Number(lpAmount) / 10 ** 18;
 };

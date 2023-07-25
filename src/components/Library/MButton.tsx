@@ -34,7 +34,8 @@ const MButton: FC<MButtonProps> = ({
         type === "primary" && "border border-[#99F] bg-[#EDEDFF]",
         type === "secondary" && "border border-[#D0D5DD] bg-[#F9FAFB]",
         isLoading && "border-dashed animate-pulse",
-        disabled && "opacity-40 pointer-events-none",
+        disabled && "pointer-events-none",
+        disabled && (isLoading ? "opacity-100" : "opacity-40"),
         className ?? ""
       )}
       onClick={onClick}
