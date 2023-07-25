@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
@@ -17,14 +17,13 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
-import { tokenAbi } from "@components/Common/Layout/evmUtils";
 import { parseAbi, parseUnits } from "viem";
 import {
   fixedAmtNum,
   getRemoveLiquidFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { FarmType, Method, UnderlyingAssets } from "@utils/types";
+import { Method, UnderlyingAssets } from "@utils/types";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";

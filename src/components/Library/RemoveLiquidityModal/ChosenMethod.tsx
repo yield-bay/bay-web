@@ -1,4 +1,5 @@
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
+import toUnits from "@utils/toUnits";
 import { FarmType, Method } from "@utils/types";
 import clsx from "clsx";
 import Image from "next/image";
@@ -60,7 +61,7 @@ const ChosenMethod: React.FC<Props> = ({
             !!lpBal && (
               <p className="flex flex-col items-end">
                 <span>Balance</span>
-                <span>{parseFloat(lpBal).toLocaleString("en-US")}</span>
+                <span>{toUnits(parseFloat(lpBal), 3)}</span>
               </p>
             )
           )}

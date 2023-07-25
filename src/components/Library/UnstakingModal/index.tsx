@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
@@ -18,17 +18,15 @@ import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
 import { Address, parseAbi, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
-import { FarmType } from "@utils/types";
+import { FarmType, Method } from "@utils/types";
 import Spinner from "../Spinner";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
-import {
-  getChefAbi,
-  getRemoveLiquidFunctionName,
-} from "@utils/abis/contract-helper-methods";
+import { fixedAmtNum, getChefAbi } from "@utils/abis/contract-helper-methods";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
+import toUnits from "@utils/toUnits";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -40,7 +38,7 @@ interface ChosenMethodProps {
   lpTokens: string;
   setLpTokens: (value: string) => void;
   handleLpTokensChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  methodId: number;
+  methodId: Method;
 }
 
 const UnstakingModal = () => {
@@ -60,13 +58,18 @@ const UnstakingModal = () => {
 
   const [percentage, setPercentage] = useState<string>("");
   const [lpTokens, setLpTokens] = useState<string>("");
-  const [methodId, setMethodId] = useState<number>(0);
+  const [methodId, setMethodId] = useState<Method>(Method.PERCENTAGE);
   const [txnHash, setTrxnHash] = useState<string>("");
 
   // When InputType.Percentage
   const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    setPercentage(event.target.value);
+    const value = parseFloat(event.target.value);
+    if ((value >= 0 && value <= 100) || event.target.value == "") {
+      setPercentage(event.target.value);
+    } else {
+      alert("Percentage must be between 0 & 100!");
+    }
   };
 
   // When InputType.Token
@@ -90,7 +93,7 @@ const UnstakingModal = () => {
 
   const getArgs = () => {
     const amt =
-      methodId == 0
+      methodId == Method.PERCENTAGE
         ? parseUnits(
             `${
               (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
@@ -133,17 +136,6 @@ const UnstakingModal = () => {
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
-
-  // // Gas estimate
-  // const { gasEstimate } = useGasEstimation(
-  //   farm!.chef,
-  //   0,
-  //   3,
-  //   farm?.protocol == "zenlink" ? ("redeem" as any) : ("withdraw" as any),
-  //   farm!,
-  //   address!,
-  //   getArgs()
-  // );
 
   const chefAbi = useMemo(() => {
     return getChefAbi(farm?.protocol!, farm?.chef as Address);
@@ -209,9 +201,7 @@ const UnstakingModal = () => {
   const handleUnstaking = async () => {
     try {
       const args = getArgs();
-
       console.log("unstake args", args);
-
       const txnRes = await unstaking?.({
         args: args,
       });
@@ -224,7 +214,7 @@ const UnstakingModal = () => {
   };
 
   const unstakeAmount = useMemo(() => {
-    return methodId == 0
+    return methodId == Method.PERCENTAGE
       ? (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
       : parseFloat(lpTokens == "" ? "0" : lpTokens);
   }, [methodId, percentage, lpTokens]);
@@ -232,7 +222,7 @@ const UnstakingModal = () => {
   const InputStep = () => {
     const confirmDisable =
       unstakeAmount > staked &&
-      (methodId == 0 ? percentage != "" : lpTokens != "");
+      (methodId == Method.PERCENTAGE ? percentage != "" : lpTokens != "");
 
     return (
       <div className="w-full flex mt-8 flex-col gap-y-8">
@@ -264,67 +254,14 @@ const UnstakingModal = () => {
             ))}
           </div>
         </div>
-        {/* Estimate Gas and Slippage Tolerance */}
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        {/* <div
-          className={clsx(
-            "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-              ? "bg-[#C0F9C9]"
-              : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "bg-[#ECFFEF]"
-                : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "Sufficient"
-                : "Insufficient"}{" "}
-              Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span>
-          </div>
-        </div> */}
         <div className="w-full">
           <MButton
             type="primary"
             isLoading={false}
             disabled={
-              (methodId == 0
+              (methodId == Method.PERCENTAGE
                 ? percentage == "" || percentage == "0"
                 : lpTokens == "" || lpTokens == "0") || confirmDisable
-              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text={confirmDisable ? "Insufficient Balance" : "Confirm Unstaking"}
             onClick={() => {
@@ -545,7 +482,7 @@ const UnstakingModal = () => {
 };
 
 // ChosenMethod returns the type of input field
-const ChosenMethod: FC<ChosenMethodProps> = ({
+const ChosenMethod: React.FC<ChosenMethodProps> = ({
   farm,
   percentage,
   setPercentage,
@@ -557,7 +494,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
   handleLpTokensChange,
   methodId,
 }) => {
-  return methodId === 0 ? (
+  return methodId === Method.PERCENTAGE ? (
     <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
       <div className="absolute text-[#344054 text-base font-medium leading-5 left-0 -top-9 flex flex-row gap-x-[6px] items-center">
         <span>Enter</span>
@@ -568,29 +505,29 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
             </div>
           ))}
         </div>
-        <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Unstake</span>
+        <span className="font-bold">{farm?.asset.symbol}</span>{" "}
+        <span>tokens percentage to Unstake</span>
       </div>
       <input
         placeholder="0"
         className={clsx(
-          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
+          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none after:content-end-['x']"
         )}
         onChange={handlePercChange}
         value={percentage}
         autoFocus
       />
       <div className="inline-flex items-center gap-x-2">
-        <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
+        <div className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
           {isLoadingStaked ? (
             <span>loading...</span>
           ) : (
-            <div className="flex flex-col items-end">
+            <p className="flex flex-col items-end">
               <span>Balance</span>
-              <span>{staked.toLocaleString("en-US")}</span>
-            </div>
+              <span>{toUnits(staked, 3)}</span>
+            </p>
           )}
-        </p>
+        </div>
         <button
           className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
           onClick={() => {
@@ -613,12 +550,13 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
           ))}
         </div>
         <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Unstake</span>
+        <span>Tokens to Remove</span>
       </div>
       <input
         placeholder="0"
         className={clsx(
-          "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
+          "text-base font-bold leading-6 text-left bg-transparent focus:outline-none",
+          fixedAmtNum(lpTokens) > staked ? "text-[#FF9999]" : "text-[#4E4C4C]"
         )}
         onChange={handleLpTokensChange}
         value={lpTokens}
@@ -629,12 +567,10 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
           {isLoadingStaked ? (
             <span>loading...</span>
           ) : (
-            !!staked && (
-              <div className="flex flex-col items-end">
-                <span>Balance</span>
-                <span>{staked.toLocaleString("en-US")}</span>
-              </div>
-            )
+            <div className="flex flex-col items-end">
+              <span>Balance</span>
+              <span>{staked.toLocaleString("en-US")}</span>
+            </div>
           )}
         </p>
         <button
