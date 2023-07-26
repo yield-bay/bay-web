@@ -51,21 +51,27 @@ const estimateGas = async (
   //   return BigInt(0);
   // }
 
-  const gasEstimate = await publicClient.estimateContractGas({
-    address: address as any,
-    abi:
-      contractType == 0
-        ? parseAbi(getChefAbi(farm?.protocol!, farm?.chef))
-        : parseAbi(
-            getRouterAbi(
-              farm?.protocol!,
-              farm?.farmType == "StandardAmm" ? false : true
-            )
-          ),
-    functionName: functionName as any,
-    args: args,
-    account: account as any,
-  });
+  let gasEstimate = BigInt(0);
+  try {
+    gasEstimate = await publicClient.estimateContractGas({
+      address: address as any,
+      abi:
+        contractType == 0
+          ? parseAbi(getChefAbi(farm?.protocol!, farm?.chef))
+          : parseAbi(
+              getRouterAbi(
+                farm?.protocol!,
+                farm?.farmType == "StandardAmm" ? false : true
+              )
+            ),
+      functionName: functionName as any,
+      args: args,
+      account: account as any,
+    });
+  } catch (error) {
+    console.log("estimateContractGas error:", error);
+  }
+
   console.log("gasssss", gasEstimate);
   return gasEstimate;
   // return BigInt(0);
