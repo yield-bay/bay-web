@@ -19,6 +19,7 @@ import Spinner from "@components/Library/Spinner";
 import {
   addLiqModalOpenAtom,
   evmPosLoadingAtom,
+  lpUpdatedAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
 import {
@@ -75,6 +76,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [txnHash, setTxnHash] = useState<string>("");
@@ -504,15 +506,16 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
       console.log("addliq txn success!");
-      fetchEvmPositions({
-        farms,
-        positions,
-        setPositions,
-        setIsEvmPosLoading,
-        address,
-        tokenPricesMap,
-        lpTokenPricesMap,
-      });
+      // fetchEvmPositions({
+      //   farms,
+      //   positions,
+      //   setPositions,
+      //   setIsEvmPosLoading,
+      //   address,
+      //   tokenPricesMap,
+      //   lpTokenPricesMap,
+      // });
+      setLpUpdated(lpUpdated + 1);
     }
   }, [isSuccessAddLiqTxn]);
 

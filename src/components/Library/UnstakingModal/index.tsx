@@ -569,7 +569,7 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
           ) : (
             <div className="flex flex-col items-end">
               <span>Balance</span>
-              <span>{staked.toLocaleString("en-US")}</span>
+              <span>{staked.toFixed(2)}</span>
             </div>
           )}
         </p>

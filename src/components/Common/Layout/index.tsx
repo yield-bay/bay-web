@@ -33,6 +33,7 @@ import {
   stakingModalOpenAtom,
   subPosLoadingAtom,
   unstakingModalOpenAtom,
+  lpUpdatedAtom,
 } from "@store/commonAtoms";
 import AddLiquidityModal from "@components/Library/AddLiquidityModal";
 import RemoveLiquidityModal from "@components/Library/RemoveLiquidityModal";
@@ -69,6 +70,8 @@ const Layout: FC<Props> = ({ children }) => {
   const [stakingModalOpen] = useAtom(stakingModalOpenAtom);
   const [unstakingModalOpen] = useAtom(unstakingModalOpenAtom);
   const [claimModalOpen] = useAtom(claimModalOpenAtom);
+
+  const [lpUpdated] = useAtom(lpUpdatedAtom);
 
   // Mangata Setup
   const [mangataHelperx, setMangataHelper] = useAtom(mangataHelperAtom);
@@ -312,7 +315,14 @@ const Layout: FC<Props> = ({ children }) => {
         setPositions,
       });
     }
-  }, [isConnected, farms, address, lpTokenPricesMap, tokenPricesMap]);
+  }, [
+    isConnected,
+    farms,
+    address,
+    lpTokenPricesMap,
+    tokenPricesMap,
+    lpUpdated,
+  ]);
 
   return (
     <div

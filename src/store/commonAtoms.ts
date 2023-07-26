@@ -19,3 +19,5 @@ export const mangataAddressAtom = atom<string>("");
 export const mangataPoolsAtom = atom<MangataPool[] | null>(null);
 export const accountInitAtom = atom<Account | null>(null);
 export const isInitialisedAtom = atom<boolean>(false);
+
+export const lpUpdatedAtom = atom<number>(0);
