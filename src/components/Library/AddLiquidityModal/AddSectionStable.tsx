@@ -8,8 +8,19 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useAtom } from "jotai";
-import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
-import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import {
+  addLiqModalOpenAtom,
+  evmPosLoadingAtom,
+  slippageModalOpenAtom,
+} from "@store/commonAtoms";
+import {
+  farmsAtom,
+  lpTokenPricesAtom,
+  positionsAtom,
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import MButton from "../MButton";
 import { UnderlyingAssets } from "@utils/types";
 import {
@@ -30,12 +41,10 @@ import useMinLPTokensStable from "@hooks/useMinLPTokensStable";
 import useStableAmounts from "./useStableAmounts";
 import toUnits from "@utils/toUnits";
 import useTotalSupply from "@hooks/useTotalSupply";
-import { estimateContractGas } from "viem/dist/types/actions/public/estimateContractGas";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
-import { ethers } from "ethers";
-import { formatTokenSymbols } from "@utils/farmListMethods";
+import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -66,8 +75,11 @@ const AddSectionStable: FC = () => {
     [address: Address]: string;
   }>({});
 
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
-
+  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
   // Checking if farm assets have a lp-token pair
   const logos = useMemo(() => {
     const symbol = farm?.asset.symbol;
@@ -175,64 +187,6 @@ const AddSectionStable: FC = () => {
     },
   });
 
-  // let iface = new ethers.Interface(
-  //   getRouterAbi(
-  //     farm?.protocol!,
-  //     farm?.farmType == "StandardAmm" ? false : true
-  //   )
-  // );
-  // const fdata = new ethers.Interface(
-  //   getRouterAbi(
-  //     farm?.protocol!,
-  //     farm?.farmType == "StandardAmm" ? false : true
-  //   )
-  // ).encodeFunctionData(
-  //   getAddLiqFunctionName(farm?.protocol as string) as any,
-  //   farm?.protocol.toLowerCase() == "curve"
-  //     ? [
-  //         amounts, // amounts (uint256[])
-  //         parseUnits(
-  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
-  //           18
-  //         ), // minToMint (uint256)
-  //       ]
-  //     : [
-  //         amounts, // amounts (uint256[])
-  //         parseUnits(
-  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
-  //           18
-  //         ), // minToMint (uint256)
-  //         1784096161000, // deadline (uint256)
-  //       ]
-  // );
-  // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
-
-  // // Gas estimate
-  // const { gasEstimate } = useGasEstimation(
-  //   farm!.router,
-  //   1,
-  //   0,
-  //   getAddLiqFunctionName(farm?.protocol as string) as any,
-  //   farm!,
-  //   address!,
-  //   farm?.protocol.toLowerCase() == "curve"
-  //     ? [
-  //         amounts, // amounts (uint256[])
-  //         parseUnits(
-  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
-  //           18
-  //         ), // minToMint (uint256)
-  //       ]
-  //     : [
-  //         amounts, // amounts (uint256[])
-  //         parseUnits(
-  //           `${(fixedAmtNum(estLpAmount.toString()) * (100 - SLIPPAGE)) / 100}`,
-  //           18
-  //         ), // minToMint (uint256)
-  //         1784096161000, // deadline (uint256)
-  //       ]
-  // );
-
   // Wait AddLiquidity Txn
   const {
     // data: addLiquidityTxnData,
@@ -242,6 +196,21 @@ const AddSectionStable: FC = () => {
   } = useWaitForTransaction({
     hash: addLiquidityData?.hash,
   });
+
+  useEffect(() => {
+    if (isSuccessAddLiqTxn) {
+      console.log("addliq txn success!");
+      fetchEvmPositions({
+        farms,
+        positions,
+        setPositions,
+        setIsEvmPosLoading,
+        address,
+        tokenPricesMap,
+        lpTokenPricesMap,
+      });
+    }
+  }, [isSuccessAddLiqTxn]);
 
   const isRequirementApproved = useMemo(() => {
     if (Object.keys(inputMapAmount).length === 0) return false;

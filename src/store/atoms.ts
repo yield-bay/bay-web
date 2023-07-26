@@ -32,6 +32,7 @@ export const farmTypesAtom = atom<FarmTypesType[]>([
   { id: 5, name: "Concentrated liquidity" },
 ]);
 
+export const farmsAtom = atom<FarmType[]>([]);
 export const positionsAtom = atom<{ [key: string]: any }>({}); // `${chain}-${protocol}-${chef}-${id}-${asset.symbol}`
 export const lpTokenPricesAtom = atom<{ [key: string]: number }>({}); // `${chain}-${protocol}-${symbol}-${address}`
 export const tokenPricesAtom = atom<{ [key: string]: number }>({}); // `${chain}-${protocol}-${symbol}-${address}`

@@ -11,15 +11,24 @@ import {
   useContractWrite,
   useWaitForTransaction,
   usePublicClient,
-  // useContractRead,
-  // useToken,
 } from "wagmi";
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
-import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
-import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import {
+  addLiqModalOpenAtom,
+  evmPosLoadingAtom,
+  slippageModalOpenAtom,
+} from "@store/commonAtoms";
+import {
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+  farmsAtom,
+  positionsAtom,
+  lpTokenPricesAtom,
+} from "@store/atoms";
 import {
   fixedAmtNum,
   getAddLiqFunctionName,
@@ -37,6 +46,7 @@ import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
 import { ethers } from "ethers";
+import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
 
 enum InputType {
   Off = -1,
@@ -60,8 +70,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
-
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
+
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [txnHash, setTxnHash] = useState<string>("");
 
@@ -490,7 +504,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
       console.log("addliq txn success!");
-      console.log("txn data", addLiquidityTxnData);
+      fetchEvmPositions({
+        farms,
+        positions,
+        setPositions,
+        setIsEvmPosLoading,
+        address,
+        tokenPricesMap,
+        lpTokenPricesMap,
+      });
     }
   }, [isSuccessAddLiqTxn]);
 

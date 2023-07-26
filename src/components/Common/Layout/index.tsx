@@ -6,6 +6,7 @@ import { satoshiFont } from "@utils/localFont";
 import { useAtom } from "jotai";
 import _ from "lodash";
 import {
+  farmsAtom,
   lpTokenPricesAtom,
   positionsAtom,
   tokenPricesAtom,
@@ -84,6 +85,7 @@ const Layout: FC<Props> = ({ children }) => {
   }, [isOnline]);
 
   // States
+  const [, setAllFarms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap, setTokenPricesMap] = useAtom(tokenPricesAtom);
@@ -114,6 +116,7 @@ const Layout: FC<Props> = ({ children }) => {
     queryFn: async () => {
       try {
         const { farms } = await fetchListicleFarms();
+        setAllFarms(farms);
         return farms;
       } catch (error) {
         console.error(error);
