@@ -1,16 +1,10 @@
-import {
-  curveLpAbi,
-  lpAbi,
-  siriusRouterAbi,
-} from "@components/Common/Layout/evmUtils";
-import { getRouterAbi } from "@utils/abis/contract-helper-methods";
-import { FarmType, UnderlyingAssets } from "@utils/types";
-import { Address, parseAbi } from "viem";
+import { lpAbi } from "@components/Common/Layout/evmUtils";
+import { FarmType, UnderlyingAssets } from "@utils/types/common";
+import { parseAbi } from "viem";
 import { useContractRead, useNetwork } from "wagmi";
 
 export default function useTokensOrder(farm: FarmType) {
   const { chain } = useNetwork();
-
   if (farm?.protocol == "arthswap") {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const { data: tokensSeqArr } = useContractRead({
@@ -29,8 +23,5 @@ export default function useTokensOrder(farm: FarmType) {
     return tokensSeq;
   } else {
     return farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
-    // return farm?.asset.underlyingAssets.map(
-    //   (ua: UnderlyingAssets) => ua.address
-    // );
   }
 }

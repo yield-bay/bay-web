@@ -1,6 +1,6 @@
 import { supportedPools } from "@components/Common/Layout/evmUtils";
 import { checkIfPoolSupported } from "@utils/farmListMethods";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 
 /**
  *

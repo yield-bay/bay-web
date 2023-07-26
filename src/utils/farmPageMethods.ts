@@ -1,4 +1,4 @@
-import { UnclaimedRewardType } from "./types";
+import { UnclaimedRewardType } from "./types/common";
 
 type RewardType = {
   amount: number;

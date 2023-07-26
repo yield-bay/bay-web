@@ -1,6 +1,6 @@
 import { FC, memo } from "react";
 import { tvlCount, tvlFormatter } from "@utils/statsMethods";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 
 interface Props {
   farms: FarmType[];

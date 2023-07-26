@@ -11,7 +11,7 @@ import {
 } from "@store/commonAtoms";
 import { useAtom } from "jotai";
 import { selectedFarmAtom } from "@store/atoms";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 
 interface Props {
   farm: FarmType;

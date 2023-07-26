@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { FarmType, UnderlyingAssets } from "@utils/types";
+import { FarmType, UnderlyingAssets } from "@utils/types/common";
 import MButton from "../MButton";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import { Address } from "viem";

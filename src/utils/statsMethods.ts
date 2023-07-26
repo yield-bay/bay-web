@@ -1,4 +1,4 @@
-import { FarmType } from "./types";
+import { FarmType } from "./types/common";
 import { formatFirstLetter } from "./farmListMethods";
 
 /**

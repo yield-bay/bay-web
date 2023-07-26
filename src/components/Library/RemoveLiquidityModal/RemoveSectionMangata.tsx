@@ -21,7 +21,7 @@ import {
   slippageAtom,
   tokenPricesAtom,
 } from "@store/atoms";
-import { FarmType, MangataPool, UnderlyingAssets } from "@utils/types";
+import { FarmType, MangataPool } from "@utils/types/common";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
 import Spinner from "../Spinner";

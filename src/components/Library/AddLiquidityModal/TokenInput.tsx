@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { UnderlyingAssets } from "@utils/types";
+import { UnderlyingAssets } from "@utils/types/common";
 import Image from "next/image";
 import { Address, useAccount, useBalance, useNetwork } from "wagmi";
 import clsx from "clsx";

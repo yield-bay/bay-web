@@ -1,6 +1,6 @@
 import { Address } from "viem";
 import { RPC_URL } from "./constants";
-import { ChainId, Network } from "./types";
+import { ChainId, Network } from "./types/enums";
 
 const moonbeamRpcUrl = RPC_URL.moonbeam;
 const moonriverRpcUrl = RPC_URL.moonriver;

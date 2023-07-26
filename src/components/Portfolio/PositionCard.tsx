@@ -14,7 +14,7 @@ import {
   calcAssetPercentage,
   calcTotalRewardValue,
 } from "@utils/farmPageMethods";
-import { FarmType, PortfolioPositionType } from "@utils/types";
+import { FarmType, PortfolioPositionType } from "@utils/types/common";
 import toDollarUnits from "@utils/toDollarUnits";
 import toUnits from "@utils/toUnits";
 import Image from "next/image";

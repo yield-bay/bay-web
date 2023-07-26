@@ -21,7 +21,7 @@ import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import Image from "next/image";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import Spinner from "../Spinner";
 import Link from "next/link";
 import {

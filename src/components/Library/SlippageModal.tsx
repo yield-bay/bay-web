@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useState } from "react";
 import MButton from "./MButton";
 import Tooltip from "./Tooltip";
-import { ModalType } from "@utils/types";
+import { ModalType } from "@utils/types/enums";
 
 const SlippageModal = () => {
   const [isOpen, setIsOpen] = useAtom(slippageModalOpenAtom);

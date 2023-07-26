@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useState } from "react";
+import { FC, memo } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { useAtom } from "jotai";
@@ -13,7 +13,7 @@ import {
   formatFarmType,
   checkIfPoolSupported,
 } from "@utils/farmListMethods";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import { isConnectedDotAtom } from "@store/accountAtoms";
 
 // Component Imports

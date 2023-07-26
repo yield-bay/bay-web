@@ -1,4 +1,4 @@
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import { Mangata } from "@mangata-finance/sdk";
 import { WalletAccount } from "@talismn/connect-wallets";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";

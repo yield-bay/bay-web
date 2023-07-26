@@ -31,7 +31,8 @@ import {
   getRemoveLiquidFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { Method, UnderlyingAssets } from "@utils/types";
+import { UnderlyingAssets } from "@utils/types/common";
+import { Method } from "@utils/types/enums";
 import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";

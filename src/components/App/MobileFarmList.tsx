@@ -25,7 +25,7 @@ import {
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
 import { sortedFarmsAtom, sortStatusAtom } from "@store/atoms";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 
 interface Props {
   farms: FarmType[];

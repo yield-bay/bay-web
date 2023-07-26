@@ -13,7 +13,7 @@ import {
 import FarmsList from "./FarmList";
 import Tooltip from "@components/Library/Tooltip";
 import LoadingSkeleton from "@components/Library/LoadingSkeleton";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import Image from "next/image";
 import SupportedFarmsToggle from "@components/Library/SupportedFarmsToggle";
 import SelectFarmType from "@components/Library/SelectFarmType";

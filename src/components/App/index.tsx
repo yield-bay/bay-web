@@ -22,7 +22,7 @@ import FarmTable from "./FarmTable";
 import useFilteredFarms from "@hooks/useFilteredFarms";
 import MetaTags from "@components/Common/metaTags/MetaTags";
 import Hero from "./Hero";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import AllProtocolsModal from "@components/Library/AllProtocolsModal";
 import { getTotalProtocols } from "@utils/statsMethods";
 import useFilteredSupported from "@hooks/useFilteredSupported";

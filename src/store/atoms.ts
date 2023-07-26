@@ -1,4 +1,4 @@
-import { FarmType, PortfolioPositionType } from "@utils/types";
+import { FarmType, PortfolioPositionType } from "@utils/types/common";
 import { atom } from "jotai";
 
 // Interfaces

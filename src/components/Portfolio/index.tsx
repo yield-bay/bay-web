@@ -19,7 +19,7 @@ import { filteredChainAtom, positionsAtom } from "@store/atoms";
 import useFilteredPositionType from "@hooks/useFilteredPositionType";
 import { useQuery } from "@tanstack/react-query";
 import { fetchListicleFarms } from "@utils/api";
-import { FarmType, PortfolioPositionType } from "@utils/types";
+import { FarmType, PortfolioPositionType } from "@utils/types/common";
 import { useAccount } from "wagmi";
 import { isConnectedDotAtom } from "@store/accountAtoms";
 import ClientOnly from "@components/Common/ClientOnly";

@@ -24,7 +24,7 @@ import ToastWrapper from "../ToastWrapper";
 import MButton from "../MButton";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { mangataHelperAtom } from "@store/commonAtoms";
-import { MangataPool } from "@utils/types";
+import { MangataPool } from "@utils/types/common";
 import { delay } from "@utils/xcm/common/utils";
 import { formatTokenSymbols } from "@utils/farmListMethods";
 import Link from "next/link";

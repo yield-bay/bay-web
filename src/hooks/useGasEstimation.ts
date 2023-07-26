@@ -13,7 +13,7 @@ import {
   getChefAbi,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import { mainnet, moonbeam, moonriver } from "viem/chains";
 
 const estimateGas = async (

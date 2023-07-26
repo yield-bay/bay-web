@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { useDisconnect, useNetwork, useSwitchNetwork } from "wagmi";
 import ModalWrapper from "./ModalWrapper";
-import { ModalType } from "@utils/types";
+import { ModalType } from "@utils/types/enums";
 import { formatFirstLetter } from "@utils/farmListMethods";
 import { getSupportedChains } from "@utils/network";
 

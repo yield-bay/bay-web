@@ -2,7 +2,7 @@ import { Fragment, ReactNode, FC } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 import clsx from "clsx";
-import { ModalType } from "@utils/types";
+import { ModalType } from "@utils/types/enums";
 
 interface Props {
   open: boolean;

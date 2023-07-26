@@ -1,11 +1,7 @@
 import BN from "bn.js";
 import { Address } from "viem";
-
-export type UnderlyingAssets = {
-  symbol: string;
-  address: Address;
-  decimals: number;
-};
+import { Network } from "ethers";
+import { ChainId } from "./enums";
 
 type Rewards = {
   amount: number;
@@ -17,6 +13,12 @@ type Rewards = {
 type APR = {
   reward: number;
   base: number;
+};
+
+export type UnderlyingAssets = {
+  symbol: string;
+  address: Address;
+  decimals: number;
 };
 
 export interface FarmType {
@@ -41,6 +43,7 @@ export interface FarmType {
   lastUpdatedAtUTC: string;
   safetyScore: number;
 }
+
 export interface TokenPriceType {
   chain: string;
   protocol: string;
@@ -88,47 +91,10 @@ export interface PortfolioPositionType {
   lpAddress: Address;
 }
 
-export enum Network {
-  MOONBEAM = "moonbeam",
-  MOONRIVER = "moonriver",
-  ASTAR = "astar",
-  HARDHAT = "hardhat",
-}
-
-export enum ChainId {
-  MOONBEAM = 1284,
-  MOONRIVER = 1285,
-  ASTAR = 592,
-  HARDHAT = 31337,
-}
-
 export interface Chain {
   id: ChainId;
   name: Network;
 }
-
-export interface WalletConnectEventType {
-  userAddress: string;
-  walletType: string;
-  walletProvider: string;
-  timestamp: string;
-}
-
-export enum ModalType {
-  DEFAULT = "default",
-  BLUE = "blue",
-  RED = "red",
-}
-
-export enum Method {
-  PERCENTAGE = 0,
-  LP = 1,
-}
-
-export type TokenType = {
-  symbol: string;
-  amount: number;
-};
 
 export type MangataPool = {
   firstTokenAmount: BN;

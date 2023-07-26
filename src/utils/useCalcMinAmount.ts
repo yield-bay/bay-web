@@ -1,5 +1,5 @@
 import { useContractRead, useContractReads, useNetwork, useToken } from "wagmi";
-import { FarmType, UnderlyingAssets } from "./types";
+import { FarmType, UnderlyingAssets } from "./types/common";
 import { parseAbi, parseUnits } from "viem";
 import { getRouterAbi } from "./abis/contract-helper-methods";
 import { useMemo } from "react";

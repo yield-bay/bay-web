@@ -5,11 +5,11 @@ import {
   formatTokenSymbols,
   getLpTokenSymbol,
 } from "@utils/farmListMethods";
+import { ModalType } from "@utils/types/enums";
 import {
-  ModalType,
   PortfolioPositionType,
   UnclaimedRewardType,
-} from "@utils/types";
+} from "@utils/types/common";
 import clsx from "clsx";
 import { useAtom } from "jotai";
 import { claimModalOpenAtom } from "@store/commonAtoms";

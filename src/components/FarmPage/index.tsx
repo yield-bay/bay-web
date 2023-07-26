@@ -54,7 +54,7 @@ import {
 } from "@store/commonAtoms";
 import { farmTypeDesc, calcUnclaimedReward } from "@utils/farmPageMethods";
 import Tooltip from "@components/Library/Tooltip";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 import Breadcrumb from "@components/Library/Breadcrumb";
 import InfoContainer from "@components/Library/InfoContainer";
 import clsx from "clsx";

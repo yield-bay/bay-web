@@ -1,4 +1,4 @@
-import { PortfolioPositionType } from "./types";
+import { PortfolioPositionType } from "./types/common";
 
 export function calcTotalUnclaimedRewards(
   userPositions: PortfolioPositionType[]

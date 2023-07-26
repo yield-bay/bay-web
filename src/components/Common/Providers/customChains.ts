@@ -1,5 +1,5 @@
 import { RPC_URL } from "@utils/constants";
-import { ChainId, Network } from "@utils/types";
+import { ChainId, Network } from "@utils/types/enums";
 import { Address } from "viem";
 
 // Astar Network Configuration

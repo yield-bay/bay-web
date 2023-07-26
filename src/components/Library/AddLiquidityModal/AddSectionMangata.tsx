@@ -37,7 +37,7 @@ import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import toUnits from "@utils/toUnits";
 import ToastWrapper from "../ToastWrapper";
 import { useToast } from "@chakra-ui/react";
-import { MangataPool } from "@utils/types";
+import { MangataPool } from "@utils/types/common";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";

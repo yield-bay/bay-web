@@ -31,7 +31,8 @@ import {
   getRemoveLiqStableFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { FarmType, UnderlyingAssets, Method } from "@utils/types";
+import { FarmType, UnderlyingAssets } from "@utils/types/common";
+import { Method } from "@utils/types/enums";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";

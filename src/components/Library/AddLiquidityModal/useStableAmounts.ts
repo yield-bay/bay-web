@@ -1,4 +1,4 @@
-import { UnderlyingAssets } from "@utils/types";
+import { UnderlyingAssets } from "@utils/types/common";
 import { useMemo } from "react";
 import { Address, parseUnits } from "viem";
 

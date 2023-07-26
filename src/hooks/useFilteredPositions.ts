@@ -1,5 +1,5 @@
 import { formatTokenSymbols } from "@utils/farmListMethods";
-import { PortfolioPositionType } from "@utils/types";
+import { PortfolioPositionType } from "@utils/types/common";
 
 /**
  *

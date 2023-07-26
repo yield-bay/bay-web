@@ -1,5 +1,5 @@
 import { supportedPools } from "@components/Common/Layout/evmUtils";
-import { FarmType } from "./types";
+import { FarmType } from "./types/common";
 
 export function formatFirstLetter(name: string): string {
   return name.slice(0, 1).toUpperCase() + name.slice(1);

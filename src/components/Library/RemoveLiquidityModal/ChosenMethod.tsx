@@ -1,6 +1,7 @@
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import toUnits from "@utils/toUnits";
-import { FarmType, Method } from "@utils/types";
+import { FarmType } from "@utils/types/common";
+import { Method } from "@utils/types/enums";
 import clsx from "clsx";
 import Image from "next/image";
 

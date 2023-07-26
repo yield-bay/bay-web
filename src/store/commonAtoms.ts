@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 import Account from "@utils/xcm/common/account";
-import { MangataPool } from "@utils/types";
+import { MangataPool } from "@utils/types/common";
 
 // Positions loading
 export const evmPosLoadingAtom = atom<boolean>(false);

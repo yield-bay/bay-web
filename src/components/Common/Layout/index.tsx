@@ -12,7 +12,7 @@ import {
   tokenPricesAtom,
 } from "@store/atoms";
 import { useQuery } from "@tanstack/react-query";
-import { FarmType, TokenPriceType } from "@utils/types";
+import { FarmType, TokenPriceType } from "@utils/types/common";
 import {
   fetchListicleFarms,
   fetchLpTokenPrices,
@@ -46,7 +46,7 @@ import SlippageModal from "@components/Library/SlippageModal";
 import { Mangata as MangataConfig } from "@utils/xcm/config";
 import MangataHelper from "@utils/xcm/common/mangataHelper";
 import Account from "@utils/xcm/common/account";
-import { walletConnectEvent } from "@utils/tracking";
+import { handleWalletConnectEvent } from "@utils/tracking";
 import {
   emptyEvmPositions,
   fetchEvmPositions,
@@ -254,7 +254,7 @@ const Layout: FC<Props> = ({ children }) => {
   // Side-effect for Substrate Chains
   useEffect(() => {
     if (isConnectedDot && farms.length > 0) {
-      walletConnectEvent({
+      handleWalletConnectEvent({
         address: account?.address!,
         walletType: "DOT",
         connector: account?.wallet?.extensionName!,
@@ -288,7 +288,7 @@ const Layout: FC<Props> = ({ children }) => {
       lpTokensPricesLength > 0 &&
       tokenPricesLength > 0
     ) {
-      walletConnectEvent({
+      handleWalletConnectEvent({
         address: address!,
         walletType: "EVM",
         connector: connector?.name!,

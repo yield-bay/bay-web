@@ -1,5 +1,5 @@
 import { formatTokenSymbols } from "@utils/farmListMethods";
-import { FarmType } from "@utils/types";
+import { FarmType } from "@utils/types/common";
 
 /**
  *
