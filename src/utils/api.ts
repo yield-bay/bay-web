@@ -4,7 +4,11 @@ import { FarmType, TokenPriceType } from "@utils/types/common";
 import {
   AddLiquidityEvent,
   Amount,
+  ClaimRewardsEvent,
   FarmPruned,
+  RemoveLiquidityEvent,
+  StakeEvent,
+  UnstakeEvent,
   WalletConnectEvent,
 } from "@utils/types/tracking-events";
 
@@ -266,4 +270,258 @@ export const createAddLiquidityEvent = async (
     .toPromise();
   const addLiquidityEvent = addLiquidityObj?.data?.createAddLiquidityEvent;
   return { addLiquidityEvent };
+};
+
+export const createRemoveLiquidityEvent = async (
+  userAddress: string,
+  walletType: string,
+  walletProvider: string,
+  timestamp: string,
+  farm: FarmPruned,
+  underlyingAmounts: Amount[],
+  lpAmount: Amount
+): Promise<{ removeLiquidityEvent: RemoveLiquidityEvent }> => {
+  const removeLiquidityObj = await client
+    .mutation(
+      gql`
+        mutation CreateRemoveLiquidityEvent(
+          $userAddress: String!
+          $walletType: String!
+          $walletProvider: String!
+          $timestamp: String!
+          $farm: FarmPruned!
+          $underlyingAmounts: [Amount!]!
+          $lpAmount: Amount!
+        ) {
+          createRemoveLiquidityEvent(
+            userAddress: $userAddress
+            walletType: $walletType
+            walletProvider: $walletProvider
+            timestamp: $timestamp
+            farm: $farm
+            underlyingAmounts: $underlyingAmounts
+            lpAmount: $lpAmount
+          ) {
+            userAddress
+            walletType
+            walletProvider
+            timestamp
+            farm {
+              id
+              chef
+              chain
+              protocol
+              assetSymbol
+            }
+            underlyingAmounts {
+              amount
+              asset
+              valueUSD
+            }
+            lpAmount {
+              amount
+              asset
+              valueUSD
+            }
+          }
+        }
+      `,
+      {
+        // variables
+        userAddress,
+        walletType,
+        walletProvider,
+        timestamp,
+        farm,
+        underlyingAmounts,
+        lpAmount,
+      }
+    )
+    .toPromise();
+  const removeLiquidityEvent =
+    removeLiquidityObj?.data?.createRemoveLiquidityEvent;
+  return { removeLiquidityEvent };
+};
+
+export const createStakeEvent = async (
+  userAddress: string,
+  walletType: string,
+  walletProvider: string,
+  timestamp: string,
+  farm: FarmPruned,
+  lpAmount: Amount
+): Promise<{ stakeEvent: StakeEvent }> => {
+  const stakeEventObj = await client
+    .mutation(
+      gql`
+        mutation CreateStakeEvent(
+          $userAddress: String!
+          $walletType: String!
+          $walletProvider: String!
+          $timestamp: String!
+          $farm: FarmPruned!
+          $lpAmount: Amount!
+        ) {
+          createStakeEvent(
+            userAddress: $userAddress
+            walletType: $walletType
+            walletProvider: $walletProvider
+            timestamp: $timestamp
+            farm: $farm
+            lpAmount: $lpAmount
+          ) {
+            userAddress
+            walletType
+            walletProvider
+            timestamp
+            farm {
+              id
+              chef
+              chain
+              protocol
+              assetSymbol
+            }
+            lpAmount {
+              amount
+              asset
+              valueUSD
+            }
+          }
+        }
+      `,
+      {
+        // variables
+        userAddress,
+        walletType,
+        walletProvider,
+        timestamp,
+        farm,
+        lpAmount,
+      }
+    )
+    .toPromise();
+  const stakeEvent = stakeEventObj?.data?.createStakeEvent;
+  return { stakeEvent };
+};
+
+export const createUnstakeEvent = async (
+  userAddress: string,
+  walletType: string,
+  walletProvider: string,
+  timestamp: string,
+  farm: FarmPruned,
+  lpAmount: Amount
+): Promise<{ unstakeEvent: UnstakeEvent }> => {
+  const unstakeEventObj = await client
+    .mutation(
+      gql`
+        mutation CreateUnstakeEvent(
+          $userAddress: String!
+          $walletType: String!
+          $walletProvider: String!
+          $timestamp: String!
+          $farm: FarmPruned!
+          $lpAmount: Amount!
+        ) {
+          createUnstakeEvent(
+            userAddress: $userAddress
+            walletType: $walletType
+            walletProvider: $walletProvider
+            timestamp: $timestamp
+            farm: $farm
+            lpAmount: $lpAmount
+          ) {
+            userAddress
+            walletType
+            walletProvider
+            timestamp
+            farm {
+              id
+              chef
+              chain
+              protocol
+              assetSymbol
+            }
+            lpAmount {
+              amount
+              asset
+              valueUSD
+            }
+          }
+        }
+      `,
+      {
+        // variables
+        userAddress,
+        walletType,
+        walletProvider,
+        timestamp,
+        farm,
+        lpAmount,
+      }
+    )
+    .toPromise();
+  const unstakeEvent = unstakeEventObj?.data?.createUnstakeEvent;
+  return { unstakeEvent };
+};
+
+export const createClaimRewardsEvent = async (
+  userAddress: string,
+  walletType: string,
+  walletProvider: string,
+  timestamp: string,
+  farm: FarmPruned,
+  rewards: Amount[]
+): Promise<{ claimRewardsEvent: ClaimRewardsEvent }> => {
+  const claimRewardsEventObj = await client
+    .mutation(
+      gql`
+        mutation CreateClaimRewardsEvent(
+          $userAddress: String!
+          $walletType: String!
+          $walletProvider: String!
+          $timestamp: String!
+          $farm: FarmPruned!
+          $rewards: [Amount!]!
+        ) {
+          createClaimRewardsEvent(
+            userAddress: $userAddress
+            walletType: $walletType
+            walletProvider: $walletProvider
+            timestamp: $timestamp
+            farm: $farm
+            rewards: $rewards
+          ) {
+            userAddress
+            walletType
+            walletProvider
+            timestamp
+            farm {
+              id
+              chef
+              chain
+              protocol
+              assetSymbol
+            }
+            rewards {
+              amount
+              asset
+              valueUSD
+            }
+          }
+        }
+      `,
+      {
+        // variables
+        userAddress,
+        walletType,
+        walletProvider,
+        timestamp,
+        farm,
+        rewards,
+      }
+    )
+    .toPromise();
+  const claimRewardsEvent = claimRewardsEventObj?.data?.createClaimRewardsEvent;
+  return { claimRewardsEvent };
 };

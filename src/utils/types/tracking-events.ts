@@ -28,3 +28,40 @@ export interface AddLiquidityEvent {
   underlyingAmounts: Amount[];
   lpAmount: Amount;
 }
+
+export interface RemoveLiquidityEvent {
+  userAddress: string;
+  walletType: string;
+  walletProvider: string;
+  timestamp: string;
+  farm: FarmPruned;
+  underlyingAmounts: Amount[];
+  lpAmount: Amount;
+}
+
+export interface StakeEvent {
+  userAddress: string;
+  walletType: string;
+  walletProvider: string;
+  timestamp: string;
+  farm: FarmPruned;
+  lpAmount: Amount;
+}
+
+export interface UnstakeEvent {
+  userAddress: string;
+  walletType: string;
+  walletProvider: string;
+  timestamp: string;
+  farm: FarmPruned;
+  lpAmount: Amount;
+}
+
+export interface ClaimRewardsEvent {
+  userAddress: string;
+  walletType: string;
+  walletProvider: string;
+  timestamp: string;
+  farm: FarmPruned;
+  rewards: Amount[];
+}
