@@ -73,8 +73,10 @@ export function protocolURL(protocolName: string): string {
       return "https://ceres-token.s3.eu-central-1.amazonaws.com/docs/Ceres%2BToken%2B-%2BDemeter%2BLitepaper%2B09.12.2021.pdf";
     case "kintsugi":
       return "https://www.interlay.io/kintsugi";
+    case "interlay":
+      return "https://app.interlay.io/";
     default:
-      return "";
+      return "/404";
   }
 }
 
@@ -101,8 +103,10 @@ export function chainURL(chainName: string): string {
       return "https://sora.org/";
     case "kintsugi kusama":
       return "https://www.interlay.io/kintsugi";
+    case "interlay polkadot":
+      return "https://www.interlay.io/";
     default:
-      return "";
+      return "/404";
   }
 }
 

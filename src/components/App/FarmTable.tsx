@@ -186,13 +186,10 @@ const FarmTable: FC<Props> = ({
             >
               <p className="inline-flex gap-x-2">
                 <span className="hidden lg:block cursor-default underline underline-offset-4 decoration-dashed">
-                  {showSupportedFarms
-                    ? "show untracked farms"
-                    : "show only supported farms"}
+                  show only supported farms
                 </span>
                 <Image
                   src="/icons/umbrella.svg"
-                  className={clsx(showSupportedFarms && "saturate-0")}
                   alt="supported farms"
                   height={16}
                   width={16}

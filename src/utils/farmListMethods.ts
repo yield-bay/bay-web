@@ -10,7 +10,7 @@ export function formatFirstLetter(name: string): string {
  * @param farm - Farm whose protocol URL is required
  * @returns - Protocol URL of the farm
  */
-export function farmURL(farm: any): string {
+export function farmURL(farm: FarmType): string {
   switch (farm.protocol.toLowerCase()) {
     case "stellaswap":
       return "https://app.stellaswap.com/farm";
@@ -48,8 +48,10 @@ export function farmURL(farm: any): string {
       return "https://farming.deotoken.io/farms";
     case "kintsugi":
       return "https://kintsugi.interlay.io/pools";
+    case "interlay":
+      return "https://app.interlay.io/pools";
     default:
-      return "";
+      return "/404";
   }
 }
 
