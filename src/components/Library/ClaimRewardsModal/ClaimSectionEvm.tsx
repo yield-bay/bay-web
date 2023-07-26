@@ -1,7 +1,13 @@
 import { useAtom } from "jotai";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { selectedPositionAtom, tokenPricesAtom } from "@store/atoms";
-import { claimModalOpenAtom } from "@store/commonAtoms";
+import {
+  farmsAtom,
+  lpTokenPricesAtom,
+  positionsAtom,
+  selectedPositionAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
+import { claimModalOpenAtom, evmPosLoadingAtom } from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
 import {
@@ -24,6 +30,7 @@ import { Address, parseAbi } from "viem";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import toUnits from "@utils/toUnits";
+import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
 
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
@@ -37,6 +44,12 @@ const ClaimSectionEvm = () => {
   const isOpenModalCondition = false; // Conditions to be written
   const [txnHash, setTxnHash] = useState<string>("");
 
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
+
   useEffect(() => {
     setIsProcessStep(false);
   }, [isOpen]);
@@ -46,8 +59,6 @@ const ClaimSectionEvm = () => {
     chainId: chain?.id,
     enabled: !!address,
   });
-
-  const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
   const [nativePrice, setNativePrice] = useState<number>(0);
   useEffect(() => {
@@ -114,6 +125,20 @@ const ClaimSectionEvm = () => {
   } = useWaitForTransaction({
     hash: claimRewardsData?.hash,
   });
+
+  useEffect(() => {
+    if (isSuccessClaimRewardsTxn) {
+      fetchEvmPositions({
+        farms,
+        positions,
+        setPositions,
+        setIsEvmPosLoading,
+        address,
+        tokenPricesMap,
+        lpTokenPricesMap,
+      });
+    }
+  }, [isSuccessClaimRewardsTxn]);
 
   const handleClaimRewards = async () => {
     try {

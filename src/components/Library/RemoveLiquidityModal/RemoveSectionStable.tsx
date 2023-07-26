@@ -2,6 +2,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
+  evmPosLoadingAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
@@ -16,7 +17,14 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import {
+  farmsAtom,
+  lpTokenPricesAtom,
+  positionsAtom,
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import { Address, formatUnits, parseAbi, parseUnits } from "viem";
 import {
   fixedAmtNum,
@@ -40,6 +48,7 @@ import { getNativeTokenAddress } from "@utils/network";
 // import { BN } from "bn.js";
 import BigNumber from "bignumber.js";
 import ChosenMethod from "./ChosenMethod";
+import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
 
 enum RemoveMethod {
   ALL = 0,
@@ -59,6 +68,12 @@ const RemoveSectionStable = () => {
   const publicClient = usePublicClient();
 
   const [txnHash, setTxnHash] = useState<string>("");
+
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
@@ -134,8 +149,6 @@ const RemoveSectionStable = () => {
     chainId: chain?.id,
     enabled: !!address,
   });
-
-  const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
   const [nativePrice, setNativePrice] = useState<number>(0);
   useEffect(() => {
@@ -290,6 +303,15 @@ const RemoveSectionStable = () => {
     if (isSuccessRemoveLiqTxn) {
       console.log("liquidity removed successfully");
       console.log("removeLiqTxnData", removeLiqTxnData);
+      fetchEvmPositions({
+        farms,
+        positions,
+        setPositions,
+        setIsEvmPosLoading,
+        address,
+        tokenPricesMap,
+        lpTokenPricesMap,
+      });
     }
   }, [isSuccessRemoveLiqTxn]);
 

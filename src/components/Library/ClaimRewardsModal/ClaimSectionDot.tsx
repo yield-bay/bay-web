@@ -3,13 +3,20 @@ import Image from "next/image";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { selectedPositionAtom } from "@store/atoms";
+import {
+  farmsAtom,
+  lpTokenPricesAtom,
+  positionsAtom,
+  selectedPositionAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import {
   accountInitAtom,
   claimModalOpenAtom,
   isInitialisedAtom,
   mangataAddressAtom,
   mangataPoolsAtom,
+  subPosLoadingAtom,
 } from "@store/commonAtoms";
 import { Spinner } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
@@ -23,6 +30,7 @@ import { formatTokenSymbols } from "@utils/farmListMethods";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import toUnits from "@utils/toUnits";
+import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
 
 const ClaimSectionDot = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
@@ -47,6 +55,12 @@ const ClaimSectionDot = () => {
   const [mangataAddress] = useAtom(mangataAddressAtom);
   const [isInitialised] = useAtom(isInitialisedAtom);
   const [mgxBalance, setMgxBalance] = useState<number>(0);
+
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
 
   const [token0, token1] = formatTokenSymbols(position?.lpSymbol ?? "");
 
@@ -148,6 +162,13 @@ const ClaimSectionDot = () => {
                         status="success"
                       />
                     ),
+                  });
+                  fetchSubstratePositions({
+                    farms,
+                    positions,
+                    setPositions,
+                    setIsSubPosLoading,
+                    account,
                   });
                   // unsub();
                   // resolve();

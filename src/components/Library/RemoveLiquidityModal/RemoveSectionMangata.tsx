@@ -9,10 +9,18 @@ import {
   mangataPoolsAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
+  subPosLoadingAtom,
 } from "@store/commonAtoms";
 import { formatTokenSymbols } from "@utils/farmListMethods";
 import MButton from "../MButton";
-import { selectedFarmAtom, slippageAtom } from "@store/atoms";
+import {
+  farmsAtom,
+  lpTokenPricesAtom,
+  positionsAtom,
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import { FarmType, MangataPool, UnderlyingAssets } from "@utils/types";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
@@ -27,6 +35,7 @@ import { BN } from "bn.js";
 import toUnits from "@utils/toUnits";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
+import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -61,6 +70,12 @@ const RemoveSectionMangata = () => {
   const [isInitialised] = useAtom(isInitialisedAtom);
   const [mgxBalance, setMgxBalance] = useState<number>(0);
   const [txnHash, setTxnHash] = useState<string>("");
+
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
 
   const [lpUpdated, setLpUpdated] = useState<number>(0);
 
@@ -547,6 +562,13 @@ const RemoveSectionMangata = () => {
                         status="success"
                       />
                     ),
+                  });
+                  fetchSubstratePositions({
+                    farms,
+                    positions,
+                    setPositions,
+                    setIsSubPosLoading,
+                    account,
                   });
                   // unsub();
                   // resolve();

@@ -11,15 +11,24 @@ import Spinner from "@components/Library/Spinner";
 import {
   accountInitAtom,
   addLiqModalOpenAtom,
+  evmPosLoadingAtom,
   isInitialisedAtom,
   mangataAddressAtom,
   mangataHelperAtom,
   mangataPoolsAtom,
   slippageModalOpenAtom,
+  subPosLoadingAtom,
 } from "@store/commonAtoms";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
-import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import {
+  farmsAtom,
+  lpTokenPricesAtom,
+  positionsAtom,
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import { formatTokenSymbols } from "@utils/farmListMethods";
 import { delay, getDecimalBN } from "@utils/xcm/common/utils";
 import BN from "bn.js";
@@ -31,6 +40,7 @@ import { useToast } from "@chakra-ui/react";
 import { MangataPool } from "@utils/types";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
+import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
 
 enum InputType {
   Off = -1,
@@ -61,6 +71,12 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [mangataAddress] = useAtom(mangataAddressAtom);
   const [isInitialised] = useAtom(isInitialisedAtom);
   const [mgxBalance, setMgxBalance] = useState<number>(0);
+
+  const [farms] = useAtom(farmsAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
+  const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
 
   const [SLIPPAGE] = useAtom(slippageAtom);
 
@@ -608,6 +624,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                         status="info"
                       />
                     ),
+                  });
+                  fetchSubstratePositions({
+                    farms,
+                    positions,
+                    setPositions,
+                    setIsSubPosLoading,
+                    account,
                   });
                   // unsub();
                   // Calling the ADD_LIQUIDITY tracker in isFinalised status
