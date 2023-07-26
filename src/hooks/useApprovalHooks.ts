@@ -29,9 +29,38 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
   });
 
   const isSuccess = useMemo(() => {
+    console.log(
+      "appdata",
+      tokenAddress,
+      data,
+      Number(data) ==
+        parseInt(
+          (
+            BigInt(
+              2 **
+                (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+                  ? 128
+                  : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
+                  ? 96
+                  : 256)
+            ) - BigInt(1)
+          ).toString()
+        )
+    );
     return (
       Number(data) ==
-      115792089237316195423570985008687907853269984665640564039457584007913129639935
+      parseInt(
+        (
+          BigInt(
+            2 **
+              (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+                ? 128
+                : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
+                ? 96
+                : 256)
+          ) - BigInt(1)
+        ).toString()
+      )
     );
   }, [data]);
 
@@ -59,10 +88,16 @@ const useApproveToken = (tokenAddress: Address, spender: Address) => {
     chainId: chain?.id,
     args: [
       spender, // spender
-      BigInt(
-        // value
-        "115792089237316195423570985008687907853269984665640564039457584007913129639935"
-      ),
+      (
+        BigInt(
+          2 **
+            (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+              ? 128
+              : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
+              ? 96
+              : 256)
+        ) - BigInt(1)
+      ).toString(),
     ],
     onError: (error) => {
       console.log(`Error while Approving:`, error);
