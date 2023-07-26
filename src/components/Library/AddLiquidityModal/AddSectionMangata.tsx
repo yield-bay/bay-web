@@ -41,6 +41,8 @@ import { MangataPool } from "@utils/types/common";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
+import { handleAddLiquidityEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 enum InputType {
   Off = -1,
@@ -613,7 +615,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                   setIsSuccess(true);
                   setIsInProcess(false);
                   setIsSigning(false);
-                  setLpUpdated(lpUpdated + 1);
                   console.log("Mint liquidity trxn finalised.");
                   toast({
                     position: "top",
@@ -680,6 +681,54 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       setIsSigning(false);
     }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("addliq txn success!");
+      setLpUpdated(lpUpdated + 1);
+
+      // Tracking
+      handleAddLiquidityEvent({
+        userAddress: account?.address!,
+        walletType: "DOT",
+        walletProvider: account?.wallet?.extensionName!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: selectedFarm?.id!,
+          chef: selectedFarm?.chef!,
+          chain: selectedFarm?.chain!,
+          protocol: selectedFarm?.protocol!,
+          assetSymbol: selectedFarm?.asset.symbol!,
+        },
+        underlyingAmounts: [
+          {
+            amount: fixedAmtNum(firstTokenAmount),
+            asset: token0,
+            valueUSD:
+              tokenPricesMap[
+                `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${token0}-${"token0Address"}`
+              ],
+          },
+          {
+            amount: fixedAmtNum(secondTokenAmount),
+            asset: token1,
+            valueUSD:
+              tokenPricesMap[
+                `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${token1}-${"token1Address"}`
+              ],
+          },
+        ],
+        lpAmount: {
+          amount: estimateLpMinted ?? 0,
+          asset: selectedFarm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${selectedFarm?.chain}-${selectedFarm?.protocol}-${selectedFarm?.asset.symbol}-${selectedFarm?.asset.address}`
+            ],
+        },
+      });
+    }
+  }, [isSuccess]);
 
   // conditions
   const token_0_not_enough =
