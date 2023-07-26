@@ -11,6 +11,7 @@ import { useAtom } from "jotai";
 import {
   addLiqModalOpenAtom,
   evmPosLoadingAtom,
+  lpUpdatedAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
 import {
@@ -22,7 +23,7 @@ import {
   tokenPricesAtom,
 } from "@store/atoms";
 import MButton from "../MButton";
-import { UnderlyingAssets } from "@utils/types";
+import { UnderlyingAssets } from "@utils/types/common";
 import {
   fixedAmtNum,
   getAddLiqFunctionName,
@@ -45,10 +46,12 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import { handleAddLiquidityEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain } = useNetwork();
 
   // Transaction Process Steps
@@ -78,6 +81,7 @@ const AddSectionStable: FC = () => {
   const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
   // Checking if farm assets have a lp-token pair
@@ -200,14 +204,41 @@ const AddSectionStable: FC = () => {
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
       console.log("addliq txn success!");
-      fetchEvmPositions({
-        farms,
-        positions,
-        setPositions,
-        setIsEvmPosLoading,
-        address,
-        tokenPricesMap,
-        lpTokenPricesMap,
+      setLpUpdated(lpUpdated + 1);
+
+      // Tracking
+      handleAddLiquidityEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: connector?.name!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: farm?.id!,
+          chef: farm?.chef!,
+          chain: farm?.chain!,
+          protocol: farm?.protocol!,
+          assetSymbol: farm?.asset.symbol!,
+        },
+        underlyingAmounts: farm?.asset.underlyingAssets.map((asset) => {
+          return {
+            amount: inputMapAmount[asset.address],
+            asset: asset.symbol,
+            valueUSD:
+              tokenPricesMap[
+                `${farm?.chain!}-${farm?.protocol!}-${asset.symbol}-${
+                  asset.address
+                }`
+              ],
+          };
+        })!,
+        lpAmount: {
+          amount: estLpAmount,
+          asset: farm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${farm?.chain}-${farm?.protocol}-${farm?.asset.symbol}-${farm?.asset.address}`
+            ],
+        },
       });
     }
   }, [isSuccessAddLiqTxn]);

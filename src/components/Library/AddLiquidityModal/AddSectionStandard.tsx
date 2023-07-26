@@ -12,6 +12,9 @@ import {
   useWaitForTransaction,
   usePublicClient,
 } from "wagmi";
+import { ethers } from "ethers";
+import Link from "next/link";
+import { CogIcon } from "@heroicons/react/solid";
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
@@ -35,19 +38,17 @@ import {
   getAddLiqFunctionName,
   getRouterAbi,
 } from "@utils/abis/contract-helper-methods";
-import { UnderlyingAssets } from "@utils/types";
+import { UnderlyingAssets } from "@utils/types/common";
 import toUnits from "@utils/toUnits";
 import useTokenReserves from "@hooks/useTokenReserves";
 import { useIsApprovedToken, useApproveToken } from "@hooks/useApprovalHooks";
 import useMinimumLPTokens from "@hooks/useMinLPTokens";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
-import { CogIcon } from "@heroicons/react/solid";
-import Link from "next/link";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
-import { ethers } from "ethers";
-import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import { handleAddLiquidityEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 enum InputType {
   Off = -1,
@@ -506,16 +507,52 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
       console.log("addliq txn success!");
-      // fetchEvmPositions({
-      //   farms,
-      //   positions,
-      //   setPositions,
-      //   setIsEvmPosLoading,
-      //   address,
-      //   tokenPricesMap,
-      //   lpTokenPricesMap,
-      // });
       setLpUpdated(lpUpdated + 1);
+
+      // Tracking
+      handleAddLiquidityEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: "Metamask",
+        timestamp: getTimestamp(),
+        farm: {
+          id: selectedFarm?.id!,
+          chef: selectedFarm?.chef!,
+          chain: selectedFarm?.chain!,
+          protocol: selectedFarm?.protocol!,
+          assetSymbol: selectedFarm?.asset.symbol!,
+        },
+        underlyingAmounts: [
+          {
+            amount: fixedAmtNum(firstTokenAmount),
+            asset: farmAsset0?.symbol,
+            valueUSD:
+              tokenPricesMap[
+                `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${
+                  farmAsset0?.symbol
+                }-${farmAsset0?.address}`
+              ],
+          },
+          {
+            amount: fixedAmtNum(secondTokenAmount),
+            asset: farmAsset1?.symbol,
+            valueUSD:
+              tokenPricesMap[
+                `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${
+                  farmAsset1?.symbol
+                }-${farmAsset1?.address}`
+              ],
+          },
+        ],
+        lpAmount: {
+          amount: minLpTokens,
+          asset: selectedFarm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${selectedFarm?.chain}-${selectedFarm?.protocol}-${selectedFarm?.asset.symbol}-${selectedFarm?.asset.address}`
+            ],
+        },
+      });
     }
   }, [isSuccessAddLiqTxn]);
 

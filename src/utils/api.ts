@@ -1,6 +1,12 @@
 import { createClient, defaultExchanges, gql } from "@urql/core";
 import { API_URL } from "./constants";
-import { FarmType, TokenPriceType, WalletConnectEventType } from "./types";
+import { FarmType, TokenPriceType } from "@utils/types/common";
+import {
+  AddLiquidityEvent,
+  Amount,
+  FarmPruned,
+  WalletConnectEvent,
+} from "@utils/types/tracking-events";
 
 const client = createClient({
   url: API_URL,
@@ -55,9 +61,7 @@ export const fetchListicleFarms = async (): Promise<{
       `
     )
     .toPromise();
-
   const farms = farmObj?.data?.farms;
-
   return {
     farms,
   };
@@ -101,9 +105,7 @@ export const fetchLpTokenPrices = async (): Promise<{
       }
     )
     .toPromise();
-
   const lpTokenPrices = lptokenPricesObj?.data?.lpTokenPrices;
-
   return {
     lpTokenPrices,
   };
@@ -147,9 +149,7 @@ export const fetchTokenPrices = async (): Promise<{
       }
     )
     .toPromise();
-
   const tokenPrices = tokenPricesObj?.data?.tokenPrices;
-
   return {
     tokenPrices,
   };
@@ -161,7 +161,7 @@ export const createWalletConnectEvent = async (
   walletProvider: string,
   timestamp: string
 ): Promise<{
-  walletConnectEvent: WalletConnectEventType;
+  walletConnectEvent: WalletConnectEvent;
 }> => {
   const walletConnectObj = await client
     .mutation(
@@ -194,8 +194,76 @@ export const createWalletConnectEvent = async (
       }
     )
     .toPromise();
-
   const walletConnectEvent = walletConnectObj?.data?.createWalletConnectEvent;
-
   return { walletConnectEvent };
+};
+
+export const createAddLiquidityEvent = async (
+  userAddress: string,
+  walletType: string,
+  walletProvider: string,
+  timestamp: string,
+  farm: FarmPruned,
+  underlyingAmounts: Amount[],
+  lpAmount: Amount
+): Promise<{ addLiquidityEvent: AddLiquidityEvent }> => {
+  const addLiquidityObj = await client
+    .mutation(
+      gql`
+        mutation CreateAddLiquidityEvent(
+          $userAddress: String!
+          $walletType: String!
+          $walletProvider: String!
+          $timestamp: String!
+          $farm: FarmPruned!
+          $underlyingAmounts: [Amount!]!
+          $lpAmount: Amount!
+        ) {
+          createAddLiquidityEvent(
+            userAddress: $userAddress
+            walletType: $walletType
+            walletProvider: $walletProvider
+            timestamp: $timestamp
+            farm: $farm
+            underlyingAmounts: $underlyingAmounts
+            lpAmount: $lpAmount
+          ) {
+            userAddress
+            walletType
+            walletProvider
+            timestamp
+            farm {
+              id
+              chef
+              chain
+              protocol
+              assetSymbol
+            }
+            underlyingAmounts {
+              amount
+              asset
+              valueUSD
+            }
+            lpAmount {
+              amount
+              asset
+              valueUSD
+            }
+          }
+        }
+      `,
+      {
+        // variables
+        userAddress,
+        walletType,
+        walletProvider,
+        timestamp,
+        farm,
+        underlyingAmounts,
+        lpAmount,
+      }
+    )
+    .toPromise();
+  const addLiquidityEvent = addLiquidityObj?.data?.createAddLiquidityEvent;
+  return { addLiquidityEvent };
 };
