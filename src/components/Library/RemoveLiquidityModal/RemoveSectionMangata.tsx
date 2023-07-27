@@ -40,6 +40,7 @@ import { fetchSubstratePositions } from "@utils/position-utils/substratePosition
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
+import { fetchTokenPricesMangata } from "@utils/fetch-prices";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -74,6 +75,16 @@ const RemoveSectionMangata = () => {
   const [isInitialised] = useAtom(isInitialisedAtom);
   const [mgxBalance, setMgxBalance] = useState<number>(0);
   const [txnHash, setTxnHash] = useState<string>("");
+
+  const [mgxPrice, setMgxPrice] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const mgxp = (await fetchTokenPricesMangata()).get("mgx")!;
+      console.log("mgxp", mgxp);
+      setMgxPrice(mgxp);
+    })();
+  });
 
   const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
@@ -247,7 +258,7 @@ const RemoveSectionMangata = () => {
     }
   };
 
-  const fees = 0.0014; // In STELLA
+  const [fees, setFees] = useState(0);
 
   const removeAmount = useMemo(() => {
     return methodId == 0
@@ -572,11 +583,11 @@ const RemoveSectionMangata = () => {
           >
             {/* <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
-              <p>
+              <p className="inline-flex">
                 <span className="opacity-40 mr-2 font-semibold">
-                  {fees} STELLA
+                  {fees.toFixed(3) ?? 0} MGX
                 </span>
-                <span>$1234</span>
+                <span>${(fees * mgxPrice).toFixed(5)}</span>
               </p>
             </div> */}
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">

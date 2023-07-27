@@ -44,6 +44,7 @@ import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import { fetchTokenPricesMangata } from "@utils/fetch-prices";
 
 enum InputType {
   Off = -1,
@@ -89,6 +90,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const secondInputRef = useRef<HTMLInputElement>(null);
 
   const [txnHash, setTxnHash] = useState<string>("");
+
+  const [mgxPrice, setMgxPrice] = useState(0);
+
+  useEffect(() => {
+    (async () => {
+      const mgxp = (await fetchTokenPricesMangata()).get("mgx")!;
+      console.log("mgxp", mgxp);
+      setMgxPrice(mgxp);
+    })();
+  });
 
   const [token0, token1] = formatTokenSymbols(
     // IS_PRODUCTION
@@ -907,10 +918,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               <span>Estimated Gas Fees:</span>
               <p className="inline-flex">
                 <span className="opacity-40 mr-2 font-semibold">
-                  {mgxBalance} MGX
+                  {fees.toFixed(3) ?? 0} MGX
                 </span>
-                <span>${mgxBalance} x MGX Price</span>
-                {/* <span>${(gasEstimate * nativePrice).toFixed(5)}</span> */}
+                <span>${(fees * mgxPrice).toFixed(5)}</span>
               </p>
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
