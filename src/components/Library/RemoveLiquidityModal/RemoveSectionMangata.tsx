@@ -4,6 +4,7 @@ import clsx from "clsx";
 import {
   accountInitAtom,
   isInitialisedAtom,
+  lpUpdatedAtom,
   mangataAddressAtom,
   mangataHelperAtom,
   mangataPoolsAtom,
@@ -36,6 +37,9 @@ import toUnits from "@utils/toUnits";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
+import { handleRemoveLiquidityEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
+import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -77,7 +81,7 @@ const RemoveSectionMangata = () => {
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
 
-  const [lpUpdated, setLpUpdated] = useState<number>(0);
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   const toast = useToast();
 
@@ -256,11 +260,6 @@ const RemoveSectionMangata = () => {
   const handleRemoveLiquidity = async () => {
     setIsInProcess(true);
 
-    // const pool = _.find(pools, {
-    //   firstTokenId: mangataHelper.getTokenIdBySymbol(token0),
-    //   secondTokenId: mangataHelper.getTokenIdBySymbol(token1),
-    // });
-
     let perc = percentage;
     if (percentage == "") {
       console.log("per is empty so using 100%");
@@ -334,8 +333,6 @@ const RemoveSectionMangata = () => {
           bltx = await mangataHelper.burnLiquidityTx(
             pool?.firstTokenId,
             pool?.secondTokenId,
-            // (BigInt(lpBalance.free) * BigInt(parseInt(perc, 10))) /
-            //   BigInt(100) +
             (BigInt(lpBalance.reserved) * BigInt(parseInt(perc, 10))) /
               BigInt(100),
             parseInt(perc, 10)
@@ -349,132 +346,6 @@ const RemoveSectionMangata = () => {
           );
         }
         txns.push(bltx);
-        //   .signAndSend(
-        //     account1?.address,
-        //     { signer: signer },
-        //     async ({ status }: any) => {
-        //       if (status.isInBlock) {
-        //         console.log("Burn Liquidity in block now!");
-        //         // unsub();
-        //         // resolve();
-        //       } else if (status.isFinalized) {
-        //         (async () => {
-        //           const tranHash = status.asFinalized.toString();
-        //           console.log(
-        //             `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
-        //           );
-        //           await delay(20000);
-        //           console.log("after delay");
-        //           const block = await mangataHelper.api.rpc.chain.getBlock(
-        //             tranHash
-        //           );
-        //           console.log("block", block);
-        //           console.log("block", JSON.stringify(block));
-        //           const bhn = parseInt(block.block.header.number) + 1;
-        //           console.log("num", bhn);
-        //           const blockHash =
-        //             await mangataHelper.api.rpc.chain.getBlockHash(bhn);
-        //           console.log(`blockHash ${blockHash}`);
-        //           console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
-        //           // const blockEvents =
-        //           //   await mangataHelper.api.query.system.events.at(tranHash);
-        //           const at = await mangataHelper.api.at(blockHash);
-        //           const blockEvents = await at.query.system.events();
-        //           console.log("blockEvents", blockEvents);
-        //           let allSuccess = true;
-        //           blockEvents.forEach((d: any) => {
-        //             const {
-        //               phase,
-        //               event: { data, method, section },
-        //             } = d;
-        //             console.info("method");
-        //             console.info(method);
-        //             if (
-        //               method === "BatchInterrupted" ||
-        //               method === "ExtrinsicFailed"
-        //             ) {
-        //               console.log("failed is true");
-        //               // failed = true;
-        //               console.log("Error in addliq Tx:");
-        //               allSuccess = false;
-        //               setIsSuccess(false);
-        //               setIsSigning(false);
-        //               setIsInProcess(false);
-        //               toast({
-        //                 position: "top",
-        //                 duration: 3000,
-        //                 render: () => (
-        //                   <ToastWrapper
-        //                     title="Error while minting Liquidity!"
-        //                     status="error"
-        //                   />
-        //                 ),
-        //               });
-        //             }
-        //           });
-        //           if (allSuccess) {
-        //             console.log("allSuccess", allSuccess);
-        //             setIsSuccess(true);
-        //             setIsInProcess(false);
-        //             setIsSigning(false);
-        //             setLpUpdated(lpUpdated + 1);
-        //             console.log(
-        //               `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
-        //             );
-        //             toast({
-        //               position: "top",
-        //               duration: 3000,
-        //               render: () => (
-        //                 <ToastWrapper
-        //                   title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
-        //                   status="success"
-        //                 />
-        //               ),
-        //             });
-        //             // unsub();
-        //             // resolve();
-        //             // createLiquidityEventHandler(
-        //             //   turingAddress as string,
-        //             //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
-        //             //   { symbol: token0, amount: firstTokenNumber },
-        //             //   { symbol: token1, amount: secondTokenNumber },
-        //             //   {
-        //             //     symbol: `${token0}-${token1}`,
-        //             //     amount:
-        //             //       method == 0
-        //             //         ? ((lpBalanceNum as number) *
-        //             //             parseFloat(percentage)) /
-        //             //           100
-        //             //         : parseFloat(lpAmount),
-        //             //   }, // Amount of Liquidity burnt
-        //             //   getTimestamp(),
-        //             //   0.0,
-        //             //   "REMOVE_LIQUIDITY"
-        //             // );
-        //           }
-        //         })();
-        //       } else {
-        //         setIsSigning(false);
-        //         console.log(`Status: ${status.type}`);
-        //       }
-        //     }
-        //   )
-        //   .catch((e: any) => {
-        //     console.log("Error in burnLiquidityTx", e);
-        //     setIsInProcess(false);
-        //     setIsSigning(false);
-        //     setIsSuccess(false);
-        //     toast({
-        //       position: "top",
-        //       duration: 3000,
-        //       render: () => (
-        //         <ToastWrapper
-        //           title="Error while removing Liquidity. Please try again later."
-        //           status="error"
-        //         />
-        //       ),
-        //     });
-        //   });
       }
 
       const removeLiqBatchTx = mangataHelper.api.tx.utility.batchAll(txns);
@@ -549,7 +420,7 @@ const RemoveSectionMangata = () => {
                   setIsSuccess(true);
                   setIsInProcess(false);
                   setIsSigning(false);
-                  setLpUpdated(lpUpdated + 1);
+                  // setLpUpdated(lpUpdated + 1);
                   console.log(
                     `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
                   );
@@ -662,7 +533,6 @@ const RemoveSectionMangata = () => {
         <div className="text-[#344054] text-left">
           <p className="text-base font-medium leading-5">You receive:</p>
           <div className="inline-flex gap-x-4 mt-3">
-            {}
             {[token0, token1].map((token, index) => (
               <div
                 key={index}
@@ -752,6 +622,58 @@ const RemoveSectionMangata = () => {
       </div>
     );
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("liquidity removed successfully");
+      setLpUpdated(lpUpdated + 1);
+
+      handleRemoveLiquidityEvent({
+        userAddress: account?.address!,
+        walletType: "DOT",
+        walletProvider: account?.wallet?.extensionName!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: farm?.id!,
+          chef: farm?.chef!,
+          chain: farm?.chain!,
+          protocol: farm?.protocol!,
+          assetSymbol: farm?.asset.symbol!,
+        },
+        underlyingAmounts: [token0, token1].map((token) => {
+          return {
+            amount: 0,
+            asset: token,
+            valueUSD:
+              tokenPricesMap[
+                `${farm?.chain!}-${farm?.protocol!}-${token}-${"NA"}`
+              ],
+          };
+        })!,
+        lpAmount: {
+          amount:
+            methodId == 0
+              ? (lpBalanceNum * fixedAmtNum(percentage)) / 100
+              : fixedAmtNum(lpTokens),
+          asset: farm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${farm?.chain}-${farm?.protocol}-${farm?.asset.symbol}-${farm?.asset.address}`
+            ],
+        },
+      });
+
+      // fetchEvmPositions({
+      //   farms,
+      //   positions,
+      //   setPositions,
+      //   setIsEvmPosLoading,
+      //   address,
+      //   tokenPricesMap,
+      //   lpTokenPricesMap,
+      // });
+    }
+  }, [isSuccess]);
 
   const ConfirmStep = () => {
     return (

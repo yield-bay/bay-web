@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
   evmPosLoadingAtom,
+  lpUpdatedAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
@@ -47,10 +48,14 @@ import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import ChosenMethod from "./ChosenMethod";
 import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import { handleRemoveLiquidityEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 const RemoveSectionStandard = () => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const publicClient = usePublicClient();
+
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -212,17 +217,55 @@ const RemoveSectionStandard = () => {
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
-      console.log("liquidity removed successfully");
-      console.log("removeLiqTxnData", removeLiqTxnData);
-      fetchEvmPositions({
-        farms,
-        positions,
-        setPositions,
-        setIsEvmPosLoading,
-        address,
-        tokenPricesMap,
-        lpTokenPricesMap,
+      console.log("liquidity removed successfully", removeLiqTxnData);
+      setLpUpdated(lpUpdated + 1);
+
+      handleRemoveLiquidityEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: connector?.name!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: farm?.id!,
+          chef: farm?.chef!,
+          chain: farm?.chain!,
+          protocol: farm?.protocol!,
+          assetSymbol: farm?.asset.symbol!,
+        },
+        underlyingAmounts: farm?.asset.underlyingAssets.map((asset, index) => {
+          return {
+            amount: minUnderlyingAssets[index],
+            asset: asset.symbol,
+            valueUSD:
+              tokenPricesMap[
+                `${farm?.chain!}-${farm?.protocol!}-${asset.symbol}-${
+                  asset.address
+                }`
+              ],
+          };
+        })!,
+        lpAmount: {
+          amount:
+            methodId == Method.PERCENTAGE
+              ? (fixedAmtNum(lpBalance) * fixedAmtNum(percentage)) / 100
+              : fixedAmtNum(lpTokens),
+          asset: farm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${farm?.chain}-${farm?.protocol}-${farm?.asset.symbol}-${farm?.asset.address}`
+            ],
+        },
       });
+
+      // fetchEvmPositions({
+      //   farms,
+      //   positions,
+      //   setPositions,
+      //   setIsEvmPosLoading,
+      //   address,
+      //   tokenPricesMap,
+      //   lpTokenPricesMap,
+      // });
     }
   }, [isSuccessRemoveLiqTxn]);
 

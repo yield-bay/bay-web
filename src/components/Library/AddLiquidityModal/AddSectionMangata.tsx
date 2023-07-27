@@ -13,6 +13,7 @@ import {
   addLiqModalOpenAtom,
   evmPosLoadingAtom,
   isInitialisedAtom,
+  lpUpdatedAtom,
   mangataAddressAtom,
   mangataHelperAtom,
   mangataPoolsAtom,
@@ -57,7 +58,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [lpBalance, setLpBalance] = useState<number>(0);
   const [fees, setFees] = useState<number>(0);
 
-  const [lpUpdated, setLpUpdated] = useState<number>(0);
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   const toast = useToast();
 

@@ -3,6 +3,7 @@ import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
   evmPosLoadingAtom,
+  lpUpdatedAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
@@ -45,11 +46,10 @@ import toUnits from "@utils/toUnits";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
-// import { ethers } from "ethers";
-// import { BN } from "bn.js";
 import BigNumber from "bignumber.js";
 import ChosenMethod from "./ChosenMethod";
-import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import { handleRemoveLiquidityEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 enum RemoveMethod {
   ALL = 0,
@@ -62,10 +62,11 @@ const RemoveSectionStable = () => {
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
   const [SLIPPAGE] = useAtom(slippageAtom);
 
   const { chain } = useNetwork();
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const publicClient = usePublicClient();
 
   const [txnHash, setTxnHash] = useState<string>("");
@@ -77,23 +78,6 @@ const RemoveSectionStable = () => {
   const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
-
-  // const { data: tokensSeqArr } = useContractRead({
-  //   address:
-  //     farm?.protocol.toLowerCase() == "curve"
-  //       ? farm?.asset.address
-  //       : farm?.router,
-  //   abi: parseAbi(
-  //     getRouterAbi(
-  //       farm?.protocol!,
-  //       farm?.farmType == "StandardAmm" ? false : true
-  //     )
-  //   ),
-  //   functionName: "getTokens",
-  //   chainId: chain?.id,
-  //   enabled: !!chain && !!farm,
-  // });
-  // const tokensSeq = tokensSeqArr as Address[];
 
   // Balance of LP Token
   const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
@@ -110,12 +94,7 @@ const RemoveSectionStable = () => {
 
   const tokensArr = farm?.asset.underlyingAssets ?? [];
   const tokens = useMemo(() => {
-    // if (farm?.protocol.toLowerCase() == "curve") return tokensArr;
-    // if (!tokensArr || !tokensSeq) return new Array<UnderlyingAssets>();
     if (!tokensArr) return new Array<UnderlyingAssets>();
-    // return tokensSeq.map(
-    //   (address) => tokensArr.find((token) => token.address == address)!
-    // );
     return tokensArr;
   }, [tokensArr]);
 
@@ -232,20 +211,6 @@ const RemoveSectionStable = () => {
     }
   };
 
-  // // Gas estimate
-  // const { gasEstimate } = useGasEstimation(
-  //   farm!.router,
-  //   1,
-  //   1,
-  //   getRemoveLiqStableFunctionName(
-  //     removeMethodId,
-  //     farm?.protocol as string
-  //   ) as any,
-  //   farm!,
-  //   address!,
-  //   getArgs(removeMethodId, farm?.protocol!, indiTokenId, 1784096161000)
-  // );
-
   // Check if already approved
   const {
     data: isLpApprovedData,
@@ -302,17 +267,69 @@ const RemoveSectionStable = () => {
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
-      console.log("liquidity removed successfully");
-      console.log("removeLiqTxnData", removeLiqTxnData);
-      fetchEvmPositions({
-        farms,
-        positions,
-        setPositions,
-        setIsEvmPosLoading,
-        address,
-        tokenPricesMap,
-        lpTokenPricesMap,
+      console.log("liquidity removed successfully", removeLiqTxnData);
+      setLpUpdated(lpUpdated + 1);
+
+      handleRemoveLiquidityEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: connector?.name!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: farm?.id!,
+          chef: farm?.chef!,
+          chain: farm?.chain!,
+          protocol: farm?.protocol!,
+          assetSymbol: farm?.asset.symbol!,
+        },
+        underlyingAmounts:
+          removeMethodId == RemoveMethod.ALL
+            ? tokens?.map((token, index) => {
+                return {
+                  amount: (minAmount as number[])[index],
+                  asset: token.symbol,
+                  valueUSD:
+                    tokenPricesMap[
+                      `${farm?.chain!}-${farm?.protocol!}-${token.symbol}-${
+                        token.address
+                      }`
+                    ],
+                };
+              })
+            : [
+                // RemoveMethod.INDIVIDUAL
+                {
+                  amount: minAmount as number,
+                  asset: tokens[indiTokenId]?.symbol,
+                  valueUSD:
+                    tokenPricesMap[
+                      `${farm?.chain!}-${farm?.protocol!}-${
+                        tokens[indiTokenId]?.symbol
+                      }-${tokens[indiTokenId]?.address}`
+                    ],
+                },
+              ],
+        lpAmount: {
+          amount:
+            methodId == Method.PERCENTAGE
+              ? (fixedAmtNum(lpBalance) * fixedAmtNum(percentage)) / 100
+              : fixedAmtNum(lpTokens),
+          asset: farm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${farm?.chain}-${farm?.protocol}-${farm?.asset.symbol}-${farm?.asset.address}`
+            ],
+        },
       });
+      // fetchEvmPositions({
+      //   farms,
+      //   positions,
+      //   setPositions,
+      //   setIsEvmPosLoading,
+      //   address,
+      //   tokenPricesMap,
+      //   lpTokenPricesMap,
+      // });
     }
   }, [isSuccessRemoveLiqTxn]);
 

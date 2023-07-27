@@ -64,7 +64,7 @@ const getPoolRatio = (r0: string, r1: string, d0: number, d1: number) => {
 };
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain } = useNetwork();
   const publicClient = usePublicClient();
   const [isOpen, setIsOpen] = useAtom(addLiqModalOpenAtom);
@@ -513,7 +513,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       handleAddLiquidityEvent({
         userAddress: address!,
         walletType: "EVM",
-        walletProvider: "Metamask",
+        walletProvider: connector?.name!,
         timestamp: getTimestamp(),
         farm: {
           id: selectedFarm?.id!,
