@@ -71,45 +71,54 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
               setRemoveLiqModalOpen(true);
               setSelectedFarm(farm);
             }}
-            disabled={!!position ? position.unstaked.amountUSD < 0.01 : true}
+            disabled={
+              !!position
+                ? position.staked.amount + position.unstaked.amount < 0.01
+                : true
+            }
             tooltipText="You need to have liquidity first"
           >
             <span>Remove Liquidity</span>
             <MinusIcon className="text-black h-4 w-4" />
           </ModalButton>
-          <ModalButton
-            onClick={() => {
-              setStakingModalOpen(true);
-              setSelectedFarm(farm);
-            }}
-            disabled={!!position ? position.unstaked.amountUSD < 0.01 : true}
-            tooltipText="You need to have liquidity first"
-          >
-            <span>Stake</span>
-            <Image
-              src="/icons/ArrowLineUpIcon.svg"
-              alt="Stake"
-              height="16"
-              width="16"
-            />
-          </ModalButton>
-          <ModalButton
-            onClick={() => {
-              setUnstakingModalOpen(true);
-              setSelectedFarm(farm);
-            }}
-            disabled={!!position ? position.staked.amountUSD < 0.01 : true}
-            tooltipText="You need to stake tokens first"
-          >
-            <span>Unstake</span>
-            <Image
-              className="transform rotate-180"
-              src="/icons/ArrowLineUpIcon.svg"
-              alt="Stake"
-              height="16"
-              width="16"
-            />
-          </ModalButton>
+          {(farm?.chain.toLowerCase() != "mangata kusama" ||
+            farm?.protocol.toLowerCase() != "mangata x") && (
+            <>
+              <ModalButton
+                onClick={() => {
+                  setStakingModalOpen(true);
+                  setSelectedFarm(farm);
+                }}
+                disabled={!!position ? position.unstaked.amount < 0.01 : true}
+                tooltipText="You need to have liquidity first"
+              >
+                <span>Stake</span>
+                <Image
+                  src="/icons/ArrowLineUpIcon.svg"
+                  alt="Stake"
+                  height="16"
+                  width="16"
+                />
+              </ModalButton>
+              <ModalButton
+                onClick={() => {
+                  setUnstakingModalOpen(true);
+                  setSelectedFarm(farm);
+                }}
+                disabled={!!position ? position.staked.amount < 0.01 : true}
+                tooltipText="You need to stake tokens first"
+              >
+                <span>Unstake</span>
+                <Image
+                  className="transform rotate-180"
+                  src="/icons/ArrowLineUpIcon.svg"
+                  alt="Stake"
+                  height="16"
+                  width="16"
+                />
+              </ModalButton>
+            </>
+          )}
         </Menu.Items>
       </Transition>
     </Menu>
