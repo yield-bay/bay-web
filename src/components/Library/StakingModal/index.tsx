@@ -2,6 +2,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
+  lpUpdatedAtom,
   slippageModalOpenAtom,
   stakingModalOpenAtom,
 } from "@store/commonAtoms";
@@ -14,7 +15,12 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import {
+  lpTokenPricesAtom,
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 // import { stellaswapV1ChefAbi } from "@components/Common/Layout/evmUtils";
 import { Address, parseAbi, parseUnits } from "viem";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
@@ -24,14 +30,12 @@ import Image from "next/image";
 import { FarmType } from "@utils/types/common";
 import Spinner from "../Spinner";
 import Link from "next/link";
-import {
-  fixedAmtNum,
-  getChefAbi,
-  getRemoveLiquidFunctionName,
-} from "@utils/abis/contract-helper-methods";
+import { fixedAmtNum, getChefAbi } from "@utils/abis/contract-helper-methods";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
+import { handleStakeEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -47,8 +51,11 @@ interface ChosenMethodProps {
 }
 
 const StakingModal = () => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain } = useNetwork();
+
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
+  const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -206,20 +213,50 @@ const StakingModal = () => {
   const handleStaking = async () => {
     try {
       const args = getArgs();
-
       console.log("stake args", args);
-
       const txnRes = await staking?.({
         args: args,
       });
       if (!!txnRes) {
+        console.log("txnResult", txnRes);
         setTxnHash(txnRes.hash);
       }
-      console.log("txnResult", txnRes);
     } catch (error) {
-      console.error(error);
+      console.error("Staking Error", error);
     }
   };
+
+  useEffect(() => {
+    if (isSuccessStakingTxn) {
+      console.log("addliq txn success!");
+      setLpUpdated(lpUpdated + 1);
+      // Tracking
+      handleStakeEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: connector?.name!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: farm?.id!,
+          chef: farm?.chef!,
+          chain: farm?.chain!,
+          protocol: farm?.protocol!,
+          assetSymbol: farm?.asset.symbol!,
+        },
+        lpAmount: {
+          amount:
+            methodId == 0
+              ? (lpBalanceNum * fixedAmtNum(percentage)) / 100
+              : fixedAmtNum(lpTokens),
+          asset: farm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${farm?.chain}-${farm?.protocol}-${farm?.asset.symbol}-${farm?.asset.address}`
+            ],
+        },
+      });
+    }
+  }, [isSuccessStakingTxn]);
 
   const stakeAmount = useMemo(() => {
     return methodId == 0

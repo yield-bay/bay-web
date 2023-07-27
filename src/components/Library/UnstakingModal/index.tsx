@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
+  lpUpdatedAtom,
   slippageModalOpenAtom,
   unstakingModalOpenAtom,
 } from "@store/commonAtoms";
@@ -14,7 +15,12 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import MButton from "../MButton";
-import { selectedFarmAtom, slippageAtom, tokenPricesAtom } from "@store/atoms";
+import {
+  lpTokenPricesAtom,
+  selectedFarmAtom,
+  slippageAtom,
+  tokenPricesAtom,
+} from "@store/atoms";
 import { Address, parseAbi, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
@@ -28,6 +34,8 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import toUnits from "@utils/toUnits";
+import { handleUnstakeEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -43,7 +51,7 @@ interface ChosenMethodProps {
 }
 
 const UnstakingModal = () => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain } = useNetwork();
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
@@ -52,6 +60,9 @@ const UnstakingModal = () => {
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(unstakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
+
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
+  const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
@@ -213,6 +224,38 @@ const UnstakingModal = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (isSuccessUnstakingTxn) {
+      console.log("addliq txn success!");
+      setLpUpdated(lpUpdated + 1);
+      // Tracking
+      handleUnstakeEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: connector?.name!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: farm?.id!,
+          chef: farm?.chef!,
+          chain: farm?.chain!,
+          protocol: farm?.protocol!,
+          assetSymbol: farm?.asset.symbol!,
+        },
+        lpAmount: {
+          amount:
+            methodId == Method.PERCENTAGE
+              ? (staked * fixedAmtNum(percentage)) / 100
+              : fixedAmtNum(lpTokens),
+          asset: farm?.asset.symbol!,
+          valueUSD:
+            lpTokenPricesMap[
+              `${farm?.chain}-${farm?.protocol}-${farm?.asset.symbol}-${farm?.asset.address}`
+            ],
+        },
+      });
+    }
+  }, [isSuccessUnstakingTxn]);
 
   const unstakeAmount = useMemo(() => {
     return methodId == Method.PERCENTAGE
