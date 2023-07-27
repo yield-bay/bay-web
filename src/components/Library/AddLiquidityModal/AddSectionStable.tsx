@@ -93,7 +93,13 @@ const AddSectionStable: FC = () => {
       symbol == "MAI-tripool" ||
       symbol == "FRAX-3pool" ||
       symbol == "MIM-3pool" ||
-      symbol == "MAI-3pool"
+      symbol == "MAI-3pool" ||
+      symbol == "4PUSDT" ||
+      symbol == "4JPYC" ||
+      symbol == "4WETH" ||
+      symbol == "4oUSD" ||
+      symbol == "4BAI" ||
+      symbol == "4WBNB"
     ) {
       // eg. FRAX-tripool -- logos = [FRAX, [USDC, BUSD, USDT]]
       logos = [
