@@ -14,6 +14,7 @@ import {
   sushiChefAbi,
   arthswapChefAbi,
   siriusChefAbi,
+  siriusRouterAbi,
 } from "@components/Common/Layout/evmUtils";
 import { Address } from "viem";
 
@@ -50,6 +51,8 @@ export function getRouterAbi(protocol: string, isStable: boolean): string[] {
   if (isStable) {
     if (protocol.toLocaleLowerCase() == "curve") {
       return curveLpAbi;
+    } else if (protocol.toLowerCase() == "sirius") {
+      return siriusRouterAbi;
     } else {
       return swapFlashLoanAbi;
     }

@@ -49,6 +49,7 @@ import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
 
 enum InputType {
   Off = -1,
@@ -506,8 +507,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
+      // (async () => {
       console.log("addliq txn success!");
-      setLpUpdated(lpUpdated + 1);
 
       // Tracking
       handleAddLiquidityEvent({
@@ -553,6 +554,17 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             ],
         },
       });
+      fetchEvmPositions({
+        farms,
+        positions,
+        setPositions,
+        setIsEvmPosLoading,
+        address,
+        tokenPricesMap,
+        lpTokenPricesMap,
+      });
+      // })();
+      // setLpUpdated(lpUpdated + 1);
     }
   }, [isSuccessAddLiqTxn]);
 

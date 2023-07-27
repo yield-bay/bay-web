@@ -18,6 +18,7 @@ interface TokenInputProps {
       [address: `0x${string}`]: string;
     }>
   >;
+  nativeBal: string;
   logos: string | string[];
   tokensLength: number;
   focusedInput: number;
@@ -31,6 +32,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
   inputMap,
   balanceMap,
   setBalanceMap,
+  nativeBal,
   logos,
   tokensLength,
   focusedInput,
@@ -53,10 +55,17 @@ const TokenInput: React.FC<TokenInputProps> = ({
 
   useEffect(() => {
     if (isSuccess && !balanceMap[token?.address]) {
-      console.log("ping");
+      console.log(
+        "pinguu",
+        token,
+        nativeBal,
+        token?.symbol == "ASTR",
+        balance?.formatted
+      );
       setBalanceMap((prev) => ({
         ...prev,
-        [token?.address]: balance?.formatted,
+        [token?.address]:
+          token?.symbol == "ASTR" ? nativeBal : balance?.formatted,
       }));
     }
   }, [isSuccess]);
@@ -113,8 +122,12 @@ const TokenInput: React.FC<TokenInputProps> = ({
                 <p className="flex flex-col items-end">
                   <span>Balance</span>
                   <span>
-                    {parseFloat(balance?.formatted).toLocaleString("en-US")}{" "}
-                    {balance?.symbol}
+                    {token?.symbol == "ASTR"
+                      ? nativeBal
+                      : parseFloat(balance?.formatted).toLocaleString(
+                          "en-US"
+                        )}{" "}
+                    {token?.symbol == "ASTR" ? "ASTR" : balance?.symbol}
                   </span>
                 </p>
               )

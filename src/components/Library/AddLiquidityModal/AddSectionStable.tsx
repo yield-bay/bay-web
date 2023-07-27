@@ -31,7 +31,7 @@ import {
 } from "@utils/abis/contract-helper-methods";
 import TokenInput from "./TokenInput";
 import TokenButton from "./TokenButton";
-import { Address, parseAbi, parseUnits } from "viem";
+import { Address, parseAbi, parseEther, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
@@ -301,6 +301,8 @@ const AddSectionStable: FC = () => {
 
       const txnRes = await addLiquidity?.({
         args: args_to_pass,
+        value:
+          farm?.asset.symbol == "nASTR-ASTR LP" ? amounts[0] : parseEther("0"),
       });
       console.log(`Adding Liquidity in ${farm?.asset.symbol} Farm`, txnRes);
       setTxnHash(txnRes?.hash);
@@ -329,6 +331,9 @@ const AddSectionStable: FC = () => {
             inputMap={inputMap}
             balanceMap={balanceMap}
             setBalanceMap={setBalanceMap}
+            nativeBal={parseFloat(nativeBal?.formatted!).toLocaleString(
+              "en-US"
+            )}
             logos={logos[index]}
             tokensLength={tokens.length}
             focusedInput={focusedInput}

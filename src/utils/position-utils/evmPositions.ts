@@ -91,8 +91,8 @@ export const fetchEvmPositions = async ({
     chain.protocols.forEach((protocol) => {
       const filteredFarms = farms.filter((f: FarmType) => {
         return (
-          f.protocol == protocol.name &&
-          f.chain == chain.name &&
+          f.protocol.toLowerCase() == protocol.name &&
+          f.chain.toLowerCase() == chain.name &&
           f.chef == protocol.chef
         );
       });
@@ -158,7 +158,7 @@ export const fetchEvmPositions = async ({
               unstakedLpAmount
             );
 
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
             let pending: any;
             let ucrewAddrs: any;
@@ -197,7 +197,7 @@ export const fetchEvmPositions = async ({
                 ucrewSymbols[i],
                 ucrewAmounts[i],
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                 ]
               );
               ucrews.push({
@@ -207,7 +207,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ],
               });
             }
@@ -221,7 +221,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
                 chain: chain.name,
@@ -235,7 +235,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 staked: {
@@ -243,7 +243,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -260,7 +260,7 @@ export const fetchEvmPositions = async ({
               "afterstellaswappositions",
               positions,
               "key",
-              `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+              `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
             );
           }
         );
@@ -320,7 +320,7 @@ export const fetchEvmPositions = async ({
               "solarbeamunstakedLpAmount",
               unstakedLpAmount
             );
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const pendingTokens = await chef.pendingTokens(ff.id, address);
             const ucrewAddrs: any = Object.values(pendingTokens)[0];
             const ucrewSymbols: any = Object.values(pendingTokens)[1];
@@ -345,7 +345,7 @@ export const fetchEvmPositions = async ({
                 ucrewSymbols[i],
                 "\ntokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                 ]
               );
               ucrews.push({
@@ -355,7 +355,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ],
               });
             }
@@ -371,7 +371,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -382,7 +382,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 staked: {
@@ -390,7 +390,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -462,7 +462,7 @@ export const fetchEvmPositions = async ({
               "zlkunstakedLpAmount",
               unstakedLpAmount
             );
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const rewardTokens: any = Object.values(poolInfo)[2];
             console.log("rewardTokens", rewardTokens);
             const pendingRewards = await chef.pendingRewards(ff.id, address);
@@ -480,7 +480,7 @@ export const fetchEvmPositions = async ({
                 dec,
                 "\ntoken price:",
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
+                  `${ff.chain}-${ff.protocol}-${sym}-${rewardTokens[i]}`
                 ]
               );
               ucrews.push({
@@ -489,7 +489,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(rewards[i]) / 10 ** Number(dec)) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${sym}-${rewardTokens[i]}`
+                    `${ff.chain}-${ff.protocol}-${sym}-${rewardTokens[i]}`
                   ],
               });
             }
@@ -498,11 +498,11 @@ export const fetchEvmPositions = async ({
 
             let price =
               lpTokenPricesMap[
-                `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
               ] *
               10 ** 18;
             if (ff.asset.symbol == "ZLK") {
-              //  tokenPricesMap[`${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
+              //  tokenPricesMap[`${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`]
               const ts = Object.keys(tokenPricesMap).map((t) =>
                 t.startsWith("moonbeam-zenlink-ZLK") ||
                 t.startsWith("moonriver-zenlink-ZLK") ||
@@ -514,7 +514,7 @@ export const fetchEvmPositions = async ({
               const as = ts.filter((a) => a != "");
               console.log("aaas", as);
               if (as.length != 0) {
-                // tokenPricesMap[`${chain.name}-${protocol.name}-ZLK-${}`]
+                // tokenPricesMap[`${ff.chain}-${ff.protocol}-ZLK-${}`]
                 price = tokenPricesMap[as[0]];
                 console.log("priceee", price);
               }
@@ -530,7 +530,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -602,7 +602,7 @@ export const fetchEvmPositions = async ({
               "unstakedLpAmount",
               unstakedLpAmount
             );
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const rewardCount: any = await chef.reward_count();
             let ucrews: any = [];
             for (let i = 0; i < rewardCount; i++) {
@@ -624,11 +624,11 @@ export const fetchEvmPositions = async ({
                 dec,
                 "\ntokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-stellaswap-${sym}-${reward_token}`
+                  `${ff.chain}${ff.protocol}-${sym}-${reward_token}`
                 ],
                 "\nlpTokenPrice",
                 lpTokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                  `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                 ], // todo: should be reward token symbol
                 "\nsymbol",
                 ff.asset.symbol,
@@ -643,7 +643,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(claimable_reward) / 10 ** Number(dec)) *
                   tokenPricesMap[
-                    `${chain.name}-stellaswap-${sym}-${reward_token}`
+                    `${ff.chain}${ff.protocol}-${sym}-${reward_token}`
                   ],
               });
             }
@@ -659,7 +659,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -670,10 +670,10 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                   // lpTokenPricesMap[
-                  //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                  //   `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   // ],
                 },
                 staked: {
@@ -681,7 +681,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -753,7 +753,7 @@ export const fetchEvmPositions = async ({
               "beamswapunstakedLpAmount",
               unstakedLpAmount
             );
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const pendingTokens = await chef.pendingTokens(ff.id, address);
             const ucrewAddrs: any = Object.values(pendingTokens)[0];
             const ucrewSymbols: any = Object.values(pendingTokens)[1];
@@ -778,7 +778,7 @@ export const fetchEvmPositions = async ({
                 ucrewSymbols[i],
                 "\ntokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                 ]
               );
               ucrews.push({
@@ -788,7 +788,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ],
               });
             }
@@ -804,7 +804,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -815,7 +815,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 staked: {
@@ -823,7 +823,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -895,7 +895,7 @@ export const fetchEvmPositions = async ({
               "solarflareunstakedLpAmount",
               unstakedLpAmount
             );
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const pendingTokens = await chef.pendingTokens(ff.id, address);
             const ucrewAddrs: any = Object.values(pendingTokens)[0];
             const ucrewSymbols: any = Object.values(pendingTokens)[1];
@@ -920,7 +920,7 @@ export const fetchEvmPositions = async ({
                 ucrewSymbols[i],
                 "\ntokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                 ]
               );
               ucrews.push({
@@ -930,7 +930,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ],
               });
             }
@@ -946,7 +946,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -957,7 +957,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 staked: {
@@ -965,7 +965,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -1027,7 +1027,7 @@ export const fetchEvmPositions = async ({
               unstakedLpAmount
             );
 
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
             let pending: any;
             let ucrewAddrs: any;
@@ -1058,7 +1058,7 @@ export const fetchEvmPositions = async ({
                 ucrewSymbols[i],
                 "\ntokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                 ]
               );
               ucrews.push({
@@ -1068,7 +1068,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ],
               });
             }
@@ -1084,7 +1084,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -1095,7 +1095,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 staked: {
@@ -1103,7 +1103,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -1175,7 +1175,7 @@ export const fetchEvmPositions = async ({
               unstakedLpAmount
             );
 
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
             let pending: any;
             let ucrewAddrs: any;
@@ -1206,7 +1206,7 @@ export const fetchEvmPositions = async ({
                 ucrewSymbols[i],
                 "\ntokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                 ]
               );
               ucrews.push({
@@ -1216,7 +1216,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i])) *
                   tokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+                    `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
                   ],
               });
             }
@@ -1232,13 +1232,13 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
                 hmm:
                   unstakedLpAmount *
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
               });
 
@@ -1248,7 +1248,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 staked: {
@@ -1256,7 +1256,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
@@ -1274,7 +1274,9 @@ export const fetchEvmPositions = async ({
         );
         allPromises.push(...arth);
         // });
-      } else if (protocol.name == "sirius") {
+      } else if (protocol.name.toLowerCase() == "sirius") {
+        console.log("insidesir");
+
         let chef = new ethers.Contract(protocol.chef, siriusChefAbi, provider);
 
         const sir = filteredFarms.map(
@@ -1288,7 +1290,7 @@ export const fetchEvmPositions = async ({
             farmType: string;
           }) => {
             console.log(
-              "ff",
+              "ffsirius",
               ff.chain,
               ff.protocol,
               ff.chef,
@@ -1305,7 +1307,7 @@ export const fetchEvmPositions = async ({
             const stakedLpAmount =
               Number(await chef.balanceOf(address)) / 10 ** 18;
             const lp_token = await chef.lpToken();
-            console.log("lp_token", lp_token);
+            console.log("siriuslp_token", lp_token);
             const lp = new ethers.Contract(lp_token, lpAbi, provider);
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
@@ -1315,7 +1317,7 @@ export const fetchEvmPositions = async ({
               "unstakedLpAmount",
               unstakedLpAmount
             );
-            const name = `${chain.name}-${protocol.name}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
+            const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const rewardCount: any = await chef.rewardCount();
             let ucrews: any = [];
             for (let i = 0; i < rewardCount; i++) {
@@ -1325,7 +1327,7 @@ export const fetchEvmPositions = async ({
                 reward_token
               );
               console.log(
-                `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+                `sirreward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
               );
               const tok = new ethers.Contract(reward_token, lpAbi, provider);
               const sym = await tok.symbol();
@@ -1335,13 +1337,13 @@ export const fetchEvmPositions = async ({
                 sym,
                 "\ndec",
                 dec,
-                "\ntokenPrice",
+                "\nsirtokenPrice",
                 tokenPricesMap[
-                  `${chain.name}-stellaswap-${sym}-${reward_token}`
+                  `${ff.chain}-${ff.protocol}-${sym}-${reward_token}`
                 ],
                 "\nlpTokenPrice",
                 lpTokenPricesMap[
-                  `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                  `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                 ], // todo: should be reward token symbol
                 "\nsymbol",
                 ff.asset.symbol,
@@ -1356,7 +1358,7 @@ export const fetchEvmPositions = async ({
                 amountUSD:
                   (Number(claimable_reward) / 10 ** Number(dec)) *
                   tokenPricesMap[
-                    `${chain.name}-stellaswap-${sym}-${reward_token}`
+                    `${ff.chain}-${ff.protocol}-${sym}-${reward_token}`
                   ],
               });
             }
@@ -1372,7 +1374,7 @@ export const fetchEvmPositions = async ({
                 lpTokenPricesMap: lpTokenPricesMap,
                 lpTokenPrice:
                   lpTokenPricesMap[
-                    `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   ],
                 lpSymbol: ff.asset.symbol,
               });
@@ -1383,10 +1385,10 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     unstakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                   // lpTokenPricesMap[
-                  //   `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                  //   `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                   // ],
                 },
                 staked: {
@@ -1394,7 +1396,7 @@ export const fetchEvmPositions = async ({
                   amountUSD:
                     stakedLpAmount *
                     lpTokenPricesMap[
-                      `${chain.name}-${protocol.name}-${ff.asset.symbol}-${ff.asset.address}`
+                      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
                     ],
                 },
                 unclaimedRewards: ucrews,
