@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useAtom } from "jotai";
-import clsx from "clsx";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import {
   farmsAtom,
@@ -267,7 +266,7 @@ const ClaimSectionDot = () => {
           </div>
         </div>
         {/* Estimate Gas */}
-        <div
+        {/* <div
           className={clsx(
             "rounded-xl",
             // parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
@@ -275,7 +274,7 @@ const ClaimSectionDot = () => {
             // : "bg-[#FFB7B7]"
           )}
         >
-          {/* <div
+          <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
               // parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
@@ -292,12 +291,12 @@ const ClaimSectionDot = () => {
                 <span>$1234</span>
               </p>
             </div>
-          </div> */}
+          </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {/* {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES */}
-              {"Sufficient"}
-              {/* : "Insufficient"}{" "} */}
+              {parseFloat(nativeBal?.formatted ?? "0") > GAS_FEES
+                ? "Sufficient"
+                : "Insufficient"}{" "}
               Wallet Balance
             </h3>
             {false ? (
@@ -310,7 +309,7 @@ const ClaimSectionDot = () => {
               </span>
             )}
           </div>
-        </div>
+        </div> */}
         <MButton
           type="primary"
           className="mt-4"
