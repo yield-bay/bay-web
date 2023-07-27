@@ -90,7 +90,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const secondInputRef = useRef<HTMLInputElement>(null);
 
   const [txnHash, setTxnHash] = useState<string>("");
-
   const [mgxPrice, setMgxPrice] = useState(0);
 
   useEffect(() => {
@@ -99,13 +98,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       console.log("mgxp", mgxp);
       setMgxPrice(mgxp);
     })();
-  });
+  }, []);
 
-  const [token0, token1] = formatTokenSymbols(
-    // IS_PRODUCTION
-    selectedFarm?.asset.symbol!
-    // : replaceTokenSymbols(farm?.asset.symbol!)
-  );
+  const [token0, token1] = formatTokenSymbols(selectedFarm?.asset.symbol!);
 
   // Process states
   const [isInProcess, setIsInProcess] = useState(false);
@@ -333,24 +328,24 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     })();
   }, [account1, pool]);
 
-  const getFirstTokenRelation = () => {
+  const getFirstTokenRelation = (): number => {
     const poolRatio =
       Number(pool?.firstTokenAmountFloat) /
       Number(pool?.secondTokenAmountFloat);
     const expFirstTokenAmount = poolRatio;
     const firstTokenAmount = isNaN(expFirstTokenAmount)
-      ? "0"
+      ? 0
       : expFirstTokenAmount;
     return firstTokenAmount;
   };
 
-  const getSecondTokenRelation = () => {
+  const getSecondTokenRelation = (): number => {
     const poolRatio =
       Number(pool?.firstTokenAmountFloat) /
       Number(pool?.secondTokenAmountFloat);
     const expSecondTokenAmount = 1 / poolRatio;
     const secondTokenAmount = isNaN(expSecondTokenAmount)
-      ? "0"
+      ? 0
       : expSecondTokenAmount;
     return secondTokenAmount;
   };
@@ -788,8 +783,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                 <div className="flex flex-col items-end">
                   <span>Balance</span>
                   <span>
-                    {firstTokenBalance.toLocaleString("en-US")}
-                    {token0}
+                    {firstTokenBalance.toLocaleString("en-US")} {token0}
                   </span>
                 </div>
               )}
@@ -805,10 +799,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         {/* Low Balance */}
         {token_0_not_enough && (
           <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            You need {fixedAmtNum(firstTokenAmount) - (firstTokenBalance ?? 0)}{" "}
-            {token0} for creating an LP token with{" "}
-            {fixedAmtNum(secondTokenAmount)}
-            {token1}
+            {focusedInput == InputType.First
+              ? "Insufficient Balance"
+              : `You need ${
+                  fixedAmtNum(firstTokenAmount) - (firstTokenBalance ?? 0)
+                } ${token0} for creating an LP token with ${fixedAmtNum(
+                  secondTokenAmount
+                )} ${token1}`}
           </div>
         )}
         {/* Plus Icon */}
@@ -869,11 +866,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         </div>
         {token_1_not_enought && (
           <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            You need{" "}
-            {fixedAmtNum(secondTokenAmount) - (secondTokenBalance ?? 0)}{" "}
-            {token1} for creating an LP token with{" "}
-            {fixedAmtNum(firstTokenAmount)}
-            {token0}
+            {focusedInput == InputType.Second
+              ? "Insufficient Balance"
+              : `You need ${
+                  fixedAmtNum(secondTokenAmount) - (secondTokenBalance ?? 0)
+                } ${token1} for creating an LP token with ${fixedAmtNum(
+                  firstTokenAmount
+                )} ${token0}`}
           </div>
         )}
 
@@ -881,10 +880,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col items-start gap-y-2">
             <p>
-              {getFirstTokenRelation()} {token0} per {token1}
+              {getFirstTokenRelation() < 0.001
+                ? "<0.001"
+                : getFirstTokenRelation()}{" "}
+              {token0} per {token1}
             </p>
             <p>
-              {getSecondTokenRelation()} {token1} per {token0}
+              {getSecondTokenRelation() < 0.001
+                ? "<0.001"
+                : getSecondTokenRelation().toLocaleString("en-US")}{" "}
+              {token1} per {token0}
             </p>
           </div>
           <p className="flex flex-col items-end">
@@ -918,7 +923,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               <span>Estimated Gas Fees:</span>
               <p className="inline-flex">
                 <span className="opacity-40 mr-2 font-semibold">
-                  {fees.toFixed(3) ?? 0} MGX
+                  {fees.toLocaleString("en-US") ?? 0} MGX
                 </span>
                 <span>${(fees * mgxPrice).toFixed(5)}</span>
               </p>
@@ -951,15 +956,15 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             <MButton
               type="primary"
               isLoading={false}
-              // disabled={
-              //   firstTokenAmount == "" ||
-              //   secondTokenAmount == "" ||
-              //   parseFloat(firstTokenAmount) <= 0 ||
-              //   parseFloat(secondTokenAmount) <= 0 ||
-              //   lpBalance <= fees ||
-              //   fixedAmtNum(firstTokenAmount) > (firstTokenBalance ?? 0) ||
-              //   fixedAmtNum(secondTokenAmount) > (secondTokenBalance ?? 0)
-              // }
+              disabled={
+                firstTokenAmount == "" ||
+                secondTokenAmount == "" ||
+                fixedAmtNum(firstTokenAmount) <= 0 ||
+                fixedAmtNum(secondTokenAmount) <= 0 ||
+                lpBalance <= fees ||
+                fixedAmtNum(firstTokenAmount) > (firstTokenBalance ?? 0) ||
+                fixedAmtNum(secondTokenAmount) > (secondTokenBalance ?? 0)
+              }
               text="Confirm Adding Liquidity"
               onClick={() => {
                 if (
