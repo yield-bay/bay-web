@@ -228,7 +228,7 @@ const StakingModal = () => {
 
   useEffect(() => {
     if (isSuccessStakingTxn) {
-      console.log("addliq txn success!");
+      console.log("staking txn success!");
       setLpUpdated(lpUpdated + 1);
       // Tracking
       handleStakeEvent({

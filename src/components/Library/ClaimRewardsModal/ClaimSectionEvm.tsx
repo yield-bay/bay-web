@@ -7,7 +7,11 @@ import {
   selectedPositionAtom,
   tokenPricesAtom,
 } from "@store/atoms";
-import { claimModalOpenAtom, evmPosLoadingAtom } from "@store/commonAtoms";
+import {
+  claimModalOpenAtom,
+  evmPosLoadingAtom,
+  lpUpdatedAtom,
+} from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
 import {
@@ -31,12 +35,15 @@ import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import toUnits from "@utils/toUnits";
 import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import { handleClaimRewardsEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const { chain } = useNetwork();
   const [position] = useAtom(selectedPositionAtom);
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   useEffect(() => console.log("selected position @claimrewards"), [position]);
 
@@ -128,14 +135,28 @@ const ClaimSectionEvm = () => {
 
   useEffect(() => {
     if (isSuccessClaimRewardsTxn) {
-      fetchEvmPositions({
-        farms,
-        positions,
-        setPositions,
-        setIsEvmPosLoading,
-        address,
-        tokenPricesMap,
-        lpTokenPricesMap,
+      console.log("claimrewards txn success!");
+      setLpUpdated(lpUpdated + 1);
+      // Tracking
+      handleClaimRewardsEvent({
+        userAddress: address!,
+        walletType: "EVM",
+        walletProvider: connector?.name!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: position?.id!,
+          chef: position?.chef!,
+          chain: position?.chain!,
+          protocol: position?.protocol!,
+          assetSymbol: position?.lpSymbol!,
+        },
+        rewards: position?.unclaimedRewards.map((reward) => {
+          return {
+            amount: reward?.amount,
+            asset: reward?.token,
+            valueUSD: reward?.amountUSD,
+          };
+        })!,
       });
     }
   }, [isSuccessClaimRewardsTxn]);

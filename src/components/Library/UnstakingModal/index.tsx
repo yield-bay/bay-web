@@ -227,7 +227,7 @@ const UnstakingModal = () => {
 
   useEffect(() => {
     if (isSuccessUnstakingTxn) {
-      console.log("addliq txn success!");
+      console.log("unstaking txn success!");
       setLpUpdated(lpUpdated + 1);
       // Tracking
       handleUnstakeEvent({

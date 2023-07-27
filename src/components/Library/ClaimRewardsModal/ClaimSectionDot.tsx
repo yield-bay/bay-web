@@ -14,6 +14,7 @@ import {
   accountInitAtom,
   claimModalOpenAtom,
   isInitialisedAtom,
+  lpUpdatedAtom,
   mangataAddressAtom,
   mangataPoolsAtom,
   subPosLoadingAtom,
@@ -31,11 +32,15 @@ import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import toUnits from "@utils/toUnits";
 import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
+import { handleClaimRewardsEvent } from "@utils/tracking";
+import getTimestamp from "@utils/getTimestamp";
 
 const ClaimSectionDot = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
   const [account] = useAtom(dotAccountAtom);
   const [position] = useAtom(selectedPositionAtom);
+
+  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   useEffect(() => console.log("selected position @claimrewards"), [position]);
 
@@ -202,6 +207,34 @@ const ClaimSectionDot = () => {
     }
   };
 
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("claimrewards txn success!");
+      setLpUpdated(lpUpdated + 1);
+      // Tracking
+      handleClaimRewardsEvent({
+        userAddress: account?.address!,
+        walletType: "DOT",
+        walletProvider: account?.wallet?.extensionName!,
+        timestamp: getTimestamp(),
+        farm: {
+          id: position?.id!,
+          chef: position?.chef!,
+          chain: position?.chain!,
+          protocol: position?.protocol!,
+          assetSymbol: position?.lpSymbol!,
+        },
+        rewards: position?.unclaimedRewards.map((reward) => {
+          return {
+            amount: reward?.amount,
+            asset: reward?.token,
+            valueUSD: reward?.amountUSD,
+          };
+        })!,
+      });
+    }
+  }, [isSuccess]);
+
   const InputStep = () => {
     return (
       <div className="w-full flex flex-col gap-y-8">
@@ -295,7 +328,6 @@ const ClaimSectionDot = () => {
   const ProcessStep = () => {
     return (
       <div className="flex flex-col items-center gap-y-8 text-left font-semibold leading-5">
-        {/* {isSuccessClaimRewardsTxn ? ( */}
         {isSuccess ? (
           <>
             <Image
