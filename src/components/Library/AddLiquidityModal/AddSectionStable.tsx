@@ -531,19 +531,17 @@ const AddSectionStable: FC = () => {
         </div>
         <hr className="border-t border-[#E3E3E3] min-w-full" />
         {/* Relative Conversion and Share of Pool */}
-        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          <p className="flex flex-col items-end">
-            <span>
-              {(totalSupply !== 0 && estLpAmount > 0
-                ? (estLpAmount / totalSupply) * 100 < 0.001
-                  ? "<0.001"
-                  : (estLpAmount / totalSupply) * 100
-                : 0
-              ).toLocaleString("en-US")}
-              {/* % = {estLpAmount} {totalSupply} */}%
-            </span>
-            <span>Share of pool</span>
-          </p>
+        <div className="p-3 flex flex-col items-end text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
+          <span>
+            {(totalSupply !== 0 && estLpAmount > 0
+              ? (estLpAmount / totalSupply) * 100 < 0.001
+                ? "<0.001"
+                : (estLpAmount / totalSupply) * 100
+              : 0
+            ).toLocaleString("en-US")}
+            {/* % = {estLpAmount} {totalSupply} */}%
+          </span>
+          <span>Share of pool</span>
         </div>
         <MButton
           type="primary"
