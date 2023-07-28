@@ -726,14 +726,24 @@ const RemoveSectionStable = () => {
             <h2 className="text-xl">
               Withdrawing{" "}
               {methodId == Method.PERCENTAGE
-                ? toUnits(
-                    parseFloat(
-                      percentage !== ""
-                        ? (parseFloat(percentage) / 100).toString()
-                        : "0"
-                    ) * parseFloat(lpBalance ?? "0"),
-                    3
-                  )
+                ? parseFloat(
+                    percentage !== ""
+                      ? (parseFloat(percentage) / 100).toString()
+                      : "0"
+                  ) *
+                    parseFloat(lpBalance ?? "0") <
+                  0.01
+                  ? "<0.01"
+                  : toUnits(
+                      parseFloat(
+                        percentage !== ""
+                          ? (parseFloat(percentage) / 100).toString()
+                          : "0"
+                      ) * parseFloat(lpBalance ?? "0"),
+                      2
+                    )
+                : parseFloat(lpTokens !== "" ? lpTokens : "0") < 0.01
+                ? "<0.01"
                 : toUnits(parseFloat(lpTokens !== "" ? lpTokens : "0"), 2)}{" "}
               {farm?.asset.symbol} Tokens
             </h2>

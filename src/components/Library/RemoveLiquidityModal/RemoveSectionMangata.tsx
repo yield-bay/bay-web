@@ -262,9 +262,7 @@ const RemoveSectionMangata = () => {
 
   const removeAmount = useMemo(() => {
     return methodId == 0
-      ? (lpBalanceNum *
-          (parseFloat("0") * parseFloat(percentage == "" ? "0" : percentage))) /
-          100
+      ? (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) / 100
       : parseFloat(lpTokens == "" ? "0" : lpTokens);
   }, [methodId, percentage, lpTokens]);
 
@@ -541,7 +539,7 @@ const RemoveSectionMangata = () => {
           </div>
         </div>
         {/* Tokens to receive */}
-        <div className="text-[#344054] text-left">
+        {/* <div className="text-[#344054] text-left">
           <p className="text-base font-medium leading-5">You receive:</p>
           <div className="inline-flex gap-x-4 mt-3">
             {[token0, token1].map((token, index) => (
@@ -562,7 +560,7 @@ const RemoveSectionMangata = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
         {/* Estimate Gas and Slippage Tolerance */}
         {/* Gas Fees // Slippage // Suff. Wallet balance */}
         <div
@@ -604,10 +602,7 @@ const RemoveSectionMangata = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {/* {parseFloat(nativeBal?.formatted ?? "0") > fees */}
-              Sufficient
-              {/* : "Insufficient"}{" "} */}
-              Wallet Balance
+              {mgxBalance > fees ? "Sufficient" : "Insufficient"} Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
               {mgxBalance.toLocaleString("en-US")} MGX
@@ -701,9 +696,11 @@ const RemoveSectionMangata = () => {
           />
         </button>
         <h3 className="font-semibold text-base leading-5 text-[#1d2838]">
-          You will receive
+          You will receive{" "}
+          {removeAmount < 0.01 ? "<0.01" : toUnits(removeAmount, 2)} {token0}/
+          {token1} LP Tokens
         </h3>
-        <div className="p-6 border border-[#BEBEBE] rounded-lg">
+        {/* <div className="p-6 border border-[#BEBEBE] rounded-lg">
           <div className="inline-flex gap-x-4">
             {[token0, token1].map((token, index) => (
               <div
@@ -723,7 +720,7 @@ const RemoveSectionMangata = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
         <MButton
           type="primary"
           isLoading={false}
@@ -774,7 +771,9 @@ const RemoveSectionMangata = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Withdrawing {removeAmount} {token0}/{token1} LP Tokens
+              Withdrawing{" "}
+              {removeAmount < 0.01 ? "<0.01" : toUnits(removeAmount, 2)}{" "}
+              {token0}/{token1} LP Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">

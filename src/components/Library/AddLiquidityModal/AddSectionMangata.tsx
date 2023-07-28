@@ -947,7 +947,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{toUnits(estimateLpMinted ?? 0, 2)}</span>
+            <span>
+              {estimateLpMinted ?? 0 < 0.01
+                ? "<0.01"
+                : toUnits(estimateLpMinted ?? 0, 2)}
+            </span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={selectedFarm?.asset.logos[0] as string}

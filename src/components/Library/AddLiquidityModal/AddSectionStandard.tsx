@@ -1115,8 +1115,15 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Supplying {firstTokenAmount} {farmAsset0?.symbol} and{" "}
-              {secondTokenAmount} {farmAsset1?.symbol}
+              Supplying{" "}
+              {parseFloat(firstTokenAmount) < 0.01
+                ? "<0.01"
+                : toUnits(parseFloat(firstTokenAmount), 2)}{" "}
+              {farmAsset0?.symbol} and{" "}
+              {parseFloat(secondTokenAmount) < 0.01
+                ? "<0.01"
+                : toUnits(parseFloat(secondTokenAmount), 2)}{" "}
+              {farmAsset1?.symbol}
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">

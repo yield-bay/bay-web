@@ -606,7 +606,12 @@ const AddSectionStable: FC = () => {
               <p>
                 {amounts.map((amount, index) => (
                   <span key={index}>
-                    {toUnits(Number(amount) / 10 ** tokens[index]?.decimals, 2)}{" "}
+                    {Number(amount) / 10 ** tokens[index]?.decimals < 0.01
+                      ? "<0.01"
+                      : toUnits(
+                          Number(amount) / 10 ** tokens[index]?.decimals,
+                          2
+                        )}{" "}
                     {tokens[index]?.symbol}{" "}
                     {index !== tokens.length - 1 && (
                       <span className="mr-1">and</span>

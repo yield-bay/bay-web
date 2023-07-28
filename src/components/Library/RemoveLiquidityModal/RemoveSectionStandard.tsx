@@ -703,7 +703,8 @@ const RemoveSectionStandard = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Withdrawing {removeAmount.toLocaleString("en-US")}{" "}
+              Withdrawing{" "}
+              {removeAmount < 0.01 ? "<0.01" : toUnits(removeAmount, 2)}{" "}
               {farmAsset0?.symbol}/{farmAsset1?.symbol} LP Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
