@@ -1,5 +1,12 @@
 // Library Imports
-import { FC, useRef, PropsWithChildren, useEffect, useState } from "react";
+import {
+  FC,
+  useRef,
+  PropsWithChildren,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
@@ -328,7 +335,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     })();
   }, [account1, pool]);
 
-  const getFirstTokenRelation = (): number => {
+  const getFirstTokenRelation = useMemo((): string => {
     const poolRatio =
       Number(pool?.firstTokenAmountFloat) /
       Number(pool?.secondTokenAmountFloat);
@@ -336,10 +343,12 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     const firstTokenAmount = isNaN(expFirstTokenAmount)
       ? 0
       : expFirstTokenAmount;
-    return firstTokenAmount;
-  };
+    return firstTokenAmount < 0.001
+      ? "<0.001"
+      : firstTokenAmount.toLocaleString("en-US");
+  }, [pool]);
 
-  const getSecondTokenRelation = (): number => {
+  const getSecondTokenRelation = useMemo((): string => {
     const poolRatio =
       Number(pool?.firstTokenAmountFloat) /
       Number(pool?.secondTokenAmountFloat);
@@ -347,8 +356,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     const secondTokenAmount = isNaN(expSecondTokenAmount)
       ? 0
       : expSecondTokenAmount;
-    return secondTokenAmount;
-  };
+    return secondTokenAmount < 0.001
+      ? "<0.001"
+      : secondTokenAmount.toLocaleString("en-US");
+  }, [pool]);
 
   // Estimate of fees; no need to be accurate
   // Method to fetch trnx fees based on token Amounts
@@ -392,7 +403,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     console.log("First Token Amount:", expFirstTokenAmount);
     const firstTokenAmount = isNaN(expFirstTokenAmount)
       ? "0"
-      : expFirstTokenAmount.toFixed(5);
+      : expFirstTokenAmount.toString();
     setFirstTokenAmount(firstTokenAmount);
     return firstTokenAmount;
   };
@@ -415,7 +426,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     console.log("Second Token Amount:", expSecondTokenAmount);
     const secondTokenAmount = isNaN(expSecondTokenAmount)
       ? "0"
-      : expSecondTokenAmount.toFixed(5);
+      : expSecondTokenAmount.toString();
 
     setSecondTokenAmount(secondTokenAmount);
     return secondTokenAmount;
@@ -880,16 +891,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col items-start gap-y-2">
             <p>
-              {getFirstTokenRelation() < 0.001
-                ? "<0.001"
-                : getFirstTokenRelation()}{" "}
-              {token0} per {token1}
+              {getFirstTokenRelation} {token0} per {token1}
             </p>
             <p>
-              {getSecondTokenRelation() < 0.001
-                ? "<0.001"
-                : getSecondTokenRelation().toLocaleString("en-US")}{" "}
-              {token1} per {token0}
+              {getSecondTokenRelation} {token1} per {token0}
             </p>
           </div>
           <p className="flex flex-col items-end">
@@ -1028,10 +1033,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           <span className="text-[#0B0B0B]">Rates</span>
           <p className="flex flex-col gap-y-2 text-[#282929]">
             <span>
-              1 {token0} = {getSecondTokenRelation()} {token1}
+              1 {token0} = {getSecondTokenRelation} {token1}
             </span>
             <span>
-              1 {token1} = {getFirstTokenRelation()} {token0}
+              1 {token1} = {getFirstTokenRelation} {token0}
             </span>
           </p>
         </div>
@@ -1040,10 +1045,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col gap-y-2">
             <p>
-              {getFirstTokenRelation()} {token0} per {token1}
+              {getFirstTokenRelation} {token0} per {token1}
             </p>
             <p>
-              {getSecondTokenRelation()} {token1} per {token0}
+              {getSecondTokenRelation} {token1} per {token0}
             </p>
           </div>
           <p className="flex flex-col items-end">
