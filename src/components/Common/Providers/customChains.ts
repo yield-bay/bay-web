@@ -9,8 +9,8 @@ export const astar = {
   network: Network.ASTAR,
   nativeCurrency: {
     decimals: 18,
-    name: "MOVR",
-    symbol: "MOVR",
+    name: "ASTR",
+    symbol: "ASTR",
   },
   rpcUrls: {
     public: {
