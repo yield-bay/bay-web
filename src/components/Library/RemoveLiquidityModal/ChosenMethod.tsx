@@ -62,7 +62,11 @@ const ChosenMethod: React.FC<Props> = ({
             !!lpBal && (
               <p className="flex flex-col items-end">
                 <span>Balance</span>
-                <span>{toUnits(parseFloat(lpBal), 3)}</span>
+                <span>
+                  {parseFloat(lpBal) < 0.01
+                    ? "<0.01"
+                    : toUnits(parseFloat(lpBal), 2)}
+                </span>
               </p>
             )
           )}
@@ -111,7 +115,11 @@ const ChosenMethod: React.FC<Props> = ({
             !!lpBal && (
               <div className="flex flex-col items-end">
                 <span>Balance</span>
-                <span>{parseFloat(lpBal).toLocaleString("en-US")}</span>
+                <span>
+                  {parseFloat(lpBal) < 0.01
+                    ? "<0.01"
+                    : toUnits(parseFloat(lpBal), 2)}
+                </span>
               </div>
             )
           )}

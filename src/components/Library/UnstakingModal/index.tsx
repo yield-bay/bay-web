@@ -346,7 +346,11 @@ const UnstakingModal = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{unstakeAmount.toLocaleString("en-US")}</span>
+            <span>
+              {unstakeAmount < 0.01
+                ? "<0.01"
+                : unstakeAmount.toLocaleString("en-US")}
+            </span>
             {farm?.asset.underlyingAssets.map((token, index) => (
               <div key={index} className="rounded-full overflow-hidden">
                 <Image
@@ -468,7 +472,10 @@ const UnstakingModal = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Unstaking {unstakeAmount.toLocaleString("en-US")}{" "}
+              Unstaking{" "}
+              {unstakeAmount < 0.01
+                ? "<0.01"
+                : unstakeAmount.toLocaleString("en-US")}{" "}
               {farm?.asset.symbol} Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
@@ -568,7 +575,7 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
           ) : (
             <p className="flex flex-col items-end">
               <span>Balance</span>
-              <span>{toUnits(staked, 3)}</span>
+              <span>{staked < 0.01 ? "<0.01" : toUnits(staked, 2)}</span>
             </p>
           )}
         </div>
@@ -613,7 +620,7 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
           ) : (
             <div className="flex flex-col items-end">
               <span>Balance</span>
-              <span>{staked.toFixed(2)}</span>
+              <span>{staked < 0.01 ? "<0.01" : toUnits(staked, 2)}</span>
             </div>
           )}
         </p>

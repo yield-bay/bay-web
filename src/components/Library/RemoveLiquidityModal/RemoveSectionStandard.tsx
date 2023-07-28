@@ -397,7 +397,10 @@ const RemoveSectionStandard = () => {
                   className="rounded-full"
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  {toUnits(minUnderlyingAssets[index], 2)} {token?.symbol}
+                  {minUnderlyingAssets[index] < 0.01
+                    ? "<0.01"
+                    : toUnits(minUnderlyingAssets[index], 2)}{" "}
+                  {token?.symbol}
                 </span>
               </div>
             ))}
@@ -584,7 +587,10 @@ const RemoveSectionStandard = () => {
                   height={24}
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  {toUnits(minUnderlyingAssets[index], 2)} {token?.symbol}
+                  {minUnderlyingAssets[index] < 0.01
+                    ? "<0.01"
+                    : toUnits(minUnderlyingAssets[index], 2)}{" "}
+                  {token?.symbol}
                 </span>
               </div>
             ))}

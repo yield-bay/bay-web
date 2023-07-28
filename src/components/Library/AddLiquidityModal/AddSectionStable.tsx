@@ -457,7 +457,9 @@ const AddSectionStable: FC = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{toUnits(estLpAmount, 3)}</span>
+            <span>
+              {estLpAmount < 0.01 ? "<0.01" : toUnits(estLpAmount, 2)}
+            </span>
             {/* Make a mapping here */}
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
@@ -604,7 +606,7 @@ const AddSectionStable: FC = () => {
               <p>
                 {amounts.map((amount, index) => (
                   <span key={index}>
-                    {toUnits(Number(amount) / 10 ** tokens[index]?.decimals, 3)}{" "}
+                    {toUnits(Number(amount) / 10 ** tokens[index]?.decimals, 2)}{" "}
                     {tokens[index]?.symbol}{" "}
                     {index !== tokens.length - 1 && (
                       <span className="mr-1">and</span>

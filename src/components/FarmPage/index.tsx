@@ -320,8 +320,12 @@ const FarmPage: NextPage = () => {
                     setSelectedFarm(farm);
                   }}
                   disabled={
-                    farmPosition.staked.amount + farmPosition.unstaked.amount <
-                    0.01
+                    farm?.chain.toLowerCase() != "mangata kusama" ||
+                    farm?.protocol.toLowerCase() != "mangata x"
+                      ? farmPosition.unstaked.amountUSD +
+                          farmPosition.staked.amountUSD <
+                        0.01
+                      : farmPosition.unstaked.amountUSD < 0.01
                   }
                   tooltipText="You need to have liquidity first"
                 >
@@ -338,7 +342,7 @@ const FarmPage: NextPage = () => {
                         setStakingModalOpen(true);
                         setSelectedFarm(farm);
                       }}
-                      disabled={farmPosition.unstaked.amount < 0.01}
+                      disabled={farmPosition.unstaked.amountUSD < 0.01}
                       tooltipText="You need to have liquidity first"
                     >
                       <span>Stake</span>
@@ -356,7 +360,7 @@ const FarmPage: NextPage = () => {
                         setUnstakingModalOpen(true);
                         setSelectedFarm(farm);
                       }}
-                      disabled={farmPosition.staked.amount < 0.01}
+                      disabled={farmPosition.staked.amountUSD < 0.01}
                       tooltipText="You need to stake tokens first"
                     >
                       <span>Unstake</span>

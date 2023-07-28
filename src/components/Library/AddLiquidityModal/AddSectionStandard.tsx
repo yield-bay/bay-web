@@ -10,7 +10,7 @@ import {
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
-import { parseAbi, parseUnits } from "viem";
+import { parseAbi, parseUnits, parseEther } from "viem";
 import {
   useAccount,
   useBalance,
@@ -396,6 +396,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
       const txnRes = await addLiquidity?.({
         args: addArgs,
+        value:
+          selectedFarm?.asset.symbol == "WELL-WGLMR LP"
+            ? parseUnits(
+                `${parseFloat(secondTokenAmount)}`,
+                farmAsset1?.decimals
+              )
+            : parseEther("0"),
       });
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
@@ -920,7 +927,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{toUnits(minLpTokens / 10 ** 18, 3)}</span>
+            <span>
+              {minLpTokens / 10 ** 18 < 0.01
+                ? "<0.01"
+                : toUnits(minLpTokens / 10 ** 18, 2)}
+            </span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={selectedFarm?.asset.logos[0] as string}

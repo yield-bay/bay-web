@@ -434,10 +434,17 @@ const RemoveSectionStable = () => {
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
                   {removeMethodId == RemoveMethod.INDIVIDUAL &&
                   indiTokenId == index
-                    ? toUnits(
-                        Array.isArray(minAmount) ? minAmount[index] : minAmount,
-                        3
-                      )
+                    ? // ? toUnits(
+                      //     Array.isArray(minAmount) ? minAmount[index] : minAmount,
+                      //     3
+                      //   )
+                      Array.isArray(minAmount)
+                      ? (minAmount as number[])[index] < 0.01
+                        ? "<0.01"
+                        : toUnits((minAmount as number[])[index], 2)
+                      : minAmount < 0.01
+                      ? "<0.01"
+                      : toUnits(minAmount, 2)
                     : 0}{" "}
                   {token?.symbol}
                 </span>
@@ -465,7 +472,9 @@ const RemoveSectionStable = () => {
                     />
                     <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
                       {removeMethodId === RemoveMethod.ALL
-                        ? toUnits((minAmount as number[])[index], 3)
+                        ? (minAmount as number[])[index] < 0.01
+                          ? "<0.01"
+                          : toUnits((minAmount as number[])[index], 2)
                         : 0}{" "}
                       {token?.symbol}
                     </span>
@@ -582,7 +591,9 @@ const RemoveSectionStable = () => {
                       height={24}
                     />
                     <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                      {toUnits((minAmount as number[])[index], 3)}{" "}
+                      {(minAmount as number[])[index] < 0.01
+                        ? "<0.01"
+                        : toUnits((minAmount as number[])[index], 2)}{" "}
                       {token.symbol}
                     </span>
                   </div>
@@ -597,7 +608,9 @@ const RemoveSectionStable = () => {
                   height={24}
                 />
                 <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  {toUnits(minAmount as number, 3)}{" "}
+                  {(minAmount as number) < 0.01
+                    ? "<0.01"
+                    : toUnits(minAmount as number, 2)}{" "}
                   {tokens[indiTokenId]?.symbol}
                 </span>
               </div>
@@ -721,7 +734,7 @@ const RemoveSectionStable = () => {
                     ) * parseFloat(lpBalance ?? "0"),
                     3
                   )
-                : toUnits(parseFloat(lpTokens !== "" ? lpTokens : "0"), 3)}{" "}
+                : toUnits(parseFloat(lpTokens !== "" ? lpTokens : "0"), 2)}{" "}
               {farm?.asset.symbol} Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />

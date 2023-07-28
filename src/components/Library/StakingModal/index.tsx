@@ -36,6 +36,7 @@ import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import { handleStakeEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import toUnits from "@utils/toUnits";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -373,7 +374,11 @@ const StakingModal = () => {
         </h3>
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
-            <span>{stakeAmount.toLocaleString("en-US")}</span>
+            <span>
+              {stakeAmount < 0.01
+                ? "<0.01"
+                : stakeAmount.toLocaleString("en-US")}
+            </span>
             <div className="z-10 flex overflow-hidden rounded-full">
               <Image
                 src={farm?.asset.logos[0] as string}
@@ -500,8 +505,11 @@ const StakingModal = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Staking {stakeAmount.toLocaleString("en-US")} {farm?.asset.symbol}{" "}
-              Tokens
+              Staking{" "}
+              {stakeAmount < 0.01
+                ? "<0.01"
+                : stakeAmount.toLocaleString("en-US")}{" "}
+              {farm?.asset.symbol} Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">
@@ -599,8 +607,9 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
               <div className="flex flex-col items-end">
                 <span>Balance</span>
                 <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
+                  {parseFloat(lpBal) < 0.01
+                    ? "<0.01"
+                    : toUnits(parseFloat(lpBal), 2)}
                 </span>
               </div>
             )
@@ -648,8 +657,9 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
               <div className="flex flex-col items-end">
                 <span>Balance</span>
                 <span>
-                  {parseFloat(lpBal).toLocaleString("en-US")}{" "}
-                  {farm?.asset.symbol}
+                  {parseFloat(lpBal) < 0.01
+                    ? "<0.01"
+                    : toUnits(parseFloat(lpBal), 2)}
                 </span>
               </div>
             )
