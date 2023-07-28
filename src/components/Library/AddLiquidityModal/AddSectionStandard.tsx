@@ -1,5 +1,12 @@
 // Library Imports
-import { FC, useRef, PropsWithChildren, useEffect, useState } from "react";
+import {
+  FC,
+  useRef,
+  PropsWithChildren,
+  useEffect,
+  useState,
+  useMemo,
+} from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
@@ -405,7 +412,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     }
   };
 
-  const getFirstTokenRelation = () => {
+  const getFirstTokenRelation = useMemo((): string => {
     const poolRatio = getPoolRatio(
       reserve0,
       reserve1,
@@ -414,12 +421,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     );
     const expectedFirstTokenAmount = poolRatio;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
-      ? "0"
-      : expectedFirstTokenAmount.toFixed(5);
-    return firstTokenAmount;
-  };
+      ? 0
+      : expectedFirstTokenAmount;
+    return firstTokenAmount < 0.001
+      ? "<0.001"
+      : firstTokenAmount.toLocaleString("en-US");
+  }, [selectedFarm]);
 
-  const getSecondTokenRelation = () => {
+  const getSecondTokenRelation = useMemo((): string => {
     const poolRatio = getPoolRatio(
       reserve0,
       reserve1,
@@ -428,10 +437,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     );
     const expectedSecondTokenAmount = 1 / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
-      ? "0"
-      : expectedSecondTokenAmount.toFixed(5);
-    return secondTokenAmount;
-  };
+      ? 0
+      : expectedSecondTokenAmount;
+    return secondTokenAmount < 0.001
+      ? "<0.001"
+      : secondTokenAmount.toLocaleString("en-US");
+  }, [selectedFarm]);
 
   // Updated tokenAmounts based on value of other token
   const updateSecondTokenAmount = (firstTokenAmount: number) => {
@@ -452,7 +463,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     const expectedSecondTokenAmount = firstTokenAmount / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
-      : expectedSecondTokenAmount.toFixed(5).toString();
+      : expectedSecondTokenAmount.toString();
     setSecondTokenAmount(secondTokenAmount);
   };
 
@@ -466,7 +477,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     const expectedFirstTokenAmount = poolRatio * secondTokenAmount;
     const firstTokenAmount = isNaN(expectedFirstTokenAmount)
       ? "0"
-      : expectedFirstTokenAmount.toFixed(5).toString();
+      : expectedFirstTokenAmount.toString();
     setFirstTokenAmount(firstTokenAmount);
   };
 
@@ -640,11 +651,16 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         {fixedAmtNum(firstTokenAmount) >
           fixedAmtNum(token0Balance?.formatted) && (
           <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            You need{" "}
-            {fixedAmtNum(firstTokenAmount) -
-              fixedAmtNum(token0Balance?.formatted)}{" "}
-            {farmAsset0?.symbol} for creating an LP token with{" "}
-            {fixedAmtNum(secondTokenAmount)} {farmAsset1?.symbol}
+            {focusedInput == InputType.First
+              ? "Insufficient Balance"
+              : `You need ${
+                  fixedAmtNum(firstTokenAmount) -
+                  fixedAmtNum(token0Balance?.formatted)
+                } ${
+                  farmAsset0?.symbol
+                } for creating an LP token with ${fixedAmtNum(
+                  secondTokenAmount
+                )} ${farmAsset1?.symbol}`}
           </div>
         )}
         {/* Plus Icon */}
@@ -713,11 +729,16 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         {fixedAmtNum(secondTokenAmount) >
           fixedAmtNum(token1Balance?.formatted) && (
           <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            You need{" "}
-            {fixedAmtNum(secondTokenAmount) -
-              fixedAmtNum(token1Balance?.formatted)}{" "}
-            {farmAsset1?.symbol} for creating an LP token with{" "}
-            {fixedAmtNum(firstTokenAmount)} {farmAsset0?.symbol}
+            {focusedInput == InputType.Second
+              ? "Insufficient Balance"
+              : `You need ${
+                  fixedAmtNum(secondTokenAmount) -
+                  fixedAmtNum(token1Balance?.formatted)
+                } ${
+                  farmAsset1?.symbol
+                } for creating an LP token with ${fixedAmtNum(
+                  firstTokenAmount
+                )} ${farmAsset0?.symbol}`}
           </div>
         )}
 
@@ -725,11 +746,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col items-start gap-y-2">
             <p>
-              {getFirstTokenRelation()} {farmAsset0?.symbol} per{" "}
+              {getFirstTokenRelation} {farmAsset0?.symbol} per{" "}
               {farmAsset1?.symbol}
             </p>
             <p>
-              {getSecondTokenRelation()} {farmAsset1?.symbol} per{" "}
+              {getSecondTokenRelation} {farmAsset1?.symbol} per{" "}
               {farmAsset0?.symbol}
             </p>
           </div>
@@ -975,11 +996,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           <span className="text-[#0B0B0B]">Rates</span>
           <p className="flex flex-col gap-y-2 text-[#282929]">
             <span>
-              1 {farmAsset0?.symbol} = {getSecondTokenRelation()}{" "}
+              1 {farmAsset0?.symbol} = {getSecondTokenRelation}{" "}
               {farmAsset1?.symbol}
             </span>
             <span>
-              1 {farmAsset1?.symbol} = {getFirstTokenRelation()}{" "}
+              1 {farmAsset1?.symbol} = {getFirstTokenRelation}{" "}
               {farmAsset0?.symbol}
             </span>
           </p>
@@ -989,11 +1010,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col gap-y-2">
             <p>
-              {getFirstTokenRelation()} {farmAsset0?.symbol} per{" "}
+              {getFirstTokenRelation} {farmAsset0?.symbol} per{" "}
               {farmAsset1?.symbol}
             </p>
             <p>
-              {getSecondTokenRelation()} {farmAsset1?.symbol} per{" "}
+              {getSecondTokenRelation} {farmAsset1?.symbol} per{" "}
               {farmAsset0?.symbol}
             </p>
           </div>
