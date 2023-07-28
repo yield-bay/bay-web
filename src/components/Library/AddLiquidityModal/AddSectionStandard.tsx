@@ -396,13 +396,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
       const txnRes = await addLiquidity?.({
         args: addArgs,
-        value:
-          selectedFarm?.asset.symbol == "WELL-WGLMR LP"
-            ? parseUnits(
-                `${parseFloat(secondTokenAmount)}`,
-                farmAsset1?.decimals
-              )
-            : parseEther("0"),
       });
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
