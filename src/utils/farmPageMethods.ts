@@ -18,6 +18,16 @@ export function calcTotalRewardValue(rewards: RewardType[]) {
 
 export function calcUnclaimedReward(unclaimedRewards: UnclaimedRewardType[]) {
   const totalRewards = unclaimedRewards.reduce(
+    (acc, current) => acc + current.amount,
+    0
+  );
+  return totalRewards.toString(); //.toFixed(2);
+}
+
+export function calcUnclaimedRewardUSD(
+  unclaimedRewards: UnclaimedRewardType[]
+) {
+  const totalRewards = unclaimedRewards.reduce(
     (acc, current) => acc + current.amountUSD,
     0
   );

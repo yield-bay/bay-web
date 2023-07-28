@@ -36,6 +36,7 @@ import toDollarUnits from "@utils/toDollarUnits";
 import {
   calcAssetPercentage,
   calcTotalRewardValue,
+  calcUnclaimedRewardUSD,
   chainURL,
   protocolURL,
 } from "@utils/farmPageMethods";
@@ -104,6 +105,7 @@ const FarmPage: NextPage = () => {
   const [farm] = useSpecificFarm(farms, idQuery, addrQuery);
   const [farmPosition, hasPosition] = useSpecificPosition(positions, farm);
   const [unclaimedReward, setUnclaimedReward] = useState(0);
+  const [unclaimedRewardUSD, setUnclaimedRewardUSD] = useState(0);
 
   const tokenNames: string[] = farm
     ? formatTokenSymbols(farm?.asset.symbol)
@@ -120,12 +122,17 @@ const FarmPage: NextPage = () => {
       const unclaimedRewards = parseFloat(
         calcUnclaimedReward(farmPosition.unclaimedRewards)
       );
+      const unclaimedRewardsUSD = parseFloat(
+        calcUnclaimedRewardUSD(farmPosition.unclaimedRewards)
+      );
       console.log(
         "total unclaimed rewards",
+        farmPosition.unclaimedRewards,
         farm?.asset.symbol,
         unclaimedRewards
       );
       setUnclaimedReward(unclaimedRewards);
+      setUnclaimedRewardUSD(unclaimedRewardsUSD);
     }
   }, [farmPosition]);
 
@@ -288,14 +295,16 @@ const FarmPage: NextPage = () => {
                   <p>Unclaimed</p>
                   <p>Rewards Worth</p>
                   <p className="mt-2 font-semibold text-2xl leading-7 text-[#101828]">
-                    ${unclaimedReward}
+                    {unclaimedReward < 0.01
+                      ? "<$0.01"
+                      : `$${unclaimedRewardUSD}`}
                   </p>
                 </div>
                 <Button
                   size="large"
                   style="h-max"
                   onButtonClick={() => setIsRewardsModalOpen(true)}
-                  disabled={unclaimedReward < 0.01}
+                  disabled={unclaimedReward <= 0}
                 >
                   Claim
                 </Button>
