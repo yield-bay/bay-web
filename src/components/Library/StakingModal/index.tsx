@@ -174,8 +174,8 @@ const StakingModal = () => {
     : 0;
 
   const {
-    data: isApprovedData,
-    isLoading: isApprovedLoading,
+    // data: isApprovedData,
+    // isLoading: isApprovedLoading,
     isSuccess: isApprovedSuccess,
   } = useIsApprovedToken(farm?.asset.address!, farm?.chef as Address);
 
@@ -302,76 +302,22 @@ const StakingModal = () => {
             ))}
           </div>
         </div>
-        {/* Estimate Gas and Slippage Tolerance */}
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        {/* <div
-          className={clsx(
-            "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-              ? "bg-[#C0F9C9]"
-              : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "bg-[#ECFFEF]"
-                : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "Sufficient"
-                : "Insufficient"}{" "}
-              Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span>
-          </div>
-        </div> */}
         <div className="flex flex-row mt-6 gap-2">
           {!isApprovedSuccess && !isSuccessApproveTxn && (
             <MButton
               type="secondary"
               isLoading={isLoadingApproveTxn || isLoadingApproveCall}
               text={
-                isLoadingApproveCall
+                isLoadingApproveTxn
                   ? "Waiting for Approval"
-                  : isLoadingApproveTxn
+                  : isLoadingApproveCall
                   ? "Sign the Txn in Wallet"
                   : `Approve ${getLpTokenSymbol(tokenNames)}`
               }
               disabled={
-                isSuccessApproveTxn ||
                 isLoadingApproveCall ||
                 isLoadingApproveTxn ||
                 typeof approveLpToken == "undefined"
-                // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
               }
               onClick={async () => {
                 const txn = await approveLpToken?.();
@@ -383,11 +329,10 @@ const StakingModal = () => {
             type="primary"
             isLoading={false}
             disabled={
-              methodId == 0
+              (methodId == 0
                 ? percentage == "" || percentage == "0"
-                : lpTokens == "" || lpTokens == "0"
-              // !isSuccessApproveTxn ||
-              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                : lpTokens == "" || lpTokens == "0") ||
+              !(isApprovedSuccess || isSuccessApproveTxn)
             }
             text="Confirm Staking"
             onClick={() => {
@@ -560,9 +505,9 @@ const StakingModal = () => {
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">
-              {isLoadingStakingCall
+              {isLoadingStakingTxn
                 ? "Waiting for transaction to complete"
-                : isLoadingStakingTxn
+                : isLoadingStakingCall
                 ? "Confirm Transaction in your Wallet"
                 : ""}
             </p>
@@ -634,7 +579,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
           ))}
         </div>
         <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Stake</span>
+        <span>percentage of Tokens to Stake</span>
       </div>
       <input
         placeholder="0"
@@ -683,7 +628,7 @@ const ChosenMethod: FC<ChosenMethodProps> = ({
           ))}
         </div>
         <span className="font-bold">{farm?.asset?.symbol}</span>{" "}
-        <span>Tokens to Remove</span>
+        <span>Tokens to Stake</span>
       </div>
       <input
         placeholder="0"

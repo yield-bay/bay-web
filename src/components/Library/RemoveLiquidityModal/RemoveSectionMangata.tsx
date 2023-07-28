@@ -779,7 +779,7 @@ const RemoveSectionMangata = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">
               {isInProcess && !isSigning
-                ? "Waiting for Completion"
+                ? "Waiting for transaction to complete"
                 : isSigning
                 ? "Confirm Transaction in your Wallet"
                 : ""}

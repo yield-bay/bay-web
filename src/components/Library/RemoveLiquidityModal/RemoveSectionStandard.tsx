@@ -63,14 +63,9 @@ const RemoveSectionStandard = () => {
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
-
   const [txnHash, setTxnHash] = useState<string>("");
-
-  const [farms] = useAtom(farmsAtom);
-  const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
-  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
@@ -512,7 +507,6 @@ const RemoveSectionStandard = () => {
               (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
               (methodId == Method.LP &&
                 fixedAmtNum(lpTokens) > fixedAmtNum(lpBalance))
-              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Removing Liquidity"
             onClick={() => {
@@ -703,7 +697,8 @@ const RemoveSectionStandard = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Withdrawing {removeAmount} STELLA/GLMR LP Tokens
+              Withdrawing {removeAmount.toLocaleString("en-US")}{" "}
+              {farmAsset0?.symbol}/{farmAsset1?.symbol} LP Tokens
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base leading-5 font-semibold text-[##AAABAD]">

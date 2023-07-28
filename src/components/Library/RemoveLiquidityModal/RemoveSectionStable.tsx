@@ -729,7 +729,7 @@ const RemoveSectionStable = () => {
               {isLoadingRemoveLiqTxn
                 ? "Waiting for transaction to complete"
                 : isLoadingRemoveLiqCall
-                ? "Confirmation Transaction in your Wallet"
+                ? "Confirm Transaction in your Wallet"
                 : ""}
             </p>
             <Spinner />

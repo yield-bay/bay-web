@@ -1110,7 +1110,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <hr className="border-t border-[#E3E3E3] min-w-full" />
             <p className="text-base text-[#373738]">
               {isLoadingAddLiqTxn
-                ? "Waiting for Completion"
+                ? "Waiting for transaction to complete"
                 : isLoadingAddLiqCall
                 ? "Confirmation Transaction in your Wallet"
                 : ""}
