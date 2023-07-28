@@ -71,15 +71,19 @@ const ClaimSectionDot = () => {
   const toast = useToast();
 
   useEffect(() => {
-    setIsProcessStep(false);
+    // Resetting all states to default on open/close
+    setIsInProcess(false);
+    setIsSigning(false);
+    setIsSuccess(false);
   }, [isOpen]);
 
   // MGX Balance
   // fetchMGXBalance();
 
   const handleClaimRewards = async () => {
-    setIsSigning(true);
+    setIsInProcess(true);
     try {
+      setIsSigning(true);
       console.log("clpool", pool, position);
       const signer = account?.wallet?.signer;
       const claimRewardsTxn = await mangataHelper.claimRewardsAll(position?.id);
@@ -202,7 +206,15 @@ const ClaimSectionDot = () => {
         });
       console.log("called claim rewards method");
     } catch (error) {
+      let errorString = `${error}`;
       console.error("error while claiming rewards:", error);
+      toast({
+        position: "top",
+        duration: 3000,
+        render: () => <ToastWrapper title={errorString} status="error" />,
+      });
+      setIsInProcess(false);
+      setIsSigning(false);
     }
   };
 
