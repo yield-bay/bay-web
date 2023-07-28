@@ -942,6 +942,46 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             {farmAsset0?.symbol}/{farmAsset1?.symbol} Pool Tokens
           </p>
         </div>
+        <div className="inline-flex justify-between text-sm font-bold">
+          <span className="text-[#0B0B0B]">Rates</span>
+          <p className="flex flex-col gap-y-2 text-[#282929]">
+            <span>
+              1 {farmAsset0?.symbol} = {getSecondTokenRelation}{" "}
+              {farmAsset1?.symbol}
+            </span>
+            <span>
+              1 {farmAsset1?.symbol} = {getFirstTokenRelation}{" "}
+              {farmAsset0?.symbol}
+            </span>
+          </p>
+        </div>
+        {/* Relative Conversion and Share of Pool */}
+        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
+          <div className="flex flex-col gap-y-2">
+            <p>
+              {getFirstTokenRelation} {farmAsset0?.symbol} per{" "}
+              {farmAsset1?.symbol}
+            </p>
+            <p>
+              {getSecondTokenRelation} {farmAsset1?.symbol} per{" "}
+              {farmAsset0?.symbol}
+            </p>
+          </div>
+          <p className="flex flex-col items-end">
+            <span>
+              {(totalSupply !== 0 && minLpTokens > 0
+                ? (minLpTokens / totalSupply) * 100 < 0.001
+                  ? "<0.001"
+                  : (minLpTokens / totalSupply) * 100
+                : 0
+              ).toLocaleString("en-US")}
+              %
+            </span>
+            <span>Share of pool</span>
+          </p>
+        </div>
+        <hr className="border-t border-[#E3E3E3] min-w-full" />
+        {/* Gas Estimate / Slippage Button / Wallet Balance */}
         <div
           className={clsx(
             "rounded-xl",
@@ -991,45 +1031,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               {nativeBal?.symbol}
             </span>
           </div>
-        </div>
-        <div className="inline-flex justify-between text-sm font-bold">
-          <span className="text-[#0B0B0B]">Rates</span>
-          <p className="flex flex-col gap-y-2 text-[#282929]">
-            <span>
-              1 {farmAsset0?.symbol} = {getSecondTokenRelation}{" "}
-              {farmAsset1?.symbol}
-            </span>
-            <span>
-              1 {farmAsset1?.symbol} = {getFirstTokenRelation}{" "}
-              {farmAsset0?.symbol}
-            </span>
-          </p>
-        </div>
-        <hr className="border-t border-[#E3E3E3] min-w-full" />
-        {/* Relative Conversion and Share of Pool */}
-        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          <div className="flex flex-col gap-y-2">
-            <p>
-              {getFirstTokenRelation} {farmAsset0?.symbol} per{" "}
-              {farmAsset1?.symbol}
-            </p>
-            <p>
-              {getSecondTokenRelation} {farmAsset1?.symbol} per{" "}
-              {farmAsset0?.symbol}
-            </p>
-          </div>
-          <p className="flex flex-col items-end">
-            <span>
-              {(totalSupply !== 0 && minLpTokens > 0
-                ? (minLpTokens / totalSupply) * 100 < 0.001
-                  ? "<0.001"
-                  : (minLpTokens / totalSupply) * 100
-                : 0
-              ).toLocaleString("en-US")}
-              %
-            </span>
-            <span>Share of pool</span>
-          </p>
         </div>
         <MButton
           type="primary"

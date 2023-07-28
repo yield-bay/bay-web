@@ -497,10 +497,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   // Method to handle max button for second token
   const handleMaxSecondToken = () => {
     // Checking if user has enough balance to pay gas fees
-    if (
-      token1 == "MGX"
-      // (token1 == "MGR" || token1 == "MGX")
-    ) {
+    if (token1 == "MGX") {
       if ((secondTokenBalance as number) < 20) {
         alert("Insufficient balance to pay gas fees!");
         toast({
@@ -546,14 +543,12 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
 
     try {
       setIsSigning(true);
-
       console.log(
         "liquidityTokenId",
         pool?.liquidityTokenId,
         "estimatedLpMinted",
         estimateLpMinted
       );
-
       // Method to Add Liquidity
       const mintLiquidityTxn = await mangataHelper.mintLiquidityTx(
         pool?.firstTokenId,
@@ -561,7 +556,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         firstTokenAmount,
         secondTokenAmount
       );
-
       await mintLiquidityTxn
         .signAndSend(
           account1?.address,
@@ -653,16 +647,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                   });
                   // unsub();
                   // Calling the ADD_LIQUIDITY tracker in isFinalised status
-                  // createLiquidityEventHandler(
-                  //   turingAddress as string,
-                  //   IS_PRODUCTION ? "KUSAMA" : "ROCOCO",
-                  //   { symbol: token0, amount: config.firstTokenAmount },
-                  //   { symbol: token1, amount: config.secondTokenAmount },
-                  //   { symbol: `${token0}-${token1}`, amount: 0 },
-                  //   getTimestamp(),
-                  //   config.fees,
-                  //   "ADD_LIQUIDITY"
-                  // );
                 }
               })();
             } else {
@@ -911,50 +895,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           </p>
         </div>
 
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        <div
-          className={clsx(
-            "rounded-xl",
-            lpBalance > fees ? "bg-[#C0F9C9]" : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              lpBalance > fees ? "bg-[#ECFFEF]" : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p className="inline-flex">
-                <span className="opacity-40 mr-2 font-semibold">
-                  {fees.toLocaleString("en-US") ?? 0} MGX
-                </span>
-                <span>${(fees * mgxPrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {lpBalance > fees ? "Sufficient" : "Insufficient"} Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {lpBalance.toLocaleString("en-US")} {"MGX"}
-            </span>
-          </div>
-        </div>
-
         {/* Buttons */}
         <div className="flex flex-row gap-x-3 mt-9">
           <div className="flex flex-row w-full gap-x-3">
@@ -1063,6 +1003,49 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             </span>
             <span>Share of pool</span>
           </p>
+        </div>
+        {/* Gas Fees // Slippage // Suff. Wallet balance */}
+        <div
+          className={clsx(
+            "rounded-xl",
+            lpBalance > fees ? "bg-[#C0F9C9]" : "bg-[#FFB7B7]"
+          )}
+        >
+          <div
+            className={clsx(
+              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
+              lpBalance > fees ? "bg-[#ECFFEF]" : "bg-[#FFE8E8]"
+            )}
+          >
+            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
+              <span>Estimated Gas Fees:</span>
+              <p className="inline-flex">
+                <span className="opacity-40 mr-2 font-semibold">
+                  {fees.toLocaleString("en-US") ?? 0} MGX
+                </span>
+                <span>${(fees * mgxPrice).toFixed(5)}</span>
+              </p>
+            </div>
+            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
+              <span>Slippage Tolerance: {SLIPPAGE}%</span>
+              <button
+                onClick={() => {
+                  setIsSlippageModalOpen(true);
+                  setIsOpen(false);
+                }}
+              >
+                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
+            <h3 className="text-[#4E4C4C] text-base font-bold">
+              {lpBalance > fees ? "Sufficient" : "Insufficient"} Wallet Balance
+            </h3>
+            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
+              {lpBalance.toLocaleString("en-US")} {"MGX"}
+            </span>
+          </div>
         </div>
         <MButton
           type="primary"
