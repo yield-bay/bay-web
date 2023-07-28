@@ -37,6 +37,7 @@ import { getNativeTokenAddress } from "@utils/network";
 import { handleStakeEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import toUnits from "@utils/toUnits";
+import BigNumber from "bignumber.js";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -106,16 +107,26 @@ const StakingModal = () => {
   });
 
   const getArgs = () => {
+    const pamt = BigNumber(lpBalanceNum!, 10)
+      .multipliedBy(parseFloat(percentage == "" ? "0" : percentage) / 100)
+      .multipliedBy(BigNumber(10).pow(18))
+      .decimalPlaces(0, 1);
+    console.log("stakinggaargs", lpBalanceNum, pamt);
+
     const amt =
       methodId == 0
-        ? parseUnits(
-            `${
-              (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
-              100
-            }`,
-            18
-          )
-        : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
+        ? // ? parseUnits(
+          //     `${
+          //       (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
+          //       100
+          //     }`,
+          //     18
+          //   )
+          pamt
+        : BigNumber(lpTokens == "" ? "0" : lpTokens)
+            .multipliedBy(BigNumber(10).pow(18))
+            .decimalPlaces(0, 1);
+    // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];
     } else if (farm?.protocol.toLowerCase() == "sirius") {

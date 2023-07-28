@@ -36,6 +36,7 @@ import { getNativeTokenAddress } from "@utils/network";
 import toUnits from "@utils/toUnits";
 import { handleUnstakeEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import BigNumber from "bignumber.js";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -104,15 +105,29 @@ const UnstakingModal = () => {
   });
 
   const getArgs = () => {
+    const pamt = BigNumber(staked!, 10)
+      .multipliedBy(parseFloat(percentage == "" ? "0" : percentage) / 100)
+      .multipliedBy(BigNumber(10).pow(18))
+      .decimalPlaces(0, 1);
+    console.log(
+      "gaars",
+      staked,
+      (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
+    );
+
     const amt =
       methodId == Method.PERCENTAGE
-        ? parseUnits(
-            `${
-              (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
-            }`,
-            18
-          )
-        : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
+        ? // ? parseUnits(
+          //     `${
+          //       (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
+          //     }`,
+          //     18
+          //   )
+          pamt
+        : BigNumber(lpTokens == "" ? "0" : lpTokens)
+            .multipliedBy(BigNumber(10).pow(18))
+            .decimalPlaces(0, 1);
+    // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];
     } else if (farm?.protocol.toLowerCase() == "sirius") {
@@ -162,6 +177,8 @@ const UnstakingModal = () => {
         ? "balanceOf"
         : farm?.protocol == "zenlink"
         ? "getUserInfo"
+        : farm?.protocol == "arthswap"
+        ? "userInfos"
         : "userInfo",
     args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
     enabled: !!farm && !!address,
