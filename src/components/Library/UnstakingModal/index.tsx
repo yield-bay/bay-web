@@ -329,19 +329,40 @@ const UnstakingModal = () => {
             handleLpTokensChange={handleLpTokensChange}
             methodId={methodId}
           />
-          <div className="inline-flex gap-2 items-center justify-start">
-            {["Percentage", "LP Tokens"].map((method, index) => (
-              <button
-                key={index}
-                className={clsx(
-                  "text-sm font-bold leading-5",
-                  methodId !== index && "opacity-40"
-                )}
-                onClick={() => setMethodId(index)}
-              >
-                {method}
-              </button>
-            ))}
+          <div className="inline-flex items-center justify-between text-sm font-bold leading-5">
+            <div className="inline-flex gap-2 items-center">
+              {["Percentage", "LP Tokens"].map((method, index) => (
+                <button
+                  key={index}
+                  className={clsx(
+                    "text-sm font-bold leading-5",
+                    methodId !== index && "opacity-40"
+                  )}
+                  onClick={() => setMethodId(index)}
+                >
+                  {method}
+                </button>
+              ))}
+            </div>
+            <p className="text-[#344054] opacity-60">
+              {methodId == Method.PERCENTAGE ? (
+                <span>
+                  {parseFloat(percentage) > 0
+                    ? ((fixedAmtNum(percentage) * staked) / 100).toLocaleString(
+                        "en-US"
+                      )
+                    : "0"}{" "}
+                  Tokens
+                </span>
+              ) : (
+                <span>
+                  {staked > 0
+                    ? ((fixedAmtNum(lpTokens) * 100) / staked).toFixed(2)
+                    : 0}
+                  %
+                </span>
+              )}
+            </p>
           </div>
         </div>
         <div className="w-full">
