@@ -324,14 +324,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     // isSuccessApproveCall: approveToken0CallSuccess,
     isSuccessApproveTxn: approveToken0TxnSuccess,
     writeAsync: approveToken0,
-  } = useApproveToken(farmAsset0?.address, selectedFarm?.router!);
+  } = useApproveToken(
+    farmAsset0?.address,
+    selectedFarm?.router!,
+    farmAsset0?.symbol
+  );
   const {
     isLoadingApproveCall: approveToken1CallLoading,
     isLoadingApproveTxn: approveToken1TxnLoading,
     // isSuccessApproveCall: approveToken1CallSuccess,
     isSuccessApproveTxn: approveToken1TxnSuccess,
     writeAsync: approveToken1,
-  } = useApproveToken(farmAsset1?.address, selectedFarm?.router!);
+  } = useApproveToken(
+    farmAsset1?.address,
+    selectedFarm?.router!,
+    farmAsset1?.symbol
+  );
 
   const {
     data: addLiquidityData,

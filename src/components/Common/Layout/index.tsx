@@ -55,6 +55,7 @@ import {
   emptySubstratePositions,
   fetchSubstratePositions,
 } from "@utils/position-utils/substratePositions";
+import Notifications from "@components/Library/Notifications";
 
 interface Props {
   children: ReactNode;
@@ -338,6 +339,7 @@ const Layout: FC<Props> = ({ children }) => {
       {unstakingModalOpen && <UnstakingModal />}
       {claimModalOpen && <ClaimRewardsModal />}
       <SlippageModal />
+      <Notifications />
       <Header />
       {children}
       <Footer />

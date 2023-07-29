@@ -32,6 +32,8 @@ module.exports = {
       },
       boxShadow: {
         farmBtn: "0px 1px 2px rgba(16, 24, 40, 0.05)",
+        toast:
+          "0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08)",
       },
       animation: {
         shiny: "shimmer 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",

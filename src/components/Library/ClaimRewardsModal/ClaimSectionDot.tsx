@@ -18,9 +18,9 @@ import {
   mangataPoolsAtom,
   subPosLoadingAtom,
 } from "@store/commonAtoms";
-import { Spinner } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/react";
-import ToastWrapper from "../ToastWrapper";
+import Spinner from "../Spinner";
+// import { useToast } from "@chakra-ui/react";
+// import ToastWrapper from "../ToastWrapper";
 import MButton from "../MButton";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { mangataHelperAtom } from "@store/commonAtoms";
@@ -71,7 +71,7 @@ const ClaimSectionDot = () => {
 
   const [token0, token1] = formatTokenSymbols(position?.lpSymbol ?? "");
 
-  const toast = useToast();
+  // const toast = useToast();
 
   useEffect(() => {
     // Resetting all states to default on open/close
@@ -143,16 +143,16 @@ const ClaimSectionDot = () => {
                     setIsSuccess(false);
                     setIsSigning(false);
                     setIsInProcess(false);
-                    toast({
-                      position: "top",
-                      duration: 3000,
-                      render: () => (
-                        <ToastWrapper
-                          title="Error while minting Liquidity!"
-                          status="error"
-                        />
-                      ),
-                    });
+                    // toast({
+                    //   position: "top",
+                    //   duration: 3000,
+                    //   render: () => (
+                    //     <ToastWrapper
+                    //       title="Error while minting Liquidity!"
+                    //       status="error"
+                    //     />
+                    //   ),
+                    // });
                   }
                 });
                 if (allSuccess) {
@@ -164,16 +164,16 @@ const ClaimSectionDot = () => {
                   console.log(
                     `Rewards Successfully claimed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
                   );
-                  toast({
-                    position: "top",
-                    duration: 3000,
-                    render: () => (
-                      <ToastWrapper
-                        title={`Rewards successfully claimed from ${token0}-${token1} pool.`}
-                        status="success"
-                      />
-                    ),
-                  });
+                  // toast({
+                  //   position: "top",
+                  //   duration: 3000,
+                  //   render: () => (
+                  //     <ToastWrapper
+                  //       title={`Rewards successfully claimed from ${token0}-${token1} pool.`}
+                  //       status="success"
+                  //     />
+                  //   ),
+                  // });
                   fetchSubstratePositions({
                     farms,
                     positions,
@@ -196,26 +196,26 @@ const ClaimSectionDot = () => {
           setIsInProcess(false);
           setIsSigning(false);
           setIsSuccess(false);
-          toast({
-            position: "top",
-            duration: 3000,
-            render: () => (
-              <ToastWrapper
-                title="Error while removing Liquidity. Please try again later."
-                status="error"
-              />
-            ),
-          });
+          // toast({
+          //   position: "top",
+          //   duration: 3000,
+          //   render: () => (
+          //     <ToastWrapper
+          //       title="Error while removing Liquidity. Please try again later."
+          //       status="error"
+          //     />
+          //   ),
+          // });
         });
       console.log("called claim rewards method");
     } catch (error) {
       let errorString = `${error}`;
-      console.error("error while claiming rewards:", error);
-      toast({
-        position: "top",
-        duration: 3000,
-        render: () => <ToastWrapper title={errorString} status="error" />,
-      });
+      console.error("error while claiming rewards:", errorString);
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => <ToastWrapper title={errorString} status="error" />,
+      // });
       setIsInProcess(false);
       setIsSigning(false);
     }

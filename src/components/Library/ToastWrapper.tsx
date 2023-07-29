@@ -1,12 +1,16 @@
-import { FC } from "react";
+import { FC, Fragment } from "react";
 import clsx from "clsx";
 import { satoshiFont } from "@utils/localFont";
+import { Toaster } from "react-hot-toast";
+import { Transition } from "@headlessui/react";
+import { CheckCircleIcon } from "@heroicons/react/outline";
 
 type Status = "success" | "error" | "warning" | "info";
 
 interface Props {
   title: string;
-  status: Status;
+  visible: boolean;
+  // status: Status;
 }
 
 const toaststatus = (status: Status) => {
@@ -24,12 +28,13 @@ const toaststatus = (status: Status) => {
   }
 };
 
-const ToastWrapper: FC<Props> = ({ title, status }) => {
+const ToastWrapper: FC<Props> = ({ title, visible }) => {
   return (
     <div
       className={clsx(
         "z-50 w-[471px] py-3 px-6 rounded-lg font-bold border text-base text-left bg-black leading-[21.6px] text-white font-sans",
-        toaststatus(status),
+        // toaststatus(status),
+        visible ? "animte-enter" : "animate-leave",
         satoshiFont.variable
       )}
     >

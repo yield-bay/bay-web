@@ -199,7 +199,11 @@ const StakingModal = () => {
     isLoadingApproveTxn,
     isSuccessApproveTxn,
     writeAsync: approveLpToken,
-  } = useApproveToken(farm?.asset.address!, farm?.chef as Address);
+  } = useApproveToken(
+    farm?.asset.address!,
+    farm?.chef as Address,
+    getLpTokenSymbol(tokenNames)
+  );
 
   // Stake LP Tokens
   const {

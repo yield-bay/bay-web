@@ -27,8 +27,8 @@ import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
 import Spinner from "../Spinner";
 import { CogIcon } from "@heroicons/react/solid";
-import { useToast } from "@chakra-ui/react";
-import ToastWrapper from "../ToastWrapper";
+// import { useToast } from "@chakra-ui/react";
+// import ToastWrapper from "../ToastWrapper";
 import { dotAccountAtom } from "@store/accountAtoms";
 import _ from "lodash";
 import { delay, getDecimalBN } from "@utils/xcm/common/utils";
@@ -97,7 +97,7 @@ const RemoveSectionMangata = () => {
 
   const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
-  const toast = useToast();
+  // const toast = useToast();
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
@@ -138,16 +138,16 @@ const RemoveSectionMangata = () => {
     setPool(pool);
 
     if (_.isUndefined(pool)) {
-      toast({
-        position: "top",
-        duration: 3000,
-        render: () => (
-          <ToastWrapper
-            title={`Couldn’t find a liquidity pool for ${poolName} ...`}
-            status="error"
-          />
-        ),
-      });
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => (
+      //     <ToastWrapper
+      //       title={`Couldn’t find a liquidity pool for ${poolName} ...`}
+      //       status="error"
+      //     />
+      //   ),
+      // });
       setIsOpen(false);
       setFarm(null);
       throw new Error(`Couldn’t find a liquidity pool for ${poolName} ...`);
@@ -251,13 +251,13 @@ const RemoveSectionMangata = () => {
       setLpTokens(event.target.value);
     } else {
       alert("LP Amount can't be negative!");
-      toast({
-        position: "top",
-        duration: 3000,
-        render: () => (
-          <ToastWrapper title="LP tokens can not be negative!" status="error" />
-        ),
-      });
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => (
+      //     <ToastWrapper title="LP tokens can not be negative!" status="error" />
+      //   ),
+      // });
     }
   };
 
@@ -415,16 +415,16 @@ const RemoveSectionMangata = () => {
                     setIsSuccess(false);
                     setIsSigning(false);
                     setIsInProcess(false);
-                    toast({
-                      position: "top",
-                      duration: 3000,
-                      render: () => (
-                        <ToastWrapper
-                          title="Error while minting Liquidity!"
-                          status="error"
-                        />
-                      ),
-                    });
+                    // toast({
+                    //   position: "top",
+                    //   duration: 3000,
+                    //   render: () => (
+                    //     <ToastWrapper
+                    //       title="Error while minting Liquidity!"
+                    //       status="error"
+                    //     />
+                    //   ),
+                    // });
                   }
                 });
                 if (allSuccess) {
@@ -436,16 +436,16 @@ const RemoveSectionMangata = () => {
                   console.log(
                     `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
                   );
-                  toast({
-                    position: "top",
-                    duration: 3000,
-                    render: () => (
-                      <ToastWrapper
-                        title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
-                        status="success"
-                      />
-                    ),
-                  });
+                  // toast({
+                  //   position: "top",
+                  //   duration: 3000,
+                  //   render: () => (
+                  //     <ToastWrapper
+                  //       title={`Liquidity successfully removed from ${token0}-${token1} pool.`}
+                  //       status="success"
+                  //     />
+                  //   ),
+                  // });
                   fetchSubstratePositions({
                     farms,
                     positions,
@@ -486,25 +486,25 @@ const RemoveSectionMangata = () => {
           setIsInProcess(false);
           setIsSigning(false);
           setIsSuccess(false);
-          toast({
-            position: "top",
-            duration: 3000,
-            render: () => (
-              <ToastWrapper
-                title="Error while removing Liquidity. Please try again later."
-                status="error"
-              />
-            ),
-          });
+          // toast({
+          //   position: "top",
+          //   duration: 3000,
+          //   render: () => (
+          //     <ToastWrapper
+          //       title="Error while removing Liquidity. Please try again later."
+          //       status="error"
+          //     />
+          //   ),
+          // });
         });
     } catch (error) {
       let errorString = `${error}`;
       console.log("error while handling remove liquidity:", errorString);
-      toast({
-        position: "top",
-        duration: 3000,
-        render: () => <ToastWrapper title={errorString} status="error" />,
-      });
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => <ToastWrapper title={errorString} status="error" />,
+      // });
       setIsInProcess(false);
       setIsSigning(false);
     }

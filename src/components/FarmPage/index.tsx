@@ -9,8 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { isConnectedDotAtom } from "@store/accountAtoms";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useToast } from "@chakra-ui/react";
-import ToastWrapper from "@components/Library/ToastWrapper";
 
 // Components, Hooks, Utils Imports
 import {
@@ -66,7 +64,6 @@ import { InformationCircleIcon } from "@heroicons/react/solid";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
-  const toast = useToast();
   const { isConnected } = useAccount();
   const [isConnectedDot] = useAtom(isConnectedDotAtom);
 
@@ -177,24 +174,6 @@ const FarmPage: NextPage = () => {
             <a href={farmURL(farm)} target="_blank" rel="noreferrer">
               <Button size="large">Visit Farm</Button>
             </a>
-            {/* <Button
-              size="large"
-              onButtonClick={() => {
-                toast({
-                  title: "Account created.",
-                  description: "We've created your account for you.",
-                  status: "success",
-                  duration: 9000,
-                  isClosable: true,
-                  position: "top-right",
-                  render: () => (
-                    <ToastWrapper title="Account created." status="success" />
-                  ),
-                });
-              }}
-            >
-              Test Toast
-            </Button> */}
             {!hasPosition &&
               (farm?.chain.toLowerCase() == "mangata kusama" ||
               farm?.protocol.toLowerCase() == "mangata x"

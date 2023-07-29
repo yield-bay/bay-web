@@ -225,7 +225,11 @@ const RemoveSectionStable = () => {
     isLoadingApproveTxn: approveLpLoadingTxn,
     isSuccessApproveTxn: approveLpSuccessTxn,
     writeAsync: approveLpToken,
-  } = useApproveToken(farm?.asset.address!, farm?.router!);
+  } = useApproveToken(
+    farm?.asset.address!,
+    farm?.router!,
+    getLpTokenSymbol(tokenNames)
+  );
 
   // Remove Liquidity Call
   const {

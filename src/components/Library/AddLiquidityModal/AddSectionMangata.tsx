@@ -18,9 +18,7 @@ import Spinner from "@components/Library/Spinner";
 import {
   accountInitAtom,
   addLiqModalOpenAtom,
-  evmPosLoadingAtom,
   isInitialisedAtom,
-  lpUpdatedAtom,
   mangataAddressAtom,
   mangataHelperAtom,
   mangataPoolsAtom,
@@ -43,8 +41,6 @@ import BN from "bn.js";
 import { dotAccountAtom } from "@store/accountAtoms";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import toUnits from "@utils/toUnits";
-import ToastWrapper from "../ToastWrapper";
-import { useToast } from "@chakra-ui/react";
 import { MangataPool } from "@utils/types/common";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
@@ -68,10 +64,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   // const [lpBalance, setLpBalance] = useState<any | null>(null);
   const [lpBalance, setLpBalance] = useState<number>(0);
   const [fees, setFees] = useState<number>(0);
-
-  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
-
-  const toast = useToast();
 
   const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
@@ -217,16 +209,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     setPool(pool);
 
     if (_.isUndefined(pool)) {
-      toast({
-        position: "top",
-        duration: 3000,
-        render: () => (
-          <ToastWrapper
-            title={`Couldn’t find a liquidity pool for ${poolName} ...`}
-            status="error"
-          />
-        ),
-      });
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => (
+      //     <ToastWrapper
+      //       title={`Couldn’t find a liquidity pool for ${poolName} ...`}
+      //       status="error"
+      //     />
+      //   ),
+      // });
       setIsOpen(false);
       setSelectedFarm(null);
       throw new Error(`Couldn’t find a liquidity pool for ${poolName} ...`);
@@ -326,13 +318,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         setFirstTokenBalance(token0BalanceFree);
         setSecondTokenBalance(token1BalanceFree);
       } else {
-        toast({
-          position: "top",
-          duration: 3000,
-          render: () => (
-            <ToastWrapper title="Please connect wallet!" status="error" />
-          ),
-        });
+        // toast({
+        //   position: "top",
+        //   duration: 3000,
+        //   render: () => (
+        //     <ToastWrapper title="Please connect wallet!" status="error" />
+        //   ),
+        // });
         console.log("Account1 is empty");
       }
     })();
@@ -472,16 +464,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     if (token0 == "MGX") {
       if ((firstTokenBalance as number) < 20) {
         alert("Insufficient balance to pay gas fees!");
-        toast({
-          position: "top",
-          duration: 3000,
-          render: () => (
-            <ToastWrapper
-              title="Insufficient balance to pay gas fees!"
-              status="warning"
-            />
-          ),
-        });
+        // toast({
+        //   position: "top",
+        //   duration: 3000,
+        //   render: () => (
+        //     <ToastWrapper
+        //       title="Insufficient balance to pay gas fees!"
+        //       status="warning"
+        //     />
+        //   ),
+        // });
       } else {
         setFirstTokenAmount(
           firstTokenBalance
@@ -503,16 +495,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     if (token1 == "MGX") {
       if ((secondTokenBalance as number) < 20) {
         alert("Insufficient balance to pay gas fees!");
-        toast({
-          position: "top",
-          duration: 3000,
-          render: () => (
-            <ToastWrapper
-              title="Insufficient balance to pay gas fees!"
-              status="warning"
-            />
-          ),
-        });
+        // toast({
+        //   position: "top",
+        //   duration: 3000,
+        //   render: () => (
+        //     <ToastWrapper
+        //       title="Insufficient balance to pay gas fees!"
+        //       status="warning"
+        //     />
+        //   ),
+        // });
       } else {
         setSecondTokenAmount(
           secondTokenBalance
@@ -613,16 +605,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                     setIsSuccess(false);
                     setIsSigning(false);
                     setIsInProcess(false);
-                    toast({
-                      position: "top",
-                      duration: 3000,
-                      render: () => (
-                        <ToastWrapper
-                          title="Error while minting Liquidity!"
-                          status="error"
-                        />
-                      ),
-                    });
+                    // toast({
+                    //   position: "top",
+                    //   duration: 3000,
+                    //   render: () => (
+                    //     <ToastWrapper
+                    //       title="Error while minting Liquidity!"
+                    //       status="error"
+                    //     />
+                    //   ),
+                    // });
                   }
                 });
                 if (allSuccess) {
@@ -631,16 +623,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                   setIsInProcess(false);
                   setIsSigning(false);
                   console.log("Mint liquidity trxn finalised.");
-                  toast({
-                    position: "top",
-                    duration: 3000,
-                    render: () => (
-                      <ToastWrapper
-                        title={`Liquidity successfully added in ${token0}-${token1} pool.`}
-                        status="info"
-                      />
-                    ),
-                  });
+                  // toast({
+                  //   position: "top",
+                  //   duration: 3000,
+                  //   render: () => (
+                  //     <ToastWrapper
+                  //       title={`Liquidity successfully added in ${token0}-${token1} pool.`}
+                  //       status="info"
+                  //     />
+                  //   ),
+                  // });
                   fetchSubstratePositions({
                     farms,
                     positions,
@@ -663,25 +655,25 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           setIsInProcess(false);
           setIsSigning(false);
           setIsSuccess(false);
-          toast({
-            position: "top",
-            duration: 3000,
-            render: () => (
-              <ToastWrapper
-                title="Error while minting Liquidity!"
-                status="error"
-              />
-            ),
-          });
+          // toast({
+          //   position: "top",
+          //   duration: 3000,
+          //   render: () => (
+          //     <ToastWrapper
+          //       title="Error while minting Liquidity!"
+          //       status="error"
+          //     />
+          //   ),
+          // });
         });
     } catch (error) {
       let errorString = `${error}`;
       console.log("error while adding liquidity:", errorString);
-      toast({
-        position: "top",
-        duration: 3000,
-        render: () => <ToastWrapper title={errorString} status="error" />,
-      });
+      // toast({
+      //   position: "top",
+      //   duration: 3000,
+      //   render: () => <ToastWrapper title={errorString} status="error" />,
+      // });
       setIsInProcess(false);
       setIsSigning(false);
     }

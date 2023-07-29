@@ -25,7 +25,7 @@ const TokenButton: React.FC<Props> = ({
   setApprovalMap,
 }) => {
   // Check Approval Token
-  const { data: isApproved, isSuccess: isApprovedSuccess } = useIsApprovedToken(
+  const { isSuccess: isApprovedSuccess } = useIsApprovedToken(
     token?.address,
     selectedFarm?.router
   );
@@ -36,7 +36,7 @@ const TokenButton: React.FC<Props> = ({
     isLoadingApproveTxn,
     isSuccessApproveTxn,
     writeAsync: approveToken,
-  } = useApproveToken(token?.address, selectedFarm?.router);
+  } = useApproveToken(token?.address, selectedFarm?.router, token?.symbol);
 
   useEffect(() => {
     // Either already approved or approved after transaction

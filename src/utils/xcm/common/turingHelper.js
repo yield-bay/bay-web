@@ -2,7 +2,7 @@ import _ from "lodash";
 import { rpc, types, runtime } from "@oak-network/types";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import Keyring from "@polkadot/keyring";
-import ToastWrapper from "@components/Library/ToastWrapper";
+// import ToastWrapper from "@components/Library/ToastWrapper";
 import { getProxies, getProxyAccount } from "./utils";
 
 class TuringHelper {
@@ -117,11 +117,11 @@ class TuringHelper {
             setIsSigning(false);
             setIsSuccess(false);
             setIsFailed(true);
-            toast({
-              position: "top",
-              duration: 3000,
-              render: () => <ToastWrapper title={errorString} status="error" />,
-            });
+            // toast({
+            //   position: "top",
+            //   duration: 3000,
+            //   render: () => <ToastWrapper title={errorString} status="error" />,
+            // });
           });
       };
       send();

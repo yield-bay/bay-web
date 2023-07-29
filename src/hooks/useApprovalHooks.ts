@@ -7,7 +7,8 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import toast from "react-hot-toast";
 
 /**
  *
@@ -73,7 +74,11 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
  * @param spender spender Contract Address
  * @returns data, isLoadingApproveCall, isLoadingApproveTxn, isError, isSuccessApproveCall, isSuccessApproveTxn, writeAsync
  */
-const useApproveToken = (tokenAddress: Address, spender: Address) => {
+const useApproveToken = (
+  tokenAddress: Address,
+  spender: Address,
+  tokenSymbol: string
+) => {
   const { chain } = useNetwork();
   const {
     data,
@@ -109,6 +114,12 @@ const useApproveToken = (tokenAddress: Address, spender: Address) => {
     useWaitForTransaction({
       hash: data?.hash,
     });
+
+  useEffect(() => {
+    if (isSuccessApproveTxn) {
+      toast(`${tokenSymbol} Approved!`);
+    }
+  }, [isSuccessApproveTxn]);
 
   return {
     data,
