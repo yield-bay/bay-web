@@ -40,13 +40,14 @@ import {
 } from "@utils/position-utils/evmPositions";
 import { handleClaimRewardsEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+// import { FarmType } from "@utils/types/common";
 
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
   const { address, connector } = useAccount();
   const { chain } = useNetwork();
   const [position] = useAtom(selectedPositionAtom);
-  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
+  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   useEffect(() => console.log("selected position @claimrewards"), [position]);
 
@@ -100,7 +101,7 @@ const ClaimSectionEvm = () => {
     0,
     4,
     contractFnName,
-    position! as any,
+    position!,
     address!,
     getClaimRewardsArgs(
       position?.id!,
@@ -117,7 +118,7 @@ const ClaimSectionEvm = () => {
   const {
     data: claimRewardsData,
     isLoading: isLoadingClaimRewardsCall,
-    isSuccess: isSuccessClaimRewardsCall,
+    // isSuccess: isSuccessClaimRewardsCall,
     isError: isErrorClaimRewardsCall,
     writeAsync: claimRewards,
   } = useContractWrite({
@@ -200,11 +201,9 @@ const ClaimSectionEvm = () => {
       );
 
       console.log("CLAIMREWARDS contract @params", {
-        address: position?.chef as Address,
-        abi: parseAbi(
-          getChefAbi(position?.protocol!, position?.chef as Address)
-        ),
-        functionName: getClaimRewardsFunctionName(position?.protocol!) as any,
+        address: position?.chef,
+        abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
+        functionName: getClaimRewardsFunctionName(position?.protocol!),
         chainId: chain?.id,
         args: thisArgs,
       });
@@ -292,7 +291,8 @@ const ClaimSectionEvm = () => {
               </span>
             ) : (
               <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-                {nativeBal?.formatted} {nativeBal?.symbol}
+                {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
+                {nativeBal?.symbol}
               </span>
             )}
           </div>

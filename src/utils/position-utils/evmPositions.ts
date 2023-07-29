@@ -37,17 +37,13 @@ interface FetchPositionsProps {
 }
 
 export const updateEvmPositions = async ({
-  // farms,
   farm,
   positions,
-  // setPositions,
-  // setIsEvmPosLoading,
   address,
   tokenPricesMap,
   lpTokenPricesMap,
 }: any) => {
-  // const farm = farms.filter(f => )
-  console.log("uepos farm", farm);
+  console.log("u-evm-pos farm", farm);
   const chain = farm.chain.toLowerCase();
   const protocol = farm.protocol.toLowerCase();
   let rpcUrl = "";

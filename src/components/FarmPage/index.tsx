@@ -304,10 +304,7 @@ const FarmPage: NextPage = () => {
                   size="large"
                   style="h-max"
                   onButtonClick={() => setIsRewardsModalOpen(true)}
-                  disabled={(() => {
-                    console.log("discond", unclaimedReward <= 0);
-                    return unclaimedReward <= 0;
-                  })()}
+                  disabled={unclaimedReward <= 0}
                 >
                   Claim
                 </Button>

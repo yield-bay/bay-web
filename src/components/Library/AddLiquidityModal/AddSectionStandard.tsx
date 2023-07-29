@@ -57,7 +57,7 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import {
-  fetchEvmPositions,
+  // fetchEvmPositions,
   updateEvmPositions,
 } from "@utils/position-utils/evmPositions";
 
@@ -277,10 +277,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       tokenPricesMap[
         `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
+    // console.log(
+    //   "tokenkey",
+    //   `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
     console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
       console.log("...setting tokenprice", tokenPrice);

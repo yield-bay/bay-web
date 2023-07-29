@@ -141,7 +141,7 @@ export function getClaimRewardsArgs(
   signer: Address,
   lpAddress: Address
 ) {
-  console.log("this -- farmid", [farmId], typeof farmId);
+  // console.log("this -- farmid", [farmId], typeof farmId);
   switch (protocol.toLowerCase()) {
     case "curve":
       return [];

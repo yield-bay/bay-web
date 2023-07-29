@@ -1,20 +1,8 @@
 import { useState } from "react";
-import { useNetwork, usePublicClient } from "wagmi";
-import {
-  Address,
-  PublicClient,
-  parseAbi,
-  parseUnits,
-  createPublicClient,
-  http,
-} from "viem";
-import {
-  getAddLiqFunctionName,
-  getChefAbi,
-  getRouterAbi,
-} from "@utils/abis/contract-helper-methods";
-import { FarmType } from "@utils/types/common";
-import { mainnet, moonbeam, moonriver } from "viem/chains";
+import { usePublicClient } from "wagmi";
+import { Address, PublicClient, parseAbi } from "viem";
+import { getChefAbi, getRouterAbi } from "@utils/abis/contract-helper-methods";
+import { FarmType, PortfolioPositionType } from "@utils/types/common";
 
 const estimateGas = async (
   publicClient: PublicClient,
@@ -22,64 +10,55 @@ const estimateGas = async (
   contractType: number, // 0: chef, 1: router, 2: lp
   functionType: number, // 0: addliq, 1: removeliq, 2: stake, 3: unstake, 4: claimrewards
   functionName: string,
-  farm: FarmType,
+  farmition: FarmType | PortfolioPositionType,
   account: Address,
   args: Array<any>
 ) => {
   console.log(
-    "egparams",
+    "estimateGas @params",
     address,
     contractType,
     functionType,
     functionName,
-    farm,
+    farmition,
     account,
     args,
     contractType == 0
-      ? parseAbi(getChefAbi(farm?.protocol!, farm?.chef))
+      ? parseAbi(getChefAbi(farmition?.protocol!, farmition?.chef))
       : parseAbi(
           getRouterAbi(
-            farm?.protocol!,
-            farm?.farmType == "StandardAmm" ? false : true
+            farmition?.protocol!,
+            farmition?.farmType == "StandardAmm" ? false : true
           )
         )
   );
 
-  // if any arg is 0
-  // if (args.some((a) => a == 0)) {
-  //   console.log("arg0");
-  //   return BigInt(0);
-  // }
-
   let gasEstimate = BigInt(0);
   try {
     gasEstimate = await publicClient.estimateContractGas({
-      address: address as any,
+      address,
       abi:
         contractType == 0
-          ? parseAbi(getChefAbi(farm?.protocol!, farm?.chef))
+          ? parseAbi(getChefAbi(farmition.protocol!, farmition.chef))
           : parseAbi(
               getRouterAbi(
-                farm?.protocol!,
-                farm?.farmType == "StandardAmm" ? false : true
+                farmition.protocol!,
+                farmition.farmType == "StandardAmm" ? false : true
               )
             ),
-      functionName: functionName as any,
+      functionName,
       args: args,
-      account: account as any,
+      account,
     });
   } catch (error) {
     console.log("estimateContractGas error:", error);
   }
-
-  console.log("gasssss", gasEstimate);
+  console.log("gas estimate", gasEstimate);
   return gasEstimate;
-  // return BigInt(0);
 };
 
 const getGasPrice = async (publicClient: PublicClient): Promise<bigint> => {
-  const gasPrice = await publicClient.getGasPrice();
-  return gasPrice;
+  return await publicClient.getGasPrice();
 };
 
 const useGasEstimation = (
@@ -87,11 +66,11 @@ const useGasEstimation = (
   contractType: number, // 0: chef, 1: router, 2: lp
   functionType: number, // 0: addliq, 1: removeliq, 2: stake, 3: unstake, 4: claimrewards
   functionName: string,
-  farm: FarmType,
+  farmition: FarmType | PortfolioPositionType,
   account: Address,
   args: Array<any>
 ) => {
-  const { chain } = useNetwork();
+  // const { chain } = useNetwork();
   // const publicClient = usePublicClient({ chainId: 1284 });
   const publicClient = usePublicClient();
   // const publicClient = createPublicClient({
@@ -115,7 +94,7 @@ const useGasEstimation = (
       gasEstimate: 0,
     };
   } else if (
-    farm.farmType == "StableAmm" &&
+    farmition.farmType == "StableAmm" &&
     functionType == 0 && // addliquidity
     args[0].every((a: any) => a == 0 || a == BigInt(0)) // at least 1 amounts arg should be non zero
   ) {
@@ -134,7 +113,7 @@ const useGasEstimation = (
         contractType,
         functionType,
         functionName,
-        farm,
+        farmition,
         account,
         args
       ).then((res) => {
