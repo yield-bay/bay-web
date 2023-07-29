@@ -44,10 +44,6 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
         );
         const tokenNames = formatTokenSymbols(position?.lpSymbol);
 
-        const isDisabled = unclaimedRewards.some(
-          (reward) => reward.amount == 0
-        );
-
         return (
           <div
             key={index}
@@ -84,8 +80,6 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
                             ? parseFloat(
                                 reward.amount.toFixed(2)
                               ).toLocaleString("en-US")
-                            : reward.amount == 0
-                            ? "0"
                             : "<0.01"}{" "}
                           {reward.token}
                         </span>
@@ -101,7 +95,6 @@ const RewardsModal = ({ open, setOpen, positions }: Props) => {
                 setOpen(false);
                 setOpenClaimRewardsModal(true);
               }}
-              disabled={isDisabled}
               className="shadow disabled:shadow-none disabled:opacity-50 py-[10px] h-fit px-4 rounded-lg font-medium text-sm leading-5 hover:bg-gray-50 border border-[#D0D5DD]"
             >
               Claim Rewards
