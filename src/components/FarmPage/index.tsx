@@ -295,7 +295,7 @@ const FarmPage: NextPage = () => {
                   <p>Unclaimed</p>
                   <p>Rewards Worth</p>
                   <p className="mt-2 font-semibold text-2xl leading-7 text-[#101828]">
-                    {unclaimedReward < 0.01
+                    {unclaimedRewardUSD < 0.01
                       ? "<$0.01"
                       : `$${unclaimedRewardUSD}`}
                   </p>
@@ -304,7 +304,10 @@ const FarmPage: NextPage = () => {
                   size="large"
                   style="h-max"
                   onButtonClick={() => setIsRewardsModalOpen(true)}
-                  disabled={unclaimedReward <= 0}
+                  disabled={(() => {
+                    console.log("discond", unclaimedReward <= 0);
+                    return unclaimedReward <= 0;
+                  })()}
                 >
                   Claim
                 </Button>

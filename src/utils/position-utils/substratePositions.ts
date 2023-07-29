@@ -78,15 +78,17 @@ export const updateSubstratePositions = async ({
   console.log("assetsInfo", assetsInfo);
   let mangataAsset: any = {};
   const balances = await mangata.getBalances();
+  console.log("mangatabalances", balances);
   for (const key in balances) {
     if (Object.hasOwnProperty.call(balances, key)) {
       const element = balances[key];
+      console.log("element", element, key);
       if (assetsInfo[key] !== undefined) {
         const e = // todo: try parseBigInt here instead of parseFloat
           parseFloat(BigInt(element.toString()).toString(10)) /
           10 ** assetsInfo[key]["decimals"];
         mangataAsset[key] = e;
-        // console.log("mgeee", e);
+        console.log("mgeee", e);
       }
     }
   }
@@ -123,7 +125,7 @@ export const updateSubstratePositions = async ({
     ff.id
   );
   const tokenPrices = await fetchTokenPricesMangata();
-  // console.log("MGX price", tokenPrices.get("mgx"));
+  console.log("mangatatokenprices", tokenPrices);
 
   console.log(
     "Reward Amount ---",

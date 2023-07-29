@@ -572,10 +572,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             } else if (status.isFinalized) {
               (async () => {
                 const tranHash = status.asFinalized.toString();
-                setTxnHash(txnHash);
                 console.log(
                   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
                 );
+                setTxnHash(tranHash);
                 await delay(20000);
                 console.log("after delay");
                 const block = await mangataHelper.api.rpc.chain.getBlock(
