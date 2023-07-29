@@ -34,7 +34,10 @@ import { Address, parseAbi } from "viem";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import toUnits from "@utils/toUnits";
-import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import {
+  fetchEvmPositions,
+  updateEvmPositions,
+} from "@utils/position-utils/evmPositions";
 import { handleClaimRewardsEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 
@@ -136,7 +139,6 @@ const ClaimSectionEvm = () => {
   useEffect(() => {
     if (isSuccessClaimRewardsTxn) {
       console.log("claimrewards txn success!");
-      setLpUpdated(lpUpdated + 1);
       // Tracking
       handleClaimRewardsEvent({
         userAddress: address!,
@@ -158,6 +160,33 @@ const ClaimSectionEvm = () => {
           };
         })!,
       });
+      (async () => {
+        console.log("beforeuepos", position?.chain!, position?.protocol!);
+
+        const a = await updateEvmPositions({
+          farm: {
+            id: position?.id!,
+            chef: position?.chef!,
+            chain: position?.chain!,
+            protocol: position?.protocol!,
+            asset: {
+              symbol: position?.lpSymbol,
+              address: position?.lpAddress,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessClaimRewardsTxn]);
 

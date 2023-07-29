@@ -17,6 +17,7 @@ import {
 import MButton from "../MButton";
 import {
   lpTokenPricesAtom,
+  positionsAtom,
   selectedFarmAtom,
   slippageAtom,
   tokenPricesAtom,
@@ -37,6 +38,7 @@ import toUnits from "@utils/toUnits";
 import { handleUnstakeEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import BigNumber from "bignumber.js";
+import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -61,6 +63,7 @@ const UnstakingModal = () => {
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(unstakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
 
   const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
   const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
@@ -245,7 +248,6 @@ const UnstakingModal = () => {
   useEffect(() => {
     if (isSuccessUnstakingTxn) {
       console.log("unstaking txn success!");
-      setLpUpdated(lpUpdated + 1);
       // Tracking
       handleUnstakeEvent({
         userAddress: address!,
@@ -271,6 +273,33 @@ const UnstakingModal = () => {
             ],
         },
       });
+      (async () => {
+        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+
+        const a = await updateEvmPositions({
+          farm: {
+            id: farm?.id!,
+            chef: farm?.chef!,
+            chain: farm?.chain!,
+            protocol: farm?.protocol!,
+            asset: {
+              symbol: farm?.asset.symbol!,
+              address: farm?.asset.address!,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessUnstakingTxn]);
 

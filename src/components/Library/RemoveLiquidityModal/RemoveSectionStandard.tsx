@@ -47,7 +47,10 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import ChosenMethod from "./ChosenMethod";
-import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import {
+  fetchEvmPositions,
+  updateEvmPositions,
+} from "@utils/position-utils/evmPositions";
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 
@@ -64,6 +67,7 @@ const RemoveSectionStandard = () => {
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
   const [txnHash, setTxnHash] = useState<string>("");
+  const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
@@ -213,7 +217,6 @@ const RemoveSectionStandard = () => {
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
       console.log("liquidity removed successfully", removeLiqTxnData);
-      setLpUpdated(lpUpdated + 1);
 
       handleRemoveLiquidityEvent({
         userAddress: address!,
@@ -251,16 +254,33 @@ const RemoveSectionStandard = () => {
             ],
         },
       });
+      (async () => {
+        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
-      // fetchEvmPositions({
-      //   farms,
-      //   positions,
-      //   setPositions,
-      //   setIsEvmPosLoading,
-      //   address,
-      //   tokenPricesMap,
-      //   lpTokenPricesMap,
-      // });
+        const a = await updateEvmPositions({
+          farm: {
+            id: farm?.id!,
+            chef: farm?.chef!,
+            chain: farm?.chain!,
+            protocol: farm?.protocol!,
+            asset: {
+              symbol: farm?.asset.symbol!,
+              address: farm?.asset.address!,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessRemoveLiqTxn]);
 

@@ -36,7 +36,10 @@ import { BN } from "bn.js";
 import toUnits from "@utils/toUnits";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
-import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
+import {
+  fetchSubstratePositions,
+  updateSubstratePositions,
+} from "@utils/position-utils/substratePositions";
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
@@ -668,16 +671,31 @@ const RemoveSectionMangata = () => {
             ],
         },
       });
+      (async () => {
+        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
-      // fetchEvmPositions({
-      //   farms,
-      //   positions,
-      //   setPositions,
-      //   setIsEvmPosLoading,
-      //   address,
-      //   tokenPricesMap,
-      //   lpTokenPricesMap,
-      // });
+        const a = await updateSubstratePositions({
+          farm: {
+            id: farm?.id!,
+            chef: farm?.chef!,
+            chain: farm?.chain!,
+            protocol: farm?.protocol!,
+            asset: {
+              symbol: farm?.asset.symbol!,
+              address: farm?.asset.address!,
+            },
+          },
+          positions,
+          account,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccess]);
 

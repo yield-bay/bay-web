@@ -17,6 +17,7 @@ import {
 import MButton from "../MButton";
 import {
   lpTokenPricesAtom,
+  positionsAtom,
   selectedFarmAtom,
   slippageAtom,
   tokenPricesAtom,
@@ -38,6 +39,7 @@ import { handleStakeEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import toUnits from "@utils/toUnits";
 import BigNumber from "bignumber.js";
+import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -65,6 +67,7 @@ const StakingModal = () => {
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(stakingModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
+  const [positions, setPositions] = useAtom(positionsAtom);
 
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
@@ -241,7 +244,6 @@ const StakingModal = () => {
   useEffect(() => {
     if (isSuccessStakingTxn) {
       console.log("staking txn success!");
-      setLpUpdated(lpUpdated + 1);
       // Tracking
       handleStakeEvent({
         userAddress: address!,
@@ -267,6 +269,33 @@ const StakingModal = () => {
             ],
         },
       });
+      (async () => {
+        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+
+        const a = await updateEvmPositions({
+          farm: {
+            id: farm?.id!,
+            chef: farm?.chef!,
+            chain: farm?.chain!,
+            protocol: farm?.protocol!,
+            asset: {
+              symbol: farm?.asset.symbol!,
+              address: farm?.asset.address!,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessStakingTxn]);
 

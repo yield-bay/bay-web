@@ -48,7 +48,10 @@ import { useToast } from "@chakra-ui/react";
 import { MangataPool } from "@utils/types/common";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
-import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
+import {
+  fetchSubstratePositions,
+  updateSubstratePositions,
+} from "@utils/position-utils/substratePositions";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";
@@ -687,7 +690,6 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   useEffect(() => {
     if (isSuccess) {
       console.log("addliq txn success!");
-      setLpUpdated(lpUpdated + 1);
 
       // Tracking
       handleAddLiquidityEvent({
@@ -729,6 +731,35 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             ],
         },
       });
+      (async () => {
+        console.log(
+          "beforeuepos",
+          selectedFarm?.chain!,
+          selectedFarm?.protocol!
+        );
+
+        const a = await updateSubstratePositions({
+          farm: {
+            id: selectedFarm?.id!,
+            chef: selectedFarm?.chef!,
+            chain: selectedFarm?.chain!,
+            protocol: selectedFarm?.protocol!,
+            asset: {
+              symbol: selectedFarm?.asset.symbol!,
+              address: selectedFarm?.asset.address!,
+            },
+          },
+          positions,
+          account,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccess]);
 
@@ -948,7 +979,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div className="flex flex-col p-6 rounded-lg border border-[#BEBEBE] gap-y-2 text-[#344054] font-bold text-lg leading-6">
           <div className="inline-flex items-center gap-x-2">
             <span>
-              {estimateLpMinted ?? 0 < 0.01
+              {(estimateLpMinted ?? 0) < 0.01
                 ? "<0.01"
                 : toUnits(estimateLpMinted ?? 0, 2)}
             </span>
@@ -1102,7 +1133,14 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <h2 className="text-xl">
-              Supplying {firstTokenAmount} {token0} and {secondTokenAmount}{" "}
+              Supplying{" "}
+              {parseFloat(firstTokenAmount) < 0.01
+                ? "<0.01"
+                : toUnits(parseFloat(firstTokenAmount), 2)}{" "}
+              {token0} and{" "}
+              {parseFloat(secondTokenAmount) < 0.01
+                ? "<0.01"
+                : toUnits(parseFloat(secondTokenAmount), 2)}{" "}
               {token1}
             </h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />

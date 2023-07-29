@@ -30,7 +30,10 @@ import { formatTokenSymbols } from "@utils/farmListMethods";
 import Link from "next/link";
 import { MANGATA_EXPLORER_URL } from "@utils/constants";
 import toUnits from "@utils/toUnits";
-import { fetchSubstratePositions } from "@utils/position-utils/substratePositions";
+import {
+  fetchSubstratePositions,
+  updateSubstratePositions,
+} from "@utils/position-utils/substratePositions";
 import { handleClaimRewardsEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 
@@ -221,7 +224,6 @@ const ClaimSectionDot = () => {
   useEffect(() => {
     if (isSuccess) {
       console.log("claimrewards txn success!");
-      setLpUpdated(lpUpdated + 1);
       // Tracking
       handleClaimRewardsEvent({
         userAddress: account?.address!,
@@ -243,6 +245,31 @@ const ClaimSectionDot = () => {
           };
         })!,
       });
+      (async () => {
+        console.log("beforeuepos", position?.chain!, position?.protocol!);
+
+        const a = await updateSubstratePositions({
+          farm: {
+            id: position?.id!,
+            chef: position?.chef!,
+            chain: position?.chain!,
+            protocol: position?.protocol!,
+            asset: {
+              symbol: position?.lpSymbol!,
+              address: position?.lpAddress!,
+            },
+          },
+          positions,
+          account,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccess]);
 

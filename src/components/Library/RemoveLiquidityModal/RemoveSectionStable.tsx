@@ -50,6 +50,7 @@ import BigNumber from "bignumber.js";
 import ChosenMethod from "./ChosenMethod";
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 
 enum RemoveMethod {
   ALL = 0,
@@ -268,7 +269,6 @@ const RemoveSectionStable = () => {
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
       console.log("liquidity removed successfully", removeLiqTxnData);
-      setLpUpdated(lpUpdated + 1);
 
       handleRemoveLiquidityEvent({
         userAddress: address!,
@@ -321,15 +321,33 @@ const RemoveSectionStable = () => {
             ],
         },
       });
-      // fetchEvmPositions({
-      //   farms,
-      //   positions,
-      //   setPositions,
-      //   setIsEvmPosLoading,
-      //   address,
-      //   tokenPricesMap,
-      //   lpTokenPricesMap,
-      // });
+      (async () => {
+        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+
+        const a = await updateEvmPositions({
+          farm: {
+            id: farm?.id!,
+            chef: farm?.chef!,
+            chain: farm?.chain!,
+            protocol: farm?.protocol!,
+            asset: {
+              symbol: farm?.asset.symbol!,
+              address: farm?.asset.address!,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessRemoveLiqTxn]);
 

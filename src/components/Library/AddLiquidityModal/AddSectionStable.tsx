@@ -45,7 +45,10 @@ import useTotalSupply from "@hooks/useTotalSupply";
 import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
-import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import {
+  fetchEvmPositions,
+  updateEvmPositions,
+} from "@utils/position-utils/evmPositions";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 
@@ -210,7 +213,6 @@ const AddSectionStable: FC = () => {
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
       console.log("addliq txn success!");
-      setLpUpdated(lpUpdated + 1);
 
       // Tracking
       handleAddLiquidityEvent({
@@ -246,6 +248,33 @@ const AddSectionStable: FC = () => {
             ],
         },
       });
+      (async () => {
+        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+
+        const a = await updateEvmPositions({
+          farm: {
+            id: farm?.id!,
+            chef: farm?.chef!,
+            chain: farm?.chain!,
+            protocol: farm?.protocol!,
+            asset: {
+              symbol: farm?.asset.symbol!,
+              address: farm?.asset.address!,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessAddLiqTxn]);
 

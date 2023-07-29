@@ -56,7 +56,10 @@ import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
-import { fetchEvmPositions } from "@utils/position-utils/evmPositions";
+import {
+  fetchEvmPositions,
+  updateEvmPositions,
+} from "@utils/position-utils/evmPositions";
 
 enum InputType {
   Off = -1,
@@ -518,7 +521,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
-      // (async () => {
       console.log("addliq txn success!");
 
       // Tracking
@@ -565,17 +567,37 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             ],
         },
       });
-      fetchEvmPositions({
-        farms,
-        positions,
-        setPositions,
-        setIsEvmPosLoading,
-        address,
-        tokenPricesMap,
-        lpTokenPricesMap,
-      });
-      // })();
-      // setLpUpdated(lpUpdated + 1);
+      (async () => {
+        console.log(
+          "beforeuepos",
+          selectedFarm?.chain!,
+          selectedFarm?.protocol!
+        );
+
+        const a = await updateEvmPositions({
+          farm: {
+            id: selectedFarm?.id!,
+            chef: selectedFarm?.chef!,
+            chain: selectedFarm?.chain!,
+            protocol: selectedFarm?.protocol!,
+            asset: {
+              symbol: selectedFarm?.asset.symbol!,
+              address: selectedFarm?.asset.address!,
+            },
+          },
+          positions,
+          address,
+          tokenPricesMap,
+          lpTokenPricesMap,
+        });
+        console.log("npos", a?.name, a?.position);
+        const tempPositions = { ...positions };
+        tempPositions[a?.name!] = a?.position;
+        setPositions((prevState: any) => ({
+          ...prevState,
+          ...tempPositions,
+        }));
+      })();
     }
   }, [isSuccessAddLiqTxn]);
 
