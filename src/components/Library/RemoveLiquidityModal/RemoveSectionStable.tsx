@@ -461,13 +461,13 @@ const RemoveSectionStable = () => {
                       //     3
                       //   )
                       Array.isArray(minAmount)
-                      ? (minAmount as number[])[index] < 0.01
+                      ? minAmount[index] < 0.01
                         ? "<0.01"
-                        : toUnits((minAmount as number[])[index], 2)
+                        : toUnits(minAmount[index], 2)
                       : minAmount < 0.01
                       ? "<0.01"
                       : toUnits(minAmount, 2)
-                    : 0}{" "}
+                    : ""}{" "}
                   {token?.symbol}
                 </span>
               </button>
@@ -497,7 +497,7 @@ const RemoveSectionStable = () => {
                         ? (minAmount as number[])[index] < 0.01
                           ? "<0.01"
                           : toUnits((minAmount as number[])[index], 2)
-                        : 0}{" "}
+                        : ""}{" "}
                       {token?.symbol}
                     </span>
                     {index !== tokens.length - 1 && (
