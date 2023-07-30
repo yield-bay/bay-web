@@ -546,7 +546,8 @@ const RemoveSectionMangata = () => {
                 <span>
                   {parseFloat(percentage) > 0
                     ? (
-                        (fixedAmtNum(percentage) * fixedAmtNum(lpBalance)) /
+                        (fixedAmtNum(percentage) *
+                          fixedAmtNum(lpBalanceNum.toString())) /
                         100
                       ).toLocaleString("en-US")
                     : "0"}{" "}
@@ -554,10 +555,10 @@ const RemoveSectionMangata = () => {
                 </span>
               ) : (
                 <span>
-                  {fixedAmtNum(lpBalance) > 0
+                  {fixedAmtNum(lpBalanceNum.toString()) > 0
                     ? (
                         (fixedAmtNum(lpTokens) * 100) /
-                        fixedAmtNum(lpBalance)
+                        fixedAmtNum(lpBalanceNum.toString())
                       ).toFixed(2)
                     : 0}
                   %
