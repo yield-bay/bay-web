@@ -203,23 +203,25 @@ const FarmPage: NextPage = () => {
                   <p className="text-sm leading-5">You hold</p>
                   <p className="text-2xl leading-7 font-bold text-[#101828]">
                     {toDollarUnits(
-                      farmPosition.unstaked.amountUSD +
-                        farmPosition.staked.amountUSD,
+                      farm?.chain.toLowerCase() != "mangata kusama"
+                        ? farmPosition.unstaked.amountUSD +
+                            farmPosition.staked.amountUSD
+                        : farmPosition.staked.amountUSD,
                       2
                     )}
                   </p>
                   <p className="p-2 bg-[#F5F5F5] rounded-lg max-w-fit text-base leading-5">
                     <span className="font-bold">
-                      {(
-                        farmPosition.unstaked.amount +
-                        farmPosition.staked.amount
+                      {(farm?.chain.toLowerCase() != "mangata kusama"
+                        ? farmPosition.unstaked.amount +
+                          farmPosition.staked.amount
+                        : farmPosition.staked.amount
                       ).toFixed(2)}
                     </span>{" "}
                     LP
                   </p>
                 </div>
-                {(farm?.chain.toLowerCase() != "mangata kusama" ||
-                  farm?.protocol.toLowerCase() !== "mangata x") && (
+                {farm?.chain.toLowerCase() != "mangata kusama" && (
                   <div className="flex flex-row justify-around sm:justify-start max-w-full sm:max-w-fit rounded-xl sm:rounded-none shadow-md sm:shadow-none border sm:border-0 border-[#EAECF0] p-3 sm:p-0 gap-x-3">
                     <div className="flex flex-col justify-between items-end">
                       <p className="inline-flex items-center text-sm leading-5">
@@ -308,20 +310,18 @@ const FarmPage: NextPage = () => {
                     setSelectedFarm(farm);
                   }}
                   disabled={
-                    farm?.chain.toLowerCase() != "mangata kusama" ||
-                    farm?.protocol.toLowerCase() != "mangata x"
+                    farm?.chain.toLowerCase() != "mangata kusama"
                       ? farmPosition.unstaked.amountUSD +
                           farmPosition.staked.amountUSD <
                         0.01
-                      : farmPosition.unstaked.amountUSD < 0.01
+                      : farmPosition.staked.amountUSD < 0.01
                   }
                   tooltipText="You need to have liquidity first"
                 >
                   <span>Remove Liquidity</span>
                   <MinusIcon className="text-black h-4 w-4" />
                 </Button>
-                {farm?.chain.toLowerCase() != "mangata kusama" ||
-                farm?.protocol.toLowerCase() != "mangata x" ? (
+                {farm?.chain.toLowerCase() != "mangata kusama" ? (
                   <div className="inline-flex items-center gap-x-2">
                     <Button
                       size="large"

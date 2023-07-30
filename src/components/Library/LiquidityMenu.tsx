@@ -73,11 +73,10 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
             }}
             disabled={
               !!position
-                ? farm?.chain.toLowerCase() != "mangata kusama" ||
-                  farm?.protocol.toLowerCase() != "mangata x"
+                ? farm?.chain.toLowerCase() != "mangata kusama"
                   ? position.unstaked.amountUSD + position.staked.amountUSD <
                     0.01
-                  : position.unstaked.amountUSD < 0.01
+                  : position.staked.amountUSD < 0.01
                 : true
             }
             tooltipText="You need to have liquidity first"
@@ -85,8 +84,7 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
             <span>Remove Liquidity</span>
             <MinusIcon className="text-black h-4 w-4" />
           </ModalButton>
-          {(farm?.chain.toLowerCase() != "mangata kusama" ||
-            farm?.protocol.toLowerCase() != "mangata x") && (
+          {farm?.chain.toLowerCase() != "mangata kusama" && (
             <>
               <ModalButton
                 onClick={() => {

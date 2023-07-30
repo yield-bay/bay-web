@@ -65,14 +65,17 @@ export default function PositionModal({ open, setOpen, position }: Props) {
                     <p className="text-sm leading-5">You Hold</p>
                     <p className="text-2xl leading-7 font-semibold text-[#101828]">
                       $
-                      {(
-                        position.unstaked.amountUSD + position.staked.amountUSD
+                      {(position?.chain.toLowerCase() != "mangata kusama"
+                        ? position.unstaked.amountUSD +
+                          position.staked.amountUSD
+                        : position.staked.amountUSD
                       ).toFixed(2)}
                     </p>
                     <p className="p-2 bg-[#F5F5F5] text-[#475467] rounded-lg text-base leading-5 max-w-fit">
                       <span className="font-bold">
-                        {(
-                          position.unstaked.amount + position.staked.amount
+                        {(position?.chain.toLowerCase() != "mangata kusama"
+                          ? position.unstaked.amount + position.staked.amount
+                          : position.staked.amount
                         ).toFixed(2)}
                       </span>{" "}
                       LP

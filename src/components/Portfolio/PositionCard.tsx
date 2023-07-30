@@ -81,8 +81,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
             LP
           </p>
         </div>
-        {(position?.chain.toLowerCase() != "mangata kusama" ||
-          position?.protocol.toLowerCase() != "mangata x") && (
+        {position?.chain.toLowerCase() != "mangata kusama" && (
           <div className="flex flex-row gap-x-3">
             <div className="flex flex-col justify-between items-end">
               <p className="inline-flex items-center text-sm leading-5">
@@ -142,18 +141,16 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
               setSelectedFarm(thisFarm);
             }}
             disabled={
-              position?.chain.toLowerCase() != "mangata kusama" ||
-              position?.protocol.toLowerCase() != "mangata x"
+              position?.chain.toLowerCase() != "mangata kusama"
                 ? position.unstaked.amountUSD + position.staked.amountUSD < 0.01
-                : position.unstaked.amountUSD < 0.01
+                : position.staked.amountUSD < 0.01
             }
             tooltipText="You need to have liquidity first"
           >
             <span>Remove Liquidity</span>
             <MinusIcon className="text-black h-4 w-4" />
           </Button>
-          {position?.chain.toLowerCase() != "mangata kusama" ||
-          position?.protocol.toLowerCase() != "mangata x" ? (
+          {position?.chain.toLowerCase() != "mangata kusama" ? (
             <div className="inline-flex items-center gap-x-2">
               <Button
                 size="large"
