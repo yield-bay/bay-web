@@ -107,7 +107,7 @@ const RemoveSectionStandard = () => {
   // When Method.Percentage
   const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const value = parseFloat(event.target.value);
+    const value = parseFloat(event.target.value); // Removes any non-number items and converts to Number
     if ((value >= 0 && value <= 100) || event.target.value == "") {
       setPercentage(event.target.value);
     } else {

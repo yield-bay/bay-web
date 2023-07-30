@@ -187,16 +187,18 @@ const UnstakingModal = () => {
     enabled: !!farm && !!address,
   });
 
-  console.log("userInfo", userInfo, "\nargs", {
-    address: farm?.chef as Address,
-    abi: parseAbi(chefAbi),
-    functionName:
-      farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
-        ? "balanceOf"
-        : "userInfo",
-    args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
-    enabled: !!farm && !!address,
-  });
+  useEffect(() => {
+    console.log("userInfo", userInfo, "\nargs", {
+      address: farm?.chef as Address,
+      abi: parseAbi(chefAbi),
+      functionName:
+        farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
+          ? "balanceOf"
+          : "userInfo",
+      args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
+      enabled: !!farm && !!address,
+    });
+  }, [userInfo]);
 
   const staked: number = useMemo(() => {
     console.log("stakeduserInfo", userInfo);
@@ -635,6 +637,20 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
         value={percentage}
         autoFocus
       />
+      <span
+        className={clsx(
+          "flex items-center absolute top-0 bottom-0",
+          percentage.length == 1
+            ? "left-9"
+            : percentage.length == 2
+            ? "left-[46px]"
+            : "left-14",
+          "text-base text-[#4E4C4C] font-bold leading-6",
+          percentage == "" && "hidden"
+        )}
+      >
+        %
+      </span>
       <div className="inline-flex items-center gap-x-2">
         <div className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
           {isLoadingStaked ? (
