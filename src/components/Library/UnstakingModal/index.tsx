@@ -45,7 +45,7 @@ interface ChosenMethodProps {
   percentage: string;
   setPercentage: (value: string) => void;
   handlePercChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  staked: number;
+  staked: string;
   isLoadingStaked: boolean;
   lpTokens: string;
   setLpTokens: (value: string) => void;
@@ -110,13 +110,14 @@ const UnstakingModal = () => {
   const getArgs = () => {
     const pamt = BigNumber(staked!, 10)
       .multipliedBy(parseFloat(percentage == "" ? "0" : percentage) / 100)
-      .multipliedBy(BigNumber(10).pow(18))
-      .decimalPlaces(0, 1);
-    console.log(
-      "gaars",
-      staked,
-      (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
-    );
+      // .multipliedBy(BigNumber(10).pow(18))
+      .decimalPlaces(0, 1)
+      .toString();
+    // console.log(
+    //   "gaars",
+    //   staked,
+    //   (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
+    // );
 
     const amt =
       methodId == Method.PERCENTAGE
@@ -129,7 +130,9 @@ const UnstakingModal = () => {
           pamt
         : BigNumber(lpTokens == "" ? "0" : lpTokens)
             .multipliedBy(BigNumber(10).pow(18))
-            .decimalPlaces(0, 1);
+            .decimalPlaces(0, 1)
+            .toString();
+    console.log("usargs", amt);
     // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];
@@ -200,12 +203,14 @@ const UnstakingModal = () => {
     });
   }, [userInfo]);
 
-  const staked: number = useMemo(() => {
+  const staked: string = useMemo(() => {
     console.log("stakeduserInfo", userInfo);
-    if (!userInfo) return 0;
-    if (farm?.protocol == "curve") return Number(userInfo) / 10 ** 18;
+    if (!userInfo) return "0";
+    // if (farm?.protocol == "curve") return Number(userInfo) / 10 ** 18;
+    if (farm?.protocol == "curve") return userInfo.toString();
     const ui = userInfo as bigint[];
-    return Number(ui[0]) / 10 ** 18;
+    // return Number(ui[0]) / 10 ** 18;
+    return ui[0].toString();
   }, [userInfo]);
 
   // Unstake LP Tokens
@@ -266,7 +271,7 @@ const UnstakingModal = () => {
         lpAmount: {
           amount:
             methodId == Method.PERCENTAGE
-              ? (staked * fixedAmtNum(percentage)) / 100
+              ? ((Number(staked) / 10 ** 18) * fixedAmtNum(percentage)) / 100
               : fixedAmtNum(lpTokens),
           asset: farm?.asset.symbol!,
           valueUSD:
@@ -307,13 +312,15 @@ const UnstakingModal = () => {
 
   const unstakeAmount = useMemo(() => {
     return methodId == Method.PERCENTAGE
-      ? (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
+      ? ((Number(staked) / 10 ** 18) *
+          parseFloat(percentage == "" ? "0" : percentage)) /
+          100
       : parseFloat(lpTokens == "" ? "0" : lpTokens);
   }, [methodId, percentage, lpTokens]);
 
   const InputStep = () => {
     const confirmDisable =
-      unstakeAmount > staked &&
+      unstakeAmount > Number(staked) / 10 ** 18 &&
       (methodId == Method.PERCENTAGE ? percentage != "" : lpTokens != "");
 
     return (
@@ -350,16 +357,21 @@ const UnstakingModal = () => {
               {methodId == Method.PERCENTAGE ? (
                 <span>
                   {parseFloat(percentage) > 0
-                    ? ((fixedAmtNum(percentage) * staked) / 100).toLocaleString(
-                        "en-US"
-                      )
+                    ? (
+                        (fixedAmtNum(percentage) * Number(staked)) /
+                        10 ** 18 /
+                        100
+                      ).toLocaleString("en-US")
                     : "0"}{" "}
                   Tokens
                 </span>
               ) : (
                 <span>
-                  {staked > 0
-                    ? ((fixedAmtNum(lpTokens) * 100) / staked).toFixed(2)
+                  {BigNumber(staked).isGreaterThan(0)
+                    ? (
+                        (fixedAmtNum(lpTokens) * 100 * 10 ** 18) /
+                        Number(staked)
+                      ).toFixed(2)
                     : 0}
                   %
                 </span>
@@ -658,7 +670,11 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
           ) : (
             <p className="flex flex-col items-end">
               <span>Balance</span>
-              <span>{staked < 0.01 ? "<0.01" : toUnits(staked, 2)}</span>
+              <span>
+                {Number(staked) / 10 ** 18 < 0.01
+                  ? "<0.01"
+                  : toUnits(Number(staked) / 10 ** 18, 2)}
+              </span>
             </p>
           )}
         </div>
@@ -690,7 +706,9 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
         placeholder="0"
         className={clsx(
           "text-base font-bold leading-6 text-left bg-transparent focus:outline-none",
-          fixedAmtNum(lpTokens) > staked ? "text-[#FF9999]" : "text-[#4E4C4C]"
+          fixedAmtNum(lpTokens) > Number(staked) / 10 ** 18
+            ? "text-[#FF9999]"
+            : "text-[#4E4C4C]"
         )}
         onChange={handleLpTokensChange}
         value={lpTokens}
@@ -703,14 +721,20 @@ const ChosenMethod: React.FC<ChosenMethodProps> = ({
           ) : (
             <div className="flex flex-col items-end">
               <span>Balance</span>
-              <span>{staked < 0.01 ? "<0.01" : toUnits(staked, 2)}</span>
+              <span>
+                {Number(staked) / 10 ** 18 < 0.01
+                  ? "<0.01"
+                  : toUnits(Number(staked) / 10 ** 18, 2)}
+              </span>
             </div>
           )}
         </p>
         <button
           className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
           onClick={() => {
-            setLpTokens(staked.toString(10));
+            setLpTokens(
+              BigNumber(staked).dividedBy(BigNumber(10).pow(18)).toString()
+            );
           }}
         >
           MAX

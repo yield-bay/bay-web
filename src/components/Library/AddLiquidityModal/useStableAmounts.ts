@@ -12,7 +12,7 @@ const useStableAmounts = (
   const updatedTokens = useMemo(() => {
     const newtokens = tokens
       .map((token) => {
-        // console.log("waota", token);
+        console.log("waota", token.symbol, inputMapAmount[token?.address]);
         const inputAmount = !isNaN(inputMapAmount[token?.address])
           ? inputMapAmount[token?.address]
           : 0;

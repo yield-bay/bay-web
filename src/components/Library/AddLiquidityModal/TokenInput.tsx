@@ -136,7 +136,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
           <button
             className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
             onClick={() => {
-              handleInput(token, balance?.formatted ?? "0");
+              handleInput(token, balance?.formatted! ?? "0");
             }}
           >
             MAX

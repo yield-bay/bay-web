@@ -53,6 +53,7 @@ import {
 } from "@utils/position-utils/evmPositions";
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import BigNumber from "bignumber.js";
 
 const RemoveSectionStandard = () => {
   const { address, connector } = useAccount();
@@ -325,25 +326,63 @@ const RemoveSectionStandard = () => {
         farmAsset0?.address, // tokenA Address
         farmAsset1?.address, // tokenB Address
         methodId == Method.PERCENTAGE
-          ? parseUnits(
-              `${
-                (parseFloat(lpBalance!) *
-                  parseFloat(percentage == "" ? "0" : percentage)) /
-                100
-              }`,
-              18
-            )
-          : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+          ? //   ? parseUnits(
+            //       `${
+            //         (parseFloat(lpBalance!) *
+            //           parseFloat(percentage == "" ? "0" : percentage)) /
+            //         100
+            //       }`,
+            //       18
+            //     )
+            //   : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+            // // 1,
+            // // 1,
+            // parseUnits(
+            //   `${minUnderlyingAssets[0].toString() as any}`,
+            //   farmAsset0?.decimals
+            // ), // amountAMin
+            // parseUnits(
+            //   `${minUnderlyingAssets[1].toString() as any}`,
+            //   farmAsset1?.decimals
+            // ), // amountBMin
+            // ? parseUnits(
+            //     `${
+            //       (fixedAmtNum(lpBalance!) *
+            //         parseFloat(percentage == "" ? "0" : percentage)) /
+            //       100
+            //     }`,
+            //     18
+            //   )
+            BigNumber(lpBalance!, 10)
+              .multipliedBy(
+                parseFloat(percentage == "" ? "0" : percentage) / 100
+              )
+              .multipliedBy(BigNumber(10).pow(18))
+              .decimalPlaces(0, 1)
+              .toString()
+          : // : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+            BigNumber(lpTokens)
+              .multipliedBy(BigNumber(10).pow(18))
+              .decimalPlaces(0, 1)
+              .toString(),
         // 1,
         // 1,
-        parseUnits(
-          `${minUnderlyingAssets[0].toString() as any}`,
-          farmAsset0?.decimals
-        ), // amountAMin
-        parseUnits(
-          `${minUnderlyingAssets[1].toString() as any}`,
-          farmAsset1?.decimals
-        ), // amountBMin
+        // parseUnits(
+        //   `${minUnderlyingAssets[0].toString() as any}`,
+        //   farmAsset0?.decimals
+        // ), // amountAMin
+        // parseUnits(
+        //   `${minUnderlyingAssets[1].toString() as any}`,
+        //   farmAsset1?.decimals
+        // ), // amountBMin
+        BigNumber(minUnderlyingAssets[0].toString())
+          .multipliedBy(BigNumber(10).pow(18))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(minUnderlyingAssets[1].toString())
+          .multipliedBy(BigNumber(10).pow(18))
+          .decimalPlaces(0, 1)
+          .toString(),
         address, // to
         blocktimestamp, // deadline (uint256)
       ];
@@ -580,25 +619,44 @@ const RemoveSectionStandard = () => {
         farmAsset0?.address, // tokenA Address
         farmAsset1?.address, // tokenB Address
         methodId == Method.PERCENTAGE
-          ? parseUnits(
-              `${
-                (fixedAmtNum(lpBalance!) *
-                  parseFloat(percentage == "" ? "0" : percentage)) /
-                100
-              }`,
-              18
-            )
-          : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+          ? // ? parseUnits(
+            //     `${
+            //       (fixedAmtNum(lpBalance!) *
+            //         parseFloat(percentage == "" ? "0" : percentage)) /
+            //       100
+            //     }`,
+            //     18
+            //   )
+            BigNumber(lpBalance!, 10)
+              .multipliedBy(
+                parseFloat(percentage == "" ? "0" : percentage) / 100
+              )
+              .multipliedBy(BigNumber(10).pow(18))
+              .decimalPlaces(0, 1)
+              .toString()
+          : // : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
+            BigNumber(lpTokens)
+              .multipliedBy(BigNumber(10).pow(18))
+              .decimalPlaces(0, 1)
+              .toString(),
         // 1,
         // 1,
-        parseUnits(
-          `${minUnderlyingAssets[0].toString() as any}`,
-          farmAsset0?.decimals
-        ), // amountAMin
-        parseUnits(
-          `${minUnderlyingAssets[1].toString() as any}`,
-          farmAsset1?.decimals
-        ), // amountBMin
+        // parseUnits(
+        //   `${minUnderlyingAssets[0].toString() as any}`,
+        //   farmAsset0?.decimals
+        // ), // amountAMin
+        // parseUnits(
+        //   `${minUnderlyingAssets[1].toString() as any}`,
+        //   farmAsset1?.decimals
+        // ), // amountBMin
+        BigNumber(minUnderlyingAssets[0].toString())
+          .multipliedBy(BigNumber(10).pow(18))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(minUnderlyingAssets[1].toString())
+          .multipliedBy(BigNumber(10).pow(18))
+          .decimalPlaces(0, 1)
+          .toString(),
         address, // to
         1784096161000, // deadline (uint256)
       ]

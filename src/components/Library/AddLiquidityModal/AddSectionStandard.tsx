@@ -60,6 +60,7 @@ import {
   // fetchEvmPositions,
   updateEvmPositions,
 } from "@utils/position-utils/evmPositions";
+import BigNumber from "bignumber.js";
 
 enum InputType {
   Off = -1,
@@ -388,18 +389,26 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       console.log("calling addliquidity method...");
 
       const addArgs = [
-        farmAsset0?.address, // TokenA Address
-        farmAsset1?.address, // TokenB Address
-        parseUnits(`${parseFloat(firstTokenAmount)}`, farmAsset0?.decimals),
-        parseUnits(`${parseFloat(secondTokenAmount)}`, farmAsset1?.decimals),
-        parseUnits(
-          `${(parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-          farmAsset0?.decimals
-        ), // amountAMin
-        parseUnits(
-          `${(parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-          farmAsset1?.decimals
-        ), // amountBMin
+        farmAsset0?.address,
+        farmAsset1?.address,
+        BigNumber(firstTokenAmount, 10)
+          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(secondTokenAmount, 10)
+          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(firstTokenAmount, 10)
+          .multipliedBy((100 - SLIPPAGE) / 100)
+          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(secondTokenAmount, 10)
+          .multipliedBy((100 - SLIPPAGE) / 100)
+          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
         address, // To
         blocktimestamp, // deadline (uint256)
       ];
@@ -915,18 +924,26 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       selectedFarm!,
       address!,
       [
-        farmAsset0?.address, // TokenA Address
-        farmAsset1?.address, // TokenB Address
-        parseUnits(`${fixedAmtNum(firstTokenAmount)}`, farmAsset0?.decimals),
-        parseUnits(`${fixedAmtNum(secondTokenAmount)}`, farmAsset1?.decimals),
-        parseUnits(
-          `${(fixedAmtNum(firstTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-          farmAsset0?.decimals
-        ), // amountAMin
-        parseUnits(
-          `${(fixedAmtNum(secondTokenAmount) * (100 - SLIPPAGE)) / 100}`,
-          farmAsset1?.decimals
-        ), // amountBMin
+        farmAsset0?.address,
+        farmAsset1?.address,
+        BigNumber(firstTokenAmount, 10)
+          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(secondTokenAmount, 10)
+          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(firstTokenAmount, 10)
+          .multipliedBy((100 - SLIPPAGE) / 100)
+          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
+        BigNumber(secondTokenAmount, 10)
+          .multipliedBy((100 - SLIPPAGE) / 100)
+          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
+          .decimalPlaces(0, 1)
+          .toString(),
         address, // To
         1784096161000, // deadline (uint256)
       ]

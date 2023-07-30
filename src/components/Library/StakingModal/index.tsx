@@ -115,10 +115,11 @@ const StakingModal = () => {
   });
 
   const getArgs = () => {
-    const pamt = BigNumber(lpBalanceNum!, 10)
+    const pamt = BigNumber(lpBalance?.formatted!, 10)
       .multipliedBy(parseFloat(percentage == "" ? "0" : percentage) / 100)
       .multipliedBy(BigNumber(10).pow(18))
-      .decimalPlaces(0, 1);
+      .decimalPlaces(0, 1)
+      .toString();
     console.log("stakinggaargs", lpBalanceNum, pamt);
 
     const amt =
@@ -133,7 +134,16 @@ const StakingModal = () => {
           pamt
         : BigNumber(lpTokens == "" ? "0" : lpTokens)
             .multipliedBy(BigNumber(10).pow(18))
-            .decimalPlaces(0, 1);
+            .decimalPlaces(0, 1)
+            .toString();
+    console.log(
+      "samt",
+      amt,
+      lpBalanceNum,
+      lpTokens,
+      lpBalance,
+      lpBalance?.formatted
+    );
     // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];

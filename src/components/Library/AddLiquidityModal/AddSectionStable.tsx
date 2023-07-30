@@ -164,7 +164,7 @@ const AddSectionStable: FC = () => {
     // Setting inputMapAmount of amount array for calculation
     setInputMapAmount((pre: any) => ({
       ...pre,
-      [token.address]: isNaN(parseFloat(value)) ? 0 : parseFloat(value),
+      [token.address]: isNaN(parseFloat(value)) ? 0 : value,
     }));
   }, []);
 
@@ -320,7 +320,7 @@ const AddSectionStable: FC = () => {
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
       console.log("timestamp fetched //", blocktimestamp);
-      console.log("calling addliquidity method...", amounts);
+      console.log("calling addliquidity method...", amounts, estLpAmount);
 
       const args_to_pass =
         farm?.protocol.toLowerCase() == "curve"
