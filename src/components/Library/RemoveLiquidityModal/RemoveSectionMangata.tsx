@@ -710,6 +710,7 @@ const RemoveSectionMangata = () => {
               symbol: farm?.asset.symbol!,
               address: farm?.asset.address!,
             },
+            tvl: farm?.tvl!,
           },
           positions,
           account,

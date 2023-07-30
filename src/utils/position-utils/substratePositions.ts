@@ -88,7 +88,7 @@ export const updateSubstratePositions = async ({
           parseFloat(BigInt(element.toString()).toString(10)) /
           10 ** assetsInfo[key]["decimals"];
         mangataAsset[key] = e;
-        console.log("mgeee", e);
+        console.log("mgeee", element, key, e);
       }
     }
   }
@@ -130,7 +130,15 @@ export const updateSubstratePositions = async ({
   console.log(
     "Reward Amount ---",
     Number(rewardsAmount.toString()) / 10 ** 18,
-    (tokenPrices.get("mgx")! * Number(rewardsAmount.toString())) / 10 ** 18
+    (tokenPrices.get("mgx")! * Number(rewardsAmount.toString())) / 10 ** 18,
+    "freeBalis",
+    freeBal,
+    "reservedBalis",
+    reservedBal,
+    "mangataAsset[ff.id]",
+    mangataAsset[ff.id],
+    "ff.tvl",
+    ff.tvl
   );
 
   // Position key

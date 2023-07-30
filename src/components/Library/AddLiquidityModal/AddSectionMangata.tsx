@@ -740,6 +740,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               symbol: selectedFarm?.asset.symbol!,
               address: selectedFarm?.asset.address!,
             },
+            tvl: selectedFarm?.tvl!,
           },
           positions,
           account,
@@ -929,7 +930,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                 secondTokenAmount == "" ||
                 fixedAmtNum(firstTokenAmount) <= 0 ||
                 fixedAmtNum(secondTokenAmount) <= 0 ||
-                lpBalance <= fees ||
+                mgxBalance <= fees ||
                 fixedAmtNum(firstTokenAmount) > (firstTokenBalance ?? 0) ||
                 fixedAmtNum(secondTokenAmount) > (secondTokenBalance ?? 0)
               }
@@ -1035,13 +1036,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         <div
           className={clsx(
             "rounded-xl",
-            lpBalance > fees ? "bg-[#C0F9C9]" : "bg-[#FFB7B7]"
+            mgxBalance > fees ? "bg-[#C0F9C9]" : "bg-[#FFB7B7]"
           )}
         >
           <div
             className={clsx(
               "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              lpBalance > fees ? "bg-[#ECFFEF]" : "bg-[#FFE8E8]"
+              mgxBalance > fees ? "bg-[#ECFFEF]" : "bg-[#FFE8E8]"
             )}
           >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
@@ -1067,10 +1068,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
             <h3 className="text-[#4E4C4C] text-base font-bold">
-              {lpBalance > fees ? "Sufficient" : "Insufficient"} Wallet Balance
+              {mgxBalance > fees ? "Sufficient" : "Insufficient"} Wallet Balance
             </h3>
             <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {lpBalance.toLocaleString("en-US")} {"MGX"}
+              {mgxBalance.toLocaleString("en-US")} {"MGX"}
             </span>
           </div>
         </div>
