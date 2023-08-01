@@ -146,11 +146,12 @@ const PortfolioPage = () => {
                     Unclaimed rewards worth
                   </p>
                   <p className="mt-3 font-semibold text-4xl leading-[44px]">
-                    {totalUnclaimedRewardsUSD >= 0.01
-                      ? `$${parseFloat(
+                    {totalUnclaimedRewardsUSD < 0.01 &&
+                    totalUnclaimedRewardsUSD > 0
+                      ? "<$0.01"
+                      : `$${parseFloat(
                           totalUnclaimedRewardsUSD.toFixed(2)
-                        ).toLocaleString("en-US")}`
-                      : "<$0.01"}
+                        ).toLocaleString("en-US")}`}
                   </p>
                 </div>
                 <ChevronRightIcon className="w-6 mr-4 text-white" />

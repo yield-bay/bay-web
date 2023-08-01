@@ -276,7 +276,7 @@ const FarmPage: NextPage = () => {
                   <p>Unclaimed</p>
                   <p>Rewards Worth</p>
                   <p className="mt-2 font-semibold text-2xl leading-7 text-[#101828]">
-                    {unclaimedRewardUSD < 0.01
+                    {unclaimedRewardUSD < 0.01 && unclaimedRewardUSD > 0
                       ? "<$0.01"
                       : `$${unclaimedRewardUSD}`}
                   </p>
