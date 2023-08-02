@@ -1,14 +1,14 @@
 // Chain interactions
 import { createConfig, configureChains } from "wagmi";
 import { moonriver, moonbeam } from "wagmi/chains";
-import { astar, hardhat } from "./customChains";
+import { astar } from "./customChains";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { TalismanConnector } from "@utils/wagmi-connector/TalismanConnector";
 import { SubWalletConnector } from "@utils/wagmi-connector/SubwalletConnector";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, publicClient } = configureChains(
-  [moonriver, moonbeam, astar, hardhat],
+  [moonriver, moonbeam, astar],
   [publicProvider()]
 );
 

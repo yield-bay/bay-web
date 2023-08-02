@@ -5,7 +5,7 @@ import { ChainId, Network } from "./types/enums";
 const moonbeamRpcUrl = RPC_URL.moonbeam;
 const moonriverRpcUrl = RPC_URL.moonriver;
 const astarRpcUrl = RPC_URL.astar;
-const hardhartRpcUrl = RPC_URL.hardhat;
+// const hardhartRpcUrl = RPC_URL.hardhat;
 
 export const getChainIdForNetwork = (network: Network): ChainId => {
   let chainId = ChainId.MOONBEAM;
@@ -19,8 +19,8 @@ export const getChainIdForNetwork = (network: Network): ChainId => {
     case "astar":
       chainId = ChainId.ASTAR;
       break;
-    case "hardhat":
-      chainId = ChainId.ASTAR;
+    // case "hardhat":
+    //   chainId = ChainId.MOONBEAM;
     default:
       break;
   }
@@ -39,8 +39,8 @@ export const getRpcUrlForNetwork = (network: string) => {
     case "astar":
       rpcUrl = astarRpcUrl;
       break;
-    case "hardhat":
-      rpcUrl = hardhartRpcUrl;
+    // case "hardhat":
+    //   rpcUrl = hardhartRpcUrl;
     default:
       break;
   }
@@ -62,10 +62,10 @@ export const getSupportedChains = () => {
       name: "Astar",
     },
     // For dev
-    {
-      id: ChainId.HARDHAT,
-      name: "Hardhat",
-    },
+    // {
+    //   id: ChainId.HARDHAT,
+    //   name: "Hardhat",
+    // },
   ];
 };
 
