@@ -89,6 +89,7 @@ export interface PortfolioPositionType {
   lpSymbol: string;
   farmType: string;
   lpAddress: Address;
+  tvl: number;
 }
 
 export interface Chain {

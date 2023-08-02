@@ -258,6 +258,7 @@ const ClaimSectionDot = () => {
               symbol: position?.lpSymbol!,
               address: position?.lpAddress!,
             },
+            tvl: position?.tvl!,
           },
           positions,
           account,

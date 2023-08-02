@@ -167,6 +167,7 @@ export const updateSubstratePositions = async ({
     farmType: ff.farmType,
     lpSymbol: ff.asset.symbol,
     lpAddress: ff.asset.address,
+    tvl: ff.tvl,
   };
   tempPositions[name] = newPosition;
   return { name: name, position: newPosition };
@@ -297,6 +298,7 @@ export const fetchSubstratePositions = async ({
           farmType: ff.farmType,
           lpSymbol: ff.asset.symbol,
           lpAddress: ff.asset.address,
+          tvl: ff.tvl,
         };
         console.log(`positions now ---\n`, tempPositions);
         setPositions((prevState: any) => ({
