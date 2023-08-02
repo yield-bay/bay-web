@@ -10,7 +10,7 @@ import {
 import {
   claimModalOpenAtom,
   evmPosLoadingAtom,
-  lpUpdatedAtom,
+  // lpUpdatedAtom,
 } from "@store/commonAtoms";
 import Image from "next/image";
 import clsx from "clsx";
@@ -347,33 +347,14 @@ const ClaimSectionEvm = () => {
         ) : !isErrorClaimRewardsTxn && !isErrorClaimRewardsCall ? (
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
-            {position?.unclaimedRewards.map((reward, index) => (
-              <div
-                key={index}
-                className="inline-flex items-center space-x-3 rounded-xl bg-[#F1F1F1] px-6 py-3"
-              >
-                <Image
-                  src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.token.toUpperCase()}.png`}
-                  alt={reward.token + "_logo"}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                />
-                <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  {reward.amount >= 0.01
-                    ? parseFloat(reward.amount.toFixed(2)).toLocaleString(
-                        "en-US"
-                      )
-                    : "<0.01"}{" "}
-                  {reward.token}
-                </span>
-              </div>
-            ))}
             <p className="inline-flex items-center text-xl">
-              Claiming{" "}
+              <span className="mr-1">Claiming</span>
               {position?.unclaimedRewards.map((reward, index) => (
                 <span className="mr-1" key={index}>
-                  {toUnits(reward.amount, 2)} {reward.token}
+                  {reward.amount >= 0.001
+                    ? toUnits(reward.amount, 3)
+                    : "<0.001"}{" "}
+                  {reward.token}
                   {index == position?.unclaimedRewards.length - 1 ? "" : " and"}
                 </span>
               ))}

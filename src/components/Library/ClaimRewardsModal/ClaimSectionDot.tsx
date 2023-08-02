@@ -51,7 +51,7 @@ const ClaimSectionDot = () => {
   const [txnHash, setTxnHash] = useState<string>("");
 
   // Process states
-  const [isInProcess, setIsInProcess] = useState(false);
+  const [isInProcess, setIsInProcess] = useState(true);
   const [isSigning, setIsSigning] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -401,10 +401,13 @@ const ClaimSectionDot = () => {
           <>
             <h3 className="text-base">Waiting For Confirmation</h3>
             <p className="inline-flex items-center text-xl">
-              Claiming{" "}
+              <span className="mr-1">Claiming</span>
               {position?.unclaimedRewards.map((reward, index) => (
                 <span className="mr-1" key={index}>
-                  {toUnits(reward.amount, 2)} {reward.token}
+                  {reward.amount >= 0.001
+                    ? toUnits(reward.amount, 3)
+                    : "<0.001"}{" "}
+                  {reward.token}
                   {index == position?.unclaimedRewards.length - 1 ? "" : " and"}
                 </span>
               ))}
@@ -433,7 +436,7 @@ const ClaimSectionDot = () => {
 
   return !!position ? (
     <LiquidityModalWrapper
-      open={isOpen || isOpenModalCondition}
+      open={true}
       setOpen={isOpenModalCondition ? () => {} : setIsOpen}
       title="Claim Rewards"
     >
