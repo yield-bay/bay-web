@@ -11,7 +11,7 @@ export default function useFilteredPositions(
   positions: PortfolioPositionType[],
   search: string
 ): [PortfolioPositionType[], boolean] {
-  if (!positions) return [[], true];
+  if (!positions || positions.length == 0) return [[], true];
   if (search === "") return [positions, false];
   const searchTerm = search.trim().toUpperCase();
   const filtered = positions.filter((position: any) => {

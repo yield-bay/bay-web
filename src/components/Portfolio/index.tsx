@@ -212,7 +212,14 @@ const PortfolioPage = () => {
           {(isConnected || isConnectedDot) &&
           !isEvmPosLoading &&
           !isSubPosLoading ? (
-            userPositions.length == 0 || netWorth == 0 ? (
+            noFilteredPositions ? (
+              <div className="h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)">
+                <div className="flex flex-col text-[#1D2939] mt-20 sm:mt-[125px] h-fit gap-y-5 items-center font-semibold px-5 sm:px-0 text-center sm:font-bold text-xl leading-6">
+                  <p>No Positions Found.</p>
+                  <p>Try searching for something else.</p>
+                </div>
+              </div>
+            ) : userPositions.length == 0 || netWorth == 0 ? (
               <div className="flex justify-center text-[#1D2939] h-[calc(100vh-107px)] sm:h-[calc(100vh-144px)">
                 <div className="flex flex-col mt-[125px] h-fit gap-y-[46px] items-center text-center">
                   <p className="font-semibold px-20 sm:px-0 text-center sm:font-bold text-xl leading-6">
