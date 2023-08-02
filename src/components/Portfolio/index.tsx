@@ -10,6 +10,7 @@ import SelectChain from "@components/Library/SelectChain";
 import {
   calcNetWorth,
   calcTotalUnclaimedRewards,
+  calcTotalUnclaimedRewardsUSD,
   joinArrayElements,
 } from "@utils/portfolioMethods";
 import useFilteredPositions from "@hooks/useFilteredPositions";
@@ -38,6 +39,7 @@ const PortfolioPage = () => {
     []
   );
   const [netWorth, setNetWorth] = useState(0);
+  const [totalUnclaimedRewards, setTotalUnclaimedRewards] = useState(0);
   const [totalUnclaimedRewardsUSD, setTotalUnclaimedRewardsUSD] = useState(0);
   const [isRewardsModalOpen, setIsRewardsModalOpen] = useState<boolean>(false);
 
@@ -104,7 +106,8 @@ const PortfolioPage = () => {
     if (!!userPositions) {
       console.log("upsss", userPositions);
       setNetWorth(calcNetWorth(userPositions));
-      setTotalUnclaimedRewardsUSD(calcTotalUnclaimedRewards(userPositions));
+      setTotalUnclaimedRewards(calcTotalUnclaimedRewards(userPositions));
+      setTotalUnclaimedRewardsUSD(calcTotalUnclaimedRewardsUSD(userPositions));
     }
   }, [userPositions]);
 
@@ -136,7 +139,7 @@ const PortfolioPage = () => {
             </p>
           </div>
           {(isConnected || isConnectedDot) && userPositions.length > 0 ? (
-            totalUnclaimedRewardsUSD > 0 ? (
+            totalUnclaimedRewards > 0 ? (
               <div
                 className="w-full sm:w-1/2 flex hover:ring-[1px] ring-[#6DA695] transition-all cursor-pointer ring-opacity-70 flex-row justify-between rounded-xl py-6 px-8 text-left bg-rewards-card"
                 onClick={() => setIsRewardsModalOpen(true)}
@@ -147,7 +150,7 @@ const PortfolioPage = () => {
                   </p>
                   <p className="mt-3 font-semibold text-4xl leading-[44px]">
                     {totalUnclaimedRewardsUSD < 0.01 &&
-                    totalUnclaimedRewardsUSD > 0
+                    totalUnclaimedRewards > 0
                       ? "<$0.01"
                       : `$${parseFloat(
                           totalUnclaimedRewardsUSD.toFixed(2)
