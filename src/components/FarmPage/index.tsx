@@ -525,69 +525,71 @@ const FarmPage: NextPage = () => {
           </div>
           {/* Rewared Breakdown -- Protocol -- Chain -- Farm Type */}
           <div className="flex flex-col gap-y-3 mt-3 sm:mt-0 w-full sm:w-1/2">
-            <div className="hidden base:block rounded-xl border border-[#EAECF0]">
-              <div className="pt-5 pb-4 px-6 bg-[#FAFAFF] rounded-t-xl border-b border-[#EAECF0]">
-                <span>Reward Breakdown</span>
-              </div>
-              <table className="min-w-full">
-                <thead className="border-b border-[#EAECF0]">
-                  <tr className="text-xs leading-[18px]">
-                    <th className="font-medium text-left w-1/3 py-[13px] pl-6">
-                      Asset
-                    </th>
-                    <th className="font-medium text-left w-1/3 py-[13px] pl-6">
-                      Amount and Frequency
-                    </th>
-                    <th className="font-medium text-left w-1/3 py-[13px] pl-6">
-                      Percentage of the Rewards
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#EAECF0]">
-                  {farm?.rewards.map((reward, index) => (
-                    <tr
-                      className={clsx(
-                        "font-medium text-sm leading-5",
-                        reward.amount == 0 && "hidden"
-                      )}
-                      key={index}
-                    >
-                      <td className="py-[14px] pl-6 inline-flex items-center">
-                        <Image
-                          src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
-                          alt={reward.asset}
-                          width={24}
-                          height={24}
-                          className="rounded-full max-h-max"
-                        />
-                        <span className="ml-3">{reward.asset}</span>
-                      </td>
-                      <td className="py-[14px] pl-6 underline underline-offset-4 decoration-dashed decoration-[#475467] cursor-default">
-                        <Tooltip
-                          label={<>{"$" + reward.valueUSD.toFixed(1)}</>}
-                          placement="top"
-                        >
-                          <span>
-                            {`${parseFloat(
-                              reward.amount.toFixed(1)
-                            ).toLocaleString("en-US")}/${
-                              reward.freq === "Weekly" ? "WEEK" : "DAY"
-                            }`}
-                          </span>
-                        </Tooltip>
-                      </td>
-                      <td className="py-[14px] pl-6">
-                        {calcAssetPercentage(
-                          reward,
-                          calcTotalRewardValue(farm.rewards)
-                        )}
-                        %
-                      </td>
+            {farm?.rewards.length > 0 && (
+              <div className="hidden base:block rounded-xl border border-[#EAECF0]">
+                <div className="pt-5 pb-4 px-6 bg-[#FAFAFF] rounded-t-xl border-b border-[#EAECF0]">
+                  <span>Reward Breakdown</span>
+                </div>
+                <table className="min-w-full">
+                  <thead className="border-b border-[#EAECF0]">
+                    <tr className="text-xs leading-[18px]">
+                      <th className="font-medium text-left w-1/3 py-[13px] pl-6">
+                        Asset
+                      </th>
+                      <th className="font-medium text-left w-1/3 py-[13px] pl-6">
+                        Amount and Frequency
+                      </th>
+                      <th className="font-medium text-left w-1/3 py-[13px] pl-6">
+                        Percentage of the Rewards
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="divide-y divide-[#EAECF0]">
+                    {farm?.rewards.map((reward, index) => (
+                      <tr
+                        className={clsx(
+                          "font-medium text-sm leading-5",
+                          reward.amount == 0 && "hidden"
+                        )}
+                        key={index}
+                      >
+                        <td className="py-[14px] pl-6 inline-flex items-center">
+                          <Image
+                            src={`https://raw.githubusercontent.com/yield-bay/assets/main/list/${reward.asset}.png`}
+                            alt={reward.asset}
+                            width={24}
+                            height={24}
+                            className="rounded-full max-h-max"
+                          />
+                          <span className="ml-3">{reward.asset}</span>
+                        </td>
+                        <td className="py-[14px] pl-6 underline underline-offset-4 decoration-dashed decoration-[#475467] cursor-default">
+                          <Tooltip
+                            label={<>{"$" + reward.valueUSD.toFixed(1)}</>}
+                            placement="top"
+                          >
+                            <span>
+                              {`${parseFloat(
+                                reward.amount.toFixed(1)
+                              ).toLocaleString("en-US")}/${
+                                reward.freq === "Weekly" ? "WEEK" : "DAY"
+                              }`}
+                            </span>
+                          </Tooltip>
+                        </td>
+                        <td className="py-[14px] pl-6">
+                          {calcAssetPercentage(
+                            reward,
+                            calcTotalRewardValue(farm.rewards)
+                          )}
+                          %
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             <InfoContainer variant="primary">
               <p className="text-sm leading-5">Protocol</p>
               <p className="text-2xl mt-1 leading-7 font-semibold text-[#101828]">

@@ -197,69 +197,71 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
             </div>
           )}
         </div>
-        <div>
-          <button
-            className={clsx(
-              "w-full inline-flex justify-between items-center bg-[#EDEDED] py-2 px-3",
-              showRewards ? "rounded-t-lg" : "rounded-lg"
-            )}
-            onClick={() => setShowRewards(!showRewards)}
-          >
-            <p>Reward Breakdown</p>
-            <ChevronDownIcon
+        {thisFarm?.rewards.length > 0 && (
+          <div>
+            <button
               className={clsx(
-                "h-[19px] transition-all",
-                showRewards && "transform rotate-180"
+                "w-full inline-flex justify-between items-center bg-[#EDEDED] py-2 px-3",
+                showRewards ? "rounded-t-lg" : "rounded-lg"
               )}
-            />
-          </button>
-          <div
-            className={clsx(
-              "rounded-b-xl border border-[#EAECF0]",
-              !showRewards && "hidden"
-            )}
-          >
-            <table className="min-w-full">
-              <thead className="border-b border-[#EAECF0]">
-                <tr className="text-xs leading-[18px]">
-                  <th className="font-medium text-left w-1/3 py-[13px] pl-6">
-                    Asset
-                  </th>
-                  <th className="font-medium text-left w-1/3 py-[13px] pl-6">
-                    Percentage
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#EAECF0]">
-                {thisFarm?.rewards.map((reward, index) => (
-                  <tr className="font-medium text-sm leading-5" key={index}>
-                    <td className="py-[14px] pl-6 cursor-default">
-                      <Tooltip
-                        label={<>{"$" + reward.valueUSD.toFixed(1)}</>}
-                        placement="top"
-                      >
-                        <span className="underline underline-offset-4 decoration-dashed">
-                          {`${parseFloat(
-                            reward.amount.toFixed(1)
-                          ).toLocaleString("en-US")} ${reward.asset}/${
-                            reward.freq == "Weekly" ? "WEEK" : "DAY"
-                          }`}
-                        </span>
-                      </Tooltip>
-                    </td>
-                    <td className="py-[14px] text-left pl-6">
-                      {calcAssetPercentage(
-                        reward,
-                        calcTotalRewardValue(thisFarm.rewards)
-                      )}
-                      %
-                    </td>
+              onClick={() => setShowRewards(!showRewards)}
+            >
+              <p>Reward Breakdown</p>
+              <ChevronDownIcon
+                className={clsx(
+                  "h-[19px] transition-all",
+                  showRewards && "transform rotate-180"
+                )}
+              />
+            </button>
+            <div
+              className={clsx(
+                "rounded-b-xl border border-[#EAECF0]",
+                !showRewards && "hidden"
+              )}
+            >
+              <table className="min-w-full">
+                <thead className="border-b border-[#EAECF0]">
+                  <tr className="text-xs leading-[18px]">
+                    <th className="font-medium text-left w-1/3 py-[13px] pl-6">
+                      Asset
+                    </th>
+                    <th className="font-medium text-left w-1/3 py-[13px] pl-6">
+                      Percentage
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-[#EAECF0]">
+                  {thisFarm?.rewards.map((reward, index) => (
+                    <tr className="font-medium text-sm leading-5" key={index}>
+                      <td className="py-[14px] pl-6 cursor-default">
+                        <Tooltip
+                          label={<>{"$" + reward.valueUSD.toFixed(1)}</>}
+                          placement="top"
+                        >
+                          <span className="underline underline-offset-4 decoration-dashed">
+                            {`${parseFloat(
+                              reward.amount.toFixed(1)
+                            ).toLocaleString("en-US")} ${reward.asset}/${
+                              reward.freq == "Weekly" ? "WEEK" : "DAY"
+                            }`}
+                          </span>
+                        </Tooltip>
+                      </td>
+                      <td className="py-[14px] text-left pl-6">
+                        {calcAssetPercentage(
+                          reward,
+                          calcTotalRewardValue(thisFarm.rewards)
+                        )}
+                        %
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex flex-col gap-2 sm:flex-row items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
           <span className="font-medium">
             Staked at {(thisFarm?.apr.base + thisFarm?.apr.reward).toFixed(2)}%
