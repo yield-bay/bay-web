@@ -74,9 +74,8 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
             disabled={
               !!position
                 ? farm?.chain.toLowerCase() != "mangata kusama"
-                  ? position.unstaked.amountUSD + position.staked.amountUSD <
-                    0.01
-                  : position.staked.amountUSD < 0.01
+                  ? position.unstaked.amountUSD == 0
+                  : position.staked.amountUSD == 0
                 : true
             }
             tooltipText="You need to have liquidity first"
@@ -91,9 +90,7 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
                   setStakingModalOpen(true);
                   setSelectedFarm(farm);
                 }}
-                disabled={
-                  !!position ? position.unstaked.amountUSD < 0.01 : true
-                }
+                disabled={!!position ? position.unstaked.amountUSD == 0 : true}
                 tooltipText="You need to have liquidity first"
               >
                 <span>Stake</span>
@@ -109,7 +106,7 @@ const SelectLiquidityModal: FC<Props> = ({ farm, position }) => {
                   setUnstakingModalOpen(true);
                   setSelectedFarm(farm);
                 }}
-                disabled={!!position ? position.staked.amountUSD < 0.01 : true}
+                disabled={!!position ? position.staked.amountUSD == 0 : true}
                 tooltipText="You need to stake tokens first"
               >
                 <span>Unstake</span>
