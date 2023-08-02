@@ -20,7 +20,7 @@ import {
 import ShareFarm from "@components/Library/ShareFarm";
 import Button from "@components/Library/Button";
 // import CalculatorModal from "@components/Library/CalculatorModal";
-import { APP_NAME } from "@utils/constants";
+import { APP_NAME, MANGATA_YIELDBAY_URL } from "@utils/constants";
 import MetaTags from "@components/Common/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
@@ -29,6 +29,7 @@ import {
   formatFarmType,
   formatFirstLetter,
   formatTokenSymbols,
+  getLpTokenSymbol,
 } from "@utils/farmListMethods";
 import toDollarUnits from "@utils/toDollarUnits";
 import {
@@ -61,6 +62,7 @@ import RewardsModal from "@components/Library/RewardsModal";
 import useSpecificPosition from "@hooks/useSpecificPosition";
 import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
 import { InformationCircleIcon } from "@heroicons/react/solid";
+import Link from "next/link";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -162,18 +164,30 @@ const FarmPage: NextPage = () => {
         {/* Heading */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-14 sm:mb-11 gap-y-8 sm:gap-x-4">
           <p className="text-2xl text-[#454545] font-semibold leading-[29px] sm:mr-1">
-            {tokenNames.map((tokenName, index) => (
-              <span key={index}>
-                {tokenName}
-                {index !== tokenNames.length - 1 && "-"}
-              </span>
-            ))}
+            {getLpTokenSymbol(tokenNames)}
           </p>
           <ShareFarm farm={farm} />
           <div className="flex gap-x-2 items-center">
             <a href={farmURL(farm)} target="_blank" rel="noreferrer">
               <Button size="large">Visit Farm</Button>
             </a>
+            {hasPosition &&
+              farm?.chain.toLowerCase() == "mangata kusama" &&
+              isConnectedDot && (
+                <div className="ml-6 text-sm leading-5 font-semibold text-[#A3A3A3] text-left">
+                  <p>
+                    You can grow your {tokenNames[0]}-{tokenNames[1]} Tokens by
+                  </p>
+                  <Link
+                    href={MANGATA_YIELDBAY_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline underline-offset-4"
+                  >
+                    Autocompounding here
+                  </Link>
+                </div>
+              )}
             {!hasPosition &&
               (farm?.chain.toLowerCase() == "mangata kusama" ||
               farm?.protocol.toLowerCase() == "mangata x"

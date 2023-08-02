@@ -404,9 +404,7 @@ const ClaimSectionDot = () => {
               <span className="mr-1">Claiming</span>
               {position?.unclaimedRewards.map((reward, index) => (
                 <span className="mr-1" key={index}>
-                  {reward.amount >= 0.001
-                    ? toUnits(reward.amount, 3)
-                    : "<0.001"}{" "}
+                  {reward.amount >= 0.01 ? toUnits(reward.amount, 3) : "<0.01"}{" "}
                   {reward.token}
                   {index == position?.unclaimedRewards.length - 1 ? "" : " and"}
                 </span>

@@ -27,3 +27,5 @@ export const RPC_URL = {
 };
 
 export const MANGATA_EXPLORER_URL = "https://mangatax.subscan.io/block";
+
+export const MANGATA_YIELDBAY_URL = "https://mangata.yieldbay.io/";
