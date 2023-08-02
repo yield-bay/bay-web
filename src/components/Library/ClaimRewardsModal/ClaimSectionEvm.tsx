@@ -40,6 +40,7 @@ import {
 } from "@utils/position-utils/evmPositions";
 import { handleClaimRewardsEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import Countdown from "../Countdown";
 // import { FarmType } from "@utils/types/common";
 
 const ClaimSectionEvm = () => {
@@ -55,11 +56,11 @@ const ClaimSectionEvm = () => {
   const isOpenModalCondition = false; // Conditions to be written
   const [txnHash, setTxnHash] = useState<string>("");
 
-  const [farms] = useAtom(farmsAtom);
+  // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
-  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
+  // const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
   useEffect(() => {
     setIsProcessStep(false);
@@ -372,7 +373,12 @@ const ClaimSectionEvm = () => {
             <h3 className="text-base">Something is Wrong</h3>
             <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+            <Countdown
+              seconds={3}
+              onComplete={() => {
+                setIsOpen(false);
+              }}
+            />
           </>
         )}
       </div>

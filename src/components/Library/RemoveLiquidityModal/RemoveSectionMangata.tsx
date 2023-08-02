@@ -44,6 +44,7 @@ import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";
+import Countdown from "../Countdown";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -58,7 +59,7 @@ interface ChosenMethodProps {
   methodId: number;
 }
 
-const RemoveSectionMangata = () => {
+const RemoveSectionMangata: FC = () => {
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
@@ -835,7 +836,12 @@ const RemoveSectionMangata = () => {
             <h3 className="text-base">Something is Wrong</h3>
             <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+            <Countdown
+              seconds={3}
+              onComplete={() => {
+                setIsOpen(false);
+              }}
+            />
           </>
         )}
       </div>

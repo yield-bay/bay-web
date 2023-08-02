@@ -61,6 +61,7 @@ import {
   updateEvmPositions,
 } from "@utils/position-utils/evmPositions";
 import BigNumber from "bignumber.js";
+import Countdown from "../Countdown";
 
 enum InputType {
   Off = -1,
@@ -736,22 +737,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             autoFocus={focusedInput === InputType.Second}
           />
           <div className="inline-flex items-center gap-x-2">
-            <p className="flex flex-col items-end text-sm leading-5 opacity-50">
+            <div className="flex flex-col items-end text-sm leading-5 opacity-50">
               {token1BalanceLoading ? (
                 <span>loading...</span>
               ) : (
                 !!token1Balance && (
-                  <div className="flex flex-col items-end">
+                  <p className="flex flex-col items-end">
                     <span>Balance</span>
                     <span>
                       {parseFloat(token1Balance?.formatted).toLocaleString(
                         "en-US"
                       )}
                     </span>
-                  </div>
+                  </p>
                 )
               )}
-            </p>
+            </div>
             <button
               className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
               onClick={() => {
@@ -1180,7 +1181,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <h3 className="text-base">Something is Wrong</h3>
             <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+            <Countdown
+              seconds={3}
+              onComplete={() => {
+                setIsOpen(false);
+              }}
+            />
           </>
         )}
       </div>

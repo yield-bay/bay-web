@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
-  evmPosLoadingAtom,
+  // evmPosLoadingAtom,
   lpUpdatedAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
@@ -19,7 +19,7 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import {
-  farmsAtom,
+  // farmsAtom,
   lpTokenPricesAtom,
   positionsAtom,
   selectedFarmAtom,
@@ -48,18 +48,19 @@ import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import ChosenMethod from "./ChosenMethod";
 import {
-  fetchEvmPositions,
+  // fetchEvmPositions,
   updateEvmPositions,
 } from "@utils/position-utils/evmPositions";
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import BigNumber from "bignumber.js";
+import Countdown from "../Countdown";
 
 const RemoveSectionStandard = () => {
   const { address, connector } = useAccount();
   const publicClient = usePublicClient();
 
-  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
+  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -826,7 +827,12 @@ const RemoveSectionStandard = () => {
             <h3 className="text-base">Something is Wrong</h3>
             <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+            <Countdown
+              seconds={3}
+              onComplete={() => {
+                setIsOpen(false);
+              }}
+            />
           </>
         )}
       </div>

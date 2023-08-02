@@ -36,6 +36,7 @@ import {
 } from "@utils/position-utils/substratePositions";
 import { handleClaimRewardsEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
+import Countdown from "../Countdown";
 
 const ClaimSectionDot = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
@@ -425,7 +426,12 @@ const ClaimSectionDot = () => {
             <h3 className="text-base">Something is Wrong</h3>
             <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+            <Countdown
+              seconds={3}
+              onComplete={() => {
+                setIsOpen(false);
+              }}
+            />
           </>
         )}
       </div>

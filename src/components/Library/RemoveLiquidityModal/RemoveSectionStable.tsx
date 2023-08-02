@@ -2,7 +2,7 @@ import { FC, useEffect, useMemo, useState } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
-  evmPosLoadingAtom,
+  // evmPosLoadingAtom,
   lpUpdatedAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
@@ -19,7 +19,7 @@ import {
 } from "wagmi";
 import MButton from "../MButton";
 import {
-  farmsAtom,
+  // farmsAtom,
   lpTokenPricesAtom,
   positionsAtom,
   selectedFarmAtom,
@@ -51,13 +51,14 @@ import ChosenMethod from "./ChosenMethod";
 import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { updateEvmPositions } from "@utils/position-utils/evmPositions";
+import Countdown from "../Countdown";
 
 enum RemoveMethod {
   ALL = 0,
   INDIVIDUAL = 1,
 }
 
-const RemoveSectionStable = () => {
+const RemoveSectionStable: FC = () => {
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm] = useAtom(selectedFarmAtom);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
@@ -809,7 +810,12 @@ const RemoveSectionStable = () => {
             <h3 className="text-base">Something is Wrong</h3>
             <h2 className="text-xl">Transaction Failed!</h2>
             <hr className="border-t border-[#E3E3E3] min-w-full" />
-            <p className="text-base text-[#AAABAD]">Redirecting in 3s</p>
+            <Countdown
+              seconds={3}
+              onComplete={() => {
+                setIsOpen(false);
+              }}
+            />
           </>
         )}
       </div>
