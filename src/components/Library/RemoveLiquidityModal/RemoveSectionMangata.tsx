@@ -853,7 +853,7 @@ const RemoveSectionMangata = () => {
       >
         {isLoading ? (
           <div className="w-full h-full flex flex-col gap-y-10 items-center justify-center">
-            <span>Preparing Pool for you...</span>
+            <span>Loading Pool data...</span>
             <Spinner />
           </div>
         ) : isProcessStep ? (

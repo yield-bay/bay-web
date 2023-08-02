@@ -1175,8 +1175,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         title="Add Liquidity"
       >
         {isLoading ? (
-          <div className="w-full h-full flex flex-col items-center justify-center">
-            <span>Preparing Pool for you...</span>
+          <div className="w-full h-full flex flex-col gap-y-10 items-center justify-center">
+            <span>Loading Pool data...</span>
             <Spinner />
           </div>
         ) : isProcessStep ? (
