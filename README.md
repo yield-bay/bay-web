@@ -6,20 +6,20 @@
 
 It's a one-stop shop to discover and evaluate yield farms in the Polkadot & Kusama Paraverse.
 
-Currently we're aggregating close to 150 yield farms from 10+ protocols across the ecosystem like [Karura DEX](https://karura.network), [StellaSwap](https://stellaswap.com), [Mangata X](https://mangata.finance) to name a few.
+Currently we're aggregating around 180 yield farms from 17 protocols across the ecosystem, including [Karura DEX](https://karura.network), [StellaSwap](https://stellaswap.com), [Mangata X](https://mangata.finance) to name a few.
 
 ## How to setup a development environment?
 
 1. Clone the repo:
 
 ```
-git clone https://github.com/yield-bay/bay-listicle-v2.git
+git clone https://github.com/yield-bay/bay-web.git
 ```
 
 2. Install the dependencies
 
 ```
-cd bay-listicle-v2
+cd bay-web
 yarn
 ```
 
@@ -27,7 +27,7 @@ yarn
 
    - [bay-api](https://github.com/yield-bay/bay-api) - GraphQL API that the frontend consumes.
    - [bay-watcher](https://github.com/yield-bay/bay-watcher) - Indexer for yield farms written in Rust.
-   - [bay-watcher-ts](https://github.com/yield-bay/bay-watcher-ts) - Indexer for yield farms written in Typescript.
+   - [bay-watcher-ts](https://github.com/yield-bay/bay-watcher-ts) - Indexer for yield farms written in TypeScript.
 
 4. Create a .env file and add the URL for `bay-api` from above.
 
