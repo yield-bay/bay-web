@@ -39,7 +39,8 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
           (
             BigInt(
               2 **
-                (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+                (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
+                tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
                   ? 128
                   : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
                   ? 96
@@ -54,7 +55,8 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
         (
           BigInt(
             2 **
-              (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+              (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
+              tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
                 ? 128
                 : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
                 ? 96
@@ -96,7 +98,8 @@ const useApproveToken = (
       (
         BigInt(
           2 **
-            (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d"
+            (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
+            tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
               ? 128
               : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
               ? 96
