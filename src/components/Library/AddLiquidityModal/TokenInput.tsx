@@ -107,7 +107,11 @@ const TokenInput: React.FC<TokenInputProps> = ({
           value={inputMap[token?.address] ?? ""}
           onChange={(event) => {
             event.preventDefault();
-            handleInput(token, event.target.value);
+            const value = event.target.value;
+            // regex for inputing decimals upto 10 digits
+            if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+              handleInput(token, value);
+            }
           }}
           ref={inputRef}
           onFocus={() => setFocusedInput(index)}

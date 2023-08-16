@@ -82,17 +82,25 @@ const UnstakingModal = () => {
   const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = parseFloat(event.target.value);
-    if ((value >= 0 && value <= 100) || event.target.value == "") {
-      setPercentage(event.target.value);
-    } else {
-      alert("Percentage must be between 0 & 100!");
+    if (
+      /^(?:[1-9][0-9]{0,1}|0|100)$/.test(event.target.value) ||
+      event.target.value === ""
+    ) {
+      if ((value >= 0 && value <= 100) || event.target.value == "") {
+        setPercentage(event.target.value);
+      } else {
+        alert("Percentage must be between 0 & 100!");
+      }
     }
   };
 
   // When InputType.Token
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    setLpTokens(event.target.value);
+    const value = event.target.value;
+    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+      setLpTokens(event.target.value);
+    }
   };
 
   useEffect(() => {
@@ -467,7 +475,7 @@ const UnstakingModal = () => {
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               {gasEstimate === 0 && !isError ? (
-                <p>Estimating Gas...</p>
+                <p>estimating gas...</p>
               ) : (
                 <p>
                   <span className="opacity-40 mr-2 font-semibold">
