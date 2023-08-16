@@ -377,11 +377,11 @@ const RemoveSectionStandard = () => {
         //   farmAsset1?.decimals
         // ), // amountBMin
         BigNumber(minUnderlyingAssets[0].toString())
-          .multipliedBy(BigNumber(10).pow(18))
+          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
         BigNumber(minUnderlyingAssets[1].toString())
-          .multipliedBy(BigNumber(10).pow(18))
+          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
         address, // to
@@ -651,11 +651,11 @@ const RemoveSectionStandard = () => {
         //   farmAsset1?.decimals
         // ), // amountBMin
         BigNumber(minUnderlyingAssets[0].toString())
-          .multipliedBy(BigNumber(10).pow(18))
+          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
         BigNumber(minUnderlyingAssets[1].toString())
-          .multipliedBy(BigNumber(10).pow(18))
+          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
         address, // to
