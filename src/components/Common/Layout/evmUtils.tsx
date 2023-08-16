@@ -1,9 +1,7 @@
-interface SupportedPoolsType {
-  [pool: string]: string[];
-}
-
 // Pools which are supported for interacting in current version
-export const supportedPools: SupportedPoolsType = {
+export const supportedPools: {
+  [pool: string]: string[];
+} = {
   moonriver: ["zenlink", "solarbeam", "sushiswap"],
   moonbeam: ["curve", "zenlink", "stellaswap", "solarflare", "beamswap"],
   astar: ["zenlink", "sirius", "arthswap"],
