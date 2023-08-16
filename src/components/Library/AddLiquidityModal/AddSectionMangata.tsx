@@ -65,6 +65,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   // const [lpBalance, setLpBalance] = useState<any | null>(null);
   const [lpBalance, setLpBalance] = useState<number>(0);
   const [fees, setFees] = useState<number>(0);
+  const [isErrorFees, setIsErrorFees] = useState<boolean>(false);
 
   const [selectedFarm, setSelectedFarm] = useAtom(selectedFarmAtom);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
@@ -376,6 +377,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       setFees(parseFloat(fees));
     } catch (error) {
       console.log("Error while fetching Fees", error);
+      setIsErrorFees(true);
     }
   };
 
@@ -1048,12 +1050,16 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
-              <p className="inline-flex">
-                <span className="opacity-40 mr-2 font-semibold">
-                  {fees.toLocaleString("en-US") ?? 0} MGX
-                </span>
-                <span>${(fees * mgxPrice).toFixed(5)}</span>
-              </p>
+              {fees === 0 && !isErrorFees ? (
+                <p>Estimating Gas...</p>
+              ) : (
+                <p className="inline-flex">
+                  <span className="opacity-40 mr-2 font-semibold">
+                    {fees.toLocaleString("en-US") ?? 0} MGX
+                  </span>
+                  <span>${(fees * mgxPrice).toFixed(5)}</span>
+                </p>
+              )}
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
