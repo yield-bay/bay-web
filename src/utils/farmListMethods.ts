@@ -98,6 +98,7 @@ export function getWalletInstallUrl(walletName: string): string {
 }
 
 export function checkIfPoolSupported(farm: FarmType): boolean {
+  if (farm == undefined) return false;
   if (farm?.farmType == "SingleStaking") return false;
   const protocols = supportedPools[farm.chain.toLocaleLowerCase()];
   if (!!protocols) return protocols.includes(farm.protocol.toLowerCase());
