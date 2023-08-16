@@ -51,7 +51,10 @@ const SlippageModal = () => {
             placeholder="0"
             className="text-lg leading-[27px] w-full font-bold text-[#344054] text-left bg-transparent focus:outline-none"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setInputSlippage(event.target.value);
+              const value = event.target.value;
+              if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+                setInputSlippage(event.target.value);
+              }
             }}
             value={inputSlippage}
             name="slippage"

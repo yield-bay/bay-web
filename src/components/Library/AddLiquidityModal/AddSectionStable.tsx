@@ -544,7 +544,7 @@ const AddSectionStable: FC = () => {
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               {gasEstimate === 0 && !isError ? (
-                <p>Estimating Gas...</p>
+                <p>estimating gas...</p>
               ) : (
                 <p>
                   <span className="opacity-40 mr-2 font-semibold">

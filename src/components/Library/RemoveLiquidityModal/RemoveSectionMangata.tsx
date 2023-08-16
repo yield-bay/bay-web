@@ -237,10 +237,15 @@ const RemoveSectionMangata: FC = () => {
   const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = parseFloat(event.target.value);
-    if ((value >= 0 && value <= 100) || event.target.value == "") {
-      setPercentage(event.target.value);
-    } else {
-      alert("Percentage must be between 0 & 100!");
+    if (
+      /^(?:[1-9][0-9]{0,1}|0|100)$/.test(event.target.value) ||
+      event.target.value === ""
+    ) {
+      if ((value >= 0 && value <= 100) || event.target.value == "") {
+        setPercentage(event.target.value);
+      } else {
+        alert("Percentage must be between 0 & 100!");
+      }
     }
   };
 
@@ -248,17 +253,8 @@ const RemoveSectionMangata: FC = () => {
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
-    if (parseFloat(value) >= 0 || value == "") {
+    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
       setLpTokens(event.target.value);
-    } else {
-      alert("LP Amount can't be negative!");
-      // toast({
-      //   position: "top",
-      //   duration: 3000,
-      //   render: () => (
-      //     <ToastWrapper title="LP tokens can not be negative!" status="error" />
-      //   ),
-      // });
     }
   };
 

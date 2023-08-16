@@ -506,18 +506,23 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const handleChangeFirstTokenAmount = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setFirstTokenAmount(e.target.value);
+    const value = e.target.value;
+    // regex only let numerical values
+    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+      setFirstTokenAmount(value);
+    }
     // update first amount based on second
-    updateSecondTokenAmount(parseFloat(e.target.value));
+    updateSecondTokenAmount(parseFloat(value));
   };
 
   // update token values
   const handleChangeSecondTokenAmount = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setSecondTokenAmount(e.target.value);
+    const value = e.target.value;
+    setSecondTokenAmount(value);
     // update first amount based on second
-    updateFirstTokenAmount(parseFloat(e.target.value));
+    updateFirstTokenAmount(parseFloat(value));
   };
 
   useEffect(() => {
@@ -1053,7 +1058,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
               {gasEstimate === 0 && !isError ? (
-                <p>Estimating Gas...</p>
+                <p>estimating gas...</p>
               ) : (
                 <p>
                   <span className="opacity-40 mr-2 font-semibold">
