@@ -15,6 +15,11 @@ interface Props {
       [address: Address]: boolean;
     }>
   >;
+  setIsApproving: React.Dispatch<
+    React.SetStateAction<{
+      [address: `0x${string}`]: boolean;
+    }>
+  >;
 }
 
 const TokenButton: React.FC<Props> = ({
@@ -23,6 +28,7 @@ const TokenButton: React.FC<Props> = ({
   selectedFarm,
   approvalMap,
   setApprovalMap,
+  setIsApproving,
 }) => {
   // Check Approval Token
   const { isSuccess: isApprovedSuccess } = useIsApprovedToken(
@@ -37,6 +43,24 @@ const TokenButton: React.FC<Props> = ({
     isSuccessApproveTxn,
     writeAsync: approveToken,
   } = useApproveToken(token?.address, selectedFarm?.router, token?.symbol);
+
+  // useEffect(() => {
+  //   if (isLoadingApproveCall || isLoadingApproveTxn) {
+  //     setIsApproving((prev) => {
+  //       return {
+  //         ...prev,
+  //         [token?.address]: true,
+  //       };
+  //     });
+  //   } else {
+  //     setIsApproving((prev) => {
+  //       return {
+  //         ...prev,
+  //         [token?.address]: false,
+  //       };
+  //     });
+  //   }
+  // }, [isLoadingApproveCall || isLoadingApproveTxn]);
 
   useEffect(() => {
     // Either already approved or approved after transaction

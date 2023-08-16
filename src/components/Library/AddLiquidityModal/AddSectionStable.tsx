@@ -58,6 +58,8 @@ const AddSectionStable: FC = () => {
   const { address, connector } = useAccount();
   const { chain } = useNetwork();
 
+  const [isApproving, setIsApproving] = useState(false);
+
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
@@ -81,8 +83,11 @@ const AddSectionStable: FC = () => {
   const [balanceMap, setBalanceMap] = useState<{
     [address: Address]: string;
   }>({});
+  const [isApprovingMap, setIsApprovingMap] = useState<{
+    [address: Address]: boolean;
+  }>({});
 
-  const [farms] = useAtom(farmsAtom);
+  // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
@@ -365,6 +370,7 @@ const AddSectionStable: FC = () => {
             index={index}
             handleInput={handleInput}
             inputMap={inputMap}
+            isApproving={isApprovingMap}
             balanceMap={balanceMap}
             setBalanceMap={setBalanceMap}
             nativeBal={parseFloat(nativeBal?.formatted!).toLocaleString(
@@ -406,6 +412,7 @@ const AddSectionStable: FC = () => {
                 token={token}
                 inputMapAmount={inputMapAmount}
                 selectedFarm={farm!}
+                setIsApproving={setIsApprovingMap}
                 approvalMap={approvalMap}
                 setApprovalMap={setApprovalMap}
               />
