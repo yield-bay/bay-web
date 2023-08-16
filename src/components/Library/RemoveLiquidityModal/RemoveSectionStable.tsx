@@ -595,7 +595,7 @@ const RemoveSectionStable: FC = () => {
       ) as any
     );
     // Gas estimate
-    const { gasEstimate } = useGasEstimation(
+    const { gasEstimate, isError } = useGasEstimation(
       farm!.router,
       1,
       1,
@@ -684,12 +684,16 @@ const RemoveSectionStable: FC = () => {
           >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
+              {gasEstimate === 0 && !isError ? (
+                <p>Estimating Gas...</p>
+              ) : (
+                <p>
+                  <span className="opacity-40 mr-2 font-semibold">
+                    {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                  </span>
+                  <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+                </p>
+              )}
             </div>
             <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
               <span>Slippage Tolerance: {SLIPPAGE}%</span>

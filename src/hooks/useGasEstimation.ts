@@ -69,7 +69,11 @@ const useGasEstimation = (
   farmition: FarmType | PortfolioPositionType,
   account: Address,
   args: Array<any>
-) => {
+): {
+  gasEstimate: number;
+  // isLoading: boolean;
+  isError: boolean;
+} => {
   // const { chain } = useNetwork();
   // const publicClient = usePublicClient({ chainId: 1284 });
   const publicClient = usePublicClient();
@@ -79,6 +83,8 @@ const useGasEstimation = (
   // });
   const [gasEstimateAmount, setGasEstimateAmount] = useState<number>(0);
   const [gasPrice, setGasPrice] = useState<number>(0);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
 
   // if any arg is 0
   if (
@@ -92,6 +98,8 @@ const useGasEstimation = (
     console.log("arg0");
     return {
       gasEstimate: 0,
+      // isLoading: false,
+      isError: false,
     };
   } else if (
     farmition.farmType == "StableAmm" &&
@@ -103,6 +111,8 @@ const useGasEstimation = (
     console.log("arg0");
     return {
       gasEstimate: 0,
+      // isLoading: false,
+      isError: false,
     };
     // } else {
   } else {
@@ -120,6 +130,7 @@ const useGasEstimation = (
         setGasEstimateAmount(Number(res));
       });
     } catch (error) {
+      setIsError(true);
       setGasEstimateAmount(0);
       console.log("Error: Estimating Gas", error);
     }
@@ -131,6 +142,7 @@ const useGasEstimation = (
       });
     } catch (error) {
       setGasPrice(0);
+      setIsError(true);
       console.log("Error: Getting Gas Price", error);
     }
 
@@ -142,9 +154,10 @@ const useGasEstimation = (
       "gas",
       (gasEstimateAmount * gasPrice) / 10 ** 18
     );
-
     return {
       gasEstimate: (gasEstimateAmount * gasPrice) / 10 ** 18,
+      // isLoading,
+      isError,
     };
   }
 };
