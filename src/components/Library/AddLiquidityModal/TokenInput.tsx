@@ -19,6 +19,9 @@ interface TokenInputProps {
     }>
   >;
   nativeBal: string;
+  isApproving: {
+    [address: Address]: boolean;
+  };
   logos: string | string[];
   tokensLength: number;
   focusedInput: number;
@@ -33,6 +36,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
   balanceMap,
   setBalanceMap,
   nativeBal,
+  isApproving,
   logos,
   tokensLength,
   focusedInput,
@@ -70,6 +74,18 @@ const TokenInput: React.FC<TokenInputProps> = ({
     }
   }, [isSuccess]);
 
+  function isAllTrue(isApprovingMap: { [address: string]: boolean }): boolean {
+    // Iterate over the keys in isApprovingMap
+    for (const address in isApprovingMap) {
+      // If any value is false, return false
+      if (!isApprovingMap[address]) {
+        return false;
+      }
+    }
+    // If all values are true, return true
+    return true;
+  }
+
   return (
     <div>
       <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
@@ -104,6 +120,7 @@ const TokenInput: React.FC<TokenInputProps> = ({
               : "text-[#4E4C4C]"
           )}
           min={0}
+          disabled={isAllTrue(isApproving)}
           value={inputMap[token?.address] ?? ""}
           onChange={(event) => {
             event.preventDefault();
