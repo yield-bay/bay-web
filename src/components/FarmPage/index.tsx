@@ -25,6 +25,7 @@ import MetaTags from "@components/Common/metaTags/MetaTags";
 import useSpecificFarm from "@hooks/useSpecificFarm";
 import { fetchListicleFarms } from "@utils/api";
 import {
+  checkIfPoolSupported,
   farmURL,
   formatFarmType,
   formatFirstLetter,
@@ -156,6 +157,8 @@ const FarmPage: NextPage = () => {
   const safetyScore = parseFloat((farm?.safetyScore * 10).toFixed(1));
   const safetyScoreColor = useSafetyscoreColor(safetyScore);
 
+  const isSupported = checkIfPoolSupported(farm);
+
   return !isLoading && idQuery ? (
     <div className="px-6 sm:px-[72px] text-[#475467] z-0">
       <MetaTags title={`Farm • ${APP_NAME}`} />
@@ -189,6 +192,7 @@ const FarmPage: NextPage = () => {
                 </div>
               )}
             {!hasPosition &&
+              isSupported &&
               (farm?.chain.toLowerCase() == "mangata kusama" ||
               farm?.protocol.toLowerCase() == "mangata x"
                 ? isConnectedDot
