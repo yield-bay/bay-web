@@ -654,6 +654,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
             className={clsx(
               "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
             )}
+            disabled={
+              approveToken0CallLoading ||
+              approveToken0TxnLoading ||
+              approveToken1CallLoading ||
+              approveToken1TxnLoading
+            }
             onChange={handleChangeFirstTokenAmount}
             value={firstTokenAmount}
             name="firstTokenAmount"
