@@ -171,7 +171,7 @@ const RemoveSectionStandard = () => {
     data: isLpApprovedData,
     isLoading: isLpApprovedLoading,
     isSuccess: isLpApprovedSuccess,
-  } = useIsApprovedToken(farm?.asset.address!, farm?.router!);
+  } = useIsApprovedToken(farm?.asset.address!, farm?.router!, lpBalance);
 
   const {
     isLoadingApproveCall: approveLpLoading,
@@ -181,7 +181,8 @@ const RemoveSectionStandard = () => {
   } = useApproveToken(
     farm?.asset.address!,
     farm?.router!,
-    getLpTokenSymbol(tokenNames)
+    getLpTokenSymbol(tokenNames),
+    lpBalance
   );
 
   // Remove Liquidity

@@ -16,7 +16,11 @@ import toast from "react-hot-toast";
  * @param spender spender Contract Address
  * @returns data, isLoading, isError, isSuccess
  */
-const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
+const useIsApprovedToken = (
+  tokenAddress: Address,
+  spender: Address,
+  tokenBalance: string | undefined
+) => {
   const { address } = useAccount();
   const { data, isLoading, isError } = useContractRead({
     address: tokenAddress,
@@ -33,40 +37,45 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
     console.log(
       "appdata",
       tokenAddress,
-      data,
-      Number(data) ==
-        parseInt(
-          (
-            BigInt(
-              2 **
-                (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
-                tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
-                  ? 128
-                  : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
-                  ? 96
-                  : 256)
-            ) - BigInt(1)
-          ).toString()
-        )
+      Number(data),
+      !tokenBalance ? false : Number(data) >= parseInt(tokenBalance)
+      // Number(data) ==
+      //   parseInt(
+      //     (
+      //       BigInt(
+      //         2 **
+      //           (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
+      //           tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
+      //             ? 128
+      //             : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
+      //             ? 96
+      //             : 256)
+      //       ) - BigInt(1)
+      //     ).toString()
+      //   )
     );
-    return (
-      Number(data) ==
-      parseInt(
-        (
-          BigInt(
-            2 **
-              (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
-              tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
-                ? 128
-                : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
-                ? 96
-                : 256)
-          ) - BigInt(1)
-        ).toString()
-      )
-    );
-  }, [data]);
+    // allowed tokens >= token balance
+    if (!tokenBalance) return false; // if balance not fetched yet show false
+    return Number(data) >= parseInt(tokenBalance);
 
+    // Allowed tokens are equal to MaxInt
+    // return (
+    //   Number(data) ==
+    //   parseInt(
+    //     (
+    //       BigInt(
+    //         2 **
+    //           (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
+    //           tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
+    //             ? 128
+    //             : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
+    //             ? 96
+    //             : 256)
+    //       ) - BigInt(1)
+    //     ).toString()
+    //   )
+    // );
+  }, [data]);
   return { data, isLoading, isError, isSuccess };
 };
 
@@ -79,9 +88,11 @@ const useIsApprovedToken = (tokenAddress: Address, spender: Address) => {
 const useApproveToken = (
   tokenAddress: Address,
   spender: Address,
-  tokenSymbol: string
+  tokenSymbol: string,
+  tokenBalance: string | undefined
 ) => {
   const { chain } = useNetwork();
+  console.log("token", tokenSymbol, "\ntokenBalance", tokenBalance);
   const {
     data,
     isLoading: isLoadingApproveCall,
@@ -95,17 +106,18 @@ const useApproveToken = (
     chainId: chain?.id,
     args: [
       spender, // spender
-      (
-        BigInt(
-          2 **
-            (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
-            tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
-              ? 128
-              : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
-              ? 96
-              : 256)
-        ) - BigInt(1)
-      ).toString(),
+      tokenBalance,
+      // (
+      //   BigInt(
+      //     2 **
+      //       (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
+      //       tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
+      //         ? 128
+      //         : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
+      //         ? 96
+      //         : 256)
+      //   ) - BigInt(1)
+      // ).toString(),
     ],
     onError: (error) => {
       console.log(`Error while Approving:`, error);

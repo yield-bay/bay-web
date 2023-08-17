@@ -312,13 +312,21 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     // data: isToken0Approved,
     isLoading: isToken0ApprovedLoading,
     isSuccess: isToken0ApprovedSuccess,
-  } = useIsApprovedToken(farmAsset0?.address, selectedFarm?.router!);
+  } = useIsApprovedToken(
+    farmAsset0?.address,
+    selectedFarm?.router!,
+    token0Balance?.formatted
+  );
 
   const {
     // data: isToken1Approved,
     isLoading: isToken1ApprovedLoading,
     isSuccess: isToken1ApprovedSuccess,
-  } = useIsApprovedToken(farmAsset1?.address, selectedFarm?.router!);
+  } = useIsApprovedToken(
+    farmAsset1?.address,
+    selectedFarm?.router!,
+    token1Balance?.formatted
+  );
 
   // To approve token0 and token1
   const {
@@ -330,7 +338,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   } = useApproveToken(
     farmAsset0?.address,
     selectedFarm?.router!,
-    farmAsset0?.symbol
+    farmAsset0?.symbol,
+    token0Balance?.formatted
   );
   const {
     isLoadingApproveCall: approveToken1CallLoading,
@@ -341,7 +350,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   } = useApproveToken(
     farmAsset1?.address,
     selectedFarm?.router!,
-    farmAsset1?.symbol
+    farmAsset1?.symbol,
+    token1Balance?.formatted
   );
 
   const {

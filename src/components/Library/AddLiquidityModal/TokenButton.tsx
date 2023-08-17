@@ -4,6 +4,7 @@ import MButton from "../MButton";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import { Address } from "viem";
 import clsx from "clsx";
+import { useAccount, useBalance, useNetwork } from "wagmi";
 
 interface Props {
   token: UnderlyingAssets;
@@ -30,10 +31,28 @@ const TokenButton: React.FC<Props> = ({
   setApprovalMap,
   setIsApproving,
 }) => {
+  const { address } = useAccount();
+  const { chain } = useNetwork();
+
+  // Balance Token
+  const {
+    data: balance,
+    isLoading: balanceLoading,
+    isSuccess,
+  } = useBalance({
+    address: address,
+    chainId: chain?.id,
+    token: token?.address,
+    enabled: !!address && !!token,
+  });
+
+  console.log("balance in tokenbutton", balance, isSuccess);
+
   // Check Approval Token
   const { isSuccess: isApprovedSuccess } = useIsApprovedToken(
     token?.address,
-    selectedFarm?.router
+    selectedFarm?.router,
+    balance?.formatted
   );
 
   // Approve token
@@ -42,7 +61,12 @@ const TokenButton: React.FC<Props> = ({
     isLoadingApproveTxn,
     isSuccessApproveTxn,
     writeAsync: approveToken,
-  } = useApproveToken(token?.address, selectedFarm?.router, token?.symbol);
+  } = useApproveToken(
+    token?.address,
+    selectedFarm?.router,
+    token?.symbol,
+    balance?.formatted
+  );
 
   // useEffect(() => {
   //   if (isLoadingApproveCall || isLoadingApproveTxn) {
