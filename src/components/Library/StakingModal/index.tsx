@@ -218,7 +218,11 @@ const StakingModal = () => {
     // data: isApprovedData,
     // isLoading: isApprovedLoading,
     isSuccess: isApprovedSuccess,
-  } = useIsApprovedToken(farm?.asset.address!, farm?.chef as Address);
+  } = useIsApprovedToken(
+    farm?.asset.address!,
+    farm?.chef as Address,
+    lpBalance?.formatted
+  );
 
   const {
     isLoadingApproveCall,
@@ -228,7 +232,8 @@ const StakingModal = () => {
   } = useApproveToken(
     farm?.asset.address!,
     farm?.chef as Address,
-    getLpTokenSymbol(tokenNames)
+    getLpTokenSymbol(tokenNames),
+    lpBalance?.formatted
   );
 
   // Stake LP Tokens

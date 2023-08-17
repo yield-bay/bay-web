@@ -223,7 +223,7 @@ const RemoveSectionStable: FC = () => {
     data: isLpApprovedData,
     isLoading: isLpApprovedLoading,
     isSuccess: isLpApprovedSuccess,
-  } = useIsApprovedToken(farm?.asset.address!, farm?.router!);
+  } = useIsApprovedToken(farm?.asset.address!, farm?.router!, lpBalance);
 
   // Approve LP token
   const {
@@ -234,7 +234,8 @@ const RemoveSectionStable: FC = () => {
   } = useApproveToken(
     farm?.asset.address!,
     farm?.router!,
-    getLpTokenSymbol(tokenNames)
+    getLpTokenSymbol(tokenNames),
+    lpBalance
   );
 
   // Remove Liquidity Call
