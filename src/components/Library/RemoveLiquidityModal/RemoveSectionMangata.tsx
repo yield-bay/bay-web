@@ -45,6 +45,7 @@ import getTimestamp from "@utils/getTimestamp";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";
 import Countdown from "../Countdown";
+import { createNumRegex } from "@utils/createRegex";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -253,7 +254,8 @@ const RemoveSectionMangata: FC = () => {
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
-    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+    const regex = createNumRegex(18);
+    if (regex.test(value) || value === "") {
       setLpTokens(event.target.value);
     }
   };

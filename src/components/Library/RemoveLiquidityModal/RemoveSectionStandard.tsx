@@ -55,6 +55,7 @@ import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import BigNumber from "bignumber.js";
 import Countdown from "../Countdown";
+import { createNumRegex } from "@utils/createRegex";
 
 const RemoveSectionStandard = () => {
   const { address, connector } = useAccount();
@@ -127,7 +128,8 @@ const RemoveSectionStandard = () => {
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
-    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+    const regex = createNumRegex(18);
+    if (regex.test(value) || value === "") {
       setLpTokens(event.target.value);
     }
   };

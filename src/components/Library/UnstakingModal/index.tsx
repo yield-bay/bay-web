@@ -40,6 +40,7 @@ import getTimestamp from "@utils/getTimestamp";
 import BigNumber from "bignumber.js";
 import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 import Countdown from "../Countdown";
+import { createNumRegex } from "@utils/createRegex";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -98,7 +99,8 @@ const UnstakingModal = () => {
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
-    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+    const regex = createNumRegex(18);
+    if (regex.test(value) || value === "") {
       setLpTokens(event.target.value);
     }
   };
