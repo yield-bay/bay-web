@@ -62,6 +62,7 @@ import {
 } from "@utils/position-utils/evmPositions";
 import BigNumber from "bignumber.js";
 import Countdown from "../Countdown";
+import { createNumRegex } from "@utils/createRegex";
 
 enum InputType {
   Off = -1,
@@ -507,12 +508,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    // regex only let numerical values
-    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+    // regex only let numerical values upto token decimals
+    const regex = createNumRegex(farmAsset0.decimals);
+    if (regex.test(value) || value === "") {
       setFirstTokenAmount(value);
+      // update first amount based on second
+      updateSecondTokenAmount(parseFloat(value));
     }
-    // update first amount based on second
-    updateSecondTokenAmount(parseFloat(value));
   };
 
   // update token values
@@ -520,9 +522,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const value = e.target.value;
-    setSecondTokenAmount(value);
-    // update first amount based on second
-    updateFirstTokenAmount(parseFloat(value));
+    // regex only let numerical values upto token decimals
+    const regex = createNumRegex(farmAsset1.decimals);
+    if (regex.test(value) || value === "") {
+      setSecondTokenAmount(value);
+      // update first amount based on second
+      updateFirstTokenAmount(parseFloat(value));
+    }
   };
 
   useEffect(() => {

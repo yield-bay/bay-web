@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Address, useAccount, useBalance, useNetwork } from "wagmi";
 import clsx from "clsx";
 import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
+import { createNumRegex } from "@utils/createRegex";
 
 interface TokenInputProps {
   token: UnderlyingAssets;
@@ -125,8 +126,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
           onChange={(event) => {
             event.preventDefault();
             const value = event.target.value;
-            // regex for inputing decimals upto 10 digits
-            if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+            // regex for inputing decimals upto token decimal places
+            const regex = createNumRegex(token?.decimals);
+            if (regex.test(value) || value === "") {
               handleInput(token, value);
             }
           }}

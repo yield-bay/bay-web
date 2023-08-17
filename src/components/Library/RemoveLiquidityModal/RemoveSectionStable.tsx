@@ -52,6 +52,7 @@ import { handleRemoveLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 import Countdown from "../Countdown";
+import { createNumRegex } from "@utils/createRegex";
 
 enum RemoveMethod {
   ALL = 0,
@@ -124,7 +125,8 @@ const RemoveSectionStable: FC = () => {
   const handleLpTokensChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     const value = event.target.value;
-    if (/^(\d+\.?\d*|\.\d+)$/.test(value) || value === "") {
+    const regex = createNumRegex(18);
+    if (regex.test(value) || value === "") {
       setLpTokens(event.target.value);
     }
   };
