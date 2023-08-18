@@ -63,6 +63,7 @@ import {
 import BigNumber from "bignumber.js";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
+import SlippageBox from "../SlippageBox";
 
 enum InputType {
   Off = -1,
@@ -108,6 +109,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   useEffect(() => {
     console.log("selectedFarm", selectedFarm);
@@ -1100,8 +1102,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -1256,7 +1258,12 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Add Liquidity"
       >
-        {isProcessStep ? (
+        {isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

@@ -41,6 +41,7 @@ import BigNumber from "bignumber.js";
 import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
+import SlippageBox from "../SlippageBox";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -73,6 +74,7 @@ const UnstakingModal = () => {
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   const [percentage, setPercentage] = useState<string>("");
   const [lpTokens, setLpTokens] = useState<string>("");
@@ -491,8 +493,8 @@ const UnstakingModal = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -621,7 +623,12 @@ const UnstakingModal = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Unstake LP Tokens"
       >
-        {isProcessStep ? (
+        {isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

@@ -53,6 +53,7 @@ import getTimestamp from "@utils/getTimestamp";
 import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
+import SlippageBox from "../SlippageBox";
 
 enum RemoveMethod {
   ALL = 0,
@@ -78,6 +79,7 @@ const RemoveSectionStable: FC = () => {
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
   // const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
@@ -712,8 +714,8 @@ const RemoveSectionStable: FC = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -863,7 +865,12 @@ const RemoveSectionStable: FC = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Remove Liquidity"
       >
-        {isProcessStep ? (
+        {isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

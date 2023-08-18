@@ -52,6 +52,7 @@ import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";
 import Countdown from "../Countdown";
+import SlippageBox from "../SlippageBox";
 
 enum InputType {
   Off = -1,
@@ -85,6 +86,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
+
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   const [SLIPPAGE] = useAtom(slippageAtom);
 
@@ -1065,8 +1068,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -1191,6 +1194,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
             <span>Loading Pool data...</span>
             <Spinner />
           </div>
+        ) : isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
         ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
