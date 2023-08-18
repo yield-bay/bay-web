@@ -33,32 +33,33 @@ const useIsApprovedToken = (
     enabled: !!address && !!spender,
   });
 
-  const isSuccess = useMemo(() => {
-    console.log(
-      "appdata",
-      tokenAddress,
-      Number(data),
-      !tokenBalance ? false : Number(data) >= parseInt(tokenBalance)
-      // Number(data) ==
-      //   parseInt(
-      //     (
-      //       BigInt(
-      //         2 **
-      //           (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
-      //           tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
-      //             ? 128
-      //             : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
-      //             ? 96
-      //             : 256)
-      //       ) - BigInt(1)
-      //     ).toString()
-      //   )
-    );
-    // allowed tokens >= token balance
-    if (!tokenBalance) return false; // if balance not fetched yet show false
-    return Number(data) >= parseInt(tokenBalance);
+  const formatData = (num: number) => {
+    if (!num) return 0;
+    const parts = num.toString().split(".");
+    return parseFloat(parts[0] + "." + parts[1].substring(0, 12));
+  };
 
-    // Allowed tokens are equal to MaxInt
+  const isSuccess = useMemo(() => {
+    const numdata = Number(data) / 10 ** 12;
+    console.log(
+      "token_address",
+      tokenAddress,
+      "\ndata",
+      data,
+      "\nnumber_data",
+      numdata,
+      "\ntokenBalance",
+      formatData(parseFloat(tokenBalance ?? "0")),
+      "\nisApproved: should be true if data >= tokenBalance",
+      !tokenBalance ? false : numdata >= formatData(parseFloat(tokenBalance))
+    );
+
+    // allowed tokens >= token balance
+    return !tokenBalance
+      ? false
+      : numdata >= formatData(parseFloat(tokenBalance));
+
+    // Infinite token allowance
     // return (
     //   Number(data) ==
     //   parseInt(
@@ -106,9 +107,11 @@ const useApproveToken = (
     chainId: chain?.id,
     args: [
       spender, // spender
-      tokenBalance,
-      // (
-      //   BigInt(
+      BigInt(
+        parseInt((parseFloat(tokenBalance ?? "0") * 10 ** 12).toString())
+      ).toString(),
+      // BigInt(
+      //   parseFloat(tokenBalance!) *
       //     2 **
       //       (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
       //       tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
@@ -116,7 +119,6 @@ const useApproveToken = (
       //         : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
       //         ? 96
       //         : 256)
-      //   ) - BigInt(1)
       // ).toString(),
     ],
     onError: (error) => {
