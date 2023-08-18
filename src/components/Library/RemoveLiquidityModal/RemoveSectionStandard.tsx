@@ -56,13 +56,13 @@ import getTimestamp from "@utils/getTimestamp";
 import BigNumber from "bignumber.js";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
+import SlippageBox from "../SlippageBox";
 
 const RemoveSectionStandard = () => {
   const { address, connector } = useAccount();
   const publicClient = usePublicClient();
 
-  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
-
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
@@ -506,58 +506,6 @@ const RemoveSectionStandard = () => {
             ))}
           </div>
         </div>
-        {/* Estimate Gas and Slippage Tolerance */}
-        {/* Gas Fees // Slippage // Suff. Wallet balance */}
-        {/* <div
-          className={clsx(
-            "rounded-xl",
-            parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-              ? "bg-[#C0F9C9]"
-              : "bg-[#FFB7B7]"
-          )}
-        >
-          <div
-            className={clsx(
-              "flex flex-col gap-y-3 rounded-xl px-6 py-3 bg-[#ECFFEF]",
-              parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "bg-[#ECFFEF]"
-                : "bg-[#FFE8E8]"
-            )}
-          >
-            <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
-              <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
-            </div>
-            <div className="inline-flex items-center font-medium text-[14px] leading-5 text-[#344054]">
-              <span>Slippage Tolerance: {SLIPPAGE}%</span>
-              <button
-                onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
-                }}
-              >
-                <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
-              </button>
-            </div>
-          </div>
-          <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
-            <h3 className="text-[#4E4C4C] text-base font-bold">
-              {parseFloat(nativeBal?.formatted ?? "0") > gasEstimate
-                ? "Sufficient"
-                : "Insufficient"}{" "}
-              Wallet Balance
-            </h3>
-            <span className="text-[#344054] opacity-50 text-sm font-medium leading-5">
-              {parseFloat(nativeBal?.formatted!).toLocaleString("en-US")}{" "}
-              {nativeBal?.symbol}
-            </span>
-          </div>
-        </div> */}
         <div className="flex flex-row mt-6 gap-2">
           {isLpApprovedLoading ? (
             <MButton
@@ -749,8 +697,8 @@ const RemoveSectionStandard = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -881,7 +829,12 @@ const RemoveSectionStandard = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Remove Liquidity"
       >
-        {isProcessStep ? (
+        {isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

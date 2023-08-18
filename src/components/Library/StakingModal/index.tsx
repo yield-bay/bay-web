@@ -42,6 +42,7 @@ import BigNumber from "bignumber.js";
 import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
+import SlippageBox from "../SlippageBox";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -79,6 +80,7 @@ const StakingModal = () => {
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
 
@@ -538,8 +540,8 @@ const StakingModal = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -665,7 +667,12 @@ const StakingModal = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Stake LP Tokens"
       >
-        {isProcessStep ? (
+        {isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

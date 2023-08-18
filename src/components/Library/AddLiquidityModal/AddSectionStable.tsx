@@ -52,6 +52,7 @@ import {
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import Countdown from "../Countdown";
+import SlippageBox from "../SlippageBox";
 
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
@@ -63,6 +64,7 @@ const AddSectionStable: FC = () => {
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
@@ -565,8 +567,8 @@ const AddSectionStable: FC = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -705,7 +707,12 @@ const AddSectionStable: FC = () => {
         setOpen={isOpenModalCondition ? () => {} : setIsOpen}
         title="Add Liquidity"
       >
-        {isProcessStep ? (
+        {isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
+        ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
           <ConfirmStep />

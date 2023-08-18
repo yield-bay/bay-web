@@ -46,6 +46,7 @@ import { fixedAmtNum } from "@utils/abis/contract-helper-methods";
 import { fetchTokenPricesMangata } from "@utils/fetch-prices";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
+import SlippageBox from "../SlippageBox";
 
 interface ChosenMethodProps {
   farm: FarmType;
@@ -70,6 +71,8 @@ const RemoveSectionMangata: FC = () => {
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [isOpen, setIsOpen] = useAtom(removeLiqModalOpenAtom);
   const [farm, setFarm] = useAtom(selectedFarmAtom);
+
+  const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   const [account] = useAtom(dotAccountAtom);
   const [mangataHelper] = useAtom(mangataHelperAtom);
@@ -620,8 +623,8 @@ const RemoveSectionMangata: FC = () => {
               <span>Slippage Tolerance: {SLIPPAGE}%</span>
               <button
                 onClick={() => {
-                  setIsSlippageModalOpen(true);
-                  setIsOpen(false);
+                  setIsSlippageStep(true);
+                  setIsConfirmStep(false);
                 }}
               >
                 <CogIcon className="w-4 h-4 text-[#344054] ml-2 transform origin-center hover:rotate-[30deg] transition-all duration-200" />
@@ -860,6 +863,11 @@ const RemoveSectionMangata: FC = () => {
             <span>Loading Pool data...</span>
             <Spinner />
           </div>
+        ) : isSlippageStep ? (
+          <SlippageBox
+            setPrevStep={setIsConfirmStep}
+            setCurrentStep={setIsSlippageStep}
+          />
         ) : isProcessStep ? (
           <ProcessStep />
         ) : isConfirmStep ? (
