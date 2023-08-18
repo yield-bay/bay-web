@@ -46,7 +46,7 @@ import WrongNetworkModal from "../WrongNetworkModal";
 import useGasEstimation from "@hooks/useGasEstimation";
 import { getNativeTokenAddress } from "@utils/network";
 import {
-  fetchEvmPositions,
+  // fetchEvmPositions,
   updateEvmPositions,
 } from "@utils/position-utils/evmPositions";
 import { handleAddLiquidityEvent } from "@utils/tracking";
@@ -58,7 +58,7 @@ const AddSectionStable: FC = () => {
   const { address, connector } = useAccount();
   const { chain } = useNetwork();
 
-  const [isApproving, setIsApproving] = useState(false);
+  // const [isApproving, setIsApproving] = useState(false);
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);

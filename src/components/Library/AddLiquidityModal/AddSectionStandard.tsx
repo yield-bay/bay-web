@@ -299,6 +299,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     enabled: !!address && !!selectedFarm,
   });
 
+  console.log("token0Balance", token0Balance);
+
   // Balance Token1
   const { data: token1Balance, isLoading: token1BalanceLoading } = useBalance({
     address,
@@ -306,6 +308,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     token: farmAsset1?.address,
     enabled: !!address && !!selectedFarm,
   });
+
+  console.log("token0Balance", token0Balance);
 
   // Check Approval Token0 & Token1
   const {
@@ -315,7 +319,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   } = useIsApprovedToken(
     farmAsset0?.address,
     selectedFarm?.router!,
-    token0Balance?.formatted
+    token0Balance,
+    fixedAmtNum(firstTokenAmount)
   );
 
   const {
@@ -325,7 +330,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   } = useIsApprovedToken(
     farmAsset1?.address,
     selectedFarm?.router!,
-    token1Balance?.formatted
+    token1Balance,
+    fixedAmtNum(secondTokenAmount)
   );
 
   // To approve token0 and token1
@@ -339,7 +345,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     farmAsset0?.address,
     selectedFarm?.router!,
     farmAsset0?.symbol,
-    token0Balance?.formatted
+    token0Balance
   );
   const {
     isLoadingApproveCall: approveToken1CallLoading,
@@ -351,7 +357,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     farmAsset1?.address,
     selectedFarm?.router!,
     farmAsset1?.symbol,
-    token1Balance?.formatted
+    token1Balance
   );
 
   const {
