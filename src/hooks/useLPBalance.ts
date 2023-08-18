@@ -13,7 +13,7 @@ const useLPBalance = (lpAddress: Address) => {
   });
 
   const lpBalance = lpBalanceLoading ? "0" : lpbalance?.formatted;
-  return { lpBalance, lpBalanceLoading };
+  return { lpBalanceObj: lpbalance, lpBalance, lpBalanceLoading };
 };
 
 export default useLPBalance;
