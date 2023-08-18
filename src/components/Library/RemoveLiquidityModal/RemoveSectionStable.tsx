@@ -85,7 +85,9 @@ const RemoveSectionStable: FC = () => {
   useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
   // Balance of LP Token
-  const { lpBalance, lpBalanceLoading } = useLPBalance(farm?.asset.address!);
+  const { lpBalanceObj, lpBalance, lpBalanceLoading } = useLPBalance(
+    farm?.asset.address!
+  );
 
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
@@ -228,7 +230,7 @@ const RemoveSectionStable: FC = () => {
   } = useIsApprovedToken(
     farm?.asset.address!,
     farm?.router!,
-    lpBalance,
+    lpBalanceObj,
     methodId == Method.PERCENTAGE
       ? (fixedAmtNum(lpBalance) * fixedAmtNum(percentage)) / 100
       : fixedAmtNum(lpTokens)
@@ -244,7 +246,7 @@ const RemoveSectionStable: FC = () => {
     farm?.asset.address!,
     farm?.router!,
     getLpTokenSymbol(tokenNames),
-    lpBalance
+    lpBalanceObj
   );
 
   // Remove Liquidity Call

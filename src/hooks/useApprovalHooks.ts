@@ -37,11 +37,14 @@ const useIsApprovedToken = (
 
   const allow = data as bigint;
 
-  const allowance = BigNumber(allow.toString(), 10)
+  const allowance = BigNumber(allow?.toString() ?? "0", 10)
     // .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
     .decimalPlaces(0, 1);
   // console.log("allowance bigint", allow);
   console.log("allowance", allowance.toString());
+
+  console.log("rawinput", input);
+  console.log("tokenbalance", tokenBalance);
 
   const inputAmount = BigNumber(input.toString(), 10)
     .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))

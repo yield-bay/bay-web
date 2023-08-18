@@ -52,7 +52,7 @@ const TokenButton: React.FC<Props> = ({
   const { isSuccess: isApprovedSuccess } = useIsApprovedToken(
     token?.address,
     selectedFarm?.router,
-    balance?.formatted,
+    balance,
     inputMapAmount[token?.address]
   );
 
@@ -66,7 +66,7 @@ const TokenButton: React.FC<Props> = ({
     token?.address,
     selectedFarm?.router,
     token?.symbol,
-    balance?.formatted
+    balance
   );
 
   // useEffect(() => {

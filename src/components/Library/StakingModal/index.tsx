@@ -223,7 +223,7 @@ const StakingModal = () => {
   } = useIsApprovedToken(
     farm?.asset.address!,
     farm?.chef as Address,
-    lpBalance?.formatted,
+    lpBalance,
     methodId == 0
       ? (lpBalanceNum * fixedAmtNum(percentage)) / 100
       : fixedAmtNum(lpTokens)
@@ -238,7 +238,7 @@ const StakingModal = () => {
     farm?.asset.address!,
     farm?.chef as Address,
     getLpTokenSymbol(tokenNames),
-    lpBalance?.formatted
+    lpBalance
   );
 
   // Stake LP Tokens
