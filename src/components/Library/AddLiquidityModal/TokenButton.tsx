@@ -52,7 +52,8 @@ const TokenButton: React.FC<Props> = ({
   const { isSuccess: isApprovedSuccess } = useIsApprovedToken(
     token?.address,
     selectedFarm?.router,
-    balance?.formatted
+    balance?.formatted,
+    inputMapAmount[token?.address]
   );
 
   // Approve token

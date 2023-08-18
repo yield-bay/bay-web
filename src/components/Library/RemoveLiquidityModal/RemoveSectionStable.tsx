@@ -223,7 +223,14 @@ const RemoveSectionStable: FC = () => {
     data: isLpApprovedData,
     isLoading: isLpApprovedLoading,
     isSuccess: isLpApprovedSuccess,
-  } = useIsApprovedToken(farm?.asset.address!, farm?.router!, lpBalance);
+  } = useIsApprovedToken(
+    farm?.asset.address!,
+    farm?.router!,
+    lpBalance,
+    methodId == Method.PERCENTAGE
+      ? (fixedAmtNum(lpBalance) * fixedAmtNum(percentage)) / 100
+      : fixedAmtNum(lpTokens)
+  );
 
   // Approve LP token
   const {

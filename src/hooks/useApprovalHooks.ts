@@ -7,8 +7,9 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
+import BigNumber from "bignumber.js";
 
 /**
  *
@@ -19,7 +20,8 @@ import toast from "react-hot-toast";
 const useIsApprovedToken = (
   tokenAddress: Address,
   spender: Address,
-  tokenBalance: string | undefined
+  tokenBalance: any | undefined,
+  input: number
 ) => {
   const { address } = useAccount();
   const { data, isLoading, isError } = useContractRead({
@@ -33,51 +35,44 @@ const useIsApprovedToken = (
     enabled: !!address && !!spender,
   });
 
-  const formatData = (num: number) => {
-    if (!num) return 0;
-    const parts = num.toString().split(".");
-    return parseFloat(parts[0] + "." + parts[1].substring(0, 12));
-  };
+  const allow = data as bigint;
 
-  const isSuccess = useMemo(() => {
-    const numdata = Number(data) / 10 ** 12;
-    console.log(
-      "token_address",
-      tokenAddress,
-      "\ndata",
-      data,
-      "\nnumber_data",
-      numdata,
-      "\ntokenBalance",
-      formatData(parseFloat(tokenBalance ?? "0")),
-      "\nisApproved: should be true if data >= tokenBalance",
-      !tokenBalance ? false : numdata >= formatData(parseFloat(tokenBalance))
-    );
+  const allowance = BigNumber(allow.toString(), 10)
+    // .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
+    .decimalPlaces(0, 1);
+  // console.log("allowance bigint", allow);
+  console.log("allowance", allowance.toString());
 
-    // allowed tokens >= token balance
-    return !tokenBalance
-      ? false
-      : numdata >= formatData(parseFloat(tokenBalance));
+  const inputAmount = BigNumber(input.toString(), 10)
+    .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
+    .decimalPlaces(0, 1);
+  console.log("inputAmount", inputAmount.toString());
 
-    // Infinite token allowance
-    // return (
-    //   Number(data) ==
-    //   parseInt(
-    //     (
-    //       BigInt(
-    //         2 **
-    //           (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
-    //           tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
-    //             ? 128
-    //             : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
-    //             ? 96
-    //             : 256)
-    //       ) - BigInt(1)
-    //     ).toString()
-    //   )
-    // );
-  }, [data]);
-  return { data, isLoading, isError, isSuccess };
+  const compare = inputAmount.isLessThanOrEqualTo(allowance);
+  console.log("compare", compare);
+
+  // const isSuccess = useMemo(() => {
+  //   const numdata = Number(data) / 10 ** 12;
+  //   // console.log(
+  //   //   "token_address",
+  //   //   tokenAddress,
+  //   //   "\ndata",
+  //   //   data,
+  //   //   "\nnumber_data",
+  //   //   numdata,
+  //   //   "\ntokenBalance",
+  //   //   parseFloat(tokenBalance ?? "0"),
+  //   //   "\nisApproved: should be true if data >= tokenBalance"
+  //   //   // !tokenBalance ? false : numdata >= formatData(parseFloat(tokenBalance))
+  //   //   // !input ? false : numdata >= formatData(parseFloat(tokenBalance))
+  //   // );
+
+  //   // allowed tokens >= token balance
+  //   // return !tokenBalance
+  //   //   ? false
+  //   //   : numdata >= formatData(parseFloat(tokenBalance));
+  //   return compare;
+  return { data, isLoading, isError, isSuccess: compare };
 };
 
 /**
@@ -90,7 +85,7 @@ const useApproveToken = (
   tokenAddress: Address,
   spender: Address,
   tokenSymbol: string,
-  tokenBalance: string | undefined
+  tokenBalance: any | undefined
 ) => {
   const { chain } = useNetwork();
   console.log("token", tokenSymbol, "\ntokenBalance", tokenBalance);
@@ -107,19 +102,10 @@ const useApproveToken = (
     chainId: chain?.id,
     args: [
       spender, // spender
-      BigInt(
-        parseInt((parseFloat(tokenBalance ?? "0") * 10 ** 12).toString())
-      ).toString(),
-      // BigInt(
-      //   parseFloat(tokenBalance!) *
-      //     2 **
-      //       (tokenAddress == "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d" ||
-      //       tokenAddress == "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080"
-      //         ? 128
-      //         : tokenAddress == "0x511aB53F793683763E5a8829738301368a2411E3"
-      //         ? 96
-      //         : 256)
-      // ).toString(),
+      BigNumber(tokenBalance?.formatted, 10)
+        .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
+        .decimalPlaces(0, 1)
+        .toString(),
     ],
     onError: (error) => {
       console.log(`Error while Approving:`, error);
