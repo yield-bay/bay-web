@@ -1,4 +1,4 @@
-import { FC, ReactNode, useEffect } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import clsx from "clsx";
 import Footer from "@components/Common/Footer";
 import Header from "@components/Common/Header";
@@ -56,6 +56,8 @@ import {
   fetchSubstratePositions,
 } from "@utils/position-utils/substratePositions";
 import Notifications from "@components/Library/Notifications";
+import Banner from "../Header/Banner";
+import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 
 interface Props {
   children: ReactNode;
@@ -105,6 +107,11 @@ const Layout: FC<Props> = ({ children }) => {
 
   const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
   const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
+  const [showBanner, setShowBanner] = useState(true);
+
+  const handleOnClose = () => {
+    setShowBanner(false);
+  };
 
   // Accounts for testing
   // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
@@ -340,6 +347,7 @@ const Layout: FC<Props> = ({ children }) => {
       {claimModalOpen && <ClaimRewardsModal />}
       <SlippageModal />
       <Notifications />
+      {showBanner && <Banner onClose={handleOnClose} />}
       <Header />
       {children}
       <Footer />
