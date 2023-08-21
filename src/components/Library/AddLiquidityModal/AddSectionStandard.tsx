@@ -985,6 +985,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       ]
     );
 
+    console.log("firstTokenAmount", firstTokenAmount);
+    console.log("secondTokenAmount", secondTokenAmount);
+
     return (
       <div className="flex flex-col gap-y-8 text-left">
         <button

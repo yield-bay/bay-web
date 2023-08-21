@@ -4,61 +4,58 @@ import { Address, PublicClient, parseAbi } from "viem";
 import { getChefAbi, getRouterAbi } from "@utils/abis/contract-helper-methods";
 import { FarmType, PortfolioPositionType } from "@utils/types/common";
 
+const determineAbi = (
+  contractType: number,
+  farmition: FarmType | PortfolioPositionType
+) => {
+  if (contractType === 0) {
+    return parseAbi(getChefAbi(farmition.protocol!, farmition.chef));
+  } else {
+    return parseAbi(
+      getRouterAbi(farmition.protocol!, farmition.farmType !== "StandardAmm")
+    );
+  }
+};
+
 const estimateGas = async (
   publicClient: PublicClient,
   address: Address,
   contractType: number, // 0: chef, 1: router, 2: lp
-  functionType: number, // 0: addliq, 1: removeliq, 2: stake, 3: unstake, 4: claimrewards
+  // functionType: number, // 0: addliq, 1: removeliq, 2: stake, 3: unstake, 4: claimrewards
   functionName: string,
   farmition: FarmType | PortfolioPositionType,
   account: Address,
   args: Array<any>
 ) => {
-  console.log(
-    "estimateGas @params",
-    address,
-    contractType,
-    functionType,
-    functionName,
-    farmition,
-    account,
-    args,
-    contractType == 0
-      ? parseAbi(getChefAbi(farmition?.protocol!, farmition?.chef))
-      : parseAbi(
-          getRouterAbi(
-            farmition?.protocol!,
-            farmition?.farmType == "StandardAmm" ? false : true
-          )
-        )
-  );
+  const abi = determineAbi(contractType, farmition);
+  console.log("Estimating gas with parameters:");
+  console.log("Address:", address);
+  console.log("ABI:", abi);
+  console.log("Function Name:", functionName);
+  console.log("Arguments:", args);
+  console.log("Account:", account);
 
-  let gasEstimate = BigInt(0);
   try {
-    gasEstimate = await publicClient.estimateContractGas({
+    return await publicClient.estimateContractGas({
       address,
-      abi:
-        contractType == 0
-          ? parseAbi(getChefAbi(farmition.protocol!, farmition.chef))
-          : parseAbi(
-              getRouterAbi(
-                farmition.protocol!,
-                farmition.farmType == "StandardAmm" ? false : true
-              )
-            ),
+      abi,
       functionName,
-      args: args,
+      args,
       account,
     });
   } catch (error) {
-    console.log("estimateContractGas error:", error);
+    console.error("Error estimating gas:", error);
+    return BigInt(0);
   }
-  console.log("gas estimate", gasEstimate);
-  return gasEstimate;
 };
 
 const getGasPrice = async (publicClient: PublicClient): Promise<bigint> => {
-  return await publicClient.getGasPrice();
+  try {
+    return await publicClient.getGasPrice();
+  } catch (error) {
+    console.error("Error getting gas price:", error);
+    return BigInt(0);
+  }
 };
 
 const useGasEstimation = (
@@ -74,89 +71,55 @@ const useGasEstimation = (
   // isLoading: boolean;
   isError: boolean;
 } => {
-  // const { chain } = useNetwork();
-  // const publicClient = usePublicClient({ chainId: 1284 });
   const publicClient = usePublicClient();
-  // const publicClient = createPublicClient({
-  //   chain: moonbeam,
-  //   transport: http(),
-  // });
-  const [gasEstimateAmount, setGasEstimateAmount] = useState<number>(0);
-  const [gasPrice, setGasPrice] = useState<number>(0);
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  const [gasEstimateAmount, setGasEstimateAmount] = useState(0);
+  const [gasPrice, setGasPrice] = useState(0);
+  const [isError, setIsError] = useState(false);
 
-  // if any arg is 0
-  if (
-    args.some(
-      (a) =>
-        (a == 0 || a == BigInt(0)) &&
-        functionName != "removeLiquidityOneToken" &&
-        functionName != "remove_liquidity_one_coin"
-    )
-  ) {
-    console.log("arg0");
+  const invalidArgs = args.some(
+    (a) =>
+      (a === 0 || a === BigInt(0)) &&
+      !["removeLiquidityOneToken", "remove_liquidity_one_coin"].includes(
+        functionName
+      )
+  );
+
+  const invalidStableAmmArgs =
+    farmition.farmType === "StableAmm" &&
+    functionType === 0 &&
+    args[0].every((a) => a === 0 || a === BigInt(0));
+
+  if (invalidArgs || invalidStableAmmArgs) {
     return {
       gasEstimate: 0,
-      // isLoading: false,
       isError: false,
     };
-  } else if (
-    farmition.farmType == "StableAmm" &&
-    functionType == 0 && // addliquidity
-    args[0].every((a: any) => a == 0 || a == BigInt(0)) // at least 1 amounts arg should be non zero
-  ) {
-    // if (functionType == 0 &&
-    //   args.every((a) => a == 0)) {
-    console.log("arg0");
-    return {
-      gasEstimate: 0,
-      // isLoading: false,
-      isError: false,
-    };
-    // } else {
   } else {
-    try {
-      estimateGas(
+    (async () => {
+      const gasEstimate = await estimateGas(
         publicClient,
         address,
         contractType,
-        functionType,
         functionName,
         farmition,
         account,
         args
-      ).then((res) => {
-        setGasEstimateAmount(Number(res));
-      });
-    } catch (error) {
-      setIsError(true);
-      setGasEstimateAmount(0);
-      console.log("Error: Estimating Gas", error);
-    }
-    // const eg = estimateGas()
+      );
+      const price = await getGasPrice(publicClient);
 
-    try {
-      getGasPrice(publicClient).then((res) => {
-        setGasPrice(Number(res));
-      });
-    } catch (error) {
-      setGasPrice(0);
+      setGasEstimateAmount(Number(gasEstimate));
+      setGasPrice(Number(price));
+    })().catch((error) => {
       setIsError(true);
-      console.log("Error: Getting Gas Price", error);
-    }
+      console.error("Error in gas estimation:", error);
+    });
 
-    console.log(
-      "gasEstimateAmount",
-      gasEstimateAmount,
-      "gasPrice",
-      gasPrice,
-      "gas",
-      (gasEstimateAmount * gasPrice) / 10 ** 18
-    );
+    // Todo: Handle BigInt properly
+    const estimate = (gasEstimateAmount * gasPrice) / 10 ** 18;
+    console.log("estimate", estimate);
+
     return {
       gasEstimate: (gasEstimateAmount * gasPrice) / 10 ** 18,
-      // isLoading,
       isError,
     };
   }
