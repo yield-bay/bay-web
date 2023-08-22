@@ -112,7 +112,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isSlippageStep, setIsSlippageStep] = useState(false);
 
   useEffect(() => {
-    console.log("selectedFarm", selectedFarm);
+    // console.log("selectedFarm", selectedFarm);
   }, [selectedFarm]);
 
   // Amount States
@@ -212,7 +212,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   //     });
   //     reserve0 = (bal0 as bigint).toString();
   //     reserve1 = (bal1 as bigint).toString();
-  //     console.log("sirbal", bal0, bal1, router, selectedFarm?.protocol!);
+  //     // console.log("sirbal", bal0, bal1, router, selectedFarm?.protocol!);
   //     // return {
   //     //   reserve0: (bal0 as bigint).toString(),
   //     //   reserve1: (bal1 as bigint).toString(),
@@ -234,7 +234,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   //   args: [1],
   //   enabled: !!selectedFarm?.protocol! && !!selectedFarm?.router!,
   // });
-  // console.log("sirbal", bal0, bal1, router, selectedFarm?.protocol!);
+  // // console.log("sirbal", bal0, bal1, router, selectedFarm?.protocol!);
   // // return {
   // //   reserve0: (bal0 as bigint).toString(),
   // //   reserve1: (bal1 as bigint).toString(),
@@ -282,13 +282,13 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       tokenPricesMap[
         `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    // console.log(
+    // // console.log(
     //   "tokenkey",
     //   `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
     // );
-    console.log("token", tokenPrice);
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [selectedFarm, tokenPricesMap]);
@@ -301,7 +301,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     enabled: !!address && !!selectedFarm,
   });
 
-  console.log("token0Balance", token0Balance);
+  // console.log("token0Balance", token0Balance);
 
   // Balance Token1
   const { data: token1Balance, isLoading: token1BalanceLoading } = useBalance({
@@ -311,7 +311,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     enabled: !!address && !!selectedFarm,
   });
 
-  console.log("token0Balance", token0Balance);
+  // console.log("token0Balance", token0Balance);
 
   // Check Approval Token0 & Token1
   const {
@@ -381,7 +381,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     ) as any,
     chainId: chain?.id,
     onError: (error) => {
-      console.log(
+      console.error(
         `Error: Adding Liquidity in ${selectedFarm?.asset.symbol} Farm:`,
         error
       );
@@ -404,9 +404,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding  30 minutes
-      console.log("timestamp fetched //", blocktimestamp);
+      // console.log("timestamp fetched //", blocktimestamp);
 
-      console.log("calling addliquidity method...");
+      // console.log("calling addliquidity method...");
 
       const addArgs = [
         farmAsset0?.address,
@@ -432,7 +432,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         address, // To
         blocktimestamp, // deadline (uint256)
       ];
-      console.log("addArgs", addArgs);
+      // console.log("addArgs", addArgs);
 
       const txnRes = await addLiquidity?.({
         args: addArgs,
@@ -440,10 +440,10 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
       }
-      console.log(
-        `Adding Liquidity in ${selectedFarm?.asset.symbol} Farm`,
-        txnRes
-      );
+      // console.log(
+      //   `Adding Liquidity in ${selectedFarm?.asset.symbol} Farm`,
+      //   txnRes
+      // );
     } catch (error) {
       console.error(
         `Error while adding liquidity -> ${selectedFarm?.asset.symbol} Farm\n`,
@@ -492,14 +492,14 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       farmAsset0.decimals,
       farmAsset1.decimals
     );
-    console.log(
-      "siri",
-      poolRatio,
-      reserve0,
-      reserve1,
-      farmAsset0.decimals,
-      farmAsset1.decimals
-    );
+    // console.log(
+    //   "siri",
+    //   poolRatio,
+    //   reserve0,
+    //   reserve1,
+    //   farmAsset0.decimals,
+    //   farmAsset1.decimals
+    // );
     const expectedSecondTokenAmount = firstTokenAmount / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
@@ -551,24 +551,24 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      console.log("isToken0ApprovedSuccess", isToken0ApprovedSuccess);
-      console.log("isToken1ApprovedSuccess", isToken1ApprovedSuccess);
+      // console.log("isToken0ApprovedSuccess", isToken0ApprovedSuccess);
+      // console.log("isToken1ApprovedSuccess", isToken1ApprovedSuccess);
     }
   }, [isToken1ApprovedSuccess, isToken0ApprovedSuccess]);
 
   // Remove after testing
   useEffect(() => {
     if (isLoadingAddLiqCall) {
-      console.log("addliq method loading... sign the txn");
+      // console.log("addliq method loading... sign the txn");
     } else if (isLoadingAddLiqTxn) {
-      console.log("addliq txn loading...");
-      console.log("call hash", addLiquidityData?.hash);
+      // console.log("addliq txn loading...");
+      // console.log("call hash", addLiquidityData?.hash);
     }
   }, [isLoadingAddLiqCall, isLoadingAddLiqTxn]);
 
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
-      console.log("addliq txn success!");
+      // console.log("addliq txn success!");
 
       // Tracking
       handleAddLiquidityEvent({
@@ -615,11 +615,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         },
       });
       (async () => {
-        console.log(
-          "beforeuepos",
-          selectedFarm?.chain!,
-          selectedFarm?.protocol!
-        );
+        // console.log(
+        //   "beforeuepos",
+        //   selectedFarm?.chain!,
+        //   selectedFarm?.protocol!
+        // );
 
         const a = await updateEvmPositions({
           farm: {
@@ -637,7 +637,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -650,8 +650,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      console.log("isSuccess Approve0", approveToken0TxnSuccess);
-      console.log("isSuccess Approve1", approveToken1TxnSuccess);
+      // console.log("isSuccess Approve0", approveToken0TxnSuccess);
+      // console.log("isSuccess Approve1", approveToken1TxnSuccess);
     }
   }, [approveToken0TxnSuccess, approveToken1TxnSuccess]);
 
@@ -876,9 +876,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                   onClick={async () => {
                     try {
                       const txn = await approveToken0?.();
-                      console.log("Approve0 Result", txn);
+                      // console.log("Approve0 Result", txn);
                     } catch (error) {
-                      console.log(
+                      console.error(
                         `Error while Approving ${farmAsset0?.symbol}`,
                         error
                       );
@@ -911,9 +911,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     onClick={async () => {
                       try {
                         const txn = await approveToken1?.();
-                        console.log("Approve1 Result", txn);
+                        // console.log("Approve1 Result", txn);
                       } catch (error) {
-                        console.log(
+                        console.error(
                           `Error while Approving ${farmAsset1?.symbol}`,
                           error
                         );
@@ -985,8 +985,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       ]
     );
 
-    console.log("firstTokenAmount", firstTokenAmount);
-    console.log("secondTokenAmount", secondTokenAmount);
+    // console.log("firstTokenAmount", firstTokenAmount);
+    // console.log("secondTokenAmount", secondTokenAmount);
 
     return (
       <div className="flex flex-col gap-y-8 text-left">
@@ -1131,22 +1131,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
           isLoading={false}
           text="Confirm Supply"
           onClick={() => {
-            console.log("args:", {
-              aAddress: farmAsset0?.address,
-              bAddress: farmAsset1?.address,
-              aAmount: parseUnits(
-                `${parseFloat(firstTokenAmount)}`,
-                farmAsset0?.decimals
-              ),
-              bAmount: parseUnits(
-                `${parseFloat(secondTokenAmount)}`,
-                farmAsset0?.decimals
-              ),
-              aAmountMin: 1, // amountAMin
-              bAmountMin: 1, // amountBMin
-              to: address, // To
-              timestamp: "calculated in call", // deadline (uint256)
-            });
+            // console.log("args:", {
+            //   aAddress: farmAsset0?.address,
+            //   bAddress: farmAsset1?.address,
+            //   aAmount: parseUnits(
+            //     `${parseFloat(firstTokenAmount)}`,
+            //     farmAsset0?.decimals
+            //   ),
+            //   bAmount: parseUnits(
+            //     `${parseFloat(secondTokenAmount)}`,
+            //     farmAsset0?.decimals
+            //   ),
+            //   aAmountMin: 1, // amountAMin
+            //   bAmountMin: 1, // amountBMin
+            //   to: address, // To
+            //   timestamp: "calculated in call", // deadline (uint256)
+            // });
             handleAddLiquidity();
             setIsProcessStep(true);
           }}

@@ -43,7 +43,7 @@ export const updateEvmPositions = async ({
   tokenPricesMap,
   lpTokenPricesMap,
 }: any) => {
-  console.log("u-evm-pos farm", farm);
+  // console.log("u-evm-pos farm", farm);
   const chain = farm.chain.toLowerCase();
   const protocol = farm.protocol.toLowerCase();
   let rpcUrl = "";
@@ -64,9 +64,9 @@ export const updateEvmPositions = async ({
     }
     const poolInfo = await chef.poolInfo(ff.id);
     const userInfo = await chef.userInfo(ff.id, address); // EVM address
-    console.log("poolInfo0", Object.keys(poolInfo), Object.values(poolInfo)[0]);
-    console.log("poolInfo", poolInfo);
-    console.log("userInfo stella", userInfo);
+    // console.log("poolInfo0", Object.keys(poolInfo), Object.values(poolInfo)[0]);
+    // console.log("poolInfo", poolInfo);
+    // console.log("userInfo stella", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -78,12 +78,12 @@ export const updateEvmPositions = async ({
       provider
     );
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "stakedLpAmount",
-      stakedLpAmount,
-      "unstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "stakedLpAmount",
+    //   stakedLpAmount,
+    //   "unstakedLpAmount",
+    //   unstakedLpAmount
+    // );
 
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
 
@@ -106,27 +106,27 @@ export const updateEvmPositions = async ({
       ucrewAmounts = Object.values(pending)[3];
     }
 
-    console.log(
-      "ucrewAddrs",
-      ucrewAddrs,
-      "ucrewSymbols",
-      ucrewSymbols,
-      "ucrewDecimals",
-      ucrewDecimals,
-      "ucrewAmounts",
-      ucrewAmounts
-    );
+    // console.log(
+    //   "ucrewAddrs",
+    //   ucrewAddrs,
+    //   "ucrewSymbols",
+    //   ucrewSymbols,
+    //   "ucrewDecimals",
+    //   ucrewDecimals,
+    //   "ucrewAmounts",
+    //   ucrewAmounts
+    // );
 
     let ucrews: any = [];
     for (let i = 0; i < ucrewAmounts.length; i++) {
-      console.log(
-        "stellaucre",
-        ucrewSymbols[i],
-        ucrewAmounts[i],
-        tokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-        ]
-      );
+      // console.log(
+      //   "stellaucre",
+      //   ucrewSymbols[i],
+      //   ucrewAmounts[i],
+      //   tokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+      //   ]
+      // );
       ucrews.push({
         token: ucrewSymbols[i],
         amount: Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
@@ -138,21 +138,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewsstellaswap", ucrews);
+    // console.log("ucrewsstellaswap", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
-    console.log("before creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-      chain: chain,
-      protocol: protocol,
-    });
+    // console.log("before creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    //   chain: chain,
+    //   protocol: protocol,
+    // });
 
     const tempPositions = { ...positions };
     const newPosition = {
@@ -185,34 +185,34 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log(
-      "afterstellaswappositions",
-      positions,
-      "key",
-      `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-    );
+    // console.log(
+    //   "afterstellaswappositions",
+    //   positions,
+    //   "key",
+    //   `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    // );
   } else if (protocol == "solarbeam") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, solarbeamChefAbi, provider);
-    console.log(
-      "solarbeamff",
-      ff.chain,
-      ff.protocol,
-      ff.chef,
-      ff.id,
-      ff.asset.symbol
-    );
+    // console.log(
+    //   "solarbeamff",
+    //   ff.chain,
+    //   ff.protocol,
+    //   ff.chef,
+    //   ff.id,
+    //   ff.asset.symbol
+    // );
 
     // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
     const poolInfo = await chef.poolInfo(ff.id);
     const userInfo = await chef.userInfo(ff.id, address);
-    console.log(
-      "solarbeampoolInfo0",
-      Object.keys(poolInfo),
-      Object.values(poolInfo)[0]
-    );
-    console.log("solarbeampoolInfo", poolInfo);
-    console.log("solarbeamuserInfo", userInfo);
+    // console.log(
+    //   "solarbeampoolInfo0",
+    //   Object.keys(poolInfo),
+    //   Object.values(poolInfo)[0]
+    // );
+    // console.log("solarbeampoolInfo", poolInfo);
+    // console.log("solarbeamuserInfo", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -224,12 +224,12 @@ export const updateEvmPositions = async ({
       provider
     );
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "solarbeamstakedLpAmount",
-      stakedLpAmount,
-      "solarbeamunstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "solarbeamstakedLpAmount",
+    //   stakedLpAmount,
+    //   "solarbeamunstakedLpAmount",
+    //   unstakedLpAmount
+    // );
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
     const pendingTokens = await chef.pendingTokens(ff.id, address);
     const ucrewAddrs: any = Object.values(pendingTokens)[0];
@@ -237,27 +237,27 @@ export const updateEvmPositions = async ({
     const ucrewDecimals: any = Object.values(pendingTokens)[2];
     const ucrewAmounts: any = Object.values(pendingTokens)[3];
 
-    console.log(
-      "ucrewAddrs",
-      ucrewAddrs,
-      "ucrewSymbols",
-      ucrewSymbols,
-      "ucrewDecimals",
-      ucrewDecimals,
-      "ucrewAmounts",
-      ucrewAmounts
-    );
+    // console.log(
+    //   "ucrewAddrs",
+    //   ucrewAddrs,
+    //   "ucrewSymbols",
+    //   ucrewSymbols,
+    //   "ucrewDecimals",
+    //   ucrewDecimals,
+    //   "ucrewAmounts",
+    //   ucrewAmounts
+    // );
 
     let ucrews: any = [];
     for (let i = 0; i < ucrewAmounts.length; i++) {
-      console.log(
-        "tokenSymbol",
-        ucrewSymbols[i],
-        "\ntokenPrice",
-        tokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-        ]
-      );
+      // console.log(
+      //   "tokenSymbol",
+      //   ucrewSymbols[i],
+      //   "\ntokenPrice",
+      //   tokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+      //   ]
+      // );
       ucrews.push({
         token: ucrewSymbols[i],
         amount: Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
@@ -269,21 +269,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewssolarbeam", ucrews);
+    // console.log("ucrewssolarbeam", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("before creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("before creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const newPosition = {
       unstaked: {
@@ -315,18 +315,18 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after solarbeam positions", positions);
+    // console.log("after solarbeam positions", positions);
   } else if (protocol == "zenlink") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, zenlinkChefAbi, provider);
-    console.log("ff", ff.chain, ff.protocol, ff.chef, ff.id, ff.asset.symbol);
+    // console.log("ff", ff.chain, ff.protocol, ff.chef, ff.id, ff.asset.symbol);
 
     // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
     const poolInfo = await chef.getPoolInfo(ff.id);
     const userInfo = await chef.getUserInfo(ff.id, address);
-    console.log("poolInfo0", Object.keys(poolInfo), Object.values(poolInfo)[0]);
-    console.log("zlkpoolInfo", poolInfo);
-    console.log(ff.asset.symbol, "zlkuserInfo", userInfo);
+    // console.log("poolInfo0", Object.keys(poolInfo), Object.values(poolInfo)[0]);
+    // console.log("zlkpoolInfo", poolInfo);
+    // console.log(ff.asset.symbol, "zlkuserInfo", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -338,15 +338,15 @@ export const updateEvmPositions = async ({
       provider
     );
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "stakedLpAmount",
-      stakedLpAmount,
-      "zlkunstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "stakedLpAmount",
+    //   stakedLpAmount,
+    //   "zlkunstakedLpAmount",
+    //   unstakedLpAmount
+    // );
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
     const rewardTokens: any = Object.values(poolInfo)[2];
-    console.log("rewardTokens", rewardTokens);
+    // console.log("rewardTokens", rewardTokens);
     const pendingRewards = await chef.pendingRewards(ff.id, address);
     const rewards: any = Object.values(pendingRewards)[0];
 
@@ -355,14 +355,14 @@ export const updateEvmPositions = async ({
       const tok = new ethers.Contract(rewardTokens[i], lpAbi, provider);
       const sym = await tok.symbol();
       const dec = await tok.decimals();
-      console.log(
-        "sym:",
-        sym,
-        "\ndec:",
-        dec,
-        "\ntoken price:",
-        tokenPricesMap[`${ff.chain}-${ff.protocol}-${sym}-${rewardTokens[i]}`]
-      );
+      // console.log(
+      //   "sym:",
+      //   sym,
+      //   "\ndec:",
+      //   dec,
+      //   "\ntoken price:",
+      //   tokenPricesMap[`${ff.chain}-${ff.protocol}-${sym}-${rewardTokens[i]}`]
+      // );
       ucrews.push({
         token: sym,
         amount: Number(rewards[i]) / 10 ** Number(dec),
@@ -374,7 +374,7 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewszenlink", ucrews);
+    // console.log("ucrewszenlink", ucrews);
 
     let price =
       lpTokenPricesMap[
@@ -390,28 +390,28 @@ export const updateEvmPositions = async ({
           ? t
           : ""
       );
-      console.log("ttts", ts);
+      // console.log("ttts", ts);
       const as = ts.filter((a) => a != "");
-      console.log("aaas", as);
+      // console.log("aaas", as);
       if (as.length != 0) {
         // tokenPricesMap[`${ff.chain}-${ff.protocol}-ZLK-${}`]
         price = tokenPricesMap[as[0]];
-        console.log("priceee", price);
+        // console.log("priceee", price);
       }
     }
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
-    console.log("unstaked and staked amount > 0 -- updating positions...");
-    console.log("before creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("unstaked and staked amount > 0 -- updating positions...");
+    // console.log("before creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const tempPositions = { ...positions };
     const newPosition = {
@@ -431,32 +431,32 @@ export const updateEvmPositions = async ({
     };
     tempPositions[name] = newPosition;
     return { name: name, position: newPosition };
-    console.log("added position", tempPositions[name]);
+    // console.log("added position", tempPositions[name]);
     // setPositions((prevState: any) => ({
     //   ...prevState,
     //   ...tempPositions,
     // }));
     // }
-    console.log("after zenlink positions", positions);
+    // console.log("after zenlink positions", positions);
   } else if (protocol == "curve") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, curveChefAbi, provider);
-    console.log("ff", ff.chain, ff.protocol, ff.chef, ff.id, ff.asset.symbol);
+    // console.log("ff", ff.chain, ff.protocol, ff.chef, ff.id, ff.asset.symbol);
 
     const reward_token = await chef.reward_tokens(0);
-    console.log("reward_token0", reward_token);
+    // console.log("reward_token0", reward_token);
     const claimable_reward = await chef.claimable_reward(address, reward_token);
     const stakedLpAmount = Number(await chef.balanceOf(address)) / 10 ** 18;
     const lp_token = await chef.lp_token();
-    console.log("lp_token", lp_token);
+    // console.log("lp_token", lp_token);
     const lp = new ethers.Contract(lp_token, lpAbi, provider);
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "stakedLpAmount",
-      stakedLpAmount,
-      "unstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "stakedLpAmount",
+    //   stakedLpAmount,
+    //   "unstakedLpAmount",
+    //   unstakedLpAmount
+    // );
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
     const rewardCount: any = await chef.reward_count();
     let ucrews: any = [];
@@ -466,28 +466,28 @@ export const updateEvmPositions = async ({
         address,
         reward_token
       );
-      console.log(
-        `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
-      );
+      // console.log(
+      //   `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+      // );
       const tok = new ethers.Contract(reward_token, lpAbi, provider);
       const sym = await tok.symbol();
       const dec = await tok.decimals();
-      console.log(
-        "sym",
-        sym,
-        "\ndec",
-        dec,
-        "\ntokenPrice",
-        tokenPricesMap[`${ff.chain}${ff.protocol}-${sym}-${reward_token}`],
-        "\nlpTokenPrice",
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ], // todo: should be reward token symbol
-        "\nsymbol",
-        ff.asset.symbol,
-        "\nreward token",
-        reward_token
-      );
+      // console.log(
+      //   "sym",
+      //   sym,
+      //   "\ndec",
+      //   dec,
+      //   "\ntokenPrice",
+      //   tokenPricesMap[`${ff.chain}${ff.protocol}-${sym}-${reward_token}`],
+      //   "\nlpTokenPrice",
+      //   lpTokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+      //   ], // todo: should be reward token symbol
+      //   "\nsymbol",
+      //   ff.asset.symbol,
+      //   "\nreward token",
+      //   reward_token
+      // );
 
       // ucrewscurve positions
       ucrews.push({
@@ -499,21 +499,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    // console.log("ucrewscurve", ucrews);
+    // // console.log("ucrewscurve", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("before creating temp positions object:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("before creating temp positions object:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const newPosition = {
       unstaked: {
@@ -549,29 +549,29 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after curve positions", positions);
+    // console.log("after curve positions", positions);
   } else if (protocol == "beamswap") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, beamswapChefAbi, provider);
-    console.log(
-      "beamswapff",
-      ff.chain,
-      ff.protocol,
-      ff.chef,
-      ff.id,
-      ff.asset.symbol
-    );
+    // console.log(
+    //   "beamswapff",
+    //   ff.chain,
+    //   ff.protocol,
+    //   ff.chef,
+    //   ff.id,
+    //   ff.asset.symbol
+    // );
 
     // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
     const poolInfo = await chef.poolInfo(ff.id);
     const userInfo = await chef.userInfo(ff.id, address);
-    console.log(
-      "beamswapInfo0",
-      Object.keys(poolInfo),
-      Object.values(poolInfo)[0]
-    );
-    console.log("beamswappoolInfo", poolInfo);
-    console.log("beamswapuserInfo", userInfo);
+    // console.log(
+    //   "beamswapInfo0",
+    //   Object.keys(poolInfo),
+    //   Object.values(poolInfo)[0]
+    // );
+    // console.log("beamswappoolInfo", poolInfo);
+    // console.log("beamswapuserInfo", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -583,12 +583,12 @@ export const updateEvmPositions = async ({
       provider
     );
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "beamswapstakedLpAmount",
-      stakedLpAmount,
-      "beamswapunstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "beamswapstakedLpAmount",
+    //   stakedLpAmount,
+    //   "beamswapunstakedLpAmount",
+    //   unstakedLpAmount
+    // );
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
     const pendingTokens = await chef.pendingTokens(ff.id, address);
     const ucrewAddrs: any = Object.values(pendingTokens)[0];
@@ -596,27 +596,27 @@ export const updateEvmPositions = async ({
     const ucrewDecimals: any = Object.values(pendingTokens)[2];
     const ucrewAmounts: any = Object.values(pendingTokens)[3];
 
-    console.log(
-      "ucrewAddrs",
-      ucrewAddrs,
-      "ucrewSymbols",
-      ucrewSymbols,
-      "ucrewDecimals",
-      ucrewDecimals,
-      "ucrewAmounts",
-      ucrewAmounts
-    );
+    // console.log(
+    //   "ucrewAddrs",
+    //   ucrewAddrs,
+    //   "ucrewSymbols",
+    //   ucrewSymbols,
+    //   "ucrewDecimals",
+    //   ucrewDecimals,
+    //   "ucrewAmounts",
+    //   ucrewAmounts
+    // );
 
     let ucrews: any = [];
     for (let i = 0; i < ucrewAmounts.length; i++) {
-      console.log(
-        "tokenSymbol",
-        ucrewSymbols[i],
-        "\ntokenPrice",
-        tokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-        ]
-      );
+      // console.log(
+      //   "tokenSymbol",
+      //   ucrewSymbols[i],
+      //   "\ntokenPrice",
+      //   tokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+      //   ]
+      // );
       ucrews.push({
         token: ucrewSymbols[i],
         amount: Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
@@ -628,21 +628,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewsbeamswap", ucrews);
+    // console.log("ucrewsbeamswap", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("before creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("before creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const newPosition = {
       unstaked: {
@@ -674,29 +674,29 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after beamswap positions", positions);
+    // console.log("after beamswap positions", positions);
   } else if (protocol == "solarflare") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, solarflareChefAbi, provider);
-    console.log(
-      "solarflareff",
-      ff.chain,
-      ff.protocol,
-      ff.chef,
-      ff.id,
-      ff.asset.symbol
-    );
+    // console.log(
+    //   "solarflareff",
+    //   ff.chain,
+    //   ff.protocol,
+    //   ff.chef,
+    //   ff.id,
+    //   ff.asset.symbol
+    // );
 
     // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
     const poolInfo = await chef.poolInfo(ff.id);
     const userInfo = await chef.userInfo(ff.id, address);
-    console.log(
-      "solarflareInfo0",
-      Object.keys(poolInfo),
-      Object.values(poolInfo)[0]
-    );
-    console.log("solarflarepoolInfo", poolInfo);
-    console.log("solarflareuserInfo", userInfo);
+    // console.log(
+    //   "solarflareInfo0",
+    //   Object.keys(poolInfo),
+    //   Object.values(poolInfo)[0]
+    // );
+    // console.log("solarflarepoolInfo", poolInfo);
+    // console.log("solarflareuserInfo", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -708,12 +708,12 @@ export const updateEvmPositions = async ({
       provider
     );
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "solarflarestakedLpAmount",
-      stakedLpAmount,
-      "solarflareunstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "solarflarestakedLpAmount",
+    //   stakedLpAmount,
+    //   "solarflareunstakedLpAmount",
+    //   unstakedLpAmount
+    // );
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
     const pendingTokens = await chef.pendingTokens(ff.id, address);
     const ucrewAddrs: any = Object.values(pendingTokens)[0];
@@ -721,27 +721,27 @@ export const updateEvmPositions = async ({
     const ucrewDecimals: any = Object.values(pendingTokens)[2];
     const ucrewAmounts: any = Object.values(pendingTokens)[3];
 
-    console.log(
-      "ucrewAddrs",
-      ucrewAddrs,
-      "ucrewSymbols",
-      ucrewSymbols,
-      "ucrewDecimals",
-      ucrewDecimals,
-      "ucrewAmounts",
-      ucrewAmounts
-    );
+    // console.log(
+    //   "ucrewAddrs",
+    //   ucrewAddrs,
+    //   "ucrewSymbols",
+    //   ucrewSymbols,
+    //   "ucrewDecimals",
+    //   ucrewDecimals,
+    //   "ucrewAmounts",
+    //   ucrewAmounts
+    // );
 
     let ucrews: any = [];
     for (let i = 0; i < ucrewAmounts.length; i++) {
-      console.log(
-        "tokenSymbol",
-        ucrewSymbols[i],
-        "\ntokenPrice",
-        tokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-        ]
-      );
+      // console.log(
+      //   "tokenSymbol",
+      //   ucrewSymbols[i],
+      //   "\ntokenPrice",
+      //   tokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+      //   ]
+      // );
       ucrews.push({
         token: ucrewSymbols[i],
         amount: Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
@@ -753,21 +753,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewssolarflare", ucrews);
+    // console.log("ucrewssolarflare", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("before creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("before creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const newPosition = {
       unstaked: {
@@ -799,26 +799,26 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after solarflare positions", positions);
+    // console.log("after solarflare positions", positions);
   } else if (protocol == "sushiswap") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, sushiChefAbi, provider);
-    console.log(
-      "sushiswapff",
-      ff.chain,
-      ff.protocol,
-      ff.chef,
-      ff.id,
-      ff.asset.symbol
-    );
+    // console.log(
+    //   "sushiswapff",
+    //   ff.chain,
+    //   ff.protocol,
+    //   ff.chef,
+    //   ff.id,
+    //   ff.asset.symbol
+    // );
 
     // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
     const lpToken = await chef.lpToken(ff.id);
     const poolInfo = await chef.poolInfo(ff.id);
     const userInfo = await chef.userInfo(ff.id, address);
-    console.log("sushiswapInfo0", Object.keys(poolInfo), lpToken);
-    console.log("sushiswappoolInfo", poolInfo);
-    console.log("sushiswapuserInfo", userInfo);
+    // console.log("sushiswapInfo0", Object.keys(poolInfo), lpToken);
+    // console.log("sushiswappoolInfo", poolInfo);
+    // console.log("sushiswapuserInfo", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -826,12 +826,12 @@ export const updateEvmPositions = async ({
     // const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
     const lp = new ethers.Contract(lpToken as string, lpAbi, provider);
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "sushiswapstakedLpAmount",
-      stakedLpAmount,
-      "sushiswapunstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "sushiswapstakedLpAmount",
+    //   stakedLpAmount,
+    //   "sushiswapunstakedLpAmount",
+    //   unstakedLpAmount
+    // );
 
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
 
@@ -846,27 +846,27 @@ export const updateEvmPositions = async ({
     ucrewDecimals = [18];
     ucrewAmounts = [pending];
 
-    console.log(
-      "ucrewAddrs",
-      ucrewAddrs,
-      "ucrewSymbols",
-      ucrewSymbols,
-      "ucrewDecimals",
-      ucrewDecimals,
-      "ucrewAmounts",
-      ucrewAmounts
-    );
+    // console.log(
+    //   "ucrewAddrs",
+    //   ucrewAddrs,
+    //   "ucrewSymbols",
+    //   ucrewSymbols,
+    //   "ucrewDecimals",
+    //   ucrewDecimals,
+    //   "ucrewAmounts",
+    //   ucrewAmounts
+    // );
 
     let ucrews: any = [];
     for (let i = 0; i < ucrewAmounts.length; i++) {
-      console.log(
-        "tokenSymbol",
-        ucrewSymbols[i],
-        "\ntokenPrice",
-        tokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-        ]
-      );
+      // console.log(
+      //   "tokenSymbol",
+      //   ucrewSymbols[i],
+      //   "\ntokenPrice",
+      //   tokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+      //   ]
+      // );
       ucrews.push({
         token: ucrewSymbols[i],
         amount: Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
@@ -878,21 +878,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewssushiswap", ucrews);
+    // console.log("ucrewssushiswap", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("before creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("before creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const newPosition = {
       unstaked: {
@@ -924,32 +924,32 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after sushiswap positions", positions);
+    // console.log("after sushiswap positions", positions);
   } else if (protocol == "arthswap") {
     const ff = farm;
     const chef = new ethers.Contract(ff.chef, arthswapChefAbi, provider);
-    console.log(
-      "arthswapff",
-      ff.chain,
-      ff.protocol,
-      ff.chef,
-      ff.id,
-      ff.asset.symbol
-    );
+    // console.log(
+    //   "arthswapff",
+    //   ff.chain,
+    //   ff.protocol,
+    //   ff.chef,
+    //   ff.id,
+    //   ff.asset.symbol
+    // );
 
     // const lpa = new ethers.Contract(
     //   ff.asset.address,
     //   lpAbi,
     //   provider
     // );
-    // console.log("artlpa", await lpa.balanceOf(address));
+    // // console.log("artlpa", await lpa.balanceOf(address));
     // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
     // const lpToken = await chef.lpTokens(ff.id);
     const poolInfo = await chef.poolInfos(ff.id);
     const userInfo = await chef.userInfos(ff.id, address);
-    // console.log("arthswapInfo0", Object.keys(poolInfo));
-    console.log("arthswappoolInfo", poolInfo);
-    console.log("arthswapuserInfo", userInfo);
+    // // console.log("arthswapInfo0", Object.keys(poolInfo));
+    // console.log("arthswappoolInfo", poolInfo);
+    // console.log("arthswapuserInfo", userInfo);
     const stakedLpAmount =
       Number(Object.values(userInfo)[0] as number) / 10 ** 18;
     const rewardDebt = Object.values(userInfo)[1];
@@ -957,12 +957,12 @@ export const updateEvmPositions = async ({
     // const nextHarvestUntilTimestamp = Object.values(userInfo)[3];
     const lp = new ethers.Contract(ff.asset.address, lpAbi, provider);
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "arthswapstakedLpAmount",
-      stakedLpAmount,
-      "arthswapunstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "arthswapstakedLpAmount",
+    //   stakedLpAmount,
+    //   "arthswapunstakedLpAmount",
+    //   unstakedLpAmount
+    // );
 
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
 
@@ -977,27 +977,27 @@ export const updateEvmPositions = async ({
     ucrewDecimals = [18];
     ucrewAmounts = [pending];
 
-    console.log(
-      "ucrewAddrs",
-      ucrewAddrs,
-      "ucrewSymbols",
-      ucrewSymbols,
-      "ucrewDecimals",
-      ucrewDecimals,
-      "ucrewAmounts",
-      ucrewAmounts
-    );
+    // console.log(
+    //   "ucrewAddrs",
+    //   ucrewAddrs,
+    //   "ucrewSymbols",
+    //   ucrewSymbols,
+    //   "ucrewDecimals",
+    //   ucrewDecimals,
+    //   "ucrewAmounts",
+    //   ucrewAmounts
+    // );
 
     let ucrews: any = [];
     for (let i = 0; i < ucrewAmounts.length; i++) {
-      console.log(
-        "tokenSymbol",
-        ucrewSymbols[i],
-        "\ntokenPrice",
-        tokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-        ]
-      );
+      // console.log(
+      //   "tokenSymbol",
+      //   ucrewSymbols[i],
+      //   "\ntokenPrice",
+      //   tokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+      //   ]
+      // );
       ucrews.push({
         token: ucrewSymbols[i],
         amount: Number(ucrewAmounts[i]) / 10 ** Number(ucrewDecimals[i]),
@@ -1009,26 +1009,26 @@ export const updateEvmPositions = async ({
       });
     }
 
-    console.log("ucrewsarthswap", ucrews);
+    // console.log("ucrewsarthswap", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("arthbefore creating temp positions obejct:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-      hmm:
-        unstakedLpAmount *
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-    });
+    // console.log("arthbefore creating temp positions obejct:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    //   hmm:
+    //     unstakedLpAmount *
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    // });
 
     const newPosition = {
       unstaked: {
@@ -1060,33 +1060,33 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after arthswap positions", positions);
+    // console.log("after arthswap positions", positions);
   } else if (protocol == "sirius") {
     const ff = farm;
     let chef = new ethers.Contract(ff.chef, siriusChefAbi, provider);
-    console.log(
-      "ffsirius",
-      ff.chain,
-      ff.protocol,
-      ff.chef,
-      ff.id,
-      ff.asset.symbol
-    );
+    // console.log(
+    //   "ffsirius",
+    //   ff.chain,
+    //   ff.protocol,
+    //   ff.chef,
+    //   ff.id,
+    //   ff.asset.symbol
+    // );
 
     const reward_token = await chef.rewardTokens(0);
-    console.log("reward_token0", reward_token);
+    // console.log("reward_token0", reward_token);
     const claimable_reward = await chef.claimableReward(address, reward_token);
     const stakedLpAmount = Number(await chef.balanceOf(address)) / 10 ** 18;
     const lp_token = await chef.lpToken();
-    console.log("siriuslp_token", lp_token);
+    // console.log("siriuslp_token", lp_token);
     const lp = new ethers.Contract(lp_token, lpAbi, provider);
     const unstakedLpAmount = Number(await lp.balanceOf(address)) / 10 ** 18;
-    console.log(
-      "stakedLpAmount",
-      stakedLpAmount,
-      "unstakedLpAmount",
-      unstakedLpAmount
-    );
+    // console.log(
+    //   "stakedLpAmount",
+    //   stakedLpAmount,
+    //   "unstakedLpAmount",
+    //   unstakedLpAmount
+    // );
     const name = `${ff.chain}-${ff.protocol}-${ff.chef}-${ff.id}-${ff.asset.symbol}`;
     const rewardCount: any = await chef.rewardCount();
     let ucrews: any = [];
@@ -1096,28 +1096,28 @@ export const updateEvmPositions = async ({
         address,
         reward_token
       );
-      console.log(
-        `sirreward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
-      );
+      // console.log(
+      //   `sirreward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+      // );
       const tok = new ethers.Contract(reward_token, lpAbi, provider);
       const sym = await tok.symbol();
       const dec = await tok.decimals();
-      console.log(
-        "sym",
-        sym,
-        "\ndec",
-        dec,
-        "\nsirtokenPrice",
-        tokenPricesMap[`${ff.chain}-${ff.protocol}-${sym}-${reward_token}`],
-        "\nlpTokenPrice",
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ], // todo: should be reward token symbol
-        "\nsymbol",
-        ff.asset.symbol,
-        "\nreward token",
-        reward_token
-      );
+      // console.log(
+      //   "sym",
+      //   sym,
+      //   "\ndec",
+      //   dec,
+      //   "\nsirtokenPrice",
+      //   tokenPricesMap[`${ff.chain}-${ff.protocol}-${sym}-${reward_token}`],
+      //   "\nlpTokenPrice",
+      //   lpTokenPricesMap[
+      //     `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+      //   ], // todo: should be reward token symbol
+      //   "\nsymbol",
+      //   ff.asset.symbol,
+      //   "\nreward token",
+      //   reward_token
+      // );
 
       // ucrewscurve positions
       ucrews.push({
@@ -1129,21 +1129,21 @@ export const updateEvmPositions = async ({
       });
     }
 
-    // console.log("ucrewscurve", ucrews);
+    // // console.log("ucrewscurve", ucrews);
 
     // if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
     const tempPositions = { ...positions };
 
-    console.log("before creating temp positions object:\n", {
-      unstakedAmount: unstakedLpAmount,
-      stakedLpAmount: stakedLpAmount,
-      lpTokenPricesMap: lpTokenPricesMap,
-      lpTokenPrice:
-        lpTokenPricesMap[
-          `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-        ],
-      lpSymbol: ff.asset.symbol,
-    });
+    // console.log("before creating temp positions object:\n", {
+    //   unstakedAmount: unstakedLpAmount,
+    //   stakedLpAmount: stakedLpAmount,
+    //   lpTokenPricesMap: lpTokenPricesMap,
+    //   lpTokenPrice:
+    //     lpTokenPricesMap[
+    //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+    //     ],
+    //   lpSymbol: ff.asset.symbol,
+    // });
 
     const newPosition = {
       unstaked: {
@@ -1178,7 +1178,7 @@ export const updateEvmPositions = async ({
     //   ...tempPositions,
     // }));
     // }
-    console.log("after curve positions", positions);
+    // console.log("after curve positions", positions);
   }
 };
 
@@ -1242,16 +1242,16 @@ export const fetchEvmPositions = async ({
           f.chef == protocol.chef
         );
       });
-      console.log(
-        "protocol:",
-        protocol.name,
-        "\nchain:",
-        chain.name,
-        "\nchef:",
-        protocol.chef
-      );
+      // console.log(
+      //   "protocol:",
+      //   protocol.name,
+      //   "\nchain:",
+      //   chain.name,
+      //   "\nchef:",
+      //   protocol.chef
+      // );
 
-      console.log("process start...");
+      // console.log("process start...");
       if (protocol.name == "stellaswap") {
         let chef = new ethers.Contract(
           protocol.chef,
@@ -1278,13 +1278,13 @@ export const fetchEvmPositions = async ({
           }) => {
             const poolInfo = await chef.poolInfo(ff.id);
             const userInfo = await chef.userInfo(ff.id, address); // EVM address
-            console.log(
-              "poolInfo0",
-              Object.keys(poolInfo),
-              Object.values(poolInfo)[0]
-            );
-            console.log("poolInfo", poolInfo);
-            console.log("userInfo stella", userInfo);
+            // console.log(
+            //   "poolInfo0",
+            //   Object.keys(poolInfo),
+            //   Object.values(poolInfo)[0]
+            // );
+            // console.log("poolInfo", poolInfo);
+            // console.log("userInfo stella", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -1297,12 +1297,12 @@ export const fetchEvmPositions = async ({
             );
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "stakedLpAmount",
-              stakedLpAmount,
-              "unstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "stakedLpAmount",
+            //   stakedLpAmount,
+            //   "unstakedLpAmount",
+            //   unstakedLpAmount
+            // );
 
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
@@ -1325,27 +1325,27 @@ export const fetchEvmPositions = async ({
               ucrewAmounts = Object.values(pending)[3];
             }
 
-            console.log(
-              "ucrewAddrs",
-              ucrewAddrs,
-              "ucrewSymbols",
-              ucrewSymbols,
-              "ucrewDecimals",
-              ucrewDecimals,
-              "ucrewAmounts",
-              ucrewAmounts
-            );
+            // console.log(
+            //   "ucrewAddrs",
+            //   ucrewAddrs,
+            //   "ucrewSymbols",
+            //   ucrewSymbols,
+            //   "ucrewDecimals",
+            //   ucrewDecimals,
+            //   "ucrewAmounts",
+            //   ucrewAmounts
+            // );
 
             let ucrews: any = [];
             for (let i = 0; i < ucrewAmounts.length; i++) {
-              console.log(
-                "stellaucre",
-                ucrewSymbols[i],
-                ucrewAmounts[i],
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                ]
-              );
+              // console.log(
+              //   "stellaucre",
+              //   ucrewSymbols[i],
+              //   ucrewAmounts[i],
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: ucrewSymbols[i],
                 amount:
@@ -1358,21 +1358,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewsstellaswap", ucrews);
+            // console.log("ucrewsstellaswap", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
-              console.log("before creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-                chain: chain.name,
-                protocol: protocol.name,
-              });
+              // console.log("before creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              //   chain: chain.name,
+              //   protocol: protocol.name,
+              // });
 
               const tempPositions = { ...positions };
               tempPositions[name] = {
@@ -1403,12 +1403,12 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log(
-              "afterstellaswappositions",
-              positions,
-              "key",
-              `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-            );
+            // console.log(
+            //   "afterstellaswappositions",
+            //   positions,
+            //   "key",
+            //   `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+            // );
           }
         );
         allPromises.push(...stella);
@@ -1430,25 +1430,25 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "solarbeamff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "solarbeamff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
             const poolInfo = await chef.poolInfo(ff.id);
             const userInfo = await chef.userInfo(ff.id, address);
-            console.log(
-              "solarbeampoolInfo0",
-              Object.keys(poolInfo),
-              Object.values(poolInfo)[0]
-            );
-            console.log("solarbeampoolInfo", poolInfo);
-            console.log("solarbeamuserInfo", userInfo);
+            // console.log(
+            //   "solarbeampoolInfo0",
+            //   Object.keys(poolInfo),
+            //   Object.values(poolInfo)[0]
+            // );
+            // console.log("solarbeampoolInfo", poolInfo);
+            // console.log("solarbeamuserInfo", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -1461,12 +1461,12 @@ export const fetchEvmPositions = async ({
             );
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "solarbeamstakedLpAmount",
-              stakedLpAmount,
-              "solarbeamunstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "solarbeamstakedLpAmount",
+            //   stakedLpAmount,
+            //   "solarbeamunstakedLpAmount",
+            //   unstakedLpAmount
+            // );
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const pendingTokens = await chef.pendingTokens(ff.id, address);
             const ucrewAddrs: any = Object.values(pendingTokens)[0];
@@ -1474,27 +1474,27 @@ export const fetchEvmPositions = async ({
             const ucrewDecimals: any = Object.values(pendingTokens)[2];
             const ucrewAmounts: any = Object.values(pendingTokens)[3];
 
-            console.log(
-              "ucrewAddrs",
-              ucrewAddrs,
-              "ucrewSymbols",
-              ucrewSymbols,
-              "ucrewDecimals",
-              ucrewDecimals,
-              "ucrewAmounts",
-              ucrewAmounts
-            );
+            // console.log(
+            //   "ucrewAddrs",
+            //   ucrewAddrs,
+            //   "ucrewSymbols",
+            //   ucrewSymbols,
+            //   "ucrewDecimals",
+            //   ucrewDecimals,
+            //   "ucrewAmounts",
+            //   ucrewAmounts
+            // );
 
             let ucrews: any = [];
             for (let i = 0; i < ucrewAmounts.length; i++) {
-              console.log(
-                "tokenSymbol",
-                ucrewSymbols[i],
-                "\ntokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                ]
-              );
+              // console.log(
+              //   "tokenSymbol",
+              //   ucrewSymbols[i],
+              //   "\ntokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: ucrewSymbols[i],
                 amount:
@@ -1507,21 +1507,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewssolarbeam", ucrews);
+            // console.log("ucrewssolarbeam", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("before creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log("before creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -1551,7 +1551,7 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after solarbeam positions", positions);
+            // console.log("after solarbeam positions", positions);
           }
         );
         allPromises.push(...solar);
@@ -1573,25 +1573,25 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "ff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "ff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
             const poolInfo = await chef.getPoolInfo(ff.id);
             const userInfo = await chef.getUserInfo(ff.id, address);
-            console.log(
-              "poolInfo0",
-              Object.keys(poolInfo),
-              Object.values(poolInfo)[0]
-            );
-            console.log("zlkpoolInfo", poolInfo);
-            console.log(ff.asset.symbol, "zlkuserInfo", userInfo);
+            // console.log(
+            //   "poolInfo0",
+            //   Object.keys(poolInfo),
+            //   Object.values(poolInfo)[0]
+            // );
+            // console.log("zlkpoolInfo", poolInfo);
+            // console.log(ff.asset.symbol, "zlkuserInfo", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -1604,15 +1604,15 @@ export const fetchEvmPositions = async ({
             );
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "stakedLpAmount",
-              stakedLpAmount,
-              "zlkunstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "stakedLpAmount",
+            //   stakedLpAmount,
+            //   "zlkunstakedLpAmount",
+            //   unstakedLpAmount
+            // );
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const rewardTokens: any = Object.values(poolInfo)[2];
-            console.log("rewardTokens", rewardTokens);
+            // console.log("rewardTokens", rewardTokens);
             const pendingRewards = await chef.pendingRewards(ff.id, address);
             const rewards: any = Object.values(pendingRewards)[0];
 
@@ -1621,16 +1621,16 @@ export const fetchEvmPositions = async ({
               const tok = new ethers.Contract(rewardTokens[i], lpAbi, provider);
               const sym = await tok.symbol();
               const dec = await tok.decimals();
-              console.log(
-                "sym:",
-                sym,
-                "\ndec:",
-                dec,
-                "\ntoken price:",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${sym}-${rewardTokens[i]}`
-                ]
-              );
+              // console.log(
+              //   "sym:",
+              //   sym,
+              //   "\ndec:",
+              //   dec,
+              //   "\ntoken price:",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${sym}-${rewardTokens[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: sym,
                 amount: Number(rewards[i]) / 10 ** Number(dec),
@@ -1642,7 +1642,7 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewszenlink", ucrews);
+            // console.log("ucrewszenlink", ucrews);
 
             let price =
               lpTokenPricesMap[
@@ -1658,30 +1658,30 @@ export const fetchEvmPositions = async ({
                   ? t
                   : ""
               );
-              console.log("ttts", ts);
+              // console.log("ttts", ts);
               const as = ts.filter((a) => a != "");
-              console.log("aaas", as);
+              // console.log("aaas", as);
               if (as.length != 0) {
                 // tokenPricesMap[`${ff.chain}-${ff.protocol}-ZLK-${}`]
                 price = tokenPricesMap[as[0]];
-                console.log("priceee", price);
+                // console.log("priceee", price);
               }
             }
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
-              console.log(
-                "unstaked and staked amount > 0 -- updating positions..."
-              );
-              console.log("before creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log(
+              //   "unstaked and staked amount > 0 -- updating positions..."
+              // );
+              // console.log("before creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               const tempPositions = { ...positions };
               tempPositions[name] = {
@@ -1699,13 +1699,13 @@ export const fetchEvmPositions = async ({
                 lpAddress: ff.asset.address,
                 tvl: ff.tvl,
               };
-              console.log("added position", tempPositions[name]);
+              // console.log("added position", tempPositions[name]);
               setPositions((prevState: any) => ({
                 ...prevState,
                 ...tempPositions,
               }));
             }
-            console.log("after zenlink positions", positions);
+            // console.log("after zenlink positions", positions);
           }
         );
         allPromises.push(...zen);
@@ -1723,17 +1723,17 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "ff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "ff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             const reward_token = await chef.reward_tokens(0);
-            console.log("reward_token0", reward_token);
+            // console.log("reward_token0", reward_token);
             const claimable_reward = await chef.claimable_reward(
               address,
               reward_token
@@ -1741,16 +1741,16 @@ export const fetchEvmPositions = async ({
             const stakedLpAmount =
               Number(await chef.balanceOf(address)) / 10 ** 18;
             const lp_token = await chef.lp_token();
-            console.log("lp_token", lp_token);
+            // console.log("lp_token", lp_token);
             const lp = new ethers.Contract(lp_token, lpAbi, provider);
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "stakedLpAmount",
-              stakedLpAmount,
-              "unstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "stakedLpAmount",
+            //   stakedLpAmount,
+            //   "unstakedLpAmount",
+            //   unstakedLpAmount
+            // );
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const rewardCount: any = await chef.reward_count();
             let ucrews: any = [];
@@ -1760,30 +1760,30 @@ export const fetchEvmPositions = async ({
                 address,
                 reward_token
               );
-              console.log(
-                `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
-              );
+              // console.log(
+              //   `curvereward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+              // );
               const tok = new ethers.Contract(reward_token, lpAbi, provider);
               const sym = await tok.symbol();
               const dec = await tok.decimals();
-              console.log(
-                "sym",
-                sym,
-                "\ndec",
-                dec,
-                "\ntokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}${ff.protocol}-${sym}-${reward_token}`
-                ],
-                "\nlpTokenPrice",
-                lpTokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                ], // todo: should be reward token symbol
-                "\nsymbol",
-                ff.asset.symbol,
-                "\nreward token",
-                reward_token
-              );
+              // console.log(
+              //   "sym",
+              //   sym,
+              //   "\ndec",
+              //   dec,
+              //   "\ntokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}${ff.protocol}-${sym}-${reward_token}`
+              //   ],
+              //   "\nlpTokenPrice",
+              //   lpTokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //   ], // todo: should be reward token symbol
+              //   "\nsymbol",
+              //   ff.asset.symbol,
+              //   "\nreward token",
+              //   reward_token
+              // );
 
               // ucrewscurve positions
               ucrews.push({
@@ -1797,21 +1797,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            // console.log("ucrewscurve", ucrews);
+            // // console.log("ucrewscurve", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("before creating temp positions object:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log("before creating temp positions object:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -1844,7 +1844,7 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after curve positions", positions);
+            // console.log("after curve positions", positions);
           }
         );
         allPromises.push(...cur);
@@ -1866,25 +1866,25 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "beamswapff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "beamswapff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
             const poolInfo = await chef.poolInfo(ff.id);
             const userInfo = await chef.userInfo(ff.id, address);
-            console.log(
-              "beamswapInfo0",
-              Object.keys(poolInfo),
-              Object.values(poolInfo)[0]
-            );
-            console.log("beamswappoolInfo", poolInfo);
-            console.log("beamswapuserInfo", userInfo);
+            // console.log(
+            //   "beamswapInfo0",
+            //   Object.keys(poolInfo),
+            //   Object.values(poolInfo)[0]
+            // );
+            // console.log("beamswappoolInfo", poolInfo);
+            // console.log("beamswapuserInfo", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -1897,12 +1897,12 @@ export const fetchEvmPositions = async ({
             );
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "beamswapstakedLpAmount",
-              stakedLpAmount,
-              "beamswapunstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "beamswapstakedLpAmount",
+            //   stakedLpAmount,
+            //   "beamswapunstakedLpAmount",
+            //   unstakedLpAmount
+            // );
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const pendingTokens = await chef.pendingTokens(ff.id, address);
             const ucrewAddrs: any = Object.values(pendingTokens)[0];
@@ -1910,27 +1910,27 @@ export const fetchEvmPositions = async ({
             const ucrewDecimals: any = Object.values(pendingTokens)[2];
             const ucrewAmounts: any = Object.values(pendingTokens)[3];
 
-            console.log(
-              "ucrewAddrs",
-              ucrewAddrs,
-              "ucrewSymbols",
-              ucrewSymbols,
-              "ucrewDecimals",
-              ucrewDecimals,
-              "ucrewAmounts",
-              ucrewAmounts
-            );
+            // console.log(
+            //   "ucrewAddrs",
+            //   ucrewAddrs,
+            //   "ucrewSymbols",
+            //   ucrewSymbols,
+            //   "ucrewDecimals",
+            //   ucrewDecimals,
+            //   "ucrewAmounts",
+            //   ucrewAmounts
+            // );
 
             let ucrews: any = [];
             for (let i = 0; i < ucrewAmounts.length; i++) {
-              console.log(
-                "tokenSymbol",
-                ucrewSymbols[i],
-                "\ntokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                ]
-              );
+              // console.log(
+              //   "tokenSymbol",
+              //   ucrewSymbols[i],
+              //   "\ntokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: ucrewSymbols[i],
                 amount:
@@ -1943,21 +1943,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewsbeamswap", ucrews);
+            // console.log("ucrewsbeamswap", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("before creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log("before creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -1987,7 +1987,7 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after beamswap positions", positions);
+            // console.log("after beamswap positions", positions);
           }
         );
         allPromises.push(...beam);
@@ -2009,25 +2009,25 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "solarflareff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "solarflareff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
             const poolInfo = await chef.poolInfo(ff.id);
             const userInfo = await chef.userInfo(ff.id, address);
-            console.log(
-              "solarflareInfo0",
-              Object.keys(poolInfo),
-              Object.values(poolInfo)[0]
-            );
-            console.log("solarflarepoolInfo", poolInfo);
-            console.log("solarflareuserInfo", userInfo);
+            // console.log(
+            //   "solarflareInfo0",
+            //   Object.keys(poolInfo),
+            //   Object.values(poolInfo)[0]
+            // );
+            // console.log("solarflarepoolInfo", poolInfo);
+            // console.log("solarflareuserInfo", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -2040,12 +2040,12 @@ export const fetchEvmPositions = async ({
             );
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "solarflarestakedLpAmount",
-              stakedLpAmount,
-              "solarflareunstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "solarflarestakedLpAmount",
+            //   stakedLpAmount,
+            //   "solarflareunstakedLpAmount",
+            //   unstakedLpAmount
+            // );
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const pendingTokens = await chef.pendingTokens(ff.id, address);
             const ucrewAddrs: any = Object.values(pendingTokens)[0];
@@ -2053,27 +2053,27 @@ export const fetchEvmPositions = async ({
             const ucrewDecimals: any = Object.values(pendingTokens)[2];
             const ucrewAmounts: any = Object.values(pendingTokens)[3];
 
-            console.log(
-              "ucrewAddrs",
-              ucrewAddrs,
-              "ucrewSymbols",
-              ucrewSymbols,
-              "ucrewDecimals",
-              ucrewDecimals,
-              "ucrewAmounts",
-              ucrewAmounts
-            );
+            // console.log(
+            //   "ucrewAddrs",
+            //   ucrewAddrs,
+            //   "ucrewSymbols",
+            //   ucrewSymbols,
+            //   "ucrewDecimals",
+            //   ucrewDecimals,
+            //   "ucrewAmounts",
+            //   ucrewAmounts
+            // );
 
             let ucrews: any = [];
             for (let i = 0; i < ucrewAmounts.length; i++) {
-              console.log(
-                "tokenSymbol",
-                ucrewSymbols[i],
-                "\ntokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                ]
-              );
+              // console.log(
+              //   "tokenSymbol",
+              //   ucrewSymbols[i],
+              //   "\ntokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: ucrewSymbols[i],
                 amount:
@@ -2086,21 +2086,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewssolarflare", ucrews);
+            // console.log("ucrewssolarflare", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("before creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log("before creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -2130,7 +2130,7 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after solarflare positions", positions);
+            // console.log("after solarflare positions", positions);
           }
         );
         allPromises.push(...solarf);
@@ -2148,22 +2148,22 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "sushiswapff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "sushiswapff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
             const lpToken = await chef.lpToken(ff.id);
             const poolInfo = await chef.poolInfo(ff.id);
             const userInfo = await chef.userInfo(ff.id, address);
-            console.log("sushiswapInfo0", Object.keys(poolInfo), lpToken);
-            console.log("sushiswappoolInfo", poolInfo);
-            console.log("sushiswapuserInfo", userInfo);
+            // console.log("sushiswapInfo0", Object.keys(poolInfo), lpToken);
+            // console.log("sushiswappoolInfo", poolInfo);
+            // console.log("sushiswapuserInfo", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -2172,12 +2172,12 @@ export const fetchEvmPositions = async ({
             const lp = new ethers.Contract(lpToken as string, lpAbi, provider);
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "sushiswapstakedLpAmount",
-              stakedLpAmount,
-              "sushiswapunstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "sushiswapstakedLpAmount",
+            //   stakedLpAmount,
+            //   "sushiswapunstakedLpAmount",
+            //   unstakedLpAmount
+            // );
 
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
@@ -2192,27 +2192,27 @@ export const fetchEvmPositions = async ({
             ucrewDecimals = [18];
             ucrewAmounts = [pending];
 
-            console.log(
-              "ucrewAddrs",
-              ucrewAddrs,
-              "ucrewSymbols",
-              ucrewSymbols,
-              "ucrewDecimals",
-              ucrewDecimals,
-              "ucrewAmounts",
-              ucrewAmounts
-            );
+            // console.log(
+            //   "ucrewAddrs",
+            //   ucrewAddrs,
+            //   "ucrewSymbols",
+            //   ucrewSymbols,
+            //   "ucrewDecimals",
+            //   ucrewDecimals,
+            //   "ucrewAmounts",
+            //   ucrewAmounts
+            // );
 
             let ucrews: any = [];
             for (let i = 0; i < ucrewAmounts.length; i++) {
-              console.log(
-                "tokenSymbol",
-                ucrewSymbols[i],
-                "\ntokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                ]
-              );
+              // console.log(
+              //   "tokenSymbol",
+              //   ucrewSymbols[i],
+              //   "\ntokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: ucrewSymbols[i],
                 amount:
@@ -2225,21 +2225,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewssushiswap", ucrews);
+            // console.log("ucrewssushiswap", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("before creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log("before creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -2269,7 +2269,7 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after sushiswap positions", positions);
+            // console.log("after sushiswap positions", positions);
           }
         );
         allPromises.push(...sushi);
@@ -2291,28 +2291,28 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "arthswapff",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "arthswapff",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             // const lpa = new ethers.Contract(
             //   ff.asset.address,
             //   lpAbi,
             //   provider
             // );
-            // console.log("artlpa", await lpa.balanceOf(address));
+            // // console.log("artlpa", await lpa.balanceOf(address));
             // const [lpToken, , , , , ,] = await chef.poolInfo(ff.id)
             // const lpToken = await chef.lpTokens(ff.id);
             const poolInfo = await chef.poolInfos(ff.id);
             const userInfo = await chef.userInfos(ff.id, address);
-            // console.log("arthswapInfo0", Object.keys(poolInfo));
-            console.log("arthswappoolInfo", poolInfo);
-            console.log("arthswapuserInfo", userInfo);
+            // // console.log("arthswapInfo0", Object.keys(poolInfo));
+            // console.log("arthswappoolInfo", poolInfo);
+            // console.log("arthswapuserInfo", userInfo);
             const stakedLpAmount =
               Number(Object.values(userInfo)[0] as number) / 10 ** 18;
             const rewardDebt = Object.values(userInfo)[1];
@@ -2321,12 +2321,12 @@ export const fetchEvmPositions = async ({
             const lp = new ethers.Contract(ff.asset.address, lpAbi, provider);
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "arthswapstakedLpAmount",
-              stakedLpAmount,
-              "arthswapunstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "arthswapstakedLpAmount",
+            //   stakedLpAmount,
+            //   "arthswapunstakedLpAmount",
+            //   unstakedLpAmount
+            // );
 
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
 
@@ -2341,27 +2341,27 @@ export const fetchEvmPositions = async ({
             ucrewDecimals = [18];
             ucrewAmounts = [pending];
 
-            console.log(
-              "ucrewAddrs",
-              ucrewAddrs,
-              "ucrewSymbols",
-              ucrewSymbols,
-              "ucrewDecimals",
-              ucrewDecimals,
-              "ucrewAmounts",
-              ucrewAmounts
-            );
+            // console.log(
+            //   "ucrewAddrs",
+            //   ucrewAddrs,
+            //   "ucrewSymbols",
+            //   ucrewSymbols,
+            //   "ucrewDecimals",
+            //   ucrewDecimals,
+            //   "ucrewAmounts",
+            //   ucrewAmounts
+            // );
 
             let ucrews: any = [];
             for (let i = 0; i < ucrewAmounts.length; i++) {
-              console.log(
-                "tokenSymbol",
-                ucrewSymbols[i],
-                "\ntokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
-                ]
-              );
+              // console.log(
+              //   "tokenSymbol",
+              //   ucrewSymbols[i],
+              //   "\ntokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ucrewSymbols[i]}-${ucrewAddrs[i]}`
+              //   ]
+              // );
               ucrews.push({
                 token: ucrewSymbols[i],
                 amount:
@@ -2374,26 +2374,26 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            console.log("ucrewsarthswap", ucrews);
+            // console.log("ucrewsarthswap", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("arthbefore creating temp positions obejct:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-                hmm:
-                  unstakedLpAmount *
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-              });
+              // console.log("arthbefore creating temp positions obejct:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              //   hmm:
+              //     unstakedLpAmount *
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -2423,13 +2423,13 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after arthswap positions", positions);
+            // console.log("after arthswap positions", positions);
           }
         );
         allPromises.push(...arth);
         // });
       } else if (protocol.name.toLowerCase() == "sirius") {
-        console.log("insidesir");
+        // console.log("insidesir");
 
         let chef = new ethers.Contract(protocol.chef, siriusChefAbi, provider);
 
@@ -2443,17 +2443,17 @@ export const fetchEvmPositions = async ({
             tvl: number;
             farmType: string;
           }) => {
-            console.log(
-              "ffsirius",
-              ff.chain,
-              ff.protocol,
-              ff.chef,
-              ff.id,
-              ff.asset.symbol
-            );
+            // console.log(
+            //   "ffsirius",
+            //   ff.chain,
+            //   ff.protocol,
+            //   ff.chef,
+            //   ff.id,
+            //   ff.asset.symbol
+            // );
 
             const reward_token = await chef.rewardTokens(0);
-            console.log("reward_token0", reward_token);
+            // console.log("reward_token0", reward_token);
             const claimable_reward = await chef.claimableReward(
               address,
               reward_token
@@ -2461,16 +2461,16 @@ export const fetchEvmPositions = async ({
             const stakedLpAmount =
               Number(await chef.balanceOf(address)) / 10 ** 18;
             const lp_token = await chef.lpToken();
-            console.log("siriuslp_token", lp_token);
+            // console.log("siriuslp_token", lp_token);
             const lp = new ethers.Contract(lp_token, lpAbi, provider);
             const unstakedLpAmount =
               Number(await lp.balanceOf(address)) / 10 ** 18;
-            console.log(
-              "stakedLpAmount",
-              stakedLpAmount,
-              "unstakedLpAmount",
-              unstakedLpAmount
-            );
+            // console.log(
+            //   "stakedLpAmount",
+            //   stakedLpAmount,
+            //   "unstakedLpAmount",
+            //   unstakedLpAmount
+            // );
             const name = `${ff.chain}-${ff.protocol}-${protocol.chef}-${ff.id}-${ff.asset.symbol}`;
             const rewardCount: any = await chef.rewardCount();
             let ucrews: any = [];
@@ -2480,30 +2480,30 @@ export const fetchEvmPositions = async ({
                 address,
                 reward_token
               );
-              console.log(
-                `sirreward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
-              );
+              // console.log(
+              //   `sirreward_token[${i}]: ${reward_token}, claimable_reward: ${claimable_reward}`
+              // );
               const tok = new ethers.Contract(reward_token, lpAbi, provider);
               const sym = await tok.symbol();
               const dec = await tok.decimals();
-              console.log(
-                "sym",
-                sym,
-                "\ndec",
-                dec,
-                "\nsirtokenPrice",
-                tokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${sym}-${reward_token}`
-                ],
-                "\nlpTokenPrice",
-                lpTokenPricesMap[
-                  `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                ], // todo: should be reward token symbol
-                "\nsymbol",
-                ff.asset.symbol,
-                "\nreward token",
-                reward_token
-              );
+              // console.log(
+              //   "sym",
+              //   sym,
+              //   "\ndec",
+              //   dec,
+              //   "\nsirtokenPrice",
+              //   tokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${sym}-${reward_token}`
+              //   ],
+              //   "\nlpTokenPrice",
+              //   lpTokenPricesMap[
+              //     `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //   ], // todo: should be reward token symbol
+              //   "\nsymbol",
+              //   ff.asset.symbol,
+              //   "\nreward token",
+              //   reward_token
+              // );
 
               // ucrewscurve positions
               ucrews.push({
@@ -2517,21 +2517,21 @@ export const fetchEvmPositions = async ({
               });
             }
 
-            // console.log("ucrewscurve", ucrews);
+            // // console.log("ucrewscurve", ucrews);
 
             if (unstakedLpAmount > 0 || stakedLpAmount > 0) {
               const tempPositions = { ...positions };
 
-              console.log("before creating temp positions object:\n", {
-                unstakedAmount: unstakedLpAmount,
-                stakedLpAmount: stakedLpAmount,
-                lpTokenPricesMap: lpTokenPricesMap,
-                lpTokenPrice:
-                  lpTokenPricesMap[
-                    `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
-                  ],
-                lpSymbol: ff.asset.symbol,
-              });
+              // console.log("before creating temp positions object:\n", {
+              //   unstakedAmount: unstakedLpAmount,
+              //   stakedLpAmount: stakedLpAmount,
+              //   lpTokenPricesMap: lpTokenPricesMap,
+              //   lpTokenPrice:
+              //     lpTokenPricesMap[
+              //       `${ff.chain}-${ff.protocol}-${ff.asset.symbol}-${ff.asset.address}`
+              //     ],
+              //   lpSymbol: ff.asset.symbol,
+              // });
 
               tempPositions[name] = {
                 unstaked: {
@@ -2564,7 +2564,7 @@ export const fetchEvmPositions = async ({
                 ...tempPositions,
               }));
             }
-            console.log("after curve positions", positions);
+            // console.log("after curve positions", positions);
           }
         );
         allPromises.push(...sir);
@@ -2574,5 +2574,5 @@ export const fetchEvmPositions = async ({
 
   await Promise.allSettled(allPromises);
   setIsEvmPosLoading(false);
-  console.log("positionsnow", positions);
+  // console.log("positionsnow", positions);
 };

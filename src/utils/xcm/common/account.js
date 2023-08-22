@@ -110,7 +110,7 @@ class Account {
       });
     }
 
-    console.log(util.inspect(result, { depth: 4, colors: true }));
+    // console.log(util.inspect(result, { depth: 4, colors: true }));
   }
 
   getChainByName(chain) {

@@ -37,7 +37,7 @@ class MangataHelper {
     this.assets = _.values(
       _.filter(assetsResp, (asset) => !_.isEmpty(asset.symbol))
     );
-    console.log("Assets on Mangata chain: ", this.assets);
+    // console.log("Assets on Mangata chain: ", this.assets);
   };
 
   getBalances = async () => {
@@ -51,9 +51,9 @@ class MangataHelper {
   };
 
   getTokenIdBySymbol(symbol) {
-    // console.log('getTokenIdBySymbol.symbol', symbol, this.assets);
+    // // console.log('getTokenIdBySymbol.symbol', symbol, this.assets);
     const token = _.find(this.assets, { symbol });
-    // console.log('getTokenIdBySymbol.token', token);
+    // // console.log('getTokenIdBySymbol.token', token);
     return token.id;
   }
 
@@ -99,7 +99,7 @@ class MangataHelper {
         },
       },
     };
-    console.log("currencyId", currencyId, "amount", amount);
+    // console.log("currencyId", currencyId, "amount", amount);
 
     const amt = 4000000000;
     const extrinsic = this.api.tx.xTokens.transfer(
@@ -191,7 +191,7 @@ class MangataHelper {
     const token = _.find(this.assets, { id: tokenId });
     const decimalBN = getDecimalBN(token.decimals);
     const amountBN = new BN(amount, 10).mul(decimalBN);
-    // console.log("albn", amountBN, amountBN.toNumber() ?? -1);
+    // // console.log("albn", amountBN, amountBN.toNumber() ?? -1);
 
     return this.api.tx.xyk.activateLiquidityV2(
       tokenId,
@@ -204,7 +204,7 @@ class MangataHelper {
     const token = _.find(this.assets, { id: tokenId });
     const decimalBN = getDecimalBN(token.decimals);
     const amountBN = new BN(amount, 10).mul(decimalBN);
-    // console.log("albn", amountBN, amountBN.toNumber() ?? -1);
+    // // console.log("albn", amountBN, amountBN.toNumber() ?? -1);
 
     return this.api.tx.proofOfStake.deactivateLiquidity(
       tokenId,
@@ -229,24 +229,24 @@ class MangataHelper {
     const secondToken = _.find(this.assets, { id: secondTokenId });
     const secondDecimalBN = getDecimalBN(secondToken.decimals);
 
-    console.log(
-      "gmlf",
-      firstToken,
-      firstDecimalBN,
-      secondToken,
-      secondDecimalBN,
-      firstTokenAmount,
-      expectedSecondTokenAmount,
-      "pa",
-      pair,
-      firstTokenId,
-      secondTokenId
-    );
+    // console.log(
+    //   "gmlf",
+    //   firstToken,
+    //   firstDecimalBN,
+    //   secondToken,
+    //   secondDecimalBN,
+    //   firstTokenAmount,
+    //   expectedSecondTokenAmount,
+    //   "pa",
+    //   pair,
+    //   firstTokenId,
+    //   secondTokenId
+    // );
 
     // const firstAmount = new BN(firstTokenAmount, 10) * firstDecimalBN;
     // const expectedSecondAmount =
     //   new BN(expectedSecondTokenAmount, 10) * secondDecimalBN;
-    // console.log(
+    // // console.log(
     //   "gmfa",
     //   firstAmount,
     //   expectedSecondAmount,
@@ -255,21 +255,21 @@ class MangataHelper {
     //   firstTokenId,
     //   secondTokenId
     // );
-    console.log(
-      "rounds",
-      new BN(
-        BigInt(
-          Math.round(firstTokenAmount * 10 ** firstToken.decimals)
-        ).toString(10),
-        10
-      ),
-      new BN(
-        BigInt(
-          Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
-        ).toString(10),
-        10
-      )
-    );
+    // console.log(
+    //   "rounds",
+    //   new BN(
+    //     BigInt(
+    //       Math.round(firstTokenAmount * 10 ** firstToken.decimals)
+    //     ).toString(10),
+    //     10
+    //   ),
+    //   new BN(
+    //     BigInt(
+    //       Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
+    //     ).toString(10),
+    //     10
+    //   )
+    // );
 
     const fees = await this.mangata.mintLiquidityFee(
       pair,
@@ -298,7 +298,7 @@ class MangataHelper {
     liquidityAssetAmount,
     percentage
   ) => {
-    console.log("burnliquidityAssetAmount", liquidityAssetAmount);
+    // console.log("burnliquidityAssetAmount", liquidityAssetAmount);
     // const firstToken = _.find(this.assets, { id: firstTokenId });
     // const firstDecimalBN = getDecimalBN(firstToken.decimals);
 
@@ -339,27 +339,27 @@ class MangataHelper {
     //   secondDecimalBN
     // );
 
-    console.log(
-      "lastmile",
-      new BN(
-        BigInt(
-          Math.round(firstTokenAmount * 10 ** firstToken.decimals)
-        ).toString(10),
-        10
-      ),
-      new BN(
-        BigInt(
-          Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
-        ).toString(10),
-        10
-      ),
-      firstTokenId,
-      secondTokenId,
-      // amountBN,
-      // expectedSecondAmountBN,
-      Math.round(firstTokenAmount * 10 ** firstToken.decimals),
-      Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
-    );
+    // console.log(
+    //   "lastmile",
+    //   new BN(
+    //     BigInt(
+    //       Math.round(firstTokenAmount * 10 ** firstToken.decimals)
+    //     ).toString(10),
+    //     10
+    //   ),
+    //   new BN(
+    //     BigInt(
+    //       Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
+    //     ).toString(10),
+    //     10
+    //   ),
+    //   firstTokenId,
+    //   secondTokenId,
+    //   // amountBN,
+    //   // expectedSecondAmountBN,
+    //   Math.round(firstTokenAmount * 10 ** firstToken.decimals),
+    //   Math.round(expectedSecondTokenAmount * 10 ** secondToken.decimals)
+    // );
 
     return this.api.tx.xyk.mintLiquidity(
       firstTokenId,
@@ -484,8 +484,8 @@ class MangataHelper {
     const sellTokenId = this.getTokenIdBySymbol(sellSymbol);
     const buyTokenId = this.getTokenIdBySymbol(buySymbol);
 
-    console.log("selltokenId", sellTokenId);
-    console.log("buytokenId", buyTokenId);
+    // console.log("selltokenId", sellTokenId);
+    // console.log("buytokenId", buyTokenId);
 
     // The last param is the max amount; setting it a very large number for now
     await this.mangata.buyAsset(
@@ -505,7 +505,7 @@ class MangataHelper {
   ) => {
     const soldAssetId = this.getTokenIdBySymbol(sellSymbol);
     const boughtAssetId = this.getTokenIdBySymbol(buySymbol);
-    console.log("soldAssetId", soldAssetId, "boughtAssetId", boughtAssetId);
+    // console.log("soldAssetId", soldAssetId, "boughtAssetId", boughtAssetId);
     return this.api.tx.xyk.buyAsset(
       soldAssetId,
       boughtAssetId,
@@ -590,7 +590,7 @@ class MangataHelper {
   // };
 
   calculateRewardsAmount = async (address, tokenId) => {
-    // console.log('calculateRewardsAmount: address', address, 'liquidityTokenId', _.toString(tokenId));
+    // // console.log('calculateRewardsAmount: address', address, 'liquidityTokenId', _.toString(tokenId));
     const amountBN = await this.mangata.calculateRewardsAmount(
       address,
       _.toString(tokenId)
@@ -623,25 +623,25 @@ class MangataHelper {
   }) => {
     const decimalBN = getDecimalBN(decimals);
     const amountBN = new BN(amount, 10);
-    // console.log('decimalBN.mul.amountBN', decimalBN.mul(amountBN).toString());
-    console.log(
-      `Sending ${amount} #${tokenId} token from ${sender} to ${dest} ...`
-    );
+    // // console.log('decimalBN.mul.amountBN', decimalBN.mul(amountBN).toString());
+    // console.log(
+    //   `Sending ${amount} #${tokenId} token from ${sender} to ${dest} ...`
+    // );
 
     return this.mangata
       .transferToken(keyPair, tokenId, dest, decimalBN.mul(amountBN), {
         // statusCallback: (result) => {
         //     // result is of the form ISubmittableResult
-        //     console.log('statusCallback.result', result);
-        //     console.log('statusCallback.result.status', result.status);
+        //     // console.log('statusCallback.result', result);
+        //     // console.log('statusCallback.result.status', result.status);
         // },
         // extrinsicStatus: (result) => {
         //     // result is of the form MangataGenericEvent[]
         //     for (let index = 0; index < result.length; index += 1) {
-        //         console.log('Phase', result[index].phase.toString());
-        //         console.log('Section', result[index].section);
-        //         console.log('Method', result[index].method);
-        //         console.log('Documentation', result[index].metaDocumentation);
+        //         // console.log('Phase', result[index].phase.toString());
+        //         // console.log('Section', result[index].section);
+        //         // console.log('Method', result[index].method);
+        //         // console.log('Documentation', result[index].metaDocumentation);
         //     }
         // },
       })

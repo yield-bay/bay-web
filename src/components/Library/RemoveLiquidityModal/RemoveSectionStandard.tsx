@@ -74,7 +74,7 @@ const RemoveSectionStandard = () => {
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
-  useEffect(() => console.log("farm @removeliq", farm), [farm]);
+  // useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
   // Balance of LP Token
   const { lpBalanceObj, lpBalance, lpBalanceLoading } = useLPBalance(
@@ -149,13 +149,13 @@ const RemoveSectionStandard = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
-    console.log("token", tokenPrice);
+    // console.log(
+    //   "tokenkey",
+    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
@@ -224,21 +224,21 @@ const RemoveSectionStandard = () => {
 
   // useEffect(() => {
   //   if (!isLpApprovedLoading) {
-  //     console.log("isTokenLpApproved", !!Number(isLpApprovedData));
+  //     // console.log("isTokenLpApproved", !!Number(isLpApprovedData));
   //   }
   // }, [isLpApprovedLoading]);
 
   useEffect(() => {
     if (isLoadingRemoveLiqTxn) {
-      console.log("removeliq method loading... sign the txn");
+      // console.log("removeliq method loading... sign the txn");
     } else if (isLoadingRemoveLiqTxn) {
-      console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
+      // console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
     }
   }, [isLoadingRemoveLiqTxn, isLoadingRemoveLiqTxn]);
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
-      console.log("liquidity removed successfully", removeLiqTxnData);
+      // console.log("liquidity removed successfully", removeLiqTxnData);
 
       handleRemoveLiquidityEvent({
         userAddress: address!,
@@ -277,7 +277,7 @@ const RemoveSectionStandard = () => {
         },
       });
       (async () => {
-        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
         const a = await updateEvmPositions({
           farm: {
@@ -295,7 +295,7 @@ const RemoveSectionStandard = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -312,32 +312,32 @@ const RemoveSectionStandard = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
-      console.log("timestamp fetched //", blocktimestamp);
+      // console.log("timestamp fetched //", blocktimestamp);
 
-      console.log(
-        "calling removeliquidity method...",
-        lpTokens,
-        lpBalance,
-        methodId == Method.PERCENTAGE
-          ? parseUnits(
-              `${
-                ((parseFloat(lpBalance!) *
-                  parseFloat(percentage == "" ? "0" : percentage)) /
-                  100) *
-                10 ** 18
-              }`,
-              18
-            )
-          : parseUnits(`${parseFloat(lpTokens) * 10 ** 18}`, 18),
-        parseUnits(
-          `${minUnderlyingAssets[0].toString() as any}`,
-          farmAsset0?.decimals
-        ), // amountAMin
-        parseUnits(
-          `${minUnderlyingAssets[1].toString() as any}`,
-          farmAsset1?.decimals
-        ) // amountBMin
-      );
+      // console.log(
+      //   "calling removeliquidity method...",
+      //   lpTokens,
+      //   lpBalance,
+      //   methodId == Method.PERCENTAGE
+      //     ? parseUnits(
+      //         `${
+      //           ((parseFloat(lpBalance!) *
+      //             parseFloat(percentage == "" ? "0" : percentage)) /
+      //             100) *
+      //           10 ** 18
+      //         }`,
+      //         18
+      //       )
+      //     : parseUnits(`${parseFloat(lpTokens) * 10 ** 18}`, 18),
+      //   parseUnits(
+      //     `${minUnderlyingAssets[0].toString() as any}`,
+      //     farmAsset0?.decimals
+      //   ), // amountAMin
+      //   parseUnits(
+      //     `${minUnderlyingAssets[1].toString() as any}`,
+      //     farmAsset1?.decimals
+      //   ) // amountBMin
+      // );
 
       const removeArgs = [
         farmAsset0?.address, // tokenA Address
@@ -404,7 +404,7 @@ const RemoveSectionStandard = () => {
         blocktimestamp, // deadline (uint256)
       ];
 
-      console.log("Remove Liquidity setting args:", removeArgs);
+      // console.log("Remove Liquidity setting args:", removeArgs);
 
       const txnRes = await removeLiquidity?.({
         args: removeArgs,
@@ -412,7 +412,7 @@ const RemoveSectionStandard = () => {
       if (!!txnRes) {
         setTxnHash(txnRes?.hash);
       }
-      console.log("called removeliquidity method.", txnRes);
+      // console.log("called removeliquidity method.", txnRes);
     } catch (error) {
       console.error("Error in Removing liquidity", error);
     }
@@ -539,9 +539,9 @@ const RemoveSectionStandard = () => {
                 onClick={async () => {
                   try {
                     const txn = await approveLpToken?.();
-                    console.log("Approve0 Result", txn);
+                    // console.log("Approve0 Result", txn);
                   } catch (error) {
-                    console.log(
+                    console.error(
                       `error while approving ${farm?.asset.symbol}`,
                       error
                     );

@@ -9,7 +9,7 @@ const useTotalSupply = (pair: Address, protocol: string) => {
     functionName: "totalSupply",
     enabled: !!pair && !!protocol,
   });
-  // console.log("totalsupply @hook", Number(totalSupply) / 10 ** 18);
+  // // console.log("totalsupply @hook", Number(totalSupply) / 10 ** 18);
   return Number(totalSupply) / 10 ** 18;
 };
 

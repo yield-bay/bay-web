@@ -21,7 +21,7 @@ export function calcUnclaimedReward(unclaimedRewards: UnclaimedRewardType[]) {
     (acc, current) => acc + current.amount,
     0
   );
-  console.log("ucretr", totalRewards);
+  // console.log("ucretr", totalRewards);
   return totalRewards.toString(); //.toFixed(2);
 }
 
@@ -32,7 +32,7 @@ export function calcUnclaimedRewardUSD(
     (acc, current) => acc + current.amountUSD,
     0
   );
-  console.log("ucretrusd", totalRewards, totalRewards.toFixed(2));
+  // console.log("ucretrusd", totalRewards, totalRewards.toFixed(2));
   return totalRewards.toFixed(2);
 }
 

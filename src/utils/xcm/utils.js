@@ -80,7 +80,7 @@ async function main() {
         isPromoted: true,
         thousandSeparator: true,
       });
-      console.log(pools);
+      // console.log(pools);
 
       break;
     }
@@ -137,7 +137,7 @@ async function main() {
       // 3. Set the amount of transfer
       const amount = 1000;
 
-      console.log("mgxToken", mgxToken);
+      // console.log("mgxToken", mgxToken);
 
       if (mgxToken.balance <= 0) {
         throw new Error(
@@ -161,9 +161,9 @@ async function main() {
       const keyPair = keyring.addFromJson(json);
       keyPair.unlock(process.env.PASS_PHRASE);
 
-      console.log(
-        `Restored account ${keyPair.meta.name} ${keyPair.address} ...`
-      );
+      // console.log(
+      //   `Restored account ${keyPair.meta.name} ${keyPair.address} ...`
+      // );
 
       const account = new Account(keyPair);
       await account.init([mangataHelper]);
@@ -192,9 +192,9 @@ async function main() {
       const keyPair = keyring.addFromJson(json);
       keyPair.unlock(process.env.PASS_PHRASE);
 
-      console.log(
-        `Restored account ${keyPair.meta.name} ${keyPair.address} ...`
-      );
+      // console.log(
+      //   `Restored account ${keyPair.meta.name} ${keyPair.address} ...`
+      // );
 
       const account = new Account(keyPair);
       await account.init([mangataHelper]);
@@ -218,7 +218,7 @@ async function main() {
       const address = "cxPKqGqUn2fhVvEvrRKdmu55ZzP1Xz3yBu4cwTgPdN4utjN";
       const result = getProxyAccount(mangataHelper.api, Turing.paraId, address);
 
-      console.log("result", result);
+      // console.log("result", result);
       break;
     }
     case "check-claimable rewards": {
@@ -227,9 +227,9 @@ async function main() {
       const keyPair = keyring.addFromJson(json);
       keyPair.unlock(process.env.PASS_PHRASE);
 
-      console.log(
-        `Restored account ${keyPair.meta.name} ${keyPair.address} ...`
-      );
+      // console.log(
+      //   `Restored account ${keyPair.meta.name} ${keyPair.address} ...`
+      // );
 
       const account = new Account(keyPair);
       await account.init([mangataHelper]);
@@ -250,15 +250,15 @@ async function main() {
       );
       const poolName = `${mgxToken.symbol}-${turToken.symbol}`;
 
-      console.log(`Checking how much reward available in ${poolName} pool ...`);
+      // console.log(`Checking how much reward available in ${poolName} pool ...`);
       const pools = await mangataHelper.getPools({ isPromoted: true });
-      console.log("pools", pools);
+      // console.log("pools", pools);
 
       const pool = _.find(pools, {
         firstTokenId: mangataHelper.getTokenIdBySymbol(mgxToken.symbol),
         secondTokenId: mangataHelper.getTokenIdBySymbol(turToken.symbol),
       });
-      console.log("pool", pool);
+      // console.log("pool", pool);
 
       if (_.isUndefined(pool)) {
         throw new Error(`Couldn’t find a liquidity pool for ${poolName} ...`);
@@ -270,7 +270,7 @@ async function main() {
         mangataAddress,
         liquidityTokenId
       );
-      console.log(`Claimable reward in ${poolName}: `, rewardAmount);
+      // console.log(`Claimable reward in ${poolName}: `, rewardAmount);
 
       const balance = await mangataHelper.mangata.getTokenBalance(
         liquidityTokenId,
@@ -281,18 +281,18 @@ async function main() {
       );
       const numReserved = new BN(balance.reserved).div(poolNameDecimalBN);
 
-      console.log(
-        `${account.name} reserved "${poolName}": ${numReserved.toString()} ...`
-      );
+      // console.log(
+      //   `${account.name} reserved "${poolName}": ${numReserved.toString()} ...`
+      // );
 
       break;
     }
     default:
-      console.log(`No action found for ${actionSelected}; skipping action ...`);
+      // console.log(`No action found for ${actionSelected}; skipping action ...`);
       break;
   }
 
-  console.log("End of main() ...");
+  // console.log("End of main() ...");
 }
 
 main()

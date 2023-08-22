@@ -17,7 +17,7 @@ export const sendExtrinsic = async (
   new Promise((resolve) => {
     const newExtrinsic = isSudo ? api.tx.sudo.sudo(extrinsic) : extrinsic;
     newExtrinsic.signAndSend(keyPair, { nonce: -1 }, ({ status, events }) => {
-      console.log("status.type", status.type);
+      // console.log("status.type", status.type);
 
       if (status.isInBlock || status.isFinalized) {
         events
@@ -35,10 +35,10 @@ export const sendExtrinsic = async (
                 // for module errors, we have the section indexed, lookup
                 const decoded = api.registry.findMetaError(error.asModule);
                 const { docs, method, section } = decoded;
-                console.log(`${section}.${method}: ${docs.join(" ")}`);
+                // console.log(`${section}.${method}: ${docs.join(" ")}`);
               } else {
                 // Other, CannotLookup, BadOrigin, no extra info
-                console.log(error.toString());
+                // console.log(error.toString());
               }
             }
           );
@@ -79,11 +79,11 @@ export const waitForEvent = async (api, method, blocks = 3) =>
     const unsub = api.rpc.chain.getFinalizedHead(async (head) => {
       await api.query.system.events((events) => {
         counter += 1;
-        console.log(
-          `await event check for '${method}', attempt ${counter}, head ${head}`
-        );
+        // console.log(
+        //   `await event check for '${method}', attempt ${counter}, head ${head}`
+        // );
         events.forEach(({ phase, event: { data, section } }) => {
-          console.log(phase, data, method, section);
+          // console.log(phase, data, method, section);
         });
         const foundEvent = _.find(
           events,
@@ -204,16 +204,16 @@ export const listenEvents = async (api, section, method, timeout = undefined) =>
             typeDef: types,
           } = event;
 
-          // console.log('section.method: ', `${section}.${method}`);
+          // // console.log('section.method: ', `${section}.${method}`);
           if (eventSection === section && eventMethod === method) {
             foundEvent = true;
             // Show what we are busy with
-            console.log(`\t${section}:${method}:: (phase=${phase.toString()})`);
-            // console.log(`\t\t${event.meta.documentation.toString()}`);
+            // console.log(`\t${section}:${method}:: (phase=${phase.toString()})`);
+            // // console.log(`\t\t${event.meta.documentation.toString()}`);
 
             // Loop through each of the parameters, displaying the type and data
             event.data.forEach((data, index) => {
-              console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
+              // console.log(`\t\t\t${types[index].type}: ${data.toString()}`);
             });
           }
         });

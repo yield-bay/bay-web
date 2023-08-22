@@ -27,14 +27,14 @@
 //   const provider = new ethers.JsonRpcProvider(
 //     process.env.NEXT_PUBLIC_MOONBEAM_URL!
 //   );
-//   console.log("ethers prov", provider);
+//   // console.log("ethers prov", provider);
 //   const currentBlock = await provider.getBlockNumber();
-//   console.log("cbb", currentBlock);
+//   // console.log("cbb", currentBlock);
 //   const timestamp = (await provider.getBlock(currentBlock))!.timestamp;
-//   console.log("currentblocktimestamp", timestamp, timestamp * 1000);
+//   // console.log("currentblocktimestamp", timestamp, timestamp * 1000);
 //   // Query the blockchain (replace example parameters)
 //   const gp = (await provider.getFeeData()).gasPrice;
-//   console.log("gpis", gp);
+//   // console.log("gpis", gp);
 
 //   const estGas = await provider.estimateGas({
 //     from: account,
@@ -44,6 +44,6 @@
 //   });
 
 //   // Print the output to console
-//   console.log("estGas", estGas);
+//   // console.log("estGas", estGas);
 //   return 0;
 // }

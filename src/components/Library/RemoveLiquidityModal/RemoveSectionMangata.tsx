@@ -89,7 +89,7 @@ const RemoveSectionMangata: FC = () => {
   useEffect(() => {
     (async () => {
       const mgxp = (await fetchTokenPricesMangata()).get("mgx")!;
-      console.log("mgxp", mgxp);
+      // console.log("mgxp", mgxp);
       setMgxPrice(mgxp);
     })();
   });
@@ -104,7 +104,7 @@ const RemoveSectionMangata: FC = () => {
 
   // const toast = useToast();
 
-  useEffect(() => console.log("farm @removeliq", farm), [farm]);
+  // useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
@@ -132,14 +132,14 @@ const RemoveSectionMangata: FC = () => {
     if (pools == null) return;
     const [token0, token1] = formatTokenSymbols(farm?.asset.symbol!);
     const poolName = `${token0}-${token1}`;
-    console.log("selected poolname", poolName);
+    // console.log("selected poolname", poolName);
 
     // Make a state for this
     const pool = _.find(pools, {
       firstTokenId: mangataHelper.getTokenIdBySymbol(token0),
       secondTokenId: mangataHelper.getTokenIdBySymbol(token1),
     });
-    console.log(`Found a pool of ${poolName}`, pool);
+    // console.log(`Found a pool of ${poolName}`, pool);
     setPool(pool);
 
     if (_.isUndefined(pool)) {
@@ -161,9 +161,9 @@ const RemoveSectionMangata: FC = () => {
     // Calculate rewards amount in pool
     const { liquidityTokenId } = pool;
 
-    console.log(
-      `Checking how much reward available in ${poolName} pool, tokenId: ${liquidityTokenId} ...`
-    );
+    // console.log(
+    //   `Checking how much reward available in ${poolName} pool, tokenId: ${liquidityTokenId} ...`
+    // );
 
     // Issue: current we couldn’t read this rewards value correct by always getting 0 on the claimable rewards.
     // The result is different from that in src/mangata.js
@@ -171,7 +171,7 @@ const RemoveSectionMangata: FC = () => {
       mangataAddress,
       liquidityTokenId
     );
-    console.log(`Claimable reward in ${poolName}: `, rewardAmount);
+    // console.log(`Claimable reward in ${poolName}: `, rewardAmount);
 
     const liquidityBalance = await mangataHelper.mangata?.getTokenBalance(
       liquidityTokenId,
@@ -180,20 +180,20 @@ const RemoveSectionMangata: FC = () => {
     const poolNameDecimalBN = getDecimalBN(
       mangataHelper.getDecimalsBySymbol(poolName)
     );
-    console.log(
-      "liquidity balance",
-      liquidityBalance?.reserved,
-      "poolName DecimalBN",
-      poolNameDecimalBN,
-      "decimal",
-      mangataHelper.getDecimalsBySymbol(poolName)
-    );
+    // console.log(
+    //   "liquidity balance",
+    //   liquidityBalance?.reserved,
+    //   "poolName DecimalBN",
+    //   poolNameDecimalBN,
+    //   "decimal",
+    //   mangataHelper.getDecimalsBySymbol(poolName)
+    // );
 
     const numReserved = new BN(liquidityBalance.reserved).div(
       poolNameDecimalBN
     );
 
-    console.log("num reserved", numReserved);
+    // console.log("num reserved", numReserved);
 
     // setting selected pool's LP token balance
     const lpBalanceh = await mangataHelper.mangata.getTokenBalance(
@@ -206,7 +206,7 @@ const RemoveSectionMangata: FC = () => {
     //   parseFloat(BigInt(lpBalanceh.free).toString(10)) / 10 ** decimal;
     const lpBalanceNum =
       parseFloat(BigInt(lpBalanceh.reserved).toString(10)) / 10 ** decimal;
-    console.log("LP Balance lpBalanceNum: ", lpBalanceNum, lpBalanceh);
+    // console.log("LP Balance lpBalanceNum: ", lpBalanceNum, lpBalanceh);
     setLpBalanceNum(lpBalanceNum);
     setLpBalance(lpBalanceh);
     // Required setup finished
@@ -229,10 +229,10 @@ const RemoveSectionMangata: FC = () => {
           account1?.address
         );
         const balFree = parseFloat(BigInt(bal.free).toString(10)) / 10 ** 18; // MGX decimals == 18
-        console.log("fetched mgxbalance", balFree);
+        // console.log("fetched mgxbalance", balFree);
         setMgxBalance(balFree);
       } catch (error) {
-        console.log("error fetching mgx balance", error);
+        // console.log("error fetching mgx balance", error);
       }
     })();
   }, [account1]);
@@ -276,42 +276,42 @@ const RemoveSectionMangata: FC = () => {
 
     let perc = percentage;
     if (percentage == "") {
-      console.log("per is empty so using 100%");
+      // console.log("per is empty so using 100%");
       perc = "100";
     }
 
     try {
       const signer = account?.wallet?.signer;
       setIsSigning(true);
-      console.log("hrllpBalance", lpBalance);
+      // console.log("hrllpBalance", lpBalance);
 
       const lpBalReserved =
         parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** 18;
       const lpBalFree =
         parseFloat(BigInt(lpBalance.free).toString(10)) / 10 ** 18;
 
-      console.log(
-        "amamamam",
-        lpTokens,
-        "lpBalance.reserved",
-        lpBalance.reserved,
-        lpBalReserved,
-        "percentage",
-        perc,
-        "heroo"
-      );
+      // console.log(
+      //   "amamamam",
+      //   lpTokens,
+      //   "lpBalance.reserved",
+      //   lpBalance.reserved,
+      //   lpBalReserved,
+      //   "percentage",
+      //   perc,
+      //   "heroo"
+      // );
 
       let txns = [];
-      console.log(
-        "res",
-        lpBalReserved,
-        "free",
-        lpBalFree,
-        "free+res",
-        lpBalReserved + lpBalFree
-      );
+      // console.log(
+      //   "res",
+      //   lpBalReserved,
+      //   "free",
+      //   lpBalFree,
+      //   "free+res",
+      //   lpBalReserved + lpBalFree
+      // );
       if (BigInt(lpBalance.reserved) == BigInt(0)) {
-        console.log("resbal is zero");
+        // console.log("resbal is zero");
       } else {
         let deactx;
 
@@ -331,17 +331,17 @@ const RemoveSectionMangata: FC = () => {
         txns.push(deactx);
       }
 
-      console.log("blstuff", lpBalance, "percentage", perc);
+      // console.log("blstuff", lpBalance, "percentage", perc);
       if (
         (BigInt(lpBalance.free) * BigInt(parseInt(perc, 10))) / BigInt(100) +
           (BigInt(lpBalance.reserved) * BigInt(parseInt(perc, 10))) /
             BigInt(100) ==
         BigInt(0)
       ) {
-        console.log("totalburnbal is zero");
+        // console.log("totalburnbal is zero");
       } else {
         let bltx;
-        console.log("mehod", methodId, perc, lpTokens, lpBalance);
+        // console.log("mehod", methodId, perc, lpTokens, lpBalance);
 
         if (methodId == 0) {
           bltx = await mangataHelper.burnLiquidityTx(
@@ -370,34 +370,34 @@ const RemoveSectionMangata: FC = () => {
           { signer: signer },
           async ({ status }: any) => {
             if (status.isInBlock) {
-              console.log("Burn Liquidity in block now!");
+              // console.log("Burn Liquidity in block now!");
               // unsub();
               // resolve();
             } else if (status.isFinalized) {
               (async () => {
                 const tranHash = status.asFinalized.toString();
-                console.log(
+                console.info(
                   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
                 );
                 setTxnHash(tranHash);
                 await delay(20000);
-                console.log("after delay");
+                // console.log("after delay");
                 const block = await mangataHelper.api.rpc.chain.getBlock(
                   tranHash
                 );
-                console.log("block", block);
-                console.log("block", JSON.stringify(block));
+                // console.log("block", block);
+                // console.log("block", JSON.stringify(block));
                 const bhn = parseInt(block.block.header.number) + 1;
-                console.log("num", bhn);
+                // console.log("num", bhn);
                 const blockHash =
                   await mangataHelper.api.rpc.chain.getBlockHash(bhn);
-                console.log(`blockHash ${blockHash}`);
-                console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
+                // console.log(`blockHash ${blockHash}`);
+                // console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
                 // const blockEvents =
                 //   await mangataHelper.api.query.system.events.at(tranHash);
                 const at = await mangataHelper.api.at(blockHash);
                 const blockEvents = await at.query.system.events();
-                console.log("blockEvents", blockEvents);
+                // console.log("blockEvents", blockEvents);
                 let allSuccess = true;
                 blockEvents.forEach((d: any) => {
                   const {
@@ -410,9 +410,9 @@ const RemoveSectionMangata: FC = () => {
                     method === "BatchInterrupted" ||
                     method === "ExtrinsicFailed"
                   ) {
-                    console.log("failed is true");
+                    // console.log("failed is true");
                     // failed = true;
-                    console.log("Error in addliq Tx:");
+                    // console.log("Error in addliq Tx:");
                     allSuccess = false;
                     setIsSuccess(false);
                     setIsSigning(false);
@@ -430,12 +430,12 @@ const RemoveSectionMangata: FC = () => {
                   }
                 });
                 if (allSuccess) {
-                  console.log("allSuccess", allSuccess);
+                  // console.log("allSuccess", allSuccess);
                   setIsSuccess(true);
                   setIsInProcess(false);
                   setIsSigning(false);
                   // setLpUpdated(lpUpdated + 1);
-                  console.log(
+                  console.info(
                     `Liquidity Successfully removed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
                   );
                   // toast({
@@ -479,12 +479,12 @@ const RemoveSectionMangata: FC = () => {
               })();
             } else {
               // setIsSigning(false);
-              console.log(`Status: ${status.type}`);
+              // console.log(`Status: ${status.type}`);
             }
           }
         )
         .catch((e: any) => {
-          console.log("Error in burnLiquidityTx", e);
+          // console.log("Error in burnLiquidityTx", e);
           setIsInProcess(false);
           setIsSigning(false);
           setIsSuccess(false);
@@ -501,7 +501,7 @@ const RemoveSectionMangata: FC = () => {
         });
     } catch (error) {
       let errorString = `${error}`;
-      console.log("error while handling remove liquidity:", errorString);
+      // console.log("error while handling remove liquidity:", errorString);
       // toast({
       //   position: "top",
       //   duration: 3000,
@@ -662,7 +662,7 @@ const RemoveSectionMangata: FC = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log("liquidity removed successfully");
+      // console.log("liquidity removed successfully");
       setLpUpdated(lpUpdated + 1);
 
       handleRemoveLiquidityEvent({
@@ -700,7 +700,7 @@ const RemoveSectionMangata: FC = () => {
         },
       });
       (async () => {
-        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
         const a = await updateSubstratePositions({
           farm: {
@@ -717,7 +717,7 @@ const RemoveSectionMangata: FC = () => {
           positions,
           account,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({

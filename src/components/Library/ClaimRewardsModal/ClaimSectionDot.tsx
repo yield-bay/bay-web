@@ -45,7 +45,7 @@ const ClaimSectionDot = () => {
 
   const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
-  useEffect(() => console.log("selected position @claimrewards"), [position]);
+  // useEffect(() => console.log("selected position @claimrewards"), [position]);
 
   const [isProcessStep, setIsProcessStep] = useState(false);
   const isOpenModalCondition = false; // Conditions to be written
@@ -88,7 +88,7 @@ const ClaimSectionDot = () => {
     setIsInProcess(true);
     try {
       setIsSigning(true);
-      console.log("clpool", pool, position);
+      // console.log("clpool", pool, position);
       const signer = account?.wallet?.signer;
       const claimRewardsTxn = await mangataHelper.claimRewardsAll(position?.id);
       claimRewardsTxn
@@ -97,34 +97,34 @@ const ClaimSectionDot = () => {
           { signer: signer },
           async ({ status }: any) => {
             if (status.isInBlock) {
-              console.log("claimrew in block now!");
+              // console.log("claimrew in block now!");
               // unsub();
               // resolve();
             } else if (status.isFinalized) {
               (async () => {
                 const tranHash = status.asFinalized.toString();
                 setTxnHash(tranHash);
-                console.log(
+                console.info(
                   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
                 );
                 await delay(20000);
-                console.log("after delay");
+                // console.log("after delay");
                 const block = await mangataHelper.api.rpc.chain.getBlock(
                   tranHash
                 );
-                console.log("block", block);
-                console.log("block", JSON.stringify(block));
+                // console.log("block", block);
+                // console.log("block", JSON.stringify(block));
                 const bhn = parseInt(block.block.header.number) + 1;
-                console.log("num", bhn);
+                // console.log("num", bhn);
                 const blockHash =
                   await mangataHelper.api.rpc.chain.getBlockHash(bhn);
-                console.log(`blockHash ${blockHash}`);
-                console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
+                // console.log(`blockHash ${blockHash}`);
+                // console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
                 // const blockEvents =
                 //   await mangataHelper.api.query.system.events.at(tranHash);
                 const at = await mangataHelper.api.at(blockHash);
                 const blockEvents = await at.query.system.events();
-                console.log("blockEvents", blockEvents);
+                // console.log("blockEvents", blockEvents);
                 let allSuccess = true;
                 blockEvents.forEach((d: any) => {
                   const {
@@ -137,9 +137,9 @@ const ClaimSectionDot = () => {
                     method === "BatchInterrupted" ||
                     method === "ExtrinsicFailed"
                   ) {
-                    console.log("failed is true");
+                    // console.log("failed is true");
                     // failed = true;
-                    console.log("Error in addliq Tx:");
+                    // console.log("Error in addliq Tx:");
                     allSuccess = false;
                     setIsSuccess(false);
                     setIsSigning(false);
@@ -157,14 +157,14 @@ const ClaimSectionDot = () => {
                   }
                 });
                 if (allSuccess) {
-                  console.log("allSuccess", allSuccess);
-                  setIsSuccess(true);
-                  setIsInProcess(false);
-                  setIsSigning(false);
-                  // setLpUpdated(lpUpdated + 1);
-                  console.log(
-                    `Rewards Successfully claimed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
-                  );
+                  // console.log("allSuccess", allSuccess);
+                  // setIsSuccess(true);
+                  // setIsInProcess(false);
+                  // setIsSigning(false);
+                  // // setLpUpdated(lpUpdated + 1);
+                  // // console.log(
+                  //   `Rewards Successfully claimed from ${token0}-${token1} with hash ${status.asFinalized.toHex()}`
+                  // );
                   // toast({
                   //   position: "top",
                   //   duration: 3000,
@@ -188,12 +188,12 @@ const ClaimSectionDot = () => {
               })();
             } else {
               setIsSigning(false);
-              console.log(`Status: ${status.type}`);
+              // console.log(`Status: ${status.type}`);
             }
           }
         )
         .catch((e: any) => {
-          console.log("Error in burnLiquidityTx", e);
+          // console.log("Error in burnLiquidityTx", e);
           setIsInProcess(false);
           setIsSigning(false);
           setIsSuccess(false);
@@ -208,7 +208,7 @@ const ClaimSectionDot = () => {
           //   ),
           // });
         });
-      console.log("called claim rewards method");
+      // console.log("called claim rewards method");
     } catch (error) {
       let errorString = `${error}`;
       console.error("error while claiming rewards:", errorString);
@@ -224,7 +224,7 @@ const ClaimSectionDot = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log("claimrewards txn success!");
+      // console.log("claimrewards txn success!");
       // Tracking
       handleClaimRewardsEvent({
         userAddress: account?.address!,
@@ -247,7 +247,7 @@ const ClaimSectionDot = () => {
         })!,
       });
       (async () => {
-        console.log("beforeuepos", position?.chain!, position?.protocol!);
+        // console.log("beforeuepos", position?.chain!, position?.protocol!);
 
         const a = await updateSubstratePositions({
           farm: {
@@ -264,7 +264,7 @@ const ClaimSectionDot = () => {
           positions,
           account,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({

@@ -30,7 +30,7 @@ class AutoCompound {
   run = async () => {
     await cryptoWaitReady();
 
-    console.log("Initializing APIs of both chains ...");
+    // console.log("Initializing APIs of both chains ...");
 
     const turingHelper = new TuringHelper(this.turingConfig);
     await turingHelper.initialize();
@@ -43,18 +43,18 @@ class AutoCompound {
     const turingNativeToken = _.first(turingHelper.config.assets);
     const mangataNativeToken = _.first(mangataHelper.config.assets);
 
-    console.log(
+    // console.log(
       `\nTuring chain name: ${turingChainName}, native token: ${JSON.stringify(
         turingNativeToken
       )}`
     );
-    console.log(
+    // console.log(
       `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
         mangataNativeToken
       )}\n`
     );
 
-    console.log("1. Reading token and balance of account ...");
+    // console.log("1. Reading token and balance of account ...");
 
     const json = await readMnemonicFromFile();
     const keyPair = keyring.addFromJson(json);
@@ -77,7 +77,7 @@ class AutoCompound {
     );
     const poolName = `${mgxToken.symbol}-${turToken.symbol}`;
 
-    console.log(
+    // console.log(
       "\n2. Add a proxy on Mangata for paraId 2114, or skip this step if that exists ..."
     );
 
@@ -96,15 +96,15 @@ class AutoCompound {
     const proxyMatch = _.find(proxies, matchCondition);
 
     if (proxyMatch) {
-      console.log(
+      // console.log(
         `Found proxy of ${account.address} on Mangata, and will skip the addition ... `,
         proxyMatch
       );
     } else {
       if (_.isEmpty(proxies)) {
-        console.log(`Proxy array of ${account.address} is empty ...`);
+        // console.log(`Proxy array of ${account.address} is empty ...`);
       } else {
-        console.log(
+        // console.log(
           "Proxy not found. Expected",
           matchCondition,
           "Actual",
@@ -112,7 +112,7 @@ class AutoCompound {
         );
       }
 
-      console.log(
+      // console.log(
         `Adding a proxy for paraId ${turingHelper.config.paraId}. Proxy address: ${proxyAddress} ...`
       );
       await mangataHelper.addProxy(proxyAddress, proxyType, account.pair);
@@ -130,7 +130,7 @@ class AutoCompound {
         firstTokenId: mangataHelper.getTokenIdBySymbol(mgxToken.symbol),
         secondTokenId: mangataHelper.getTokenIdBySymbol(turToken.symbol),
       });
-      console.log(`Found a pool of ${poolName}`, pool);
+      // console.log(`Found a pool of ${poolName}`, pool);
 
       if (_.isUndefined(pool)) {
         throw new Error(`Couldn’t find a liquidity pool for ${poolName} ...`);
@@ -139,7 +139,7 @@ class AutoCompound {
       // Calculate rwards amount in pool
       const { liquidityTokenId } = pool;
 
-      console.log(
+      // console.log(
         `Checking how much reward available in ${poolName} pool, tokenId: ${liquidityTokenId} ...`
       );
 
@@ -149,7 +149,7 @@ class AutoCompound {
         mangataAddress,
         liquidityTokenId
       );
-      console.log(`Claimable reward in ${poolName}: `, rewardAmount);
+      // console.log(`Claimable reward in ${poolName}: `, rewardAmount);
 
       const liquidityBalance = await mangataHelper.mangata.getTokenBalance(
         liquidityTokenId,
@@ -162,7 +162,7 @@ class AutoCompound {
         poolNameDecimalBN
       );
 
-      console.log(
+      // console.log(
         `Before auto-compound, ${
           account.name
         } reserved "${poolName}": ${numReserved.toString()} ...`
@@ -170,7 +170,7 @@ class AutoCompound {
 
       // Mint liquidity to create reserved MGR-TUR if it’s zero
       if (numReserved.toNumber() === 0) {
-        console.log(
+        // console.log(
           "Reserved pool token is zero; minting liquidity to generate rewards..."
         );
 
@@ -178,11 +178,11 @@ class AutoCompound {
         const MAX_SLIPPIAGE = 0.08; // 4% slippage; can’t be too large
         const poolRatio =
           pool.firstTokenAmountFloat / pool.secondTokenAmountFloat;
-        console.log("poolRatio", poolRatio);
+        // console.log("poolRatio", poolRatio);
         const expectedSecondTokenAmount =
           (firstTokenAmount / poolRatio) * (1 + MAX_SLIPPIAGE);
 
-        console.log(
+        // console.log(
           "pool.firstTokenAmountFloat",
           pool.firstTokenAmountFloat,
           "pool.secondTokenAmountFloat",
@@ -202,7 +202,7 @@ class AutoCompound {
           expectedSecondTokenAmount,
         });
 
-        console.log("fees", fees);
+        // console.log("fees", fees);
 
         let mlres = await mangataHelper.mintLiquidity({
           pair: account.pair,
@@ -211,7 +211,7 @@ class AutoCompound {
           firstTokenAmount: firstTokenAmount - fees,
           expectedSecondTokenAmount,
         });
-        console.log("mlres", mlres);
+        // console.log("mlres", mlres);
         // TODO: activate liquidity mining
         // figure out lp token amount
         // await mangataHelper.activateLiquidityV2({
@@ -219,15 +219,15 @@ class AutoCompound {
         //     amount:
         // })
       } else {
-        console.log("rpt not zero");
+        // console.log("rpt not zero");
       }
       if (rewardAmount === 0) {
-        console.log(
+        // console.log(
           "Reserved pool token is not zero but claimable rewards is. You might need to wait some time for it to accumulate ..."
         );
       }
 
-      console.log("rewardAmount", rewardAmount);
+      // console.log("rewardAmount", rewardAmount);
 
       const answerPool = await confirm({
         message:
@@ -235,11 +235,11 @@ class AutoCompound {
         default: true,
       });
 
-      console.log("answerPool", answerPool);
+      // console.log("answerPool", answerPool);
 
       if (answerPool) {
         // Create Mangata proxy call
-        console.log("\n4. Start to schedule an auto-compound call via XCM ...");
+        // console.log("\n4. Start to schedule an auto-compound call via XCM ...");
         const proxyExtrinsic = mangataHelper.api.tx.xyk.compoundRewards(
           liquidityTokenId,
           1000000
@@ -255,11 +255,11 @@ class AutoCompound {
           mangataAddress
         );
 
-        console.log("encodedMangataProxyCall: ", encodedMangataProxyCall);
-        console.log("mangataProxyCallFees: ", mangataProxyCallFees.toHuman());
+        // console.log("encodedMangataProxyCall: ", encodedMangataProxyCall);
+        // console.log("mangataProxyCallFees: ", mangataProxyCallFees.toHuman());
 
         // Create Turing scheduleXcmpTask extrinsic
-        console.log("\na) Create the call for scheduleXcmpTask ");
+        // console.log("\na) Create the call for scheduleXcmpTask ");
         const providedId = `xcmp_automation_test_${(Math.random() + 1)
           .toString(36)
           .substring(7)}`;
@@ -293,13 +293,13 @@ class AutoCompound {
           parseInt(mangataProxyCallFees.weight.refTime, 10)
         );
 
-        console.log("xcmpCall: ", xcmpCall);
+        // console.log("xcmpCall: ", xcmpCall);
 
         // Query automationTime fee
-        console.log("\nb) Query automationTime fee details ");
+        // console.log("\nb) Query automationTime fee details ");
         const { executionFee, xcmpFee } =
           await turingHelper.api.rpc.automationTime.queryFeeDetails(xcmpCall);
-        console.log("automationFeeDetails: ", {
+        // console.log("automationFeeDetails: ", {
           executionFee: executionFee.toHuman(),
           xcmpFee: xcmpFee.toHuman(),
         });
@@ -309,14 +309,14 @@ class AutoCompound {
           turingAddress,
           providedId
         );
-        console.log("TaskId:", taskId.toHuman());
+        // console.log("TaskId:", taskId.toHuman());
 
         // Send extrinsic
-        console.log("\nc) Sign and send scheduleXcmpTask call ...");
+        // console.log("\nc) Sign and send scheduleXcmpTask call ...");
         await turingHelper.sendXcmExtrinsic(xcmpCall, account.pair, taskId);
 
         // Listen XCM events on Mangata side
-        console.log(
+        // console.log(
           `\n5. Keep Listening XCM events on ${mangataChainName} until ${moment(
             timestampNextHour * 1000
           ).format(
@@ -333,13 +333,13 @@ class AutoCompound {
           nextHourExecutionTimeout
         );
         if (!isTaskExecuted) {
-          console.log("Timeout! Task was not executed.");
+          // console.log("Timeout! Task was not executed.");
           return;
         }
 
-        console.log("Task has been executed!");
+        // console.log("Task has been executed!");
 
-        console.log("\nWaiting 20 seconds before reading new chain states ...");
+        // console.log("\nWaiting 20 seconds before reading new chain states ...");
         await delay(20000);
 
         // Account’s reserved LP token after auto-compound
@@ -347,17 +347,17 @@ class AutoCompound {
           liquidityTokenId,
           mangataAddress
         );
-        console.log(
+        // console.log(
           `\nAfter auto-compound, reserved ${poolName} is: ${newLiquidityBalance.reserved.toString()} planck ...`
         );
 
-        console.log(
+        // console.log(
           `${account.name} has compounded ${newLiquidityBalance.reserved
             .sub(liquidityBalance.reserved)
             .toString()} planck more ${poolName} ...`
         );
 
-        console.log("\n5. Cancel task ...");
+        // console.log("\n5. Cancel task ...");
         const cancelTaskExtrinsic =
           turingHelper.api.tx.automationTime.cancelTask(taskId);
         await sendExtrinsic(turingHelper.api, cancelTaskExtrinsic, keyPair);
@@ -366,7 +366,7 @@ class AutoCompound {
           timestampTwoHoursLater
         );
 
-        console.log(
+        // console.log(
           `\n6. Keep Listening events on ${mangataChainName} until ${moment(
             timestampTwoHoursLater * 1000
           ).format(
@@ -381,10 +381,10 @@ class AutoCompound {
           twoHoursExecutionTimeout
         );
         if (isTaskExecutedAgain) {
-          console.log("Task cancellation failed! It executes again.");
+          // console.log("Task cancellation failed! It executes again.");
           return;
         }
-        console.log("Task canceled successfully! It didn't execute again.");
+        // console.log("Task canceled successfully! It didn't execute again.");
       }
     }
   };

@@ -40,23 +40,23 @@ const useIsApprovedToken = (
   const allowance = BigNumber(allow?.toString() ?? "0", 10)
     // .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
     .decimalPlaces(0, 1);
-  // console.log("allowance bigint", allow);
-  console.log("allowance", allowance.toString());
+  // // console.log("allowance bigint", allow);
+  // console.log("allowance", allowance.toString());
 
-  console.log("rawinput", input);
-  console.log("tokenbalance", tokenBalance);
+  // console.log("rawinput", input);
+  // console.log("tokenbalance", tokenBalance);
 
   const inputAmount = BigNumber(input.toString(), 10)
     .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
     .decimalPlaces(0, 1);
-  console.log("inputAmount", inputAmount.toString());
+  // console.log("inputAmount", inputAmount.toString());
 
   const compare = inputAmount.isLessThanOrEqualTo(allowance);
-  console.log("compare", compare);
+  // console.log("compare", compare);
 
   // const isSuccess = useMemo(() => {
   //   const numdata = Number(data) / 10 ** 12;
-  //   // console.log(
+  //   // // console.log(
   //   //   "token_address",
   //   //   tokenAddress,
   //   //   "\ndata",
@@ -91,7 +91,7 @@ const useApproveToken = (
   tokenBalance: any | undefined
 ) => {
   const { chain } = useNetwork();
-  console.log("token", tokenSymbol, "\ntokenBalance", tokenBalance);
+  // console.log("token", tokenSymbol, "\ntokenBalance", tokenBalance);
   const {
     data,
     isLoading: isLoadingApproveCall,
@@ -111,7 +111,7 @@ const useApproveToken = (
         .toString(),
     ],
     onError: (error) => {
-      console.log(`Error while Approving:`, error);
+      // console.log(`Error while Approving:`, error);
     },
   });
 

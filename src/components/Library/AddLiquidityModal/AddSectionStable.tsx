@@ -126,7 +126,7 @@ const AddSectionStable: FC = () => {
   const tokens = farm?.asset.underlyingAssets ?? [];
 
   // useEffect(() => {
-  //   console.log("balancemap", balanceMap);
+  //   // console.log("balancemap", balanceMap);
   // }, [balanceMap]);
 
   // Input focus states
@@ -148,18 +148,18 @@ const AddSectionStable: FC = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
-    console.log("token", tokenPrice);
+    // console.log(
+    //   "tokenkey",
+    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
 
-  useEffect(() => console.log("selectedfarm", farm), [farm]);
+  // useEffect(() => console.log("selectedfarm", farm), [farm]);
 
   // const tokens = farm?.asset.underlyingAssets ?? [];
 
@@ -201,7 +201,7 @@ const AddSectionStable: FC = () => {
     functionName: getAddLiqFunctionName(farm?.protocol!) as any,
     chainId: chain?.id,
     onError: (error) => {
-      console.log(
+      console.error(
         `Error: Adding Liquidity in ${farm?.asset.symbol} Farm:`,
         error
       );
@@ -220,7 +220,7 @@ const AddSectionStable: FC = () => {
 
   useEffect(() => {
     if (isSuccessAddLiqTxn) {
-      console.log("addliq txn success!");
+      // console.log("addliq txn success!");
 
       // Tracking
       handleAddLiquidityEvent({
@@ -257,7 +257,7 @@ const AddSectionStable: FC = () => {
         },
       });
       (async () => {
-        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
         const a = await updateEvmPositions({
           farm: {
@@ -275,7 +275,7 @@ const AddSectionStable: FC = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -302,7 +302,7 @@ const AddSectionStable: FC = () => {
   }, [approvalMap, inputMapAmount]);
 
   useEffect(() => {
-    console.log("balanceMap", balanceMap);
+    // console.log("balanceMap", balanceMap);
   }, [balanceMap]);
 
   const isSufficientBalance = useMemo(() => {
@@ -316,9 +316,9 @@ const AddSectionStable: FC = () => {
   }, [inputMapAmount, balanceMap]);
 
   useEffect(() => {
-    console.log("isRequirementApproved", isRequirementApproved);
-    console.log("approvalMap", approvalMap);
-    console.log("inputMapAmount", inputMapAmount);
+    // console.log("isRequirementApproved", isRequirementApproved);
+    // console.log("approvalMap", approvalMap);
+    // console.log("inputMapAmount", inputMapAmount);
   }, [isRequirementApproved]);
 
   const handleAddLiquidity = async () => {
@@ -327,8 +327,8 @@ const AddSectionStable: FC = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
-      console.log("timestamp fetched //", blocktimestamp);
-      console.log("calling addliquidity method...", amounts, estLpAmount);
+      // console.log("timestamp fetched //", blocktimestamp);
+      // console.log("calling addliquidity method...", amounts, estLpAmount);
 
       const args_to_pass =
         farm?.protocol.toLowerCase() == "curve"
@@ -347,7 +347,7 @@ const AddSectionStable: FC = () => {
         value:
           farm?.asset.symbol == "nASTR-ASTR LP" ? amounts[0] : parseEther("0"),
       });
-      console.log(`Adding Liquidity in ${farm?.asset.symbol} Farm`, txnRes);
+      // console.log(`Adding Liquidity in ${farm?.asset.symbol} Farm`, txnRes);
       setTxnHash(txnRes?.hash);
     } catch (error) {
       console.error(
@@ -593,7 +593,7 @@ const AddSectionStable: FC = () => {
           isLoading={false}
           text="Confirm Supply"
           onClick={() => {
-            console.log("args:", {});
+            // console.log("args:", {});
             handleAddLiquidity();
             setIsProcessStep(true);
           }}

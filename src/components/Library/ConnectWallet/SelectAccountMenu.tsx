@@ -126,11 +126,11 @@ const MenuItems: FC<MenuItemsProps> = ({ choice, setChoice }) => {
                   }
                 );
               } else {
-                console.log(`${wallet.extensionName} not installed!`);
+                // console.log(`${wallet.extensionName} not installed!`);
                 router.push(wallet.installUrl);
               }
             } catch (err) {
-              console.log("Error in subscribing accounts: ", err);
+              // console.log("Error in subscribing accounts: ", err);
             }
           }}
         >

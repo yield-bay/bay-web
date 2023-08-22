@@ -28,12 +28,12 @@ const estimateGas = async (
   args: Array<any>
 ) => {
   const abi = determineAbi(contractType, farmition);
-  console.log("Estimating gas with parameters:");
-  console.log("Address:", address);
-  console.log("ABI:", abi);
-  console.log("Function Name:", functionName);
-  console.log("Arguments:", args);
-  console.log("Account:", account);
+  // console.log("Estimating gas with parameters:");
+  // console.log("Address:", address);
+  // console.log("ABI:", abi);
+  // console.log("Function Name:", functionName);
+  // console.log("Arguments:", args);
+  // console.log("Account:", account);
 
   try {
     return await publicClient.estimateContractGas({
@@ -116,7 +116,7 @@ const useGasEstimation = (
 
     // Todo: Handle BigInt properly
     const estimate = (gasEstimateAmount * gasPrice) / 10 ** 18;
-    console.log("estimate", estimate);
+    // console.log("estimate", estimate);
 
     return {
       gasEstimate: (gasEstimateAmount * gasPrice) / 10 ** 18,

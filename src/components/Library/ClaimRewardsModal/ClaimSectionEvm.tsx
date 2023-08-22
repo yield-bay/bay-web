@@ -50,7 +50,7 @@ const ClaimSectionEvm = () => {
   const [position] = useAtom(selectedPositionAtom);
   // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
-  useEffect(() => console.log("selected position @claimrewards"), [position]);
+  // useEffect(() => console.log("selected position @claimrewards"), [position]);
 
   const [isProcessStep, setIsProcessStep] = useState(false);
   const isOpenModalCondition = false; // Conditions to be written
@@ -81,13 +81,13 @@ const ClaimSectionEvm = () => {
       tokenPricesMap[
         `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
-    console.log("token", tokenPrice);
+    // console.log(
+    //   "tokenkey",
+    //   `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [position, tokenPricesMap]);
@@ -140,7 +140,7 @@ const ClaimSectionEvm = () => {
 
   useEffect(() => {
     if (isSuccessClaimRewardsTxn) {
-      console.log("claimrewards txn success!");
+      // console.log("claimrewards txn success!");
       // Tracking
       handleClaimRewardsEvent({
         userAddress: address!,
@@ -163,7 +163,7 @@ const ClaimSectionEvm = () => {
         })!,
       });
       (async () => {
-        console.log("beforeuepos", position?.chain!, position?.protocol!);
+        // console.log("beforeuepos", position?.chain!, position?.protocol!);
 
         const a = await updateEvmPositions({
           farm: {
@@ -181,7 +181,7 @@ const ClaimSectionEvm = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -201,13 +201,13 @@ const ClaimSectionEvm = () => {
         position?.lpAddress!
       );
 
-      console.log("CLAIMREWARDS contract @params", {
-        address: position?.chef,
-        abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
-        functionName: getClaimRewardsFunctionName(position?.protocol!),
-        chainId: chain?.id,
-        args: thisArgs,
-      });
+      // console.log("CLAIMREWARDS contract @params", {
+      //   address: position?.chef,
+      //   abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
+      //   functionName: getClaimRewardsFunctionName(position?.protocol!),
+      //   chainId: chain?.id,
+      //   args: thisArgs,
+      // });
 
       const txnRes = await claimRewards?.({
         args: [thisArgs],
@@ -215,7 +215,7 @@ const ClaimSectionEvm = () => {
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
       }
-      console.log("called claim rewards method:", txnRes);
+      // console.log("called claim rewards method:", txnRes);
     } catch (error) {
       console.error("error while claiming rewards:", error);
     }

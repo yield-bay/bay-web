@@ -60,13 +60,13 @@ const TokenInput: React.FC<TokenInputProps> = ({
 
   useEffect(() => {
     if (isSuccess && !balanceMap[token?.address]) {
-      console.log(
-        "pinguu",
-        token,
-        nativeBal,
-        token?.symbol == "ASTR",
-        balance?.formatted
-      );
+      // console.log(
+      //   "pinguu",
+      //   token,
+      //   nativeBal,
+      //   token?.symbol == "ASTR",
+      //   balance?.formatted
+      // );
       setBalanceMap((prev) => ({
         ...prev,
         [token?.address]:

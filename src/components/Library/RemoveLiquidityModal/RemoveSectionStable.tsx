@@ -82,7 +82,7 @@ const RemoveSectionStable: FC = () => {
   const [isSlippageStep, setIsSlippageStep] = useState(false);
   // const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
-  useEffect(() => console.log("farm @removeliq", farm), [farm]);
+  // useEffect(() => console.log("farm @removeliq", farm), [farm]);
 
   // Balance of LP Token
   const { lpBalanceObj, lpBalance, lpBalanceLoading } = useLPBalance(
@@ -148,13 +148,13 @@ const RemoveSectionStable: FC = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
-    console.log("token", tokenPrice);
+    // console.log(
+    //   "tokenkey",
+    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
@@ -173,7 +173,7 @@ const RemoveSectionStable: FC = () => {
 
   useEffect(() => {
     if (!isLoadingMinAmount) {
-      console.log("minamoutdata removeliq stable", minAmount);
+      // console.log("minamoutdata removeliq stable", minAmount);
     }
   }, [isLoadingMinAmount]);
 
@@ -183,20 +183,20 @@ const RemoveSectionStable: FC = () => {
     tokenIndex: number,
     timestamp: number
   ) => {
-    console.log(
-      "ingalpb",
-      minAmount,
-      lpBalance,
-      parseFloat(lpBalance!),
-      lpTokens,
-      parseFloat(lpTokens)
-    );
+    // console.log(
+    //   "ingalpb",
+    //   minAmount,
+    //   lpBalance,
+    //   parseFloat(lpBalance!),
+    //   lpTokens,
+    //   parseFloat(lpTokens)
+    // );
 
     let mm = BigNumber(lpBalance!, 10)
       .multipliedBy(parseFloat(percentage == "" ? "0" : percentage) / 100)
       .multipliedBy(BigNumber(10).pow(18))
       .decimalPlaces(0, 1);
-    console.log("MMis", mm.toString(), mm);
+    // console.log("MMis", mm.toString(), mm);
     const tokenAmount =
       methodId == Method.PERCENTAGE
         ? mm.toString()
@@ -282,15 +282,15 @@ const RemoveSectionStable: FC = () => {
 
   useEffect(() => {
     if (isLoadingRemoveLiqCall) {
-      console.log("removeliq method loading... sign the txn");
+      // console.log("removeliq method loading... sign the txn");
     } else if (isLoadingRemoveLiqTxn) {
-      console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
+      // console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
     }
   }, [isLoadingRemoveLiqCall, isLoadingRemoveLiqTxn]);
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
-      console.log("liquidity removed successfully", removeLiqTxnData);
+      // console.log("liquidity removed successfully", removeLiqTxnData);
 
       handleRemoveLiquidityEvent({
         userAddress: address!,
@@ -344,7 +344,7 @@ const RemoveSectionStable: FC = () => {
         },
       });
       (async () => {
-        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
         const a = await updateEvmPositions({
           farm: {
@@ -362,7 +362,7 @@ const RemoveSectionStable: FC = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -379,9 +379,9 @@ const RemoveSectionStable: FC = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
-      console.log("timestamp fetched //", blocktimestamp);
+      // console.log("timestamp fetched //", blocktimestamp);
 
-      console.log("calling removeliquidity method...");
+      // console.log("calling removeliquidity method...");
 
       const args_to_pass = getArgs(
         removeMethodId,
@@ -389,7 +389,7 @@ const RemoveSectionStable: FC = () => {
         indiTokenId,
         blocktimestamp
       );
-      console.log("removal_args_to_pass", args_to_pass);
+      // console.log("removal_args_to_pass", args_to_pass);
 
       const txnRes = await removeLiquidity?.({
         args: args_to_pass,
@@ -397,7 +397,7 @@ const RemoveSectionStable: FC = () => {
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
       }
-      console.log("called removeliquidity method.", txnRes);
+      // console.log("called removeliquidity method.", txnRes);
     } catch (error) {
       console.error(error);
     }
@@ -575,7 +575,7 @@ const RemoveSectionStable: FC = () => {
               }
               onClick={async () => {
                 const txn = await approveLpToken?.();
-                console.log("Approve0 Result", txn);
+                // console.log("Approve0 Result", txn);
               }}
             />
           )}
@@ -602,15 +602,15 @@ const RemoveSectionStable: FC = () => {
   };
 
   const ConfirmStep = () => {
-    console.log(
-      "removeMethodIdconfirm",
-      removeMethodId,
-      indiTokenId,
-      getRemoveLiqStableFunctionName(
-        removeMethodId,
-        farm?.protocol as string
-      ) as any
-    );
+    // console.log(
+    //   "removeMethodIdconfirm",
+    //   removeMethodId,
+    //   indiTokenId,
+    //   getRemoveLiqStableFunctionName(
+    //     removeMethodId,
+    //     farm?.protocol as string
+    //   ) as any
+    // );
     // Gas estimate
     const { gasEstimate, isError } = useGasEstimation(
       farm!.router,

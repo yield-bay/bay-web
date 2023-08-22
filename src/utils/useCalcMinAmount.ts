@@ -21,7 +21,7 @@ const useCalcMinAmount = (
     enabled: !!farm,
   });
 
-  console.log("ridddd", removalId);
+  // console.log("ridddd", removalId);
 
   const functionNames = useMemo(() => {
     if (farm?.protocol.toLowerCase() == "curve") {
@@ -60,7 +60,7 @@ const useCalcMinAmount = (
       enabled: !!farm && !!lpToken && !!amount,
     });
 
-  console.log("rssminamtdata", minAmountData, amount, tokens);
+  // console.log("rssminamtdata", minAmountData, amount, tokens);
 
   const minAmountBigInt = minAmountData as bigint[];
 
@@ -74,7 +74,7 @@ const useCalcMinAmount = (
         );
       } else {
         return minAmountBigInt.map((amt, index) => {
-          // console.log(
+          // // console.log(
           //   `${tokens[index].symbol} decimals:`,
           //   tokens[index].decimals,
           //   "\nminAmount:",
