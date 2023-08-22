@@ -41,13 +41,13 @@ export default function useMinimumUnderlyingTokens(
     const lpAmountAdjusted = !!lpAmount
       ? (lpAmount * (100 - slippage)) / 100
       : 0;
-    console.log(
-      "lpAmountAdjusted",
-      lpAmountAdjusted,
-      parseFloat(ethers.formatUnits(reserve0, d0)),
-      parseFloat(ethers.formatUnits(reserve1, d1)),
-      Number(totalSupply)
-    );
+    // console.log(
+    //   "lpAmountAdjusted",
+    //   lpAmountAdjusted,
+    //   parseFloat(ethers.formatUnits(reserve0, d0)),
+    //   parseFloat(ethers.formatUnits(reserve1, d1)),
+    //   Number(totalSupply)
+    // );
     const amount0 =
       ((lpAmountAdjusted * parseFloat(ethers.formatUnits(reserve0, d0))) /
         Number(totalSupply)) *
@@ -57,7 +57,7 @@ export default function useMinimumUnderlyingTokens(
         Number(totalSupply)) *
       10 ** 18;
 
-    console.log("minunderlyingtokens:\namount0", amount0, "\namount1", amount1);
+    // console.log("minunderlyingtokens:\namount0", amount0, "\namount1", amount1);
     return [amount0, amount1];
   }, [lpAmount]);
 

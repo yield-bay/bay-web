@@ -31,7 +31,7 @@ const scheduleTask = async ({
   paraTokenIdOnTuring,
   keyPair,
 }) => {
-  console.log("\na). Create a payload to store in Turing’s task ...");
+  // console.log("\na). Create a payload to store in Turing’s task ...");
 
   // We are using a very simple system.remark extrinsic to demonstrate the payload here.
   // The real payload would be Shibuya’s utility.batch() call to claim staking rewards and stake
@@ -46,10 +46,10 @@ const scheduleTask = async ({
     parachainAddress
   );
   const encodedCallWeight = parseInt(payloadViaProxyFees.weight.refTime, 10);
-  console.log(`Encoded call data: ${encodedCallData}`);
-  console.log(`Encoded call weight: ${encodedCallWeight}`);
+  // console.log(`Encoded call data: ${encodedCallData}`);
+  // console.log(`Encoded call weight: ${encodedCallWeight}`);
 
-  console.log(
+  // console.log(
     "\nb) Prepare automationTime.scheduleXcmpTask extrinsic for XCM ..."
   );
 
@@ -84,10 +84,10 @@ const scheduleTask = async ({
   const taskViaProxyFees = await taskViaProxy.paymentInfo(turingAddress);
   const requireWeightAtMost = parseInt(taskViaProxyFees.weight, 10);
 
-  console.log(`Encoded call data: ${encodedTaskViaProxy}`);
-  console.log(`requireWeightAtMost: ${requireWeightAtMost}`);
+  // console.log(`Encoded call data: ${encodedTaskViaProxy}`);
+  // console.log(`requireWeightAtMost: ${requireWeightAtMost}`);
 
-  console.log(
+  // console.log(
     `\nc) Execute the above an XCM from ${shibuyaHelper.config.name} to schedule a task on ${turingHelper.config.name} ...`
   );
   const feePerSecond = await turingHelper.getFeePerSecond(paraTokenIdOnTuring);
@@ -101,7 +101,7 @@ const scheduleTask = async ({
   });
   await sendExtrinsic(shibuyaHelper.api, xcmpExtrinsic, keyPair);
 
-  console.log(`\nAt this point if the XCM succeeds, you should see the below events on both chains:\n
+  // console.log(`\nAt this point if the XCM succeeds, you should see the below events on both chains:\n
   1. Shibuya\n
   xcmpQueue.XcmpMessageSent and polkadotXcm.Sent - an XCM is successfully sent from Shibuya to Turing to schedule a task.\n
   2. Turing Dev\n
@@ -130,8 +130,8 @@ const main = async () => {
   const parachainName = shibuyaHelper.config.key;
   const parachainNativeToken = _.first(shibuyaHelper.config.assets);
 
-  console.log(`\nTuring chain key: ${turingChainName}`);
-  console.log(
+  // console.log(`\nTuring chain key: ${turingChainName}`);
+  // console.log(
     `Parachain name: ${parachainName}, native token: ${JSON.stringify(
       parachainNativeToken
     )}\n`
@@ -149,19 +149,19 @@ const main = async () => {
   const turingAddress = account.getChainByName(turingChainName)?.address;
   const decimalBN = getDecimalBN(parachainNativeToken.decimals);
 
-  console.log(
+  // console.log(
     `\nUser ${account.name} ${turingChainName} address: ${turingAddress}, ${parachainName} address: ${parachainAddress}`
   );
 
   const paraTokenIdOnTuring = await turingHelper.getAssetIdByParaId(
     shibuyaHelper.config.paraId
   );
-  console.log("Rocstar ID on Turing: ", paraTokenIdOnTuring);
+  // console.log("Rocstar ID on Turing: ", paraTokenIdOnTuring);
 
   // One-time setup - a proxy account needs to be created to execute an XCM message on behalf of its user
   // We also need to transfer tokens to the proxy account to pay for XCM and task execution fees
-  console.log(`\n1. One-time proxy setup on ${parachainName} ...`);
-  console.log(
+  // console.log(`\n1. One-time proxy setup on ${parachainName} ...`);
+  // console.log(
     `\na) Add a proxy for ${account.name} If there is none setup on ${parachainName} (paraId:${turingHelper.config.paraId}) \n`
   );
 
@@ -177,11 +177,11 @@ const main = async () => {
   });
 
   if (proxyMatch) {
-    console.log(
+    // console.log(
       `Proxy address ${proxyOnParachain} for paraId: ${turingHelper.config.paraId} and proxyType: ${proxyTypeParachain} already exists; skipping creation ...`
     );
   } else {
-    console.log(
+    // console.log(
       `Add a proxy of ${turingChainName} (paraId:${turingHelper.config.paraId}) and proxyType: ${proxyTypeParachain} on ${parachainName} ...\n Proxy address: ${proxyOnParachain}\n`
     );
     await sendExtrinsic(
@@ -199,7 +199,7 @@ const main = async () => {
   const balance = await shibuyaHelper.getBalance(proxyOnParachain);
 
   if (balance.free.lt(minBalance)) {
-    console.log("\nb) Topping up the proxy account on Shibuya with SBY ...\n");
+    // console.log("\nb) Topping up the proxy account on Shibuya with SBY ...\n");
     const amount = new BN(1000, 10);
     const amountBN = amount.mul(decimalBN);
     const topUpExtrinsic = shibuyaHelper.api.tx.balances.transfer(
@@ -209,13 +209,13 @@ const main = async () => {
     await sendExtrinsic(shibuyaHelper.api, topUpExtrinsic, keyPair);
   } else {
     const freeAmount = new BN(balance.free).div(decimalBN);
-    console.log(
+    // console.log(
       `\nb) Proxy’s balance is ${freeAmount.toString()}, no need to top it up with SBY transfer ...`
     );
   }
 
-  console.log("\n2. One-time proxy setup on Turing");
-  console.log(
+  // console.log("\n2. One-time proxy setup on Turing");
+  // console.log(
     `\na) Add a proxy for Alice If there is none setup on Turing (paraId:${shibuyaHelper.config.paraId})\n`
   );
   const proxyTypeTuring = "Any";
@@ -231,11 +231,11 @@ const main = async () => {
   });
 
   if (proxyMatchTuring) {
-    console.log(
+    // console.log(
       `Proxy address ${proxyOnTuring} for paraId: ${shibuyaHelper.config.paraId} and proxyType: ${proxyTypeTuring} already exists; skipping creation ...`
     );
   } else {
-    console.log(
+    // console.log(
       `Add a proxy of ${parachainName} (paraId:${shibuyaHelper.config.paraId}) and proxyType: ${proxyTypeTuring} on Turing ...\n Proxy address: ${proxyOnTuring}\n`
     );
     await sendExtrinsic(
@@ -253,7 +253,7 @@ const main = async () => {
   );
 
   if (balanceOnTuring.free.lt(minBalanceOnTuring)) {
-    console.log(
+    // console.log(
       `\nb) Topping up the proxy account on ${turingChainName} via reserve transfer ...`
     );
     const topUpAmount = new BN(1000, 10);
@@ -271,12 +271,12 @@ const main = async () => {
     );
   } else {
     const freeBalanceOnTuring = new BN(balanceOnTuring.free).div(decimalBN);
-    console.log(
+    // console.log(
       `\nb) Proxy’s balance is ${freeBalanceOnTuring.toString()}, no need to top it up with reserve transfer ...`
     );
   }
 
-  console.log(
+  // console.log(
     `\n3. Execute an XCM from ${parachainName} to schedule a task on ${turingChainName} ...`
   );
 
@@ -293,7 +293,7 @@ const main = async () => {
   const { taskId, providedId, executionTime } = result;
   const timeout = calculateTimeout(executionTime);
 
-  console.log(
+  // console.log(
     `\n4. Keep Listening events on ${parachainName} until ${moment(
       executionTime * 1000
     ).format(
@@ -308,13 +308,13 @@ const main = async () => {
   );
 
   if (!isTaskExecuted) {
-    console.log("Timeout! Task was not executed.");
+    // console.log("Timeout! Task was not executed.");
     return;
   }
 
-  console.log("Task has been executed!");
+  // console.log("Task has been executed!");
 
-  console.log("\n5. Cancel task ...");
+  // console.log("\n5. Cancel task ...");
   const cancelTaskExtrinsic =
     turingHelper.api.tx.automationTime.cancelTask(taskId);
   await sendExtrinsic(turingHelper.api, cancelTaskExtrinsic, keyPair);
@@ -322,7 +322,7 @@ const main = async () => {
   const nextExecutionTime = executionTime + TASK_FREQUENCY;
   const nextExecutionTimeout = calculateTimeout(nextExecutionTime);
 
-  console.log(
+  // console.log(
     `\n6. Keep Listening events on ${parachainName} until ${moment(
       nextExecutionTime * 1000
     ).format(
@@ -338,15 +338,15 @@ const main = async () => {
   );
 
   if (isTaskExecutedAgain) {
-    console.log("Task cancellation failed! It executes again.");
+    // console.log("Task cancellation failed! It executes again.");
     return;
   }
-  console.log("Task canceled successfully! It didn't execute again.");
+  // console.log("Task canceled successfully! It didn't execute again.");
 };
 
 main()
   .catch(console.error)
   .finally(() => {
-    console.log("Reached the end of main() ...");
+    // console.log("Reached the end of main() ...");
     process.exit();
   });

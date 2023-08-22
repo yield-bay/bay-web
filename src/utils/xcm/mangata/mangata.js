@@ -38,7 +38,7 @@ const keyring = new Keyring({ type: "sr25519" });
 async function main() {
   await cryptoWaitReady();
 
-  console.log("Initializing APIs of both chains ...");
+  // console.log("Initializing APIs of both chains ...");
   const turingHelper = new TuringHelper(TuringDev);
   await turingHelper.initialize();
 
@@ -52,18 +52,18 @@ async function main() {
   const turingNativeToken = _.first(turingHelper.config.assets);
   const mangataNativeToken = _.first(mangataHelper.config.assets);
 
-  console.log(
+  // console.log(
     `\nTuring chain name: ${turingChainName}, native token: ${JSON.stringify(
       turingNativeToken
     )}`
   );
-  console.log(
+  // console.log(
     `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
       mangataNativeToken
     )}\n`
   );
 
-  console.log("Reading token and balance of Alice account ...");
+  // console.log("Reading token and balance of Alice account ...");
   const keyPair = keyring.addFromUri("//Alice", undefined, "sr25519");
   keyPair.meta.name = "Alice";
 
@@ -76,7 +76,7 @@ async function main() {
   const poolName = `${mangataNativeToken.symbol}-${turingNativeToken.symbol}`;
 
   // Calculate rwards amount in pool
-  console.log(`Checking how much reward available in ${poolName} pool ...`);
+  // console.log(`Checking how much reward available in ${poolName} pool ...`);
 
   // TODO: determining liquidityTokenId by symbol name cannot handle duplicate symbols. It’s better we retrieve pools and find the correct pool
   const pools = await mangataHelper.getPools({ isPromoted: true });
@@ -93,7 +93,7 @@ async function main() {
     mangataAddress,
     liquidityTokenId
   );
-  console.log(`Claimable reward in ${poolName}: `, rewardAmount);
+  // console.log(`Claimable reward in ${poolName}: `, rewardAmount);
 
   // Alice’s reserved LP token before auto-compound
   const liquidityBalance = await mangataHelper.mangata.getTokenBalance(
@@ -103,7 +103,7 @@ async function main() {
   const liquidityDecimalBN = getDecimalBN(
     mangataHelper.getDecimalsBySymbol(poolName)
   );
-  console.log(
+  // console.log(
     `Before auto-compound, ${account.name} reserved ${poolName}: ${new BN(
       liquidityBalance.reserved
     )
@@ -112,7 +112,7 @@ async function main() {
   );
 
   // Create Mangata proxy call
-  console.log("\nStart to schedule an auto-compound call via XCM ...");
+  // console.log("\nStart to schedule an auto-compound call via XCM ...");
 
   const proxyType = "AutoCompound";
   const proxyExtrinsic = mangataHelper.api.tx.xyk.compoundRewards(
@@ -130,11 +130,11 @@ async function main() {
     mangataAddress
   );
 
-  console.log("encodedMangataProxyCall: ", encodedMangataProxyCall);
-  console.log("mangataProxyCallFees: ", mangataProxyCallFees.toHuman());
+  // console.log("encodedMangataProxyCall: ", encodedMangataProxyCall);
+  // console.log("mangataProxyCallFees: ", mangataProxyCallFees.toHuman());
 
   // Create Turing scheduleXcmpTask extrinsic
-  console.log("\n1. Create the call for scheduleXcmpTask ");
+  // console.log("\n1. Create the call for scheduleXcmpTask ");
   const secondsInHour = 3600;
   const millisecondsInHour = 3600 * 1000;
   const currentTimestamp = moment().valueOf();
@@ -165,13 +165,13 @@ async function main() {
     parseInt(mangataProxyCallFees.weight.refTime, 10)
   );
 
-  console.log("xcmpCall: ", xcmpCall);
+  // console.log("xcmpCall: ", xcmpCall);
 
   // Query automationTime fee
-  console.log("\n2. Query automationTime fee details ");
+  // console.log("\n2. Query automationTime fee details ");
   const { executionFee, xcmpFee } =
     await turingHelper.api.rpc.automationTime.queryFeeDetails(xcmpCall);
-  console.log("automationFeeDetails: ", {
+  // console.log("automationFeeDetails: ", {
     executionFee: executionFee.toHuman(),
     xcmpFee: xcmpFee.toHuman(),
   });
@@ -181,14 +181,14 @@ async function main() {
     turingAddress,
     providedId
   );
-  console.log("TaskId:", taskId.toHuman());
+  // console.log("TaskId:", taskId.toHuman());
 
   // Send extrinsic
-  console.log("\n3. Sign and send scheduleXcmpTask call ...");
+  // console.log("\n3. Sign and send scheduleXcmpTask call ...");
   await turingHelper.sendXcmExtrinsic(xcmpCall, account.pair, taskId);
 
   // Listen XCM events on Mangata side
-  console.log(
+  // console.log(
     `\n4. Keep Listening XCM events on ${parachainName} until ${moment(
       executionTime * 1000
     ).format(
@@ -204,13 +204,13 @@ async function main() {
     executionTime
   );
   if (!isTaskExecuted) {
-    console.log("Timeout! Task was not executed.");
+    // console.log("Timeout! Task was not executed.");
     return;
   }
 
-  console.log("Task has been executed!");
+  // console.log("Task has been executed!");
 
-  console.log("\nWaiting 20 seconds before reading new chain states ...");
+  // console.log("\nWaiting 20 seconds before reading new chain states ...");
   await delay(20000);
 
   // Account’s reserved LP token after auto-compound
@@ -221,7 +221,7 @@ async function main() {
   const newReservedBalanceBN = new BN(newLiquidityBalance.reserved).div(
     liquidityDecimalBN
   );
-  console.log(
+  // console.log(
     `\nAfter auto-compound, reserved ${poolName} is: ${newReservedBalanceBN} ${poolName} ...`
   );
 
@@ -229,13 +229,13 @@ async function main() {
     liquidityBalance.reserved
   );
   const reservedDeltaBN = reservedPlanckDeltaBN.div(liquidityDecimalBN);
-  console.log(
+  // console.log(
     `${
       account.name
     } has compounded ${reservedDeltaBN.toString()} more ${poolName} ...`
   );
 
-  console.log("\n5. Cancel task ...");
+  // console.log("\n5. Cancel task ...");
   const cancelTaskExtrinsic =
     turingHelper.api.tx.automationTime.cancelTask(taskId);
   await sendExtrinsic(turingHelper.api, cancelTaskExtrinsic, keyPair);
@@ -243,7 +243,7 @@ async function main() {
   const nextExecutionTime = executionTime + TASK_FREQUENCY;
   const nextExecutionTimeout = calculateTimeout(nextExecutionTime);
 
-  console.log(
+  // console.log(
     `\n6. Keep Listening events on ${parachainName} until ${moment(
       nextExecutionTime * 1000
     ).format(
@@ -258,15 +258,15 @@ async function main() {
     nextExecutionTimeout
   );
   if (isTaskExecutedAgain) {
-    console.log("Task cancellation failed! It executes again.");
+    // console.log("Task cancellation failed! It executes again.");
     return;
   }
-  console.log("Task canceled successfully! It didn't execute again.");
+  // console.log("Task canceled successfully! It didn't execute again.");
 }
 
 main()
   .catch(console.error)
   .finally(() => {
-    console.log("Reached end of main() ...");
+    // console.log("Reached end of main() ...");
     process.exit();
   });

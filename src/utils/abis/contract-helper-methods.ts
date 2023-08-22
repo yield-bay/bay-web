@@ -19,7 +19,7 @@ import {
 import { Address } from "viem";
 
 export function getChefAbi(protocol: string, chef: string): string[] {
-  // console.log("this -- protocol", protocol, "\nchef", chef);
+  // // console.log("this -- protocol", protocol, "\nchef", chef);
   if (!protocol) return solarbeamChefAbi;
   switch (protocol.toLowerCase()) {
     case "solarbeam":
@@ -141,7 +141,7 @@ export function getClaimRewardsArgs(
   signer: Address,
   lpAddress: Address
 ) {
-  // console.log("this -- farmid", [farmId], typeof farmId);
+  // // console.log("this -- farmid", [farmId], typeof farmId);
   switch (protocol.toLowerCase()) {
     case "curve":
       return [];

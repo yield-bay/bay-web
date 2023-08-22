@@ -126,7 +126,7 @@ const UnstakingModal = () => {
       // .multipliedBy(BigNumber(10).pow(18))
       .decimalPlaces(0, 1)
       .toString();
-    // console.log(
+    // // console.log(
     //   "gaars",
     //   staked,
     //   (staked * parseFloat(percentage == "" ? "0" : percentage)) / 100
@@ -145,7 +145,7 @@ const UnstakingModal = () => {
             .multipliedBy(BigNumber(10).pow(18))
             .decimalPlaces(0, 1)
             .toString();
-    console.log("usargs", amt);
+    // console.log("usargs", amt);
     // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];
@@ -172,13 +172,13 @@ const UnstakingModal = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
-    console.log("token", tokenPrice);
+    // console.log(
+    //   "tokenkey",
+    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
@@ -204,20 +204,20 @@ const UnstakingModal = () => {
   });
 
   useEffect(() => {
-    console.log("userInfo", userInfo, "\nargs", {
-      address: farm?.chef as Address,
-      abi: parseAbi(chefAbi),
-      functionName:
-        farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
-          ? "balanceOf"
-          : "userInfo",
-      args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
-      enabled: !!farm && !!address,
-    });
+    // console.log("userInfo", userInfo, "\nargs", {
+    // address: farm?.chef as Address,
+    // abi: parseAbi(chefAbi),
+    // functionName:
+    //   farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
+    //     ? "balanceOf"
+    //     : "userInfo",
+    // args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
+    // enabled: !!farm && !!address,
+    // });
   }, [userInfo]);
 
   const staked: string = useMemo(() => {
-    console.log("stakeduserInfo", userInfo);
+    // console.log("stakeduserInfo", userInfo);
     if (!userInfo) return "0";
     // if (farm?.protocol == "curve") return Number(userInfo) / 10 ** 18;
     if (farm?.protocol == "curve") return userInfo.toString();
@@ -253,7 +253,7 @@ const UnstakingModal = () => {
   const handleUnstaking = async () => {
     try {
       const args = getArgs();
-      console.log("unstake args", args);
+      // console.log("unstake args", args);
       const txnRes = await unstaking?.({
         args: args,
       });
@@ -267,7 +267,7 @@ const UnstakingModal = () => {
 
   useEffect(() => {
     if (isSuccessUnstakingTxn) {
-      console.log("unstaking txn success!");
+      // console.log("unstaking txn success!");
       // Tracking
       handleUnstakeEvent({
         userAddress: address!,
@@ -294,7 +294,7 @@ const UnstakingModal = () => {
         },
       });
       (async () => {
-        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
         const a = await updateEvmPositions({
           farm: {
@@ -312,7 +312,7 @@ const UnstakingModal = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({

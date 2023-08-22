@@ -46,7 +46,7 @@ const TokenButton: React.FC<Props> = ({
     enabled: !!address && !!token,
   });
 
-  console.log("balance in tokenbutton", balance, isSuccess);
+  // console.log("balance in tokenbutton", balance, isSuccess);
 
   // Check Approval Token
   const { isSuccess: isApprovedSuccess } = useIsApprovedToken(
@@ -110,9 +110,9 @@ const TokenButton: React.FC<Props> = ({
   const handleApproveToken = async () => {
     try {
       const txn = await approveToken?.();
-      console.log("Approve Result", txn);
+      // console.log("Approve Result", txn);
     } catch (error) {
-      console.log(`Error while Approving ${token.symbol}`, error);
+      // console.log(`Error while Approving ${token.symbol}`, error);
     }
   };
 

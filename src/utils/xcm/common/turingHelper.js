@@ -85,20 +85,20 @@ class TuringHelper {
             { signer: signer, nonce: -1 },
             async ({ status }) => {
               if (status.isInBlock) {
-                console.log("Transaction is in Block now!");
-                console.log(`Successful with hash ${status.asInBlock.toHex()}`);
-                console.log("kpaddr", keyPair, "task", taskId);
+                // console.log("Transaction is in Block now!");
+                // console.log(`Successful with hash ${status.asInBlock.toHex()}`);
+                // console.log("kpaddr", keyPair, "task", taskId);
                 // Get Task
                 const task = await this.api.query.automationTime.accountTasks(
                   keyPair,
                   taskId
                 );
-                console.log("Task:", task);
+                // console.log("Task:", task);
                 // unsub();
                 // resolve();
               } else if (status.isFinalized) {
-                console.log("Transaction is Finalized!");
-                console.log(
+                // console.log("Transaction is Finalized!");
+                // console.log(
                   `Finalized block hash ${status.asFinalized.toHex()}`
                 );
                 setIsInProcess(false);
@@ -106,12 +106,12 @@ class TuringHelper {
                 setIsSuccess(true);
               } else {
                 setIsSigning(false); // Reaching here means the trxn is signed
-                console.log(`Status: ${status.type}`);
+                // console.log(`Status: ${status.type}`);
               }
             }
           )
           .catch((error) => {
-            console.log("sendXcmExtrinsic Err --\n", error);
+            // console.log("sendXcmExtrinsic Err --\n", error);
             let errorString = `${error}`;
             setIsInProcess(false);
             setIsSigning(false);

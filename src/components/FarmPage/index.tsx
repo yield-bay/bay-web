@@ -125,12 +125,12 @@ const FarmPage: NextPage = () => {
       const unclaimedRewardsUSD = parseFloat(
         calcUnclaimedRewardUSD(farmPosition.unclaimedRewards)
       );
-      console.log(
-        "total unclaimed rewards",
-        farmPosition.unclaimedRewards,
-        farm?.asset.symbol,
-        unclaimedRewards
-      );
+      // console.log(
+      //   "total unclaimed rewards",
+      //   farmPosition.unclaimedRewards,
+      //   farm?.asset.symbol,
+      //   unclaimedRewards
+      // );
       setUnclaimedReward(unclaimedRewards);
       setUnclaimedRewardUSD(unclaimedRewardsUSD);
     }
@@ -201,7 +201,7 @@ const FarmPage: NextPage = () => {
                   size="custom"
                   style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
                   onButtonClick={() => {
-                    console.log("farm in farmpage", farm);
+                    // console.log("farm in farmpage", farm);
                     setSelectedFarm(farm);
                     setAddLiqModalOpen(true);
                   }}

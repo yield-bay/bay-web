@@ -4,7 +4,7 @@ export function calcTotalUnclaimedRewards(
   userPositions: PortfolioPositionType[]
 ) {
   return userPositions.reduce((accumulator: number, position) => {
-    console.log("upreduce", accumulator, position.unclaimedRewards);
+    // console.log("upreduce", accumulator, position.unclaimedRewards);
     return (
       accumulator +
       position.unclaimedRewards.reduce((sum: number, reward) => {
@@ -21,7 +21,7 @@ export function calcTotalUnclaimedRewardsUSD(
   userPositions: PortfolioPositionType[]
 ) {
   return userPositions.reduce((accumulator: number, position) => {
-    console.log("upreduce", accumulator, position.unclaimedRewards);
+    // console.log("upreduce", accumulator, position.unclaimedRewards);
     return (
       accumulator +
       position.unclaimedRewards.reduce((sum: number, reward) => {

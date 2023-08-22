@@ -102,7 +102,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   useEffect(() => {
     (async () => {
       const mgxp = (await fetchTokenPricesMangata()).get("mgx")!;
-      console.log("mgxp", mgxp);
+      // console.log("mgxp", mgxp);
       setMgxPrice(mgxp);
     })();
   }, []);
@@ -170,8 +170,8 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
               Number(BigInt(element).toString(10)) /
               10 ** assetsInfo[key]["decimals"];
             if (pool.liquidityTokenId == key) {
-              console.log("--> bal:", e, "\n----------");
-              console.log("match id");
+              // console.log("--> bal:", e, "\n----------");
+              // console.log("match id");
               setLpTotalBalance(e);
             }
           }
@@ -190,10 +190,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           account1?.address
         );
         const balFree = parseFloat(BigInt(bal.free).toString(10)) / 10 ** 18; // MGX decimals == 18
-        console.log("fetched mgxbalance", balFree);
+        // console.log("fetched mgxbalance", balFree);
         setMgxBalance(balFree);
       } catch (error) {
-        console.log("error fetching mgx balance", error);
+        // console.log("error fetching mgx balance", error);
       }
     })();
   }, [account1]);
@@ -202,15 +202,15 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     if (pools == null) return;
     const [token0, token1] = formatTokenSymbols(selectedFarm?.asset.symbol!);
     const poolName = `${token0}-${token1}`;
-    console.log("selected poolname", poolName);
-    // console.log("balance in componding tab", allLpBalances[poolName]);
+    // console.log("selected poolname", poolName);
+    // // console.log("balance in componding tab", allLpBalances[poolName]);
 
     // Make a state for this
     const pool = _.find(pools, {
       firstTokenId: mangataHelper.getTokenIdBySymbol(token0),
       secondTokenId: mangataHelper.getTokenIdBySymbol(token1),
     });
-    console.log(`Found a pool of ${poolName}`, pool);
+    // console.log(`Found a pool of ${poolName}`, pool);
     setPool(pool);
 
     if (_.isUndefined(pool)) {
@@ -232,9 +232,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     // Calculate rwards amount in pool
     const { liquidityTokenId } = pool;
 
-    console.log(
-      `Checking how much reward available in ${poolName} pool, tokenId: ${liquidityTokenId} ...`
-    );
+    // console.log(
+    //   `Checking how much reward available in ${poolName} pool, tokenId: ${liquidityTokenId} ...`
+    // );
 
     // Issue: current we couldn’t read this rewards value correct by always getting 0 on the claimable rewards.
     // The result is different from that in src/mangata.js
@@ -242,7 +242,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
       mangataAddress,
       liquidityTokenId
     );
-    console.log(`Claimable reward in ${poolName}: `, rewardAmount);
+    // console.log(`Claimable reward in ${poolName}: `, rewardAmount);
 
     const liquidityBalance = await mangataHelper.mangata?.getTokenBalance(
       liquidityTokenId,
@@ -251,26 +251,26 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     const poolNameDecimalBN = getDecimalBN(
       mangataHelper.getDecimalsBySymbol(poolName)
     );
-    console.log(
-      "liquidity balance",
-      liquidityBalance?.reserved,
-      "poolName DecimalBN",
-      poolNameDecimalBN,
-      "decimal",
-      mangataHelper.getDecimalsBySymbol(poolName)
-    );
+    // console.log(
+    //   "liquidity balance",
+    //   liquidityBalance?.reserved,
+    //   "poolName DecimalBN",
+    //   poolNameDecimalBN,
+    //   "decimal",
+    //   mangataHelper.getDecimalsBySymbol(poolName)
+    // );
 
     const numReserved = new BN(liquidityBalance.reserved).div(
       poolNameDecimalBN
     );
 
-    console.log(
-      `Before auto-compound, ${
-        account?.name
-      } reserved "${poolName}": ${numReserved.toString()} ... lb ${liquidityBalance.reserved.toString()}`
-    );
+    // console.log(
+    //   `Before auto-compound, ${
+    //     account?.name
+    //   } reserved "${poolName}": ${numReserved.toString()} ... lb ${liquidityBalance.reserved.toString()}`
+    // );
 
-    console.log("num reserved", numReserved);
+    // console.log("num reserved", numReserved);
 
     // setting selected pool's LP token balance
     const lpBalance = await mangataHelper.mangata.getTokenBalance(
@@ -283,7 +283,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     //   parseFloat(BigInt(lpBalance.free).toString(10)) / 10 ** decimal;
     const lpBalanceNum =
       parseFloat(BigInt(lpBalance.reserved).toString(10)) / 10 ** decimal;
-    console.log("LP Balance lpBalanceNum: ", lpBalanceNum);
+    // console.log("LP Balance lpBalanceNum: ", lpBalanceNum);
     setLpBalance(lpBalanceNum);
 
     // Required setup finished
@@ -330,7 +330,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         //     <ToastWrapper title="Please connect wallet!" status="error" />
         //   ),
         // });
-        console.log("Account1 is empty");
+        // console.log("Account1 is empty");
       }
     })();
   }, [account1, pool]);
@@ -364,9 +364,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
   // Estimate of fees; no need to be accurate
   // Method to fetch trnx fees based on token Amounts
   const handleFees = async (firstTokenAmt: number, secondTokenAmt: string) => {
-    console.log("Calculating fees...");
-    console.log("first token in feemint: ", firstTokenAmt);
-    console.log("second token in feemint: ", secondTokenAmt);
+    // console.log("Calculating fees...");
+    // console.log("first token in feemint: ", firstTokenAmt);
+    // console.log("second token in feemint: ", secondTokenAmt);
     try {
       // Estimate of fees; no need to be accurate
       const fees = await mangataHelper.getMintLiquidityFee({
@@ -376,10 +376,10 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         secondTokenId: pool?.secondTokenId,
         expectedSecondTokenAmount: secondTokenAmt,
       });
-      console.log("fees:", fees, parseFloat(fees));
+      // console.log("fees:", fees, parseFloat(fees));
       setFees(parseFloat(fees));
     } catch (error) {
-      console.log("Error while fetching Fees", error);
+      // console.log("Error while fetching Fees", error);
       setIsErrorFees(true);
     }
   };
@@ -389,19 +389,19 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     const poolRatio =
       Number(pool?.firstTokenAmountFloat) /
       Number(pool?.secondTokenAmountFloat);
-    console.log("poolRatio", poolRatio, secondTokenAmount);
+    // console.log("poolRatio", poolRatio, secondTokenAmount);
 
     // Estimated LP to be minted
     const lpAmount =
       (secondTokenAmount * lpTotalBalance) /
       (parseFloat(pool?.secondTokenAmountFloat.toString()!) * (1 + SLIPPAGE));
-    console.log("lpAmount via secondToken", lpAmount);
+    // console.log("lpAmount via secondToken", lpAmount);
     setEstimateLpMinted(lpAmount);
 
     // Calculate first token amount
     const expFirstTokenAmount =
       (poolRatio * secondTokenAmount) / (1 + SLIPPAGE);
-    console.log("First Token Amount:", expFirstTokenAmount);
+    // console.log("First Token Amount:", expFirstTokenAmount);
     const firstTokenAmount = isNaN(expFirstTokenAmount)
       ? "0"
       : expFirstTokenAmount.toString();
@@ -418,13 +418,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     const lpAmount =
       (firstTokenAmount * lpTotalBalance) /
       parseFloat(pool?.firstTokenAmountFloat.toString()!);
-    console.log("lpAmount via first token", lpAmount);
+    // console.log("lpAmount via first token", lpAmount);
     setEstimateLpMinted(lpAmount);
 
     // Calculate second token amount
     const expSecondTokenAmount =
       (firstTokenAmount / poolRatio) * (1 + SLIPPAGE);
-    console.log("Second Token Amount:", expSecondTokenAmount);
+    // console.log("Second Token Amount:", expSecondTokenAmount);
     const secondTokenAmount = isNaN(expSecondTokenAmount)
       ? "0"
       : expSecondTokenAmount.toString();
@@ -531,25 +531,25 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
     setIsInProcess(true);
     const signer = account?.wallet?.signer;
 
-    console.log(
-      "pool.firstTokenAmountFloat",
-      pool?.firstTokenAmountFloat,
-      "pool.secondTokenAmountFloat",
-      pool?.secondTokenAmountFloat,
-      "firstTokenAmount",
-      firstTokenAmount,
-      "expectedSecondTokenAmount",
-      secondTokenAmount
-    );
+    // console.log(
+    //   "pool.firstTokenAmountFloat",
+    //   pool?.firstTokenAmountFloat,
+    //   "pool.secondTokenAmountFloat",
+    //   pool?.secondTokenAmountFloat,
+    //   "firstTokenAmount",
+    //   firstTokenAmount,
+    //   "expectedSecondTokenAmount",
+    //   secondTokenAmount
+    // );
 
     try {
       setIsSigning(true);
-      console.log(
-        "liquidityTokenId",
-        pool?.liquidityTokenId,
-        "estimatedLpMinted",
-        estimateLpMinted
-      );
+      // console.log(
+      //   "liquidityTokenId",
+      //   pool?.liquidityTokenId,
+      //   "estimatedLpMinted",
+      //   estimateLpMinted
+      // );
       // Method to Add Liquidity
       const mintLiquidityTxn = await mangataHelper.mintLiquidityTx(
         pool?.firstTokenId,
@@ -563,35 +563,35 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           { signer: signer },
           ({ status }: any) => {
             if (status.isInBlock) {
-              console.log(
-                `Mint liquidity trxn is in Block with hash ${status.asInBlock.toHex()}`
-              );
+              // console.log(
+              //   `Mint liquidity trxn is in Block with hash ${status.asInBlock.toHex()}`
+              // );
               // unsub();
             } else if (status.isFinalized) {
               (async () => {
                 const tranHash = status.asFinalized.toString();
-                console.log(
-                  `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
-                );
+                // console.log(
+                //   `Batch Tx finalized with hash ${tranHash}\n\nbefore delay\n`
+                // );
                 setTxnHash(tranHash);
                 await delay(20000);
-                console.log("after delay");
+                // console.log("after delay");
                 const block = await mangataHelper.api.rpc.chain.getBlock(
                   tranHash
                 );
-                console.log("block", block);
-                console.log("block", JSON.stringify(block));
+                // console.log("block", block);
+                // console.log("block", JSON.stringify(block));
                 const bhn = parseInt(block.block.header.number) + 1;
-                console.log("num", bhn);
+                // console.log("num", bhn);
                 const blockHash =
                   await mangataHelper.api.rpc.chain.getBlockHash(bhn);
-                console.log(`blockHash ${blockHash}`);
-                console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
+                // console.log(`blockHash ${blockHash}`);
+                // console.log("bhjs", JSON.stringify(blockHash) ?? "nothing");
                 // const blockEvents =
                 //   await mangataHelper.api.query.system.events.at(tranHash);
                 const at = await mangataHelper.api.at(blockHash);
                 const blockEvents = await at.query.system.events();
-                console.log("blockEvents", blockEvents);
+                // console.log("blockEvents", blockEvents);
                 let allSuccess = true;
                 blockEvents.forEach((d: any) => {
                   const {
@@ -604,9 +604,9 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                     method === "BatchInterrupted" ||
                     method === "ExtrinsicFailed"
                   ) {
-                    console.log("failed is true");
+                    // console.log("failed is true");
                     // failed = true;
-                    console.log("Error in addliq Tx:");
+                    // console.log("Error in addliq Tx:");
                     allSuccess = false;
                     setIsSuccess(false);
                     setIsSigning(false);
@@ -624,11 +624,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                   }
                 });
                 if (allSuccess) {
-                  console.log("allSuccess", allSuccess);
+                  // console.log("allSuccess", allSuccess);
                   setIsSuccess(true);
                   setIsInProcess(false);
                   setIsSigning(false);
-                  console.log("Mint liquidity trxn finalised.");
+                  // console.log("Mint liquidity trxn finalised.");
                   // toast({
                   //   position: "top",
                   //   duration: 3000,
@@ -651,13 +651,13 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                 }
               })();
             } else {
-              console.log("Status:", status.type);
+              // console.log("Status:", status.type);
               // setIsSigning(false);
             }
           }
         )
         .catch((err: any) => {
-          console.log("Error while minting liquidity: ", err);
+          // console.log("Error while minting liquidity: ", err);
           setIsInProcess(false);
           setIsSigning(false);
           setIsSuccess(false);
@@ -674,7 +674,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         });
     } catch (error) {
       let errorString = `${error}`;
-      console.log("error while adding liquidity:", errorString);
+      // console.log("error while adding liquidity:", errorString);
       // toast({
       //   position: "top",
       //   duration: 3000,
@@ -687,7 +687,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log("addliq txn success!");
+      // console.log("addliq txn success!");
 
       // Tracking
       handleAddLiquidityEvent({
@@ -730,11 +730,11 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
         },
       });
       (async () => {
-        console.log(
-          "beforeuepos",
-          selectedFarm?.chain!,
-          selectedFarm?.protocol!
-        );
+        // console.log(
+        //   "beforeuepos",
+        //   selectedFarm?.chain!,
+        //   selectedFarm?.protocol!
+        // );
 
         const a = await updateSubstratePositions({
           farm: {
@@ -751,7 +751,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
           positions,
           account,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -946,7 +946,7 @@ const AddSectionMangata: FC<PropsWithChildren> = () => {
                   parseFloat(firstTokenAmount) <= 0 &&
                   parseFloat(secondTokenAmount) <= 0
                 ) {
-                  console.log("Both token amount can't be zero");
+                  // console.log("Both token amount can't be zero");
                 } else {
                   setIsConfirmStep(true);
                 }

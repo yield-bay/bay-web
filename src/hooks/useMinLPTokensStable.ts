@@ -16,7 +16,7 @@ const useMinLPTokensStable = (
     args: [amounts, 1],
   });
 
-  // console.log("lpAmount", Number(lpAmount) / 10 ** 18, {
+  // // console.log("lpAmount", Number(lpAmount) / 10 ** 18, {
   //   address: router,
   //   abi: parseAbi(getRouterAbi(protocol, true)),
   //   functionName:

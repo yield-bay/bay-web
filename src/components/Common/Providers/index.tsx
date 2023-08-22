@@ -61,7 +61,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
             }
           );
         } catch (err) {
-          console.log("Error in subscribing accounts: ", err);
+          // console.log("Error in subscribing accounts: ", err);
         }
       })();
     }

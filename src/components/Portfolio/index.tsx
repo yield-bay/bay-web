@@ -83,7 +83,7 @@ const PortfolioPage = () => {
           !isNaN(position.staked.amountUSD)
         );
       });
-      // console.log("user positions", temp);
+      // // console.log("user positions", temp);
       setUserPositions(temp);
     }
   }, [positions]);
@@ -104,7 +104,7 @@ const PortfolioPage = () => {
 
   useEffect(() => {
     if (!!userPositions) {
-      console.log("upsss", userPositions);
+      // console.log("upsss", userPositions);
       setNetWorth(calcNetWorth(userPositions));
       setTotalUnclaimedRewards(calcTotalUnclaimedRewards(userPositions));
       setTotalUnclaimedRewardsUSD(calcTotalUnclaimedRewardsUSD(userPositions));

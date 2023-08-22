@@ -33,9 +33,9 @@ export async function handleWalletConnectEvent({
       connector,
       getTimestamp()
     );
-    console.log(`connectWalletEvent: ${walletType}`, walletConnectEvent);
+    // console.log(`connectWalletEvent: ${walletType}`, walletConnectEvent);
   } catch (error) {
-    console.log(`Error: CreateWalletEvent ${walletType}`, error);
+    // console.log(`Error: CreateWalletEvent ${walletType}`, error);
   }
 }
 
@@ -58,9 +58,9 @@ export async function handleAddLiquidityEvent({
       underlyingAmounts,
       lpAmount
     );
-    console.log("addLiquidityEvent:", addLiquidityEvent);
+    // console.log("addLiquidityEvent:", addLiquidityEvent);
   } catch (error) {
-    console.log("Error: CreateAddLiquidityEvent ${walletType}", error);
+    // console.log("Error: CreateAddLiquidityEvent ${walletType}", error);
   }
 }
 
@@ -83,9 +83,9 @@ export async function handleRemoveLiquidityEvent({
       underlyingAmounts,
       lpAmount
     );
-    console.log("removeLiquidityEvent:", removeLiquidityEvent);
+    // console.log("removeLiquidityEvent:", removeLiquidityEvent);
   } catch (error) {
-    console.log(`Error: createRemoveLiquidityEvent ${walletType}`, error);
+    // console.log(`Error: createRemoveLiquidityEvent ${walletType}`, error);
   }
 }
 
@@ -106,9 +106,9 @@ export async function handleStakeEvent({
       farm,
       lpAmount
     );
-    console.log("stakeEvent:", stakeEvent);
+    // console.log("stakeEvent:", stakeEvent);
   } catch (error) {
-    console.log(`Error: createStakeEvent ${walletType}`, error);
+    // console.log(`Error: createStakeEvent ${walletType}`, error);
   }
 }
 
@@ -129,9 +129,9 @@ export async function handleUnstakeEvent({
       farm,
       lpAmount
     );
-    console.log("unstakeEvent:", unstakeEvent);
+    // console.log("unstakeEvent:", unstakeEvent);
   } catch (error) {
-    console.log(`Error: createUnstakeEvent ${walletType}`, error);
+    // console.log(`Error: createUnstakeEvent ${walletType}`, error);
   }
 }
 
@@ -152,8 +152,8 @@ export async function handleClaimRewardsEvent({
       farm,
       rewards
     );
-    console.log("claimRewardsEvent:", claimRewardsEvent);
+    // console.log("claimRewardsEvent:", claimRewardsEvent);
   } catch (error) {
-    console.log(`Error: createClaimRewardsEvent ${walletType}`, error);
+    // console.log(`Error: createClaimRewardsEvent ${walletType}`, error);
   }
 }

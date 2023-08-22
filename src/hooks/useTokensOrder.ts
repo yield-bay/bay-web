@@ -14,7 +14,7 @@ export default function useTokensOrder(farm: FarmType) {
       chainId: chain?.id,
       enabled: !!chain && !!farm,
     });
-    console.log("arthswaptokensSeqArr", tokensSeqArr);
+    // console.log("arthswaptokensSeqArr", tokensSeqArr);
     const tokensSeq: UnderlyingAssets[] = [
       tokensSeqArr,
       tokensSeqArr,

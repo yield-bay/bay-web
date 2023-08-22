@@ -23,7 +23,7 @@ const ConnectBtnDot: FC = () => {
 
   useEffect(() => {
     // Clear timeout when component unmounts
-    console.log("Connected substrate Account", account);
+    // console.log("Connected substrate Account", account);
     return () => {
       clearTimeout(timerRef.current as ReturnType<typeof setTimeout>);
     };
@@ -101,7 +101,7 @@ const ConnectBtnDot: FC = () => {
                             )}
                             key={account.name}
                             onClick={() => {
-                              console.log("selected account", account);
+                              // console.log("selected account", account);
                               setAccount(account);
                             }}
                           >

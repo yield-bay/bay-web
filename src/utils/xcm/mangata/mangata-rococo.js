@@ -21,6 +21,6 @@ async function main() {
 main()
   .catch(console.error)
   .finally(() => {
-    console.log("Reached end of main() ...");
+    // console.log("Reached end of main() ...");
     process.exit();
   });

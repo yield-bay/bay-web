@@ -95,7 +95,7 @@ const Layout: FC<Props> = ({ children }) => {
   const [tokenPricesMap, setTokenPricesMap] = useAtom(tokenPricesAtom);
 
   useEffect(() => {
-    console.log("---- Updated Positions ----\n", positions);
+    // console.log("---- Updated Positions ----\n", positions);
   }, [positions]);
 
   const { isConnected, address, connector } = useAccount();
@@ -143,7 +143,7 @@ const Layout: FC<Props> = ({ children }) => {
   });
   useEffect(() => {
     if (isLpPricesLoading) {
-      console.log("loading lp prices...");
+      // console.log("loading lp prices...");
     } else {
       const tempLpTokenPrices: { [key: string]: number } = {};
       lpTokenPrices?.forEach((lptp: TokenPriceType) => {
@@ -151,7 +151,7 @@ const Layout: FC<Props> = ({ children }) => {
           `${lptp.chain}-${lptp.protocol}-${lptp.symbol}-${lptp.address}` // key
         ] = lptp.price; // assigning lp token price to the key
       });
-      console.log("lpTokenPricesMap", tempLpTokenPrices);
+      // console.log("lpTokenPricesMap", tempLpTokenPrices);
       setLpTokenPricesMap(tempLpTokenPrices);
     }
   }, [isLpPricesLoading]);
@@ -170,10 +170,10 @@ const Layout: FC<Props> = ({ children }) => {
   });
   useEffect(() => {
     if (isTPricesLoading) {
-      console.log("loading token prices...");
+      // console.log("loading token prices...");
     } else {
       // Setting Token prices data
-      // console.log("token prices", tokenPrices);
+      // // console.log("token prices", tokenPrices);
       // Mapped token prices in a variable
       const tokenPricesMap: any = {};
       tokenPrices?.forEach((tp: any) => {
@@ -181,54 +181,54 @@ const Layout: FC<Props> = ({ children }) => {
           `${tp.chain}-${tp.protocol}-${tp.symbol}-${tp.address}` // key
         ] = tp.price; // assigning token price to the key
       });
-      console.log("tokenPricesMap", tokenPricesMap);
+      // console.log("tokenPricesMap", tokenPricesMap);
       setTokenPricesMap(tokenPricesMap);
     }
   }, [isTPricesLoading]);
 
   useEffect(() => {
-    console.log("lpTokenPrices useeffect", lpTokenPricesMap);
+    // console.log("lpTokenPrices useeffect", lpTokenPricesMap);
   }, [lpTokenPricesMap]);
 
   useEffect(() => {
-    console.log("tokenPrices useeffect", tokenPricesMap);
+    // console.log("tokenPrices useeffect", tokenPricesMap);
   }, [tokenPricesMap]);
 
   const setupMangataHelper = async (accountInit: Account | null) => {
     if (account?.address == null) {
-      console.log("Connect wallet to use App!");
+      // console.log("Connect wallet to use App!");
       return;
     }
 
     if (mangataHelperx != null && accountInit?.address === account.address) {
-      console.log("accountinit", accountInit?.address);
-      console.log("account address", account.address);
-      console.log("Already initialised!");
+      // console.log("accountinit", accountInit?.address);
+      // console.log("account address", account.address);
+      // console.log("Already initialised!");
       return;
     }
 
-    console.log("Initializing APIs of both chains ...");
+    // console.log("Initializing APIs of both chains ...");
 
     let mangataConfig = MangataConfig;
     const mangataHelper = new MangataHelper(mangataConfig);
-    console.log("initiliazing mangata helper...");
+    // console.log("initiliazing mangata helper...");
     await mangataHelper.initialize();
-    console.log("✅ mangata helper initialized\n", mangataHelper);
+    // console.log("✅ mangata helper initialized\n", mangataHelper);
     setMangataHelper(mangataHelper);
 
     const mangataChainName = mangataHelper.config.key;
 
-    console.log("mangata Assets", mangataHelper.config.assets);
+    // console.log("mangata Assets", mangataHelper.config.assets);
 
     const mangataNativeToken = _.first(mangataHelper.config.assets);
 
-    console.log(
-      `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
-        mangataNativeToken
-      )}\n`
-    );
+    // console.log(
+    //   `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
+    //     mangataNativeToken
+    //   )}\n`
+    // );
 
-    console.log("1. Reading token and balance of account ...");
+    // console.log("1. Reading token and balance of account ...");
 
     // New account instance from connected account
     const account1 = new Account({
@@ -238,7 +238,7 @@ const Layout: FC<Props> = ({ children }) => {
       },
     });
     await account1.init([mangataHelper]);
-    console.log("account1", account1);
+    // console.log("account1", account1);
     // It is setting Account1 here, and this fn runs only once in starting
     // it should re-run when an account is updated.
     setAccountInit(account1);
@@ -247,7 +247,7 @@ const Layout: FC<Props> = ({ children }) => {
     setMangataAddress(mangataAddress);
 
     const pools = await mangataHelper.getPools({ isPromoted: true });
-    console.log("Promoted Pools", pools);
+    // console.log("Promoted Pools", pools);
     setPools(pools);
     setIsInitialised(true);
   };
@@ -260,7 +260,7 @@ const Layout: FC<Props> = ({ children }) => {
         walletType: "DOT",
         connector: account?.wallet?.extensionName!,
       });
-      console.log("running mangata setup\n==> account", account);
+      // console.log("running mangata setup\n==> account", account);
       fetchSubstratePositions({
         farms,
         positions,
@@ -270,7 +270,7 @@ const Layout: FC<Props> = ({ children }) => {
       });
       setupMangataHelper(accountInit);
     } else if (!isConnectedDot && farms.length > 0) {
-      console.log("emptying mangata positions...");
+      // console.log("emptying mangata positions...");
       emptySubstratePositions({
         farms,
         positions,
@@ -309,7 +309,7 @@ const Layout: FC<Props> = ({ children }) => {
       lpTokensPricesLength > 0 &&
       tokenPricesLength > 0
     ) {
-      console.log("emptying evm positions running...");
+      // console.log("emptying evm positions running...");
       emptyEvmPositions({
         farms,
         positions,

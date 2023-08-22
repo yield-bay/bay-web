@@ -85,7 +85,7 @@ const StakingModal = () => {
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
 
   useEffect(() => {
-    console.log("selectedFarm", farm);
+    // console.log("selectedFarm", farm);
   }, [farm]);
 
   // When InputType.Percentage
@@ -133,7 +133,7 @@ const StakingModal = () => {
       .multipliedBy(BigNumber(10).pow(18))
       .decimalPlaces(0, 1)
       .toString();
-    console.log("stakinggaargs", lpBalanceNum, pamt);
+    // console.log("stakinggaargs", lpBalanceNum, pamt);
 
     const amt =
       methodId == 0
@@ -149,14 +149,14 @@ const StakingModal = () => {
             .multipliedBy(BigNumber(10).pow(18))
             .decimalPlaces(0, 1)
             .toString();
-    console.log(
-      "samt",
-      amt,
-      lpBalanceNum,
-      lpTokens,
-      lpBalance,
-      lpBalance?.formatted
-    );
+    // console.log(
+    //   "samt",
+    //   amt,
+    //   lpBalanceNum,
+    //   lpTokens,
+    //   lpBalance,
+    //   lpBalance?.formatted
+    // );
     // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];
@@ -183,13 +183,13 @@ const StakingModal = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    console.log(
-      "tokenkey",
-      `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    );
-    console.log("token", tokenPrice);
+    // console.log(
+    //   "tokenkey",
+    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
+    // );
+    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      console.log("...setting tokenprice", tokenPrice);
+      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
@@ -268,12 +268,12 @@ const StakingModal = () => {
   const handleStaking = async () => {
     try {
       const args = getArgs();
-      console.log("stake args", args);
+      // console.log("stake args", args);
       const txnRes = await staking?.({
         args: args,
       });
       if (!!txnRes) {
-        console.log("txnResult", txnRes);
+        // console.log("txnResult", txnRes);
         setTxnHash(txnRes.hash);
       }
     } catch (error) {
@@ -283,7 +283,7 @@ const StakingModal = () => {
 
   useEffect(() => {
     if (isSuccessStakingTxn) {
-      console.log("staking txn success!");
+      // console.log("staking txn success!");
       // Tracking
       handleStakeEvent({
         userAddress: address!,
@@ -310,7 +310,7 @@ const StakingModal = () => {
         },
       });
       (async () => {
-        console.log("beforeuepos", farm?.chain!, farm?.protocol!);
+        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
 
         const a = await updateEvmPositions({
           farm: {
@@ -328,7 +328,7 @@ const StakingModal = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        console.log("npos", a?.name, a?.position);
+        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -428,7 +428,7 @@ const StakingModal = () => {
               }
               onClick={async () => {
                 const txn = await approveLpToken?.();
-                console.log("Approve0 Result", txn);
+                // console.log("Approve0 Result", txn);
               }}
             />
           )}

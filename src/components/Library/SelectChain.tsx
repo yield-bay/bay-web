@@ -18,7 +18,7 @@ const SelectChain: FC<Props> = ({ availableChains }) => {
   const [selectedChain, setSelectedChain] = useState(chains[filteredChainId]);
 
   useEffect(() => {
-    console.log({
+    // console.log({
       filteredChainId: filteredChainId,
       selectedChain: selectedChain,
     });
