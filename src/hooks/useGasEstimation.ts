@@ -87,7 +87,7 @@ const useGasEstimation = (
   const invalidStableAmmArgs =
     farmition.farmType === "StableAmm" &&
     functionType === 0 &&
-    args[0].every((a) => a === 0 || a === BigInt(0));
+    args[0].every((a: any) => a === 0 || a === BigInt(0));
 
   if (invalidArgs || invalidStableAmmArgs) {
     return {

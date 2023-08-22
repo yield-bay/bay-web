@@ -17,13 +17,6 @@ const SelectChain: FC<Props> = ({ availableChains }) => {
   // State
   const [selectedChain, setSelectedChain] = useState(chains[filteredChainId]);
 
-  useEffect(() => {
-    // console.log({
-      filteredChainId: filteredChainId,
-      selectedChain: selectedChain,
-    });
-  }, [filteredChainId]);
-
   return (
     <Listbox
       value={{ id: filteredChainId, name: selectedChain }}
