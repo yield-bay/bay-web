@@ -53,15 +53,15 @@ async function main() {
   const mangataNativeToken = _.first(mangataHelper.config.assets);
 
   // console.log(
-    `\nTuring chain name: ${turingChainName}, native token: ${JSON.stringify(
-      turingNativeToken
-    )}`
-  );
+  //   `\nTuring chain name: ${turingChainName}, native token: ${JSON.stringify(
+  //     turingNativeToken
+  //   )}`
+  // );
   // console.log(
-    `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
-      mangataNativeToken
-    )}\n`
-  );
+  //   `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
+  //     mangataNativeToken
+  //   )}\n`
+  // );
 
   // console.log("Reading token and balance of Alice account ...");
   const keyPair = keyring.addFromUri("//Alice", undefined, "sr25519");
@@ -104,12 +104,12 @@ async function main() {
     mangataHelper.getDecimalsBySymbol(poolName)
   );
   // console.log(
-    `Before auto-compound, ${account.name} reserved ${poolName}: ${new BN(
-      liquidityBalance.reserved
-    )
-      .div(liquidityDecimalBN)
-      .toString()} ...`
-  );
+  //   `Before auto-compound, ${account.name} reserved ${poolName}: ${new BN(
+  //     liquidityBalance.reserved
+  //   )
+  //     .div(liquidityDecimalBN)
+  //     .toString()} ...`
+  // );
 
   // Create Mangata proxy call
   // console.log("\nStart to schedule an auto-compound call via XCM ...");
@@ -172,9 +172,9 @@ async function main() {
   const { executionFee, xcmpFee } =
     await turingHelper.api.rpc.automationTime.queryFeeDetails(xcmpCall);
   // console.log("automationFeeDetails: ", {
-    executionFee: executionFee.toHuman(),
-    xcmpFee: xcmpFee.toHuman(),
-  });
+  //   executionFee: executionFee.toHuman(),
+  //   xcmpFee: xcmpFee.toHuman(),
+  // });
 
   // Get a TaskId from Turing rpc
   const taskId = await turingHelper.api.rpc.automationTime.generateTaskId(
@@ -189,12 +189,12 @@ async function main() {
 
   // Listen XCM events on Mangata side
   // console.log(
-    `\n4. Keep Listening XCM events on ${parachainName} until ${moment(
-      executionTime * 1000
-    ).format(
-      "YYYY-MM-DD HH:mm:ss"
-    )}(${executionTime}) to verify that the task(taskId: ${taskId}, providerId: ${providedId}) will be successfully executed ...`
-  );
+  //   `\n4. Keep Listening XCM events on ${parachainName} until ${moment(
+  //     executionTime * 1000
+  //   ).format(
+  //     "YYYY-MM-DD HH:mm:ss"
+  //   )}(${executionTime}) to verify that the task(taskId: ${taskId}, providerId: ${providedId}) will be successfully executed ...`
+  // );
   await listenEvents(mangataHelper.api, "proxy", "ProxyExecuted");
 
   const isTaskExecuted = await listenEvents(
@@ -222,18 +222,18 @@ async function main() {
     liquidityDecimalBN
   );
   // console.log(
-    `\nAfter auto-compound, reserved ${poolName} is: ${newReservedBalanceBN} ${poolName} ...`
-  );
+  //   `\nAfter auto-compound, reserved ${poolName} is: ${newReservedBalanceBN} ${poolName} ...`
+  // );
 
   const reservedPlanckDeltaBN = newLiquidityBalance.reserved.sub(
     liquidityBalance.reserved
   );
   const reservedDeltaBN = reservedPlanckDeltaBN.div(liquidityDecimalBN);
   // console.log(
-    `${
-      account.name
-    } has compounded ${reservedDeltaBN.toString()} more ${poolName} ...`
-  );
+  //   `${
+  //     account.name
+  //   } has compounded ${reservedDeltaBN.toString()} more ${poolName} ...`
+  // );
 
   // console.log("\n5. Cancel task ...");
   const cancelTaskExtrinsic =
@@ -244,12 +244,12 @@ async function main() {
   const nextExecutionTimeout = calculateTimeout(nextExecutionTime);
 
   // console.log(
-    `\n6. Keep Listening events on ${parachainName} until ${moment(
-      nextExecutionTime * 1000
-    ).format(
-      "YYYY-MM-DD HH:mm:ss"
-    )}(${nextExecutionTime}) to verify that the task was successfully canceled ...`
-  );
+  //   `\n6. Keep Listening events on ${parachainName} until ${moment(
+  //     nextExecutionTime * 1000
+  //   ).format(
+  //     "YYYY-MM-DD HH:mm:ss"
+  //   )}(${nextExecutionTime}) to verify that the task was successfully canceled ...`
+  // );
 
   const isTaskExecutedAgain = await listenEvents(
     mangataHelper.api,

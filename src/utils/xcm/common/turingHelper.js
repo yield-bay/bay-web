@@ -99,8 +99,8 @@ class TuringHelper {
               } else if (status.isFinalized) {
                 // console.log("Transaction is Finalized!");
                 // console.log(
-                  `Finalized block hash ${status.asFinalized.toHex()}`
-                );
+                //   `Finalized block hash ${status.asFinalized.toHex()}`
+                // );
                 setIsInProcess(false);
                 setIsSigning(false);
                 setIsSuccess(true);

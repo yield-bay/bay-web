@@ -41,15 +41,15 @@ async function main() {
   const mangataNativeToken = _.first(mangataHelper.config.assets);
 
   // console.log(
-    `\nTuring chain name: ${turingChainName}, native token: ${JSON.stringify(
-      turingNativeToken
-    )}`
-  );
+  //   `\nTuring chain name: ${turingChainName}, native token: ${JSON.stringify(
+  //     turingNativeToken
+  //   )}`
+  // );
   // console.log(
-    `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
-      mangataNativeToken
-    )}\n`
-  );
+  //   `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
+  //     mangataNativeToken
+  //   )}\n`
+  // );
 
   const keyPair = keyring.addFromUri("//Alice", undefined, "sr25519");
   keyPair.meta.name = "Alice";
@@ -75,8 +75,8 @@ async function main() {
   await mangataHelper.initIssuance(account.pair);
 
   // console.log(
-    `\n3. Minting tokens for ${account.name} on Maganta if balance is zero ...`
-  );
+  //   `\n3. Minting tokens for ${account.name} on Maganta if balance is zero ...`
+  // );
 
   // We are iterating all assets here for minting, but ROC is not used or required for this demo
   for (let i = 0; i < mangataTokens.length; i += 1) {
@@ -84,8 +84,8 @@ async function main() {
 
     if (balance === 0) {
       // console.log(
-        `[${account.name}] ${symbol} balance on Mangata is zero; minting ${symbol} with sudo ...`
-      );
+      //   `[${account.name}] ${symbol} balance on Mangata is zero; minting ${symbol} with sudo ...`
+      // );
       // Because sending extrinsic in parallel will cause repeated nonce errors
       // we need to wait for the previous extrinsic to be finalized before sending the extrinsic.
       await mangataHelper.mintToken(mangataAddress, symbol, account.pair);
@@ -94,8 +94,8 @@ async function main() {
 
   // If there is no proxy, add a proxy of Turing on Mangata
   // console.log(
-    "\n4. Add a proxy on Mangata for paraId 2114, or skip this step if that exists ..."
-  );
+  //   "\n4. Add a proxy on Mangata for paraId 2114, or skip this step if that exists ..."
+  // );
 
   const proxyAddress = mangataHelper.getProxyAccount(
     mangataAddress,
@@ -114,20 +114,19 @@ async function main() {
   if (proxyMatch) {
     // console.log(`Found proxy of ${account.address} on Mangata: `, proxyMatch);
   } else {
-    if (_.isEmpty(proxies)) {
-      // console.log(`Proxy array of ${account.address} is empty ...`);
-    } else {
-      // console.log(
-        "Proxy not found. Expected",
-        matchCondition,
-        "Actual",
-        proxies
-      );
-    }
-
+    // if (_.isEmpty(proxies)) {
+    // console.log(`Proxy array of ${account.address} is empty ...`);
+    // } else {
     // console.log(
-      `Adding a proxy for paraId ${turingHelper.config.paraId}. Proxy address: ${proxyAddress} ...`
-    );
+    //   "Proxy not found. Expected",
+    //   matchCondition,
+    //   "Actual",
+    //   proxies
+    // );
+    // }
+    // console.log(
+    //   `Adding a proxy for paraId ${turingHelper.config.paraId}. Proxy address: ${proxyAddress} ...`
+    // );
     await mangataHelper.addProxy(proxyAddress, proxyType, account.pair);
   }
 
@@ -153,8 +152,8 @@ async function main() {
     // Create a MGR-TUR pool is not found
     if (_.isUndefined(poolFound)) {
       // console.log(
-        `No ${poolName} pool found; creating a ${poolName} pool with ${account.name} ...`
-      );
+      //   `No ${poolName} pool found; creating a ${poolName} pool with ${account.name} ...`
+      // );
 
       const parachainTokenDeposit = 10000; // Add 10,000 initial MGR to pool
       const turingTokenDeposit = 1000; // Add 1,000 initial TUR to pool
@@ -169,8 +168,8 @@ async function main() {
 
       // Update assets
       // console.log(
-        `\nChecking out assets after pool creation; there should be a new ${poolName} token ...`
-      );
+      //   `\nChecking out assets after pool creation; there should be a new ${poolName} token ...`
+      // );
       await mangataHelper.updateAssets();
     } else {
       // console.log(`An existing ${poolName} pool found; skip pool creation ...`);

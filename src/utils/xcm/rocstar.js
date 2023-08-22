@@ -50,8 +50,8 @@ const scheduleTask = async ({
   // console.log(`Encoded call weight: ${encodedCallWeight}`);
 
   // console.log(
-    "\nb) Prepare automationTime.scheduleXcmpTask extrinsic for XCM ..."
-  );
+  //   "\nb) Prepare automationTime.scheduleXcmpTask extrinsic for XCM ..."
+  // );
 
   // Schedule an XCMP task from Turing’s timeAutomation pallet
   // The parameter "Fixed: { executionTimes: [0] }" will trigger the task immediately, while in real world usage Recurring can achieve every day or every week
@@ -88,8 +88,8 @@ const scheduleTask = async ({
   // console.log(`requireWeightAtMost: ${requireWeightAtMost}`);
 
   // console.log(
-    `\nc) Execute the above an XCM from ${shibuyaHelper.config.name} to schedule a task on ${turingHelper.config.name} ...`
-  );
+  //   `\nc) Execute the above an XCM from ${shibuyaHelper.config.name} to schedule a task on ${turingHelper.config.name} ...`
+  // );
   const feePerSecond = await turingHelper.getFeePerSecond(paraTokenIdOnTuring);
   const xcmpExtrinsic = shibuyaHelper.createTransactExtrinsic({
     targetParaId: turingHelper.config.paraId,
@@ -102,13 +102,13 @@ const scheduleTask = async ({
   await sendExtrinsic(shibuyaHelper.api, xcmpExtrinsic, keyPair);
 
   // console.log(`\nAt this point if the XCM succeeds, you should see the below events on both chains:\n
-  1. Shibuya\n
-  xcmpQueue.XcmpMessageSent and polkadotXcm.Sent - an XCM is successfully sent from Shibuya to Turing to schedule a task.\n
-  2. Turing Dev\n
-  a) proxy.ProxyExecuted and automationTime.TaskScheduled - the above XCM is received and executed on Turing.\n
-  b) xcmpHandler.XcmTransactedLocally, xcmpQueue.XcmpMessageSent, xcmpHandler.XcmSent and automationTime.XcmpTaskSucceeded - the task is triggered and its payload is sent to Shibuya via XCM.\n
-  3. Shibuya\n
-  proxy.ProxyExecuted and xcmpQueue.Success - the above payload is received and executed.\n`);
+  // 1. Shibuya\n
+  // xcmpQueue.XcmpMessageSent and polkadotXcm.Sent - an XCM is successfully sent from Shibuya to Turing to schedule a task.\n
+  // 2. Turing Dev\n
+  // a) proxy.ProxyExecuted and automationTime.TaskScheduled - the above XCM is received and executed on Turing.\n
+  // b) xcmpHandler.XcmTransactedLocally, xcmpQueue.XcmpMessageSent, xcmpHandler.XcmSent and automationTime.XcmpTaskSucceeded - the task is triggered and its payload is sent to Shibuya via XCM.\n
+  // 3. Shibuya\n
+  // proxy.ProxyExecuted and xcmpQueue.Success - the above payload is received and executed.\n`);
 
   const taskIdCodec = await turingHelper.api.rpc.automationTime.generateTaskId(
     turingAddress,
@@ -132,10 +132,10 @@ const main = async () => {
 
   // console.log(`\nTuring chain key: ${turingChainName}`);
   // console.log(
-    `Parachain name: ${parachainName}, native token: ${JSON.stringify(
-      parachainNativeToken
-    )}\n`
-  );
+  //   `Parachain name: ${parachainName}, native token: ${JSON.stringify(
+  //     parachainNativeToken
+  //   )}\n`
+  // );
 
   const json = await readMnemonicFromFile();
   const keyPair = keyring.addFromJson(json);
@@ -150,8 +150,8 @@ const main = async () => {
   const decimalBN = getDecimalBN(parachainNativeToken.decimals);
 
   // console.log(
-    `\nUser ${account.name} ${turingChainName} address: ${turingAddress}, ${parachainName} address: ${parachainAddress}`
-  );
+  //   `\nUser ${account.name} ${turingChainName} address: ${turingAddress}, ${parachainName} address: ${parachainAddress}`
+  // );
 
   const paraTokenIdOnTuring = await turingHelper.getAssetIdByParaId(
     shibuyaHelper.config.paraId
@@ -162,8 +162,8 @@ const main = async () => {
   // We also need to transfer tokens to the proxy account to pay for XCM and task execution fees
   // console.log(`\n1. One-time proxy setup on ${parachainName} ...`);
   // console.log(
-    `\na) Add a proxy for ${account.name} If there is none setup on ${parachainName} (paraId:${turingHelper.config.paraId}) \n`
-  );
+  //   `\na) Add a proxy for ${account.name} If there is none setup on ${parachainName} (paraId:${turingHelper.config.paraId}) \n`
+  // );
 
   const proxyTypeParachain = "Any"; // We cannotset proxyType to "DappsStaking" without the actual auto-restake call
   const proxyOnParachain = shibuyaHelper.getProxyAccount(
@@ -178,12 +178,12 @@ const main = async () => {
 
   if (proxyMatch) {
     // console.log(
-      `Proxy address ${proxyOnParachain} for paraId: ${turingHelper.config.paraId} and proxyType: ${proxyTypeParachain} already exists; skipping creation ...`
-    );
+    //   `Proxy address ${proxyOnParachain} for paraId: ${turingHelper.config.paraId} and proxyType: ${proxyTypeParachain} already exists; skipping creation ...`
+    // );
   } else {
     // console.log(
-      `Add a proxy of ${turingChainName} (paraId:${turingHelper.config.paraId}) and proxyType: ${proxyTypeParachain} on ${parachainName} ...\n Proxy address: ${proxyOnParachain}\n`
-    );
+    //   `Add a proxy of ${turingChainName} (paraId:${turingHelper.config.paraId}) and proxyType: ${proxyTypeParachain} on ${parachainName} ...\n Proxy address: ${proxyOnParachain}\n`
+    // );
     await sendExtrinsic(
       shibuyaHelper.api,
       shibuyaHelper.api.tx.proxy.addProxy(
@@ -210,14 +210,14 @@ const main = async () => {
   } else {
     const freeAmount = new BN(balance.free).div(decimalBN);
     // console.log(
-      `\nb) Proxy’s balance is ${freeAmount.toString()}, no need to top it up with SBY transfer ...`
-    );
+    //   `\nb) Proxy’s balance is ${freeAmount.toString()}, no need to top it up with SBY transfer ...`
+    // );
   }
 
   // console.log("\n2. One-time proxy setup on Turing");
   // console.log(
-    `\na) Add a proxy for Alice If there is none setup on Turing (paraId:${shibuyaHelper.config.paraId})\n`
-  );
+  //   `\na) Add a proxy for Alice If there is none setup on Turing (paraId:${shibuyaHelper.config.paraId})\n`
+  // );
   const proxyTypeTuring = "Any";
   const proxyOnTuring = turingHelper.getProxyAccount(
     turingAddress,
@@ -232,12 +232,12 @@ const main = async () => {
 
   if (proxyMatchTuring) {
     // console.log(
-      `Proxy address ${proxyOnTuring} for paraId: ${shibuyaHelper.config.paraId} and proxyType: ${proxyTypeTuring} already exists; skipping creation ...`
-    );
+    //   `Proxy address ${proxyOnTuring} for paraId: ${shibuyaHelper.config.paraId} and proxyType: ${proxyTypeTuring} already exists; skipping creation ...`
+    // );
   } else {
     // console.log(
-      `Add a proxy of ${parachainName} (paraId:${shibuyaHelper.config.paraId}) and proxyType: ${proxyTypeTuring} on Turing ...\n Proxy address: ${proxyOnTuring}\n`
-    );
+    //   `Add a proxy of ${parachainName} (paraId:${shibuyaHelper.config.paraId}) and proxyType: ${proxyTypeTuring} on Turing ...\n Proxy address: ${proxyOnTuring}\n`
+    // );
     await sendExtrinsic(
       turingHelper.api,
       turingHelper.api.tx.proxy.addProxy(proxyOnTuring, proxyTypeTuring, 0),
@@ -254,8 +254,8 @@ const main = async () => {
 
   if (balanceOnTuring.free.lt(minBalanceOnTuring)) {
     // console.log(
-      `\nb) Topping up the proxy account on ${turingChainName} via reserve transfer ...`
-    );
+    //   `\nb) Topping up the proxy account on ${turingChainName} via reserve transfer ...`
+    // );
     const topUpAmount = new BN(1000, 10);
     const topUpAmountBN = topUpAmount.mul(decimalBN);
     const reserveTransferAssetsExtrinsic =
@@ -270,15 +270,15 @@ const main = async () => {
       keyPair
     );
   } else {
-    const freeBalanceOnTuring = new BN(balanceOnTuring.free).div(decimalBN);
+    // const freeBalanceOnTuring = new BN(balanceOnTuring.free).div(decimalBN);
     // console.log(
-      `\nb) Proxy’s balance is ${freeBalanceOnTuring.toString()}, no need to top it up with reserve transfer ...`
-    );
+    //   `\nb) Proxy’s balance is ${freeBalanceOnTuring.toString()}, no need to top it up with reserve transfer ...`
+    // );
   }
 
   // console.log(
-    `\n3. Execute an XCM from ${parachainName} to schedule a task on ${turingChainName} ...`
-  );
+  //   `\n3. Execute an XCM from ${parachainName} to schedule a task on ${turingChainName} ...`
+  // );
 
   const result = await scheduleTask({
     turingHelper,
@@ -291,15 +291,15 @@ const main = async () => {
   });
 
   const { taskId, providedId, executionTime } = result;
-  const timeout = calculateTimeout(executionTime);
+  // const timeout = calculateTimeout(executionTime);
 
   // console.log(
-    `\n4. Keep Listening events on ${parachainName} until ${moment(
-      executionTime * 1000
-    ).format(
-      "YYYY-MM-DD HH:mm:ss"
-    )}(${executionTime}) to verify that the task(taskId: ${taskId}, providerId: ${providedId}) will be successfully executed ...`
-  );
+  //   `\n4. Keep Listening events on ${parachainName} until ${moment(
+  //     executionTime * 1000
+  //   ).format(
+  //     "YYYY-MM-DD HH:mm:ss"
+  //   )}(${executionTime}) to verify that the task(taskId: ${taskId}, providerId: ${providedId}) will be successfully executed ...`
+  // );
   const isTaskExecuted = await listenEvents(
     shibuyaHelper.api,
     "proxy",
@@ -323,12 +323,12 @@ const main = async () => {
   const nextExecutionTimeout = calculateTimeout(nextExecutionTime);
 
   // console.log(
-    `\n6. Keep Listening events on ${parachainName} until ${moment(
-      nextExecutionTime * 1000
-    ).format(
-      "YYYY-MM-DD HH:mm:ss"
-    )}(${nextExecutionTime}) to verify that the task was successfully canceled ...`
-  );
+  //   `\n6. Keep Listening events on ${parachainName} until ${moment(
+  //     nextExecutionTime * 1000
+  //   ).format(
+  //     "YYYY-MM-DD HH:mm:ss"
+  //   )}(${nextExecutionTime}) to verify that the task was successfully canceled ...`
+  // );
 
   const isTaskExecutedAgain = await listenEvents(
     shibuyaHelper.api,
