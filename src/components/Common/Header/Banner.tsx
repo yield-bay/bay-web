@@ -27,18 +27,19 @@ const Banner = ({
           >
             Vote
           </Link>
-          {width > 640 ? (
-            <button onClick={onClose} className="ml-12">
-              <XIcon height={24} width={24} />
-            </button>
-          ) : (
-            <button
-              onClick={onClose}
-              className="mt-4 text-[#080814] opacity-50 underline underline-offset-4"
-            >
-              I don&apos;t believe in the future of Defi
-            </button>
-          )}
+          {width !== 0 &&
+            (width > 640 ? (
+              <button onClick={onClose} className="ml-12">
+                <XIcon height={24} width={24} />
+              </button>
+            ) : (
+              <button
+                onClick={onClose}
+                className="mt-4 text-[#080814] opacity-50 underline underline-offset-4"
+              >
+                I don&apos;t believe in the future of Defi
+              </button>
+            ))}
         </div>
       </div>
     </div>
