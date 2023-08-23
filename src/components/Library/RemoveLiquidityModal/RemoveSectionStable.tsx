@@ -560,7 +560,13 @@ const RemoveSectionStable: FC = () => {
               type="secondary"
               isLoading={approveLpLoading || approveLpLoadingTxn}
               text={
-                approveLpLoadingTxn
+                (
+                  methodId == Method.PERCENTAGE
+                    ? fixedAmtNum(percentage) <= 0
+                    : fixedAmtNum(lpTokens) <= 0
+                )
+                  ? "Please enter amount"
+                  : approveLpLoadingTxn
                   ? "Waiting for Approval"
                   : approveLpLoading
                   ? "Sign the Txn in Wallet"
@@ -570,7 +576,10 @@ const RemoveSectionStable: FC = () => {
                 approveLpSuccessTxn ||
                 approveLpLoading ||
                 approveLpLoadingTxn ||
-                typeof approveLpToken == "undefined"
+                typeof approveLpToken == "undefined" ||
+                (methodId == Method.PERCENTAGE
+                  ? fixedAmtNum(percentage) <= 0
+                  : fixedAmtNum(lpTokens) <= 0)
                 // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
               }
               onClick={async () => {

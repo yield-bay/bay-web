@@ -415,7 +415,14 @@ const StakingModal = () => {
               type="secondary"
               isLoading={isLoadingApproveTxn || isLoadingApproveCall}
               text={
-                isLoadingApproveTxn
+                (
+                  methodId == 0
+                    ? fixedAmtNum(percentage) <= 0
+                    : fixedAmtNum(lpTokens) <= 0 ||
+                      fixedAmtNum(lpTokens) > lpBalanceNum
+                )
+                  ? "Please enter amount"
+                  : isLoadingApproveTxn
                   ? "Waiting for Approval"
                   : isLoadingApproveCall
                   ? "Sign the Txn in Wallet"
@@ -424,6 +431,10 @@ const StakingModal = () => {
               disabled={
                 isLoadingApproveCall ||
                 isLoadingApproveTxn ||
+                (methodId == 0
+                  ? fixedAmtNum(percentage) <= 0
+                  : fixedAmtNum(lpTokens) <= 0 ||
+                    fixedAmtNum(lpTokens) > lpBalanceNum) ||
                 typeof approveLpToken == "undefined"
               }
               onClick={async () => {
