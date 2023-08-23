@@ -172,7 +172,7 @@ const AddSectionStable: FC = () => {
     // Setting inputMapAmount of amount array for calculation
     setInputMapAmount((pre: any) => ({
       ...pre,
-      [token.address]: isNaN(parseFloat(value)) ? 0 : value,
+      [token.address]: isNaN(parseFloat(value)) ? 0 : parseFloat(value),
     }));
   }, []);
 
