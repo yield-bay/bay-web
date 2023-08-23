@@ -46,26 +46,29 @@ const useIsApprovedToken = (
 
   const allowanceRaw = data as bigint;
 
-  const allowance = new BigNumber(
-    allowanceRaw?.toString() ?? "0"
-  ).decimalPlaces(0, 1);
+  const allowance = BigNumber(allowanceRaw?.toString() ?? "0").decimalPlaces(
+    0,
+    1
+  );
   // console.log("allowance bigint", allowance);
-  console.log("allowance", allowanceRaw);
+  // console.log("allowance", allowanceRaw);
 
   const inputAmount = useMemo(() => {
     if (tokenBalance?.decimals && input) {
-      return new BigNumber(input.toString())
-        .multipliedBy(new BigNumber(10).pow(tokenBalance.decimals))
+      return BigNumber(input.toString())
+        .multipliedBy(BigNumber(10).pow(tokenBalance.decimals))
         .decimalPlaces(0, 1);
     }
-    return new BigNumber(0);
+    return BigNumber(0);
   }, [tokenBalance, input]);
 
-  console.log("input", input);
-  console.log("inputAmount", inputAmount);
+  // console.log("input", input);
 
-  const compare = inputAmount.isLessThanOrEqualTo(allowance);
-  console.log("compare", compare);
+  const compare =
+    input == undefined || input == 0
+      ? false
+      : inputAmount.isLessThanOrEqualTo(allowance);
+  // console.log("compare", compare);
   // const isSuccess = useMemo(() => {
   //   // return !tokenBalance
   //   //   ? false
@@ -104,8 +107,8 @@ const useApproveToken = (
     chainId: chain?.id,
     args: [
       spender,
-      new BigNumber(tokenBalance?.formatted ?? "0")
-        .multipliedBy(new BigNumber(10).pow(tokenBalance?.decimals ?? 0))
+      BigNumber(tokenBalance?.formatted ?? "0")
+        .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals ?? 0))
         .decimalPlaces(0, 1)
         .toString(),
     ],
@@ -124,6 +127,9 @@ const useApproveToken = (
   useEffect(() => {
     if (isSuccessApproveTxn) {
       toast(`${tokenSymbol} Approved!`);
+      // console.log(
+      //   `${tokenSymbol} Approved by ${tokenBalance?.formatted} Amount`
+      // );
     }
   }, [isSuccessApproveTxn]);
 

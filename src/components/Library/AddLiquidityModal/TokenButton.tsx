@@ -56,8 +56,6 @@ const TokenButton: React.FC<Props> = ({
     inputMapAmount[token?.address]
   );
 
-  console.log("inputMapAmount[token?.address]", inputMapAmount, token?.address);
-
   // Approve token
   const {
     isLoadingApproveCall,
@@ -106,6 +104,7 @@ const TokenButton: React.FC<Props> = ({
     !inputMapAmount[token?.address] ||
     Object.keys(approvalMap).find((key) => key === token?.address)
   ) {
+    // console.log("ApprovalMap", approvalMap, !inputMapAmount[token?.address]);
     return <></>;
   }
 
