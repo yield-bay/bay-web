@@ -16,7 +16,7 @@ const Banner = ({
     <div className="sm:mb-12 mb-48">
       <div className="bg-[#E0E0FF] text-[#080814] py-6 sm:py-2 px-6 font-semibold fixed w-full top-0 z-50 flex sm:flex-row flex-col text-justify justify-center items-center">
         <span>
-          GM! If you like using yieldbay, we are up for vite on Polkassembly to
+          GM! If you like using yieldbay, we are up for vote on Polkassembly to
           onboard the next 3B Users to Polkadot. Please Vote!
         </span>
         <div className="sm:ml-6 flex sm:flex-row flex-col justify-center items-center sm:mt-0 mt-4">
