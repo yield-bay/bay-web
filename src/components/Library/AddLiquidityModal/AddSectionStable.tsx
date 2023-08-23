@@ -500,22 +500,14 @@ const AddSectionStable: FC = () => {
               {estLpAmount < 0.01 ? "<0.01" : toUnits(estLpAmount, 2)}
             </span>
             {/* Make a mapping here */}
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[0] as string}
-                alt={farm?.asset.logos[0] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={farm?.asset.logos[1] as string}
-                alt={farm?.asset.logos[1] as string}
-                width={24}
-                height={24}
-              />
-            </div>
+            {farm?.asset.logos.map((logo, index) => (
+              <div
+                key={logo}
+                className="z-10 flex overflow-hidden rounded-full"
+              >
+                <Image src={logo} alt={logo} width={24} height={24} />
+              </div>
+            ))}
           </div>
           <p>{farm?.asset.symbol} Tokens</p>
         </div>

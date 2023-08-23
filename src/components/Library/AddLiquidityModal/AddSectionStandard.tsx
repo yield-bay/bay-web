@@ -10,7 +10,7 @@ import {
 import { useAtom } from "jotai";
 import clsx from "clsx";
 import Image from "next/image";
-import { parseAbi, parseUnits, parseEther } from "viem";
+import { parseAbi } from "viem";
 import {
   useAccount,
   useBalance,
@@ -26,17 +26,11 @@ import { CogIcon } from "@heroicons/react/solid";
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
 import Spinner from "@components/Library/Spinner";
-import {
-  addLiqModalOpenAtom,
-  evmPosLoadingAtom,
-  lpUpdatedAtom,
-  slippageModalOpenAtom,
-} from "@store/commonAtoms";
+import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import {
   selectedFarmAtom,
   slippageAtom,
   tokenPricesAtom,
-  farmsAtom,
   positionsAtom,
   lpTokenPricesAtom,
 } from "@store/atoms";
@@ -56,10 +50,7 @@ import { getNativeTokenAddress } from "@utils/network";
 import WrongNetworkModal from "../WrongNetworkModal";
 import { handleAddLiquidityEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
-import {
-  // fetchEvmPositions,
-  updateEvmPositions,
-} from "@utils/position-utils/evmPositions";
+import { updateEvmPositions } from "@utils/position-utils/evmPositions";
 import BigNumber from "bignumber.js";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
@@ -87,12 +78,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
     slippageModalOpenAtom
   );
-  const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
-  // const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
-  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
 
   const [SLIPPAGE] = useAtom(slippageAtom);
   const [txnHash, setTxnHash] = useState<string>("");
@@ -124,121 +112,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     selectedFarm?.protocol!,
     selectedFarm?.router!
   );
-  // let iface = new ethers.Interface(
-  //   getRouterAbi(
-  //     selectedFarm?.protocol!,
-  //     selectedFarm?.farmType == "StandardAmm" ? false : true
-  //   )
-  // );
-  // const fdata = new ethers.Interface(
-  //   getRouterAbi(
-  //     selectedFarm?.protocol!,
-  //     selectedFarm?.farmType == "StandardAmm" ? false : true
-  //   )
-  // ).encodeFunctionData(
-  //   getAddLiqFunctionName(selectedFarm?.protocol as string) as any,
-  //   [
-  //     farmAsset0?.address, // TokenA Address
-  //     farmAsset1?.address, // TokenB Address
-  //     // 1,
-  //     // 1,
-  //     // 1,
-  //     // 1,
-  //     parseUnits(
-  //       `${
-  //         firstTokenAmount == "" || firstTokenAmount == "0"
-  //           ? 1
-  //           : parseFloat(firstTokenAmount)
-  //       }`,
-  //       farmAsset0?.decimals
-  //     ),
-  //     parseUnits(
-  //       `${
-  //         secondTokenAmount == "" || secondTokenAmount == "0"
-  //           ? 1 /
-  //             getPoolRatio(
-  //               reserve0,
-  //               reserve1,
-  //               farmAsset0.decimals,
-  //               farmAsset1.decimals
-  //             )
-  //           : parseFloat(secondTokenAmount)
-  //       }`,
-  //       farmAsset1?.decimals
-  //     ),
-  //     parseUnits(
-  //       `${
-  //         (firstTokenAmount == "" || firstTokenAmount == "0"
-  //           ? 1
-  //           : parseFloat(firstTokenAmount) * (100 - SLIPPAGE)) / 100
-  //       }`,
-  //       farmAsset0?.decimals
-  //     ), // amountAMin
-  //     parseUnits(
-  //       `${
-  //         (secondTokenAmount == "" || secondTokenAmount == "0"
-  //           ? 1 /
-  //             getPoolRatio(
-  //               reserve0,
-  //               reserve1,
-  //               farmAsset0.decimals,
-  //               farmAsset1.decimals
-  //             )
-  //           : parseFloat(secondTokenAmount) * (100 - SLIPPAGE)) / 100
-  //       }`,
-  //       farmAsset1?.decimals
-  //     ), // amountBMin
-  //     address, // To
-  //     1784096161000, // deadline (uint256)
-  //   ]
-  // );
-  // const x = estimateGas(iface, fdata, selectedFarm!.router, address!);
-
-  // useEffect(function siriusReserves() {
-  //   if (selectedFarm?.protocol!.toLowerCase() == "sirius") {
-  //     const { data: bal0 } = useContractRead({
-  //       address: selectedFarm?.router!,
-  //       abi: parseAbi(siriusRouterAbi),
-  //       functionName: "getTokenBalance",
-  //       args: [0],
-  //       enabled: !!selectedFarm?.protocol! && !!selectedFarm?.router!,
-  //     });
-  //     const { data: bal1 } = useContractRead({
-  //       address: selectedFarm?.router!,
-  //       abi: parseAbi(siriusRouterAbi),
-  //       functionName: "getTokenBalance",
-  //       args: [1],
-  //       enabled: !!selectedFarm?.protocol! && !!selectedFarm?.router!,
-  //     });
-  //     reserve0 = (bal0 as bigint).toString();
-  //     reserve1 = (bal1 as bigint).toString();
-  //     // console.log("sirbal", bal0, bal1, router, selectedFarm?.protocol!);
-  //     // return {
-  //     //   reserve0: (bal0 as bigint).toString(),
-  //     //   reserve1: (bal1 as bigint).toString(),
-  //     // };
-  //   }
-  // });
-  // const { data: bal0 } = useContractRead({
-  //   address: selectedFarm?.router!,
-  //   abi: parseAbi(siriusRouterAbi),
-  //   functionName: "getTokenBalance",
-  //   args: [0],
-  //   enabled: !!selectedFarm?.protocol! && !!selectedFarm?.router!,
-  // });
-  // // eslint-disable-next-line react-hooks/rules-of-hooks
-  // const { data: bal1 } = useContractRead({
-  //   address: selectedFarm?.router!,
-  //   abi: parseAbi(siriusRouterAbi),
-  //   functionName: "getTokenBalance",
-  //   args: [1],
-  //   enabled: !!selectedFarm?.protocol! && !!selectedFarm?.router!,
-  // });
-  // // console.log("sirbal", bal0, bal1, router, selectedFarm?.protocol!);
-  // // return {
-  // //   reserve0: (bal0 as bigint).toString(),
-  // //   reserve1: (bal1 as bigint).toString(),
-  // // };
 
   const { minLpTokens, totalSupply } = useMinimumLPTokens(
     selectedFarm?.asset.address!,

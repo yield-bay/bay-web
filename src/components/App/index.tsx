@@ -90,13 +90,11 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (router.query.id) {
-      router.push(
-        `${
-          typeof window !== "undefined"
-            ? `http://${window.location.host}` // for testing locally
-            : "https://list.yieldbay.io"
-        }/farm/${router.query.id}?addr=${router.query.farm}`
-      );
+      const url =
+        typeof window !== "undefined"
+          ? `http://${window.location.host}` // for testing locally
+          : "https://list.yieldbay.io";
+      router.push(`${url}/farm/${router.query.id}?addr=${router.query.farm}`);
     }
   }, [router]);
 
