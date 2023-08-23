@@ -733,7 +733,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     approveToken0CallLoading || approveToken0TxnLoading
                   }
                   text={
-                    approveToken0CallLoading
+                    fixedAmtNum(firstTokenAmount) <= 0
+                      ? "Please enter amount"
+                      : approveToken0CallLoading
                       ? "Sign the Txn in Wallet"
                       : approveToken0TxnLoading
                       ? "Waiting for Approval"
@@ -743,7 +745,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                     approveToken0TxnSuccess ||
                     approveToken0CallLoading ||
                     approveToken0TxnLoading ||
-                    typeof approveToken0 == "undefined"
+                    typeof approveToken0 == "undefined" ||
+                    fixedAmtNum(firstTokenAmount) <= 0
                     // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
                   }
                   onClick={async () => {
@@ -768,7 +771,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       approveToken1CallLoading || approveToken1TxnLoading
                     }
                     text={
-                      approveToken1CallLoading
+                      fixedAmtNum(secondTokenAmount) <= 0
+                        ? "Please enter amount"
+                        : approveToken1CallLoading
                         ? "Sign the Txn in Wallet"
                         : approveToken1TxnLoading
                         ? "Waiting for Approval"
@@ -778,7 +783,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       approveToken1TxnSuccess ||
                       approveToken1CallLoading ||
                       approveToken1TxnLoading ||
-                      typeof approveToken1 == "undefined"
+                      typeof approveToken1 == "undefined" ||
+                      fixedAmtNum(secondTokenAmount) <= 0
                       // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
                     }
                     onClick={async () => {
