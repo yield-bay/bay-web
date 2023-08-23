@@ -7,70 +7,63 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { tokenAbi } from "@components/Common/Layout/evmUtils";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import toast from "react-hot-toast";
 import BigNumber from "bignumber.js";
 
+// Define known structure for tokenBalance (Modify as needed)
+interface TokenBalance {
+  decimals: number;
+  formatted: string;
+  symbol: string;
+  value: bigint;
+}
+
 /**
+ * Check if a token is approved.
  *
- * @param token Underlying Asset
- * @param spender spender Contract Address
- * @returns data, isLoading, isError, isSuccess
+ * @param tokenAddress Address of the token
+ * @param spender Contract address of the spender
+ * @param tokenBalance Balance of the token
+ * @param input Input value
+ * @returns Object containing data, isLoading, isError, and isSuccess
  */
 const useIsApprovedToken = (
   tokenAddress: Address,
   spender: Address,
-  tokenBalance: any | undefined,
+  tokenBalance: TokenBalance | undefined,
   input: number
 ) => {
   const { address } = useAccount();
+
   const { data, isLoading, isError } = useContractRead({
     address: tokenAddress,
     abi: parseAbi(tokenAbi),
-    functionName: "allowance" as any,
-    args: [
-      address, // owner
-      spender, // spender
-    ],
+    functionName: "allowance",
+    args: [address, spender], // owner, spender
     enabled: !!address && !!spender,
   });
 
-  const allow = data as bigint;
+  const allowanceRaw = data as bigint;
 
-  const allowance = BigNumber(allow?.toString() ?? "0", 10)
-    // .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
-    .decimalPlaces(0, 1);
+  const allowance = new BigNumber(
+    allowanceRaw?.toString() ?? "0"
+  ).decimalPlaces(0, 1);
   // // console.log("allowance bigint", allow);
   // console.log("allowance", allowance.toString());
 
-  // console.log("rawinput", input);
-  // console.log("tokenbalance", tokenBalance);
-
-  const inputAmount = BigNumber(input.toString(), 10)
-    .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
-    .decimalPlaces(0, 1);
-  // console.log("inputAmount", inputAmount.toString());
+  const inputAmount = useMemo(() => {
+    if (tokenBalance?.decimals && input) {
+      return new BigNumber(input.toString())
+        .multipliedBy(new BigNumber(10).pow(tokenBalance.decimals))
+        .decimalPlaces(0, 1);
+    }
+    return new BigNumber(0);
+  }, [tokenBalance, input]);
 
   const compare = inputAmount.isLessThanOrEqualTo(allowance);
   // console.log("compare", compare);
-
   // const isSuccess = useMemo(() => {
-  //   const numdata = Number(data) / 10 ** 12;
-  //   // // console.log(
-  //   //   "token_address",
-  //   //   tokenAddress,
-  //   //   "\ndata",
-  //   //   data,
-  //   //   "\nnumber_data",
-  //   //   numdata,
-  //   //   "\ntokenBalance",
-  //   //   parseFloat(tokenBalance ?? "0"),
-  //   //   "\nisApproved: should be true if data >= tokenBalance"
-  //   //   // !tokenBalance ? false : numdata >= formatData(parseFloat(tokenBalance))
-  //   //   // !input ? false : numdata >= formatData(parseFloat(tokenBalance))
-  //   // );
-
-  //   // allowed tokens >= token balance
   //   // return !tokenBalance
   //   //   ? false
   //   //   : numdata >= formatData(parseFloat(tokenBalance));
@@ -79,19 +72,22 @@ const useIsApprovedToken = (
 };
 
 /**
+ * Approve a token.
  *
- * @param token Underlying Asset
- * @param spender spender Contract Address
- * @returns data, isLoadingApproveCall, isLoadingApproveTxn, isError, isSuccessApproveCall, isSuccessApproveTxn, writeAsync
+ * @param tokenAddress Address of the token
+ * @param spender Contract address of the spender
+ * @param tokenSymbol Symbol of the token
+ * @param tokenBalance Balance of the token
+ * @returns Object containing various states and the writeAsync function
  */
 const useApproveToken = (
   tokenAddress: Address,
   spender: Address,
   tokenSymbol: string,
-  tokenBalance: any | undefined
+  tokenBalance: TokenBalance | undefined
 ) => {
   const { chain } = useNetwork();
-  // console.log("token", tokenSymbol, "\ntokenBalance", tokenBalance);
+
   const {
     data,
     isLoading: isLoadingApproveCall,
@@ -104,14 +100,15 @@ const useApproveToken = (
     functionName: "approve" as any,
     chainId: chain?.id,
     args: [
-      spender, // spender
-      BigNumber(tokenBalance?.formatted, 10)
-        .multipliedBy(BigNumber(10).pow(tokenBalance?.decimals))
+      spender,
+      new BigNumber(tokenBalance?.formatted ?? "0")
+        .multipliedBy(new BigNumber(10).pow(tokenBalance?.decimals ?? 0))
         .decimalPlaces(0, 1)
         .toString(),
     ],
     onError: (error) => {
-      // console.log(`Error while Approving:`, error);
+      // This is just logging the error. Depending on your needs, you might want to show this to the user or take corrective action.
+      console.error(`Error while Approving:`, error);
     },
   });
 
