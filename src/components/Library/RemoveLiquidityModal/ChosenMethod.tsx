@@ -122,22 +122,22 @@ const ChosenMethod: React.FC<Props> = ({
         autoFocus
       />
       <div className="inline-flex items-center gap-x-2">
-        <p className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
+        <div className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">
           {lpBalLoading ? (
             <span>loading...</span>
           ) : (
             !!lpBal && (
-              <div className="flex flex-col items-end">
+              <p className="flex flex-col items-end">
                 <span>Balance</span>
                 <span>
                   {parseFloat(lpBal) < 0.01
                     ? "<0.01"
                     : toUnits(parseFloat(lpBal), 2)}
                 </span>
-              </div>
+              </p>
             )
           )}
-        </p>
+        </div>
         <button
           className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
           onClick={() => {
