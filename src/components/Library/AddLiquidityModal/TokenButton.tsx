@@ -56,6 +56,8 @@ const TokenButton: React.FC<Props> = ({
     inputMapAmount[token?.address]
   );
 
+  console.log("inputMapAmount[token?.address]", inputMapAmount, token?.address);
+
   // Approve token
   const {
     isLoadingApproveCall,

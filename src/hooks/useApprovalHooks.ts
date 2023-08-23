@@ -49,8 +49,8 @@ const useIsApprovedToken = (
   const allowance = new BigNumber(
     allowanceRaw?.toString() ?? "0"
   ).decimalPlaces(0, 1);
-  // // console.log("allowance bigint", allow);
-  // console.log("allowance", allowance.toString());
+  // console.log("allowance bigint", allowance);
+  console.log("allowance", allowanceRaw);
 
   const inputAmount = useMemo(() => {
     if (tokenBalance?.decimals && input) {
@@ -61,8 +61,11 @@ const useIsApprovedToken = (
     return new BigNumber(0);
   }, [tokenBalance, input]);
 
+  console.log("input", input);
+  console.log("inputAmount", inputAmount);
+
   const compare = inputAmount.isLessThanOrEqualTo(allowance);
-  // console.log("compare", compare);
+  console.log("compare", compare);
   // const isSuccess = useMemo(() => {
   //   // return !tokenBalance
   //   //   ? false
