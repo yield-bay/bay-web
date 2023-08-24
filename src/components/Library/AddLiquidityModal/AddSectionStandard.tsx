@@ -6,6 +6,7 @@ import {
   useEffect,
   useState,
   useMemo,
+  useCallback,
 } from "react";
 import { useAtom } from "jotai";
 import clsx from "clsx";
@@ -55,6 +56,7 @@ import BigNumber from "bignumber.js";
 import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
 import SlippageBox from "../SlippageBox";
+import TokenContainer from "./TokenContainer";
 
 enum InputType {
   Off = -1,
@@ -65,9 +67,11 @@ enum InputType {
 const getPoolRatio = (r0: string, r1: string, d0: number, d1: number) => {
   const amount0 = parseFloat(ethers.formatUnits(r0, d0));
   const amount1 = parseFloat(ethers.formatUnits(r1, d1));
-  const pr = amount0 / amount1;
-  return pr;
+  const poolRatio = amount0 / amount1;
+  return poolRatio;
 };
+
+const THIRTY_MINUTES_IN_MS = 60000 * 30;
 
 const AddSectionStandard: FC<PropsWithChildren> = () => {
   const { address, connector } = useAccount();
@@ -92,16 +96,11 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
 
   const [farmAsset0, farmAsset1] =
     selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
-  // const [reserve0, reserve1] = useState("0");
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
   const [isProcessStep, setIsProcessStep] = useState(false);
   const [isSlippageStep, setIsSlippageStep] = useState(false);
-
-  useEffect(() => {
-    // console.log("selectedFarm", selectedFarm);
-  }, [selectedFarm]);
 
   // Amount States
   const [firstTokenAmount, setFirstTokenAmount] = useState("");
@@ -148,22 +147,25 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const [nativePrice, setNativePrice] = useState<number>(0);
 
   useEffect(() => {
-    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(
-      selectedFarm?.chain!
-    );
-    const tokenPrice =
-      tokenPricesMap[
-        `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-      ];
-    // // console.log(
-    //   "tokenkey",
-    //   `${selectedFarm?.chain!}-${selectedFarm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    // );
-    // console.log("token", tokenPrice);
-    if (!!tokenPrice && typeof tokenPrice == "number") {
-      // console.log("...setting tokenprice", tokenPrice);
-      setNativePrice(tokenPrice);
+    if (!selectedFarm) {
+      console.warn("Farm is not available!");
+      return;
     }
+    const { tokenSymbol, tokenAddress } = getNativeTokenAddress(
+      selectedFarm.chain
+    );
+    if (!tokenSymbol || !tokenAddress) {
+      console.warn("Native token is not available!");
+      return;
+    }
+    const tokenPriceKey = `${selectedFarm.chain}-${selectedFarm.protocol}-${tokenSymbol}-${tokenAddress}`;
+    const tokenPrice = tokenPricesMap[tokenPriceKey];
+
+    if (typeof tokenPrice !== "number") {
+      console.warn(`Token price for ${tokenPriceKey} is not a number`);
+      return;
+    }
+    setNativePrice(tokenPrice);
   }, [selectedFarm, tokenPricesMap]);
 
   // Balance Token0
@@ -174,8 +176,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     enabled: !!address && !!selectedFarm,
   });
 
-  // console.log("token0Balance", token0Balance);
-
   // Balance Token1
   const { data: token1Balance, isLoading: token1BalanceLoading } = useBalance({
     address,
@@ -183,8 +183,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     token: farmAsset1?.address,
     enabled: !!address && !!selectedFarm,
   });
-
-  // console.log("token0Balance", token0Balance);
 
   // Check Approval Token0 & Token1
   const {
@@ -213,7 +211,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const {
     isLoadingApproveCall: approveToken0CallLoading,
     isLoadingApproveTxn: approveToken0TxnLoading,
-    // isSuccessApproveCall: approveToken0CallSuccess,
     isSuccessApproveTxn: approveToken0TxnSuccess,
     writeAsync: approveToken0,
   } = useApproveToken(
@@ -225,7 +222,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const {
     isLoadingApproveCall: approveToken1CallLoading,
     isLoadingApproveTxn: approveToken1TxnLoading,
-    // isSuccessApproveCall: approveToken1CallSuccess,
     isSuccessApproveTxn: approveToken1TxnSuccess,
     writeAsync: approveToken1,
   } = useApproveToken(
@@ -271,57 +267,69 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     hash: addLiquidityData?.hash,
   });
 
+  /**
+   *
+   * @param amount - Amount to be formatted
+   * @param decimals - Decimals of the token
+   * @param multiplier - Multiplier to be applied to the amount
+   * @returns Formatted amount
+   */
+  const formatTokenAmount = (
+    amount: string,
+    decimals: number,
+    multiplier: number = 1
+  ) => {
+    return BigNumber(amount, 10)
+      .multipliedBy(BigNumber(10).pow(decimals))
+      .multipliedBy(multiplier)
+      .decimalPlaces(0, 1)
+      .toString();
+  };
+
   const handleAddLiquidity = async () => {
+    if (!addLiquidity) {
+      throw new Error("AddLiquidity is not defined!");
+    }
+
     try {
       // Fetch latest block's timestamp
       const block = await publicClient.getBlock();
       const blocktimestamp =
-        Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding  30 minutes
-      // console.log("timestamp fetched //", blocktimestamp);
-
-      // console.log("calling addliquidity method...");
+        Number(block.timestamp.toString() + "000") + THIRTY_MINUTES_IN_MS;
 
       const addArgs = [
         farmAsset0?.address,
         farmAsset1?.address,
-        BigNumber(firstTokenAmount, 10)
-          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
-        BigNumber(secondTokenAmount, 10)
-          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
-        BigNumber(firstTokenAmount, 10)
-          .multipliedBy((100 - SLIPPAGE) / 100)
-          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
-        BigNumber(secondTokenAmount, 10)
-          .multipliedBy((100 - SLIPPAGE) / 100)
-          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
+        formatTokenAmount(firstTokenAmount, farmAsset0?.decimals),
+        formatTokenAmount(secondTokenAmount, farmAsset1?.decimals),
+        formatTokenAmount(
+          firstTokenAmount,
+          farmAsset0?.decimals,
+          (100 - SLIPPAGE) / 100
+        ),
+        formatTokenAmount(
+          secondTokenAmount,
+          farmAsset1?.decimals,
+          (100 - SLIPPAGE) / 100
+        ),
         address, // To
         blocktimestamp, // deadline (uint256)
       ];
-      // console.log("addArgs", addArgs);
 
       const txnRes = await addLiquidity?.({
         args: addArgs,
       });
+
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
+        console.info("Add Liquidity Txn Hash", txnRes.hash);
       }
-      // console.log(
-      //   `Adding Liquidity in ${selectedFarm?.asset.symbol} Farm`,
-      //   txnRes
-      // );
     } catch (error) {
       console.error(
         `Error while adding liquidity -> ${selectedFarm?.asset.symbol} Farm\n`,
         error
       );
+      // throw error;
     }
   };
 
@@ -365,14 +373,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       farmAsset0.decimals,
       farmAsset1.decimals
     );
-    // console.log(
-    //   "siri",
-    //   poolRatio,
-    //   reserve0,
-    //   reserve1,
-    //   farmAsset0.decimals,
-    //   farmAsset1.decimals
-    // );
     const expectedSecondTokenAmount = firstTokenAmount / poolRatio;
     const secondTokenAmount = isNaN(expectedSecondTokenAmount)
       ? "0"
@@ -394,55 +394,49 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     setFirstTokenAmount(firstTokenAmount);
   };
 
+  // Handler function for handling inputs
+  const handleChangeTokenAmount = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setTokenAmount: React.Dispatch<React.SetStateAction<string>>,
+    updateTokenAmount: (value: number) => void,
+    decimals: number
+  ) => {
+    const value = e.target.value;
+    // regex only let numerical values upto token decimals
+    const regex = createNumRegex(decimals);
+    if (regex.test(value) || value === "") {
+      setTokenAmount(value);
+      // update first amount based on second
+      updateTokenAmount(parseFloat(value));
+    }
+  };
+
   // update first token values
   const handleChangeFirstTokenAmount = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = e.target.value;
-    // regex only let numerical values upto token decimals
-    const regex = createNumRegex(farmAsset0.decimals);
-    if (regex.test(value) || value === "") {
-      setFirstTokenAmount(value);
-      // update first amount based on second
-      updateSecondTokenAmount(parseFloat(value));
-    }
+    handleChangeTokenAmount(
+      e,
+      setFirstTokenAmount,
+      updateSecondTokenAmount,
+      farmAsset0.decimals
+    );
   };
 
-  // update token values
+  // update second token values
   const handleChangeSecondTokenAmount = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const value = e.target.value;
-    // regex only let numerical values upto token decimals
-    const regex = createNumRegex(farmAsset1.decimals);
-    if (regex.test(value) || value === "") {
-      setSecondTokenAmount(value);
-      // update first amount based on second
-      updateFirstTokenAmount(parseFloat(value));
-    }
+    handleChangeTokenAmount(
+      e,
+      setSecondTokenAmount,
+      updateFirstTokenAmount,
+      farmAsset1.decimals
+    );
   };
 
   useEffect(() => {
-    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      // console.log("isToken0ApprovedSuccess", isToken0ApprovedSuccess);
-      // console.log("isToken1ApprovedSuccess", isToken1ApprovedSuccess);
-    }
-  }, [isToken1ApprovedSuccess, isToken0ApprovedSuccess]);
-
-  // Remove after testing
-  useEffect(() => {
-    if (isLoadingAddLiqCall) {
-      // console.log("addliq method loading... sign the txn");
-    } else if (isLoadingAddLiqTxn) {
-      // console.log("addliq txn loading...");
-      // console.log("call hash", addLiquidityData?.hash);
-    }
-  }, [isLoadingAddLiqCall, isLoadingAddLiqTxn]);
-
-  useEffect(() => {
     if (isSuccessAddLiqTxn) {
-      // console.log("addliq txn success!");
-
       // Tracking
       handleAddLiquidityEvent({
         userAddress: address!,
@@ -488,12 +482,6 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
         },
       });
       (async () => {
-        // console.log(
-        //   "beforeuepos",
-        //   selectedFarm?.chain!,
-        //   selectedFarm?.protocol!
-        // );
-
         const a = await updateEvmPositions({
           farm: {
             id: selectedFarm?.id!,
@@ -521,175 +509,77 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     }
   }, [isSuccessAddLiqTxn]);
 
-  useEffect(() => {
-    if (!isToken0ApprovedLoading || !isToken1ApprovedLoading) {
-      // console.log("isSuccess Approve0", approveToken0TxnSuccess);
-      // console.log("isSuccess Approve1", approveToken1TxnSuccess);
-    }
-  }, [approveToken0TxnSuccess, approveToken1TxnSuccess]);
-
   const InputStep = () => {
+    const disableInput =
+      approveToken0CallLoading ||
+      approveToken0TxnLoading ||
+      approveToken1CallLoading ||
+      approveToken1TxnLoading;
+
+    const disableApproveFirstToken =
+      approveToken0TxnSuccess ||
+      approveToken0CallLoading ||
+      approveToken0TxnLoading ||
+      typeof approveToken0 == "undefined" ||
+      fixedAmtNum(firstTokenAmount) <= 0;
+
+    const disableApproveSecondToken =
+      approveToken1TxnSuccess ||
+      approveToken1CallLoading ||
+      approveToken1TxnLoading ||
+      typeof approveToken1 == "undefined" ||
+      fixedAmtNum(secondTokenAmount) <= 0;
+
+    const disableConfirmButton =
+      fixedAmtNum(firstTokenAmount) <= 0 ||
+      fixedAmtNum(secondTokenAmount) <= 0 ||
+      !(isToken0ApprovedSuccess || approveToken0TxnSuccess) ||
+      !(isToken1ApprovedSuccess || approveToken1TxnSuccess) ||
+      fixedAmtNum(firstTokenAmount) > fixedAmtNum(token0Balance?.formatted) ||
+      fixedAmtNum(secondTokenAmount) > fixedAmtNum(token1Balance?.formatted);
+
     return (
       <div className="w-full mt-9 flex flex-col gap-y-3">
         {/* First token Container */}
-        <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
-          <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={selectedFarm?.asset.logos[0] as string}
-                alt={selectedFarm?.asset.logos[0] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <span className="text-[#344054 text-[14px] font-medium leading-5">
-              {farmAsset0?.symbol}
-            </span>
-          </div>
-          <input
-            placeholder="0"
-            className={clsx(
-              "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
-            )}
-            disabled={
-              approveToken0CallLoading ||
-              approveToken0TxnLoading ||
-              approveToken1CallLoading ||
-              approveToken1TxnLoading
-            }
-            onChange={handleChangeFirstTokenAmount}
-            value={firstTokenAmount}
-            name="firstTokenAmount"
-            id="firstTokenAmount"
-            ref={firstInputRef}
-            // onBlur={() => setFocusedInput(InputType.Off)}
-            onFocus={() => setFocusedInput(InputType.First)}
-            autoFocus={focusedInput === InputType.First}
-          />
-          <div className="inline-flex items-center gap-x-2">
-            <div className="flex flex-col items-end text-sm leading-5 opacity-50">
-              {token0BalanceLoading ? (
-                <span>loading...</span>
-              ) : (
-                !!token0Balance && (
-                  <div className="flex flex-col items-end">
-                    <span>Balance</span>
-                    <span>
-                      {parseFloat(token0Balance?.formatted).toLocaleString(
-                        "en-US"
-                      )}
-                    </span>
-                  </div>
-                )
-              )}
-            </div>
-            <button
-              className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
-              onClick={() => {
-                setFirstTokenAmount(token0Balance?.formatted ?? "0");
-                updateSecondTokenAmount(
-                  parseFloat(token0Balance?.formatted ?? "0")
-                );
-              }}
-            >
-              MAX
-            </button>
-          </div>
-        </div>
-        {fixedAmtNum(firstTokenAmount) >
-          fixedAmtNum(token0Balance?.formatted) && (
-          <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            {focusedInput == InputType.First
-              ? "Insufficient Balance"
-              : `You need ${
-                  fixedAmtNum(firstTokenAmount) -
-                  fixedAmtNum(token0Balance?.formatted)
-                } ${
-                  farmAsset0?.symbol
-                } for creating an LP token with ${fixedAmtNum(
-                  secondTokenAmount
-                )} ${farmAsset1?.symbol}`}
-          </div>
-        )}
+        <TokenContainer
+          handleChangeTokenAmount={handleChangeFirstTokenAmount}
+          inputToFocus={InputType.First}
+          focusedInput={focusedInput}
+          setFocusedInput={setFocusedInput}
+          farm={selectedFarm!}
+          tokenSymbol={farmAsset0?.symbol}
+          tokenAmount={firstTokenAmount}
+          inputRef={firstInputRef}
+          setTokenAmount={setFirstTokenAmount}
+          updateAnotherTokenAmount={updateSecondTokenAmount}
+          tokenBalanceLoading={token0BalanceLoading}
+          tokenBalance={token0Balance}
+          otherTokenAmount={secondTokenAmount}
+          otherTokenSymbol={farmAsset1?.symbol}
+          disableInput={disableInput}
+        />
         {/* Plus Icon */}
         <div className="bg-[#e0dcdc] flex justify-center p-3 max-w-fit items-center rounded-full text-base select-none mx-auto">
           <Image src="/icons/PlusIcon.svg" alt="Plus" width={16} height={16} />
         </div>
         {/* Second token container */}
-        <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
-          <div className="absolute left-0 -top-9 flex flex-row gap-x-[6px] items-center">
-            <div className="z-10 flex overflow-hidden rounded-full">
-              <Image
-                src={selectedFarm?.asset.logos[1] as string}
-                alt={selectedFarm?.asset.logos[1] as string}
-                width={24}
-                height={24}
-              />
-            </div>
-            <span className="text-[#344054 text-[14px] font-medium leading-5">
-              {farmAsset1?.symbol}
-            </span>
-          </div>
-          <input
-            placeholder="0"
-            className={clsx(
-              "text-base text-[#4E4C4C] font-bold leading-6 text-left bg-transparent focus:outline-none"
-            )}
-            onChange={handleChangeSecondTokenAmount}
-            value={secondTokenAmount}
-            name="secondTokenAmount"
-            id="secondTokenAmount"
-            ref={secondInputRef}
-            // onBlur={() => setFocusedInput(InputType.Off)}
-            onFocus={() => setFocusedInput(InputType.Second)}
-            autoFocus={focusedInput === InputType.Second}
-          />
-          <div className="inline-flex items-center gap-x-2">
-            <div className="flex flex-col items-end text-sm leading-5 opacity-50">
-              {token1BalanceLoading ? (
-                <span>loading...</span>
-              ) : (
-                !!token1Balance && (
-                  <p className="flex flex-col items-end">
-                    <span>Balance</span>
-                    <span>
-                      {parseFloat(token1Balance?.formatted).toLocaleString(
-                        "en-US"
-                      )}
-                    </span>
-                  </p>
-                )
-              )}
-            </div>
-            <button
-              className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
-              onClick={() => {
-                setSecondTokenAmount(token1Balance?.formatted ?? "0");
-                updateFirstTokenAmount(
-                  parseFloat(token1Balance?.formatted ?? "0")
-                );
-              }}
-            >
-              MAX
-            </button>
-          </div>
-        </div>
-        {fixedAmtNum(secondTokenAmount) >
-          fixedAmtNum(token1Balance?.formatted) && (
-          <div className="text-[#FF9999] leading-6 font-semibold text-base text-left">
-            {focusedInput == InputType.Second
-              ? "Insufficient Balance"
-              : `You need ${
-                  fixedAmtNum(secondTokenAmount) -
-                  fixedAmtNum(token1Balance?.formatted)
-                } ${
-                  farmAsset1?.symbol
-                } for creating an LP token with ${fixedAmtNum(
-                  firstTokenAmount
-                )} ${farmAsset0?.symbol}`}
-          </div>
-        )}
-
+        <TokenContainer
+          handleChangeTokenAmount={handleChangeSecondTokenAmount}
+          inputToFocus={InputType.Second}
+          focusedInput={focusedInput}
+          setFocusedInput={setFocusedInput}
+          farm={selectedFarm!}
+          tokenSymbol={farmAsset1?.symbol}
+          tokenAmount={secondTokenAmount}
+          inputRef={secondInputRef}
+          setTokenAmount={setSecondTokenAmount}
+          updateAnotherTokenAmount={updateFirstTokenAmount}
+          tokenBalanceLoading={token1BalanceLoading}
+          tokenBalance={token1Balance}
+          otherTokenAmount={firstTokenAmount}
+          otherTokenSymbol={farmAsset0?.symbol}
+          disableInput={disableInput}
+        />
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
           <div className="flex flex-col items-start gap-y-2">
@@ -741,14 +631,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                       ? "Waiting for Approval"
                       : `Approve ${farmAsset0.symbol}`
                   }
-                  disabled={
-                    approveToken0TxnSuccess ||
-                    approveToken0CallLoading ||
-                    approveToken0TxnLoading ||
-                    typeof approveToken0 == "undefined" ||
-                    fixedAmtNum(firstTokenAmount) <= 0
-                    // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
-                  }
+                  disabled={disableApproveFirstToken}
                   onClick={async () => {
                     try {
                       const txn = await approveToken0?.();
@@ -779,14 +662,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
                         ? "Waiting for Approval"
                         : `Approve ${farmAsset1.symbol}`
                     }
-                    disabled={
-                      approveToken1TxnSuccess ||
-                      approveToken1CallLoading ||
-                      approveToken1TxnLoading ||
-                      typeof approveToken1 == "undefined" ||
-                      fixedAmtNum(secondTokenAmount) <= 0
-                      // fixedAmtNum(nativeBal?.formatted) <= gasEstimate
-                    }
+                    disabled={disableApproveSecondToken}
                     onClick={async () => {
                       try {
                         const txn = await approveToken1?.();
@@ -803,20 +679,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
               <MButton
                 type="primary"
                 isLoading={false}
-                disabled={
-                  // firstTokenAmount == "" ||
-                  // secondTokenAmount == "" ||
-                  // parseFloat(firstTokenAmount) <= 0 ||
-                  // parseFloat(secondTokenAmount) <= 0 ||
-                  fixedAmtNum(firstTokenAmount) <= 0 ||
-                  fixedAmtNum(secondTokenAmount) <= 0 ||
-                  !(isToken0ApprovedSuccess || approveToken0TxnSuccess) ||
-                  !(isToken1ApprovedSuccess || approveToken1TxnSuccess) ||
-                  fixedAmtNum(firstTokenAmount) >
-                    fixedAmtNum(token0Balance?.formatted) ||
-                  fixedAmtNum(secondTokenAmount) >
-                    fixedAmtNum(token1Balance?.formatted)
-                }
+                disabled={disableConfirmButton}
                 text="Confirm Adding Liquidity"
                 onClick={() => {
                   setIsConfirmStep(true);
@@ -841,31 +704,22 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       [
         farmAsset0?.address,
         farmAsset1?.address,
-        BigNumber(firstTokenAmount, 10)
-          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
-        BigNumber(secondTokenAmount, 10)
-          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
-        BigNumber(firstTokenAmount, 10)
-          .multipliedBy((100 - SLIPPAGE) / 100)
-          .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
-        BigNumber(secondTokenAmount, 10)
-          .multipliedBy((100 - SLIPPAGE) / 100)
-          .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
-          .decimalPlaces(0, 1)
-          .toString(),
+        formatTokenAmount(firstTokenAmount, farmAsset0?.decimals),
+        formatTokenAmount(secondTokenAmount, farmAsset1?.decimals),
+        formatTokenAmount(
+          firstTokenAmount,
+          farmAsset0?.decimals,
+          (100 - SLIPPAGE) / 100
+        ),
+        formatTokenAmount(
+          secondTokenAmount,
+          farmAsset1?.decimals,
+          (100 - SLIPPAGE) / 100
+        ),
         address, // To
         1784096161000, // deadline (uint256)
       ]
     );
-
-    // console.log("firstTokenAmount", firstTokenAmount);
-    // console.log("secondTokenAmount", secondTokenAmount);
 
     return (
       <div className="flex flex-col gap-y-8 text-left">
@@ -1114,14 +968,31 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     );
   };
 
-  const isOpenModalCondition =
-    approveToken0CallLoading ||
-    approveToken1CallLoading ||
-    approveToken0TxnLoading ||
-    approveToken1TxnLoading ||
-    isLoadingAddLiqCall ||
-    isLoadingAddLiqTxn ||
-    isSlippageModalOpen;
+  const isOpenModalCondition = useMemo(() => {
+    return (
+      approveToken0CallLoading ||
+      approveToken1CallLoading ||
+      approveToken0TxnLoading ||
+      approveToken1TxnLoading ||
+      isLoadingAddLiqCall ||
+      isLoadingAddLiqTxn ||
+      isSlippageModalOpen
+    );
+  }, [
+    approveToken0CallLoading,
+    approveToken1CallLoading,
+    approveToken0TxnLoading,
+    approveToken1TxnLoading,
+    isLoadingAddLiqCall,
+    isLoadingAddLiqTxn,
+    isSlippageModalOpen,
+  ]);
+
+  const setOpenProp = useCallback(() => {
+    if (!isOpenModalCondition) {
+      setIsOpen(false);
+    }
+  }, [isOpenModalCondition]);
 
   if (selectedFarm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
     return (
@@ -1137,7 +1008,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     !!selectedFarm && (
       <LiquidityModalWrapper
         open={isOpen || isOpenModalCondition}
-        setOpen={isOpenModalCondition ? () => {} : setIsOpen}
+        setOpen={setOpenProp}
         title="Add Liquidity"
       >
         {isSlippageStep ? (
