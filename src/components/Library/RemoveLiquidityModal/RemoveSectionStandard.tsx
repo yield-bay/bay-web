@@ -693,14 +693,21 @@ const RemoveSectionStandard = () => {
           >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
-              {gasEstimate === 0 && !isError ? (
+              {isError ? (
+                <p className="text-red-400">Error estimating gas</p>
+              ) : gasEstimate === 0 ? (
                 <p>estimating gas...</p>
               ) : (
                 <p>
                   <span className="opacity-40 mr-2 font-semibold">
-                    {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
+                    {gasEstimate < 0.001 ? "<0.001" : gasEstimate.toFixed(3)}{" "}
+                    {nativeBal?.symbol}
                   </span>
-                  <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+                  {gasEstimate * nativePrice < 0.00001 ? (
+                    "<$0.00001"
+                  ) : (
+                    <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+                  )}
                 </p>
               )}
             </div>
@@ -732,6 +739,7 @@ const RemoveSectionStandard = () => {
         <MButton
           type="primary"
           isLoading={false}
+          disabled={isError}
           text="Confirm Withdrawal"
           onClick={async () => {
             await handleRemoveLiquidity();
