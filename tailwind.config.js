@@ -18,7 +18,7 @@ module.exports = {
         baseBlueDark: "#010E23",
         primaryBlue: "#3780FF",
         primaryWhite: "#EEF1FC",
-        blueSilver: "#E2E8FF",
+        blueSilver: "#E3E3E3",
         bodyGray: "#EEF1FC",
         mediumGray: "#838383",
         success300: "#C5FFDC",

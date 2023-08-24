@@ -75,6 +75,8 @@ const RemoveSectionStable: FC = () => {
 
   const [txnHash, setTxnHash] = useState<string>("");
 
+  const isCorrectChain = farm?.chain.toLowerCase() == chain?.name.toLowerCase();
+
   // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
@@ -86,7 +88,8 @@ const RemoveSectionStable: FC = () => {
 
   // Balance of LP Token
   const { lpBalanceObj, lpBalance, lpBalanceLoading } = useLPBalance(
-    farm?.asset.address!
+    farm?.asset.address!,
+    isCorrectChain
   );
 
   const [percentage, setPercentage] = useState("");
@@ -138,7 +141,7 @@ const RemoveSectionStable: FC = () => {
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
     chainId: chain?.id,
-    enabled: !!address,
+    enabled: !!address && isCorrectChain,
   });
 
   const [nativePrice, setNativePrice] = useState<number>(0);
@@ -168,14 +171,15 @@ const RemoveSectionStable: FC = () => {
       : parseFloat(lpTokens !== "" ? lpTokens : "0"),
     farm!,
     removeMethodId,
-    indiTokenId
+    indiTokenId,
+    isCorrectChain
   );
 
-  useEffect(() => {
-    if (!isLoadingMinAmount) {
-      // console.log("minamoutdata removeliq stable", minAmount);
-    }
-  }, [isLoadingMinAmount]);
+  // useEffect(() => {
+  // if (!isLoadingMinAmount) {
+  // console.log("minamoutdata removeliq stable", minAmount);
+  // }
+  // }, [isLoadingMinAmount]);
 
   const getArgs = (
     removalId: number,
@@ -867,7 +871,7 @@ const RemoveSectionStable: FC = () => {
     isLoadingRemoveLiqTxn ||
     isSlippageModalOpen;
 
-  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+  if (!isCorrectChain) {
     return (
       <WrongNetworkModal
         isOpen={isOpen}

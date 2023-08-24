@@ -15,7 +15,6 @@ import {
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
 import {
-  farmsAtom,
   lpTokenPricesAtom,
   positionsAtom,
   selectedFarmAtom,
@@ -101,6 +100,8 @@ const AddSectionStable: FC = () => {
     [address: Address]: boolean;
   }>({});
 
+  const isCorrectChain = farm?.chain.toLowerCase() == chain?.name.toLowerCase();
+
   // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
@@ -132,7 +133,11 @@ const AddSectionStable: FC = () => {
   // Input focus states
   const [focusedInput, setFocusedInput] = useState<number>(0);
 
-  const totalSupply = useTotalSupply(farm?.asset.address!, farm?.protocol!);
+  const totalSupply = useTotalSupply(
+    farm?.asset.address!,
+    farm?.protocol!,
+    isCorrectChain
+  );
 
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
@@ -182,7 +187,8 @@ const AddSectionStable: FC = () => {
   const estLpAmount = useMinLPTokensStable(
     farm?.router!,
     farm?.protocol!,
-    amounts
+    amounts,
+    isCorrectChain
   );
 
   const {
@@ -688,7 +694,7 @@ const AddSectionStable: FC = () => {
     );
   };
 
-  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+  if (!isCorrectChain) {
     return (
       <WrongNetworkModal
         isOpen={isOpen}
