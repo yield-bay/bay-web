@@ -11,14 +11,15 @@ const useCalcMinAmount = (
   amount: number,
   farm: FarmType,
   removalId: number,
-  singleTokenIndex: number
+  singleTokenIndex: number,
+  isEnable: boolean = false
 ) => {
   const { chain } = useNetwork();
   const [SLIPPAGE] = useAtom(slippageAtom);
 
   const { data: lpToken } = useToken({
     address: farm?.asset.address,
-    enabled: !!farm,
+    enabled: !!farm && isEnable,
   });
 
   // console.log("ridddd", removalId);
