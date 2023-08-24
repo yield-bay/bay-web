@@ -12,7 +12,8 @@ const useMinimumLPTokens = (
   amount0: number,
   amount1: number,
   d0: number,
-  d1: number
+  d1: number,
+  isEnable: boolean = false
 ) => {
   /**
    * LP Tokens received ->
@@ -24,7 +25,7 @@ const useMinimumLPTokens = (
     address: pair,
     abi: parseAbi(lpAbi),
     functionName: "totalSupply",
-    enabled: !!pair,
+    enabled: !!pair && isEnable,
   });
 
   const minLpToken = useMemo(() => {

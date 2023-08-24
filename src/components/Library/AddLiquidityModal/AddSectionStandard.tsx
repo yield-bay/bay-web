@@ -94,6 +94,9 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const firstInputRef = useRef<HTMLInputElement>(null);
   const secondInputRef = useRef<HTMLInputElement>(null);
 
+  const isCorrectChain =
+    selectedFarm?.chain.toLowerCase() == chain?.name.toLowerCase();
+
   const [farmAsset0, farmAsset1] =
     selectedFarm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
@@ -109,7 +112,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const { reserve0, reserve1 } = useTokenReserves(
     selectedFarm?.asset.address!,
     selectedFarm?.protocol!,
-    selectedFarm?.router!
+    selectedFarm?.router!,
+    isCorrectChain
   );
 
   const { minLpTokens, totalSupply } = useMinimumLPTokens(
@@ -120,7 +124,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     fixedAmtNum(firstTokenAmount),
     fixedAmtNum(secondTokenAmount),
     farmAsset0.decimals,
-    farmAsset1.decimals
+    farmAsset1.decimals,
+    isCorrectChain
   );
 
   useEffect(() => {
@@ -142,7 +147,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
     chainId: chain?.id,
-    enabled: !!address,
+    enabled: !!address && isCorrectChain,
   });
   const [nativePrice, setNativePrice] = useState<number>(0);
 
@@ -173,7 +178,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     address,
     chainId: chain?.id,
     token: farmAsset0?.address,
-    enabled: !!address && !!selectedFarm,
+    enabled: !!address && !!selectedFarm && isCorrectChain,
   });
 
   // Balance Token1
@@ -181,7 +186,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     address,
     chainId: chain?.id,
     token: farmAsset1?.address,
-    enabled: !!address && !!selectedFarm,
+    enabled: !!address && !!selectedFarm && isCorrectChain,
   });
 
   // Check Approval Token0 & Token1
@@ -193,7 +198,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     farmAsset0?.address,
     selectedFarm?.router!,
     token0Balance,
-    fixedAmtNum(firstTokenAmount)
+    fixedAmtNum(firstTokenAmount),
+    isCorrectChain
   );
 
   const {
@@ -204,7 +210,8 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     farmAsset1?.address,
     selectedFarm?.router!,
     token1Balance,
-    fixedAmtNum(secondTokenAmount)
+    fixedAmtNum(secondTokenAmount),
+    isCorrectChain
   );
 
   // To approve token0 and token1
@@ -1002,7 +1009,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
     }
   }, [isOpenModalCondition]);
 
-  if (selectedFarm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+  if (!isCorrectChain) {
     return (
       <WrongNetworkModal
         isOpen={isOpen}

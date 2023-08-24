@@ -6,7 +6,12 @@ import {
 import { Address, parseAbi } from "viem";
 import { useContractRead } from "wagmi";
 
-const useTokenReserves = (pair: Address, protocol: string, router: Address) => {
+const useTokenReserves = (
+  pair: Address,
+  protocol: string,
+  router: Address,
+  isEnable: boolean = false
+) => {
   const { data: d } = useContractRead({
     address: protocol.toLowerCase() == "sirius" ? router : pair,
     abi: parseAbi(
@@ -23,7 +28,7 @@ const useTokenReserves = (pair: Address, protocol: string, router: Address) => {
         ? "getTokenBalance"
         : "getReserves",
     args: protocol.toLowerCase() == "sirius" ? [0] : [],
-    enabled: !!protocol,
+    enabled: !!protocol && isEnable,
   });
   const { data: bal1 } = useContractRead({
     address: router,
