@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useCallback, useState } from "react";
 import Link from "next/link";
 import clsx from "clsx";
 import {
@@ -43,6 +43,30 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
   const [, setStakingModalOpen] = useAtom(stakingModalOpenAtom);
   const [, setUnstakingModalOpen] = useAtom(unstakingModalOpenAtom);
   const [, setSelectedFarm] = useAtom(selectedFarmAtom);
+
+  const handleAddLiquidity = useCallback(() => {
+    setAddLiqModalOpen(true);
+    setSelectedFarm(thisFarm);
+  }, [setAddLiqModalOpen, setSelectedFarm, thisFarm]);
+
+  const handleRemoveLiquidity = useCallback(() => {
+    setRemoveLiqModalOpen(true);
+    setSelectedFarm(thisFarm);
+  }, [setRemoveLiqModalOpen, setSelectedFarm, thisFarm]);
+
+  const handleStake = useCallback(() => {
+    setStakingModalOpen(true);
+    setSelectedFarm(thisFarm);
+  }, [setStakingModalOpen, setSelectedFarm, thisFarm]);
+
+  const handleUnstake = useCallback(() => {
+    setUnstakingModalOpen(true);
+    setSelectedFarm(thisFarm);
+  }, [setUnstakingModalOpen, setSelectedFarm, thisFarm]);
+
+  const toggleShowRewards = useCallback(() => {
+    setShowRewards((prevShowRewards) => !prevShowRewards);
+  }, []);
 
   return (
     <li className="col-span-1 divide-y border border-[#EAECF0] h-fit divide-[#EAECF0] z-0 p-6 max-w-sm rounded-xl bg-white shadow">
@@ -125,10 +149,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
           <Button
             size="large"
             style="inline-flex justify-between items-center"
-            onButtonClick={() => {
-              setAddLiqModalOpen(true);
-              setSelectedFarm(thisFarm);
-            }}
+            onButtonClick={handleAddLiquidity}
           >
             <span>Add Liquidity</span>
             <PlusIcon className="text-black h-4 w-4" />
@@ -136,10 +157,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
           <Button
             size="large"
             style="inline-flex justify-between items-center"
-            onButtonClick={() => {
-              setRemoveLiqModalOpen(true);
-              setSelectedFarm(thisFarm);
-            }}
+            onButtonClick={handleRemoveLiquidity}
             disabled={
               position?.chain.toLowerCase() != "mangata kusama"
                 ? position.unstaked.amountUSD == 0
@@ -155,10 +173,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
               <Button
                 size="large"
                 style="inline-flex justify-between items-center w-1/2"
-                onButtonClick={() => {
-                  setStakingModalOpen(true);
-                  setSelectedFarm(thisFarm);
-                }}
+                onButtonClick={handleStake}
                 disabled={position.unstaked.amountUSD == 0}
                 tooltipText="You need to have liquidity first"
               >
@@ -173,10 +188,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
               <Button
                 size="large"
                 style="inline-flex justify-between items-center w-1/2"
-                onButtonClick={() => {
-                  setUnstakingModalOpen(true);
-                  setSelectedFarm(thisFarm);
-                }}
+                onButtonClick={handleUnstake}
                 disabled={position.staked.amountUSD == 0}
                 tooltipText="You need to stake tokens first"
               >
@@ -204,7 +216,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
                 "w-full inline-flex justify-between items-center bg-[#EDEDED] py-2 px-3",
                 showRewards ? "rounded-t-lg" : "rounded-lg"
               )}
-              onClick={() => setShowRewards(!showRewards)}
+              onClick={toggleShowRewards}
             >
               <p>Reward Breakdown</p>
               <ChevronDownIcon
@@ -262,19 +274,22 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
             </div>
           </div>
         )}
-        <div className="flex flex-col gap-2 sm:flex-row items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
-          <span className="font-medium">
-            Staked at {(thisFarm?.apr.base + thisFarm?.apr.reward).toFixed(2)}%
-            APY
-          </span>
-          <Link
-            // href={`/farm/${position.id}?addr=${position.address}`}
-            href={`/farm/${thisFarm?.id}?addr=${thisFarm?.asset.address}`}
-            className="font-bold underline underline-offset-2"
-          >
-            View Farm
-          </Link>
-        </div>
+        {/* Banner -- Display the APR at which liquidity is staked in a Pool */}
+        {position.staked.amount > 0 && !!thisFarm && (
+          <div className="flex flex-col gap-2 sm:flex-row items-center text-base leading-5 justify-center py-6 bg-[#EDEDFF] rounded-lg">
+            <span className="font-medium">
+              Staked at {(thisFarm.apr.base + thisFarm.apr.reward).toFixed(2)}%
+              APY
+            </span>
+            <Link
+              href={`/farm/${thisFarm.id}?addr=${thisFarm.asset.address}`}
+              className="font-bold underline underline-offset-2"
+              aria-label="View Farm"
+            >
+              View Farm
+            </Link>
+          </div>
+        )}
       </div>
     </li>
   );
