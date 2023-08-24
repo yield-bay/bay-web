@@ -54,12 +54,24 @@ import getTimestamp from "@utils/getTimestamp";
 import Countdown from "../Countdown";
 import SlippageBox from "../SlippageBox";
 
+// Constants
+const STABLE_AMM_SYMBOLS = [
+  "MAI-tripool",
+  "FRAX-3pool",
+  "MIM-3pool",
+  "MAI-3pool",
+  "4PUSDT",
+  "4JPYC",
+  "4WETH",
+  "4oUSD",
+  "4BAI",
+  "4WBNB",
+];
+
 const AddSectionStable: FC = () => {
   const publicClient = usePublicClient();
   const { address, connector } = useAccount();
   const { chain } = useNetwork();
-
-  // const [isApproving, setIsApproving] = useState(false);
 
   // Transaction Process Steps
   const [isConfirmStep, setIsConfirmStep] = useState(false);
@@ -92,7 +104,7 @@ const AddSectionStable: FC = () => {
   // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
-  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
+  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
   const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
   // Checking if farm assets have a lp-token pair
@@ -100,19 +112,7 @@ const AddSectionStable: FC = () => {
     const symbol = farm?.asset.symbol;
     const assetLogos = farm?.asset.logos;
     let logos: (string | string[])[];
-    if (
-      symbol == "MAI-tripool" ||
-      symbol == "FRAX-3pool" ||
-      symbol == "MIM-3pool" ||
-      symbol == "MAI-3pool" ||
-      symbol == "4PUSDT" ||
-      symbol == "4JPYC" ||
-      symbol == "4WETH" ||
-      symbol == "4oUSD" ||
-      symbol == "4BAI" ||
-      symbol == "4WBNB"
-    ) {
-      // eg. FRAX-tripool -- logos = [FRAX, [USDC, BUSD, USDT]]
+    if (STABLE_AMM_SYMBOLS.includes(symbol ?? "")) {
       logos = [
         assetLogos?.[0]!,
         [assetLogos?.[1]!, assetLogos?.[2]!, assetLogos?.[3]!],
@@ -164,15 +164,16 @@ const AddSectionStable: FC = () => {
   // const tokens = farm?.asset.underlyingAssets ?? [];
 
   const handleInput = useCallback((token: UnderlyingAssets, value: string) => {
+    const parsedValue = isNaN(parseFloat(value)) ? 0 : parseFloat(value);
     // Setting inputMap for Input fields
-    setInputMap((pre: any) => ({
+    setInputMap((pre: { [address: Address]: string }) => ({
       ...pre,
       [token.address]: value,
     }));
     // Setting inputMapAmount of amount array for calculation
-    setInputMapAmount((pre: any) => ({
+    setInputMapAmount((pre: { [address: Address]: number }) => ({
       ...pre,
-      [token.address]: isNaN(parseFloat(value)) ? 0 : parseFloat(value),
+      [token.address]: parsedValue,
     }));
   }, []);
 
@@ -301,9 +302,9 @@ const AddSectionStable: FC = () => {
     });
   }, [approvalMap, inputMapAmount]);
 
-  useEffect(() => {
-    // console.log("balanceMap", balanceMap);
-  }, [balanceMap]);
+  // useEffect(() => {
+  // console.log("balanceMap", balanceMap);
+  // }, [balanceMap]);
 
   const isSufficientBalance = useMemo(() => {
     return Object.entries(balanceMap).every(([tokenAddress, balance]) => {
@@ -315,11 +316,11 @@ const AddSectionStable: FC = () => {
     });
   }, [inputMapAmount, balanceMap]);
 
-  useEffect(() => {
-    // console.log("isRequirementApproved", isRequirementApproved);
-    // console.log("approvalMap", approvalMap);
-    // console.log("inputMapAmount", inputMapAmount);
-  }, [isRequirementApproved]);
+  // useEffect(() => {
+  // console.log("isRequirementApproved", isRequirementApproved);
+  // console.log("approvalMap", approvalMap);
+  // console.log("inputMapAmount", inputMapAmount);
+  // }, [isRequirementApproved]);
 
   const handleAddLiquidity = async () => {
     try {
@@ -327,18 +328,19 @@ const AddSectionStable: FC = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
-      // console.log("timestamp fetched //", blocktimestamp);
-      // console.log("calling addliquidity method...", amounts, estLpAmount);
-
+      const minToMint = parseUnits(
+        `${(estLpAmount * (100 - SLIPPAGE)) / 100}`,
+        18
+      );
       const args_to_pass =
         farm?.protocol.toLowerCase() == "curve"
           ? [
               amounts, // amounts (uint256[])
-              parseUnits(`${(estLpAmount * (100 - SLIPPAGE)) / 100}`, 18), // minToMint (uint256)
+              minToMint, // minToMint  (uint256)
             ]
           : [
               amounts, // amounts (uint256[])
-              parseUnits(`${(estLpAmount * (100 - SLIPPAGE)) / 100}`, 18), // minToMint (uint256)
+              minToMint, // minToMint (uint256)
               blocktimestamp, // deadline (uint256)
             ];
 
@@ -387,10 +389,6 @@ const AddSectionStable: FC = () => {
 
         {/* Relative Conversion and Share of Pool */}
         <div className="p-3 flex flex-row w-full justify-end text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          {/* <div className="flex flex-col gap-y-2">
-            <p>0.1234 GLMR per STELLA</p>
-            <p>0.1234 STELLA per GLMR</p>
-          </div> */}
           <p className="flex flex-col items-end">
             <span>
               {(totalSupply !== 0 && estLpAmount > 0
