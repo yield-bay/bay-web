@@ -61,7 +61,7 @@ const StakingModal = () => {
   const { address, connector } = useAccount();
   const { chain } = useNetwork();
 
-  const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
+  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
   const [lpTokenPricesMap] = useAtom(lpTokenPricesAtom);
 
   const [isSlippageModalOpen, setIsSlippageModalOpen] = useAtom(
@@ -84,9 +84,7 @@ const StakingModal = () => {
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
 
-  useEffect(() => {
-    // console.log("selectedFarm", farm);
-  }, [farm]);
+  const isCorrectChain = farm?.chain.toLowerCase() == chain?.name.toLowerCase();
 
   // When InputType.Percentage
   const handlePercChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,27 +135,11 @@ const StakingModal = () => {
 
     const amt =
       methodId == 0
-        ? // ? parseUnits(
-          //     `${
-          //       (lpBalanceNum * parseFloat(percentage == "" ? "0" : percentage)) /
-          //       100
-          //     }`,
-          //     18
-          //   )
-          pamt
+        ? pamt
         : BigNumber(lpTokens == "" ? "0" : lpTokens)
             .multipliedBy(BigNumber(10).pow(18))
             .decimalPlaces(0, 1)
             .toString();
-    // console.log(
-    //   "samt",
-    //   amt,
-    //   lpBalanceNum,
-    //   lpTokens,
-    //   lpBalance,
-    //   lpBalance?.formatted
-    // );
-    // : parseUnits(`${parseFloat(lpTokens == "" ? "0" : lpTokens)}`, 18); // amount
     if (farm?.protocol.toLowerCase() == "curve") {
       return [amt];
     } else if (farm?.protocol.toLowerCase() == "sirius") {
@@ -194,23 +176,12 @@ const StakingModal = () => {
     }
   }, [farm, tokenPricesMap]);
 
-  // // Gas estimate
-  // const { gasEstimate } = useGasEstimation(
-  //   farm!.chef,
-  //   0,
-  //   2,
-  //   farm?.protocol == "zenlink" ? ("stake" as any) : ("deposit" as any),
-  //   farm!,
-  //   address!,
-  //   getArgs()
-  // );
-
   // Balance of LP Tokens
   const { data: lpBalance, isLoading: lpBalanceLoading } = useBalance({
     address,
     chainId: chain?.id,
     token: farm?.asset.address,
-    enabled: !!farm,
+    enabled: !!farm && isCorrectChain,
   });
   const lpBalanceNum: number = !!lpBalance
     ? parseFloat(lpBalance.formatted)
@@ -226,7 +197,8 @@ const StakingModal = () => {
     lpBalance,
     methodId == 0
       ? (lpBalanceNum * fixedAmtNum(percentage)) / 100
-      : fixedAmtNum(lpTokens)
+      : fixedAmtNum(lpTokens),
+    isCorrectChain
   );
 
   const {
@@ -669,7 +641,7 @@ const StakingModal = () => {
     );
   };
 
-  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+  if (!isCorrectChain) {
     return (
       <WrongNetworkModal
         isOpen={isOpen}

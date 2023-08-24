@@ -32,7 +32,8 @@ const useIsApprovedToken = (
   tokenAddress: Address,
   spender: Address,
   tokenBalance: TokenBalance | undefined,
-  input: number
+  input: number,
+  isEnable: boolean = false
 ) => {
   const { address } = useAccount();
 
@@ -41,7 +42,7 @@ const useIsApprovedToken = (
     abi: parseAbi(tokenAbi),
     functionName: "allowance",
     args: [address, spender], // owner, spender
-    enabled: !!address && !!spender,
+    enabled: !!address && !!spender && isEnable,
   });
 
   const allowanceRaw = data as bigint;
@@ -93,7 +94,6 @@ const useApproveToken = (
   tokenBalance: TokenBalance | undefined
 ) => {
   const { chain } = useNetwork();
-
   const {
     data,
     isLoading: isLoadingApproveCall,

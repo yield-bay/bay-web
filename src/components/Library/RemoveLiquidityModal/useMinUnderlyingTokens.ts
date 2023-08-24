@@ -17,13 +17,14 @@ export default function useMinimumUnderlyingTokens(
   lpAmount: number,
   slippage: number,
   d0: number,
-  d1: number
+  d1: number,
+  isEnable: boolean = false
 ): number[] {
   const { data: reserves } = useContractRead({
     address: pair,
     abi: parseAbi(lpAbi),
     functionName: "getReserves",
-    enabled: !!pair && !!protocol && protocol !== "curve",
+    enabled: !!pair && !!protocol && protocol !== "curve" && isEnable,
   });
 
   const totalReserves = reserves as bigint[];
@@ -35,6 +36,7 @@ export default function useMinimumUnderlyingTokens(
     address: pair,
     abi: parseAbi(lpAbi),
     functionName: "totalSupply",
+    enabled: !!pair && isEnable,
   });
 
   const minunderlyingtokens = useMemo(() => {

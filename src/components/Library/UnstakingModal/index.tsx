@@ -200,21 +200,24 @@ const UnstakingModal = () => {
         ? "userInfos"
         : "userInfo",
     args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
-    enabled: !!farm && !!address,
+    enabled:
+      !!farm &&
+      !!address &&
+      farm?.chain.toLowerCase() == chain?.name.toLowerCase(),
   });
 
-  useEffect(() => {
-    // console.log("userInfo", userInfo, "\nargs", {
-    // address: farm?.chef as Address,
-    // abi: parseAbi(chefAbi),
-    // functionName:
-    //   farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
-    //     ? "balanceOf"
-    //     : "userInfo",
-    // args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
-    // enabled: !!farm && !!address,
-    // });
-  }, [userInfo]);
+  // useEffect(() => {
+  // console.log("userInfo", userInfo, "\nargs", {
+  // address: farm?.chef as Address,
+  // abi: parseAbi(chefAbi),
+  // functionName:
+  //   farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
+  //     ? "balanceOf"
+  //     : "userInfo",
+  // args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
+  // enabled: !!farm && !!address,
+  // });
+  // }, [userInfo]);
 
   const staked: string = useMemo(() => {
     // console.log("stakeduserInfo", userInfo);

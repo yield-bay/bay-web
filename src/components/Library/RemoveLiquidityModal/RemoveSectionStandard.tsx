@@ -87,6 +87,8 @@ const RemoveSectionStandard = () => {
 
   const { chain } = useNetwork();
 
+  const isCorrectChain = farm?.chain.toLowerCase() == chain?.name.toLowerCase();
+
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
   // const [token0, token1] = tokenNames;
   const [farmAsset0, farmAsset1] =
@@ -102,7 +104,8 @@ const RemoveSectionStandard = () => {
       : parseFloat(lpTokens),
     SLIPPAGE,
     farm?.asset.underlyingAssets[0].decimals!,
-    farm?.asset.underlyingAssets[1].decimals!
+    farm?.asset.underlyingAssets[1].decimals!,
+    isCorrectChain
   );
 
   // Transaction Process Steps
@@ -139,7 +142,7 @@ const RemoveSectionStandard = () => {
   const { data: nativeBal, isLoading: isLoadingNativeBal } = useBalance({
     address,
     chainId: chain?.id,
-    enabled: !!address,
+    enabled: !!address && isCorrectChain,
   });
 
   const [nativePrice, setNativePrice] = useState<number>(0);
@@ -831,7 +834,7 @@ const RemoveSectionStandard = () => {
     isLoadingRemoveLiqTxn ||
     isSlippageModalOpen;
 
-  if (farm?.chain.toLowerCase() !== chain?.name.toLowerCase()) {
+  if (!isCorrectChain) {
     return (
       <WrongNetworkModal
         isOpen={isOpen}
