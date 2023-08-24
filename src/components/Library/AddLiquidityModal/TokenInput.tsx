@@ -116,7 +116,9 @@ const TokenInput: React.FC<TokenInputProps> = ({
           className={clsx(
             "text-base font-bold leading-6 text-left bg-transparent focus:outline-none",
             fixedAmtNum(inputMap[token.address]) >
-              fixedAmtNum(balance?.formatted)
+              fixedAmtNum(
+                token?.symbol == "ASTR" ? nativeBal : balance?.formatted
+              )
               ? "text-[#FF9999]"
               : "text-[#4E4C4C]"
           )}
@@ -159,7 +161,10 @@ const TokenInput: React.FC<TokenInputProps> = ({
           <button
             className="p-2 bg-[#F1F1F1] rounded-lg text-[#8B8B8B] text-[14px] font-bold leading-5"
             onClick={() => {
-              handleInput(token, balance?.formatted! ?? "0");
+              handleInput(
+                token,
+                token?.symbol == "ASTR" ? nativeBal : balance?.formatted ?? "0"
+              );
             }}
           >
             MAX
@@ -169,7 +174,10 @@ const TokenInput: React.FC<TokenInputProps> = ({
       <div
         className={clsx(
           "text-left text-base leading-6 font-bold mt-3",
-          fixedAmtNum(inputMap[token.address]) > fixedAmtNum(balance?.formatted)
+          fixedAmtNum(inputMap[token.address]) >
+            fixedAmtNum(
+              token?.symbol == "ASTR" ? nativeBal : balance?.formatted
+            )
             ? "text-[#FF9999]"
             : "hidden"
         )}

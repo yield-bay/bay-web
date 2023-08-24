@@ -55,6 +55,14 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
           undefined;
         const isSupported = checkIfPoolSupported(farm);
 
+        // Skipping a particular farm
+        if (
+          farm?.id == 1 &&
+          farm?.asset.address == "0xcB274236fBA7B873FC8F154bb0475a166C24B119"
+        ) {
+          return;
+        }
+
         return (
           <tr
             key={`${farm.asset.address}-${farm.tvl}`}
