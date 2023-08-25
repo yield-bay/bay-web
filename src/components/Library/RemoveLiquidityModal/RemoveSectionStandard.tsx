@@ -182,7 +182,8 @@ const RemoveSectionStandard = () => {
     lpBalanceObj,
     methodId == Method.PERCENTAGE
       ? (fixedAmtNum(lpBalance) * fixedAmtNum(percentage)) / 100
-      : fixedAmtNum(lpTokens)
+      : fixedAmtNum(lpTokens),
+    isCorrectChain
   );
 
   const {

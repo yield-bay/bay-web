@@ -21,6 +21,7 @@ interface Props {
       [address: `0x${string}`]: boolean;
     }>
   >;
+  isCorrectChain: boolean;
 }
 
 const TokenButton: React.FC<Props> = ({
@@ -30,6 +31,7 @@ const TokenButton: React.FC<Props> = ({
   approvalMap,
   setApprovalMap,
   setIsApproving,
+  isCorrectChain,
 }) => {
   const { address } = useAccount();
   const { chain } = useNetwork();
@@ -43,7 +45,7 @@ const TokenButton: React.FC<Props> = ({
     address: address,
     chainId: chain?.id,
     token: token?.address,
-    enabled: !!address && !!token,
+    enabled: !!address && !!token && isCorrectChain,
   });
 
   // console.log("balance in tokenbutton", balance, isSuccess);
@@ -53,7 +55,8 @@ const TokenButton: React.FC<Props> = ({
     token?.address,
     selectedFarm?.router,
     balance,
-    inputMapAmount[token?.address]
+    inputMapAmount[token?.address],
+    isCorrectChain
   );
 
   // Approve token

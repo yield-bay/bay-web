@@ -421,6 +421,7 @@ const AddSectionStable: FC = () => {
                 setIsApproving={setIsApprovingMap}
                 approvalMap={approvalMap}
                 setApprovalMap={setApprovalMap}
+                isCorrectChain={isCorrectChain}
               />
             ))}
           </div>
