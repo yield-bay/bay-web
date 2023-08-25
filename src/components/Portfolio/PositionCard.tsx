@@ -28,6 +28,7 @@ import {
   unstakingModalOpenAtom,
 } from "@store/commonAtoms";
 import { selectedFarmAtom } from "@store/atoms";
+import { ButtonType } from "@utils/types/enums";
 
 interface Props {
   tokenNames: string[];
@@ -150,9 +151,10 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
             size="large"
             style="inline-flex justify-between items-center"
             onButtonClick={handleAddLiquidity}
+            type={ButtonType.PRIMARY}
           >
             <span>Add Liquidity</span>
-            <PlusIcon className="text-black h-4 w-4" />
+            <PlusIcon className="text-white h-4 w-4" />
           </Button>
           <Button
             size="large"
@@ -164,9 +166,10 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
                 : position.staked.amountUSD == 0
             }
             tooltipText="You need to have liquidity first"
+            type={ButtonType.PRIMARY}
           >
             <span>Remove Liquidity</span>
-            <MinusIcon className="text-black h-4 w-4" />
+            <MinusIcon className="text-white h-4 w-4" />
           </Button>
           {position?.chain.toLowerCase() != "mangata kusama" ? (
             <div className="inline-flex items-center gap-x-2">
@@ -176,6 +179,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
                 onButtonClick={handleStake}
                 disabled={position.unstaked.amountUSD == 0}
                 tooltipText="You need to have liquidity first"
+                type={ButtonType.PRIMARY}
               >
                 <span>Stake</span>
                 <Image
@@ -191,6 +195,7 @@ const PositionCard: FC<Props> = ({ tokenNames, thisFarm, position }) => {
                 onButtonClick={handleUnstake}
                 disabled={position.staked.amountUSD == 0}
                 tooltipText="You need to stake tokens first"
+                type={ButtonType.PRIMARY}
               >
                 <span>Unstake</span>
                 <Image

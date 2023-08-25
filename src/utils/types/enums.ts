@@ -22,3 +22,8 @@ export enum ChainId {
   ASTAR = 592,
   HARDHAT = 31337,
 }
+
+export enum ButtonType {
+  PRIMARY = 0,
+  SECONDARY = 1,
+}

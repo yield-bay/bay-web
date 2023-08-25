@@ -26,6 +26,7 @@ import SafetyScorePill from "@components/Library/SafetyScorePill";
 import Tooltip from "@components/Library/Tooltip";
 import { evmPosLoadingAtom, subPosLoadingAtom } from "@store/commonAtoms";
 import SelectLiquidityModal from "@components/Library/LiquidityMenu";
+import { ButtonType } from "@utils/types/enums";
 
 interface Props {
   farms: FarmType[];
@@ -201,6 +202,7 @@ const FarmsList: FC<Props> = ({ farms, positions }) => {
                     )}
                   <Button
                     size="large"
+                    type={ButtonType.PRIMARY}
                     onButtonClick={() => {
                       router.push(
                         `/farm/${farm.id}/?addr=${farm.asset.address}`

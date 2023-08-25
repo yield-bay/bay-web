@@ -64,6 +64,7 @@ import useSpecificPosition from "@hooks/useSpecificPosition";
 import { useSafetyscoreColor } from "@hooks/useSafetyscoreColor";
 import { InformationCircleIcon } from "@heroicons/react/solid";
 import Link from "next/link";
+import { ButtonType } from "@utils/types/enums";
 
 const FarmPage: NextPage = () => {
   const router = useRouter();
@@ -199,15 +200,15 @@ const FarmPage: NextPage = () => {
                 : isConnected) && (
                 <Button
                   size="custom"
-                  style="inline-flex justify-between items-center gap-x-2 bg-[#F0F0FF]"
+                  style="inline-flex justify-between items-center gap-x-2 border border-[#D0D5DD]"
+                  type={ButtonType.PRIMARY}
                   onButtonClick={() => {
-                    // console.log("farm in farmpage", farm);
                     setSelectedFarm(farm);
                     setAddLiqModalOpen(true);
                   }}
                 >
                   <span>Add Liquidity</span>
-                  <PlusIcon className="text-black h-4 w-4" />
+                  <PlusIcon className="text-white h-4 w-4" />
                 </Button>
               )}
           </div>
@@ -316,9 +317,10 @@ const FarmPage: NextPage = () => {
                     setAddLiqModalOpen(true);
                     setSelectedFarm(farm);
                   }}
+                  type={ButtonType.PRIMARY}
                 >
                   <span>Add Liquidity</span>
-                  <PlusIcon className="text-black h-4 w-4" />
+                  <PlusIcon className="text-white h-4 w-4" />
                 </Button>
                 <Button
                   size="large"
@@ -327,6 +329,7 @@ const FarmPage: NextPage = () => {
                     setRemoveLiqModalOpen(true);
                     setSelectedFarm(farm);
                   }}
+                  type={ButtonType.PRIMARY}
                   disabled={
                     farm?.chain.toLowerCase() != "mangata kusama"
                       ? farmPosition.unstaked.amountUSD == 0
@@ -335,13 +338,14 @@ const FarmPage: NextPage = () => {
                   tooltipText="You need to have liquidity first"
                 >
                   <span>Remove Liquidity</span>
-                  <MinusIcon className="text-black h-4 w-4" />
+                  <MinusIcon className="text-white h-4 w-4" />
                 </Button>
                 {farm?.chain.toLowerCase() != "mangata kusama" ? (
                   <div className="inline-flex items-center gap-x-2">
                     <Button
                       size="large"
                       style="inline-flex justify-between items-center w-1/2"
+                      type={ButtonType.PRIMARY}
                       onButtonClick={() => {
                         setStakingModalOpen(true);
                         setSelectedFarm(farm);
@@ -360,6 +364,7 @@ const FarmPage: NextPage = () => {
                     <Button
                       size="large"
                       style="inline-flex justify-between items-center w-1/2"
+                      type={ButtonType.PRIMARY}
                       onButtonClick={() => {
                         setUnstakingModalOpen(true);
                         setSelectedFarm(farm);
