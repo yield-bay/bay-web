@@ -10,7 +10,6 @@ const Banner = ({
   onClose: () => void;
 }) => {
   const { width } = useWindowSize();
-  console.log("width", width);
 
   return (
     <div className="sm:mb-12 mb-48">
