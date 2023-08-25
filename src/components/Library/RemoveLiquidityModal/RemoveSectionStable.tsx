@@ -237,7 +237,8 @@ const RemoveSectionStable: FC = () => {
     lpBalanceObj,
     methodId == Method.PERCENTAGE
       ? (fixedAmtNum(lpBalance) * fixedAmtNum(percentage)) / 100
-      : fixedAmtNum(lpTokens)
+      : fixedAmtNum(lpTokens),
+    isCorrectChain
   );
 
   // Approve LP token
