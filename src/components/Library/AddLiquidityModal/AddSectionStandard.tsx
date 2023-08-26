@@ -26,7 +26,7 @@ import { CogIcon } from "@heroicons/react/solid";
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
-import Spinner from "@components/Library/Spinner";
+import { ProcessSpinner, Spinner } from "@components/Library/Spinners";
 import { addLiqModalOpenAtom, slippageModalOpenAtom } from "@store/commonAtoms";
 import {
   selectedFarmAtom,
@@ -517,7 +517,7 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
   }, [isSuccessAddLiqTxn]);
 
   const InputStep = () => {
-    const disableInput =
+    const isProcessing =
       approveToken0CallLoading ||
       approveToken0TxnLoading ||
       approveToken1CallLoading ||
@@ -528,14 +528,18 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       approveToken0CallLoading ||
       approveToken0TxnLoading ||
       typeof approveToken0 == "undefined" ||
-      fixedAmtNum(firstTokenAmount) <= 0;
+      fixedAmtNum(firstTokenAmount) <= 0 ||
+      fixedAmtNum(firstTokenAmount) > fixedAmtNum(token0Balance?.formatted) ||
+      fixedAmtNum(secondTokenAmount) > fixedAmtNum(token1Balance?.formatted);
 
     const disableApproveSecondToken =
       approveToken1TxnSuccess ||
       approveToken1CallLoading ||
       approveToken1TxnLoading ||
       typeof approveToken1 == "undefined" ||
-      fixedAmtNum(secondTokenAmount) <= 0;
+      fixedAmtNum(secondTokenAmount) <= 0 ||
+      fixedAmtNum(firstTokenAmount) > fixedAmtNum(token0Balance?.formatted) ||
+      fixedAmtNum(secondTokenAmount) > fixedAmtNum(token1Balance?.formatted);
 
     const disableConfirmButton =
       fixedAmtNum(firstTokenAmount) <= 0 ||
@@ -546,72 +550,90 @@ const AddSectionStandard: FC<PropsWithChildren> = () => {
       fixedAmtNum(secondTokenAmount) > fixedAmtNum(token1Balance?.formatted);
 
     return (
-      <div className="w-full mt-9 flex flex-col gap-y-3">
-        {/* First token Container */}
-        <TokenContainer
-          handleChangeTokenAmount={handleChangeFirstTokenAmount}
-          inputToFocus={InputType.First}
-          focusedInput={focusedInput}
-          setFocusedInput={setFocusedInput}
-          farm={selectedFarm!}
-          tokenSymbol={farmAsset0?.symbol}
-          tokenAmount={firstTokenAmount}
-          inputRef={firstInputRef}
-          setTokenAmount={setFirstTokenAmount}
-          updateAnotherTokenAmount={updateSecondTokenAmount}
-          tokenBalanceLoading={token0BalanceLoading}
-          tokenBalance={token0Balance}
-          otherTokenAmount={secondTokenAmount}
-          otherTokenSymbol={farmAsset1?.symbol}
-          disableInput={disableInput}
-        />
-        {/* Plus Icon */}
-        <div className="bg-[#e0dcdc] flex justify-center p-3 max-w-fit items-center rounded-full text-base select-none mx-auto">
-          <Image src="/icons/PlusIcon.svg" alt="Plus" width={16} height={16} />
-        </div>
-        {/* Second token container */}
-        <TokenContainer
-          handleChangeTokenAmount={handleChangeSecondTokenAmount}
-          inputToFocus={InputType.Second}
-          focusedInput={focusedInput}
-          setFocusedInput={setFocusedInput}
-          farm={selectedFarm!}
-          tokenSymbol={farmAsset1?.symbol}
-          tokenAmount={secondTokenAmount}
-          inputRef={secondInputRef}
-          setTokenAmount={setSecondTokenAmount}
-          updateAnotherTokenAmount={updateFirstTokenAmount}
-          tokenBalanceLoading={token1BalanceLoading}
-          tokenBalance={token1Balance}
-          otherTokenAmount={firstTokenAmount}
-          otherTokenSymbol={farmAsset0?.symbol}
-          disableInput={disableInput}
-        />
-        {/* Relative Conversion and Share of Pool */}
-        <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
-          <div className="flex flex-col items-start gap-y-2">
-            <p>
-              {getFirstTokenRelation} {farmAsset0?.symbol} per{" "}
-              {farmAsset1?.symbol}
-            </p>
-            <p>
-              {getSecondTokenRelation} {farmAsset1?.symbol} per{" "}
-              {farmAsset0?.symbol}
+      <div className="relative w-full mt-9 flex flex-col gap-y-3">
+        <div
+          className={clsx(
+            isProcessing && "opacity-20 select-none",
+            "flex flex-col gap-y-3"
+          )}
+        >
+          {/* First token Container */}
+          <TokenContainer
+            handleChangeTokenAmount={handleChangeFirstTokenAmount}
+            inputToFocus={InputType.First}
+            focusedInput={focusedInput}
+            setFocusedInput={setFocusedInput}
+            farm={selectedFarm!}
+            tokenSymbol={farmAsset0?.symbol}
+            tokenAmount={firstTokenAmount}
+            inputRef={firstInputRef}
+            setTokenAmount={setFirstTokenAmount}
+            updateAnotherTokenAmount={updateSecondTokenAmount}
+            tokenBalanceLoading={token0BalanceLoading}
+            tokenBalance={token0Balance}
+            otherTokenAmount={secondTokenAmount}
+            otherTokenSymbol={farmAsset1?.symbol}
+            disableInput={isProcessing}
+          />
+          {/* Plus Icon */}
+          <div className="bg-[#e0dcdc] flex justify-center p-3 max-w-fit items-center rounded-full text-base select-none mx-auto">
+            <Image
+              src="/icons/PlusIcon.svg"
+              alt="Plus"
+              width={16}
+              height={16}
+            />
+          </div>
+          {/* Second token container */}
+          <TokenContainer
+            handleChangeTokenAmount={handleChangeSecondTokenAmount}
+            inputToFocus={InputType.Second}
+            focusedInput={focusedInput}
+            setFocusedInput={setFocusedInput}
+            farm={selectedFarm!}
+            tokenSymbol={farmAsset1?.symbol}
+            tokenAmount={secondTokenAmount}
+            inputRef={secondInputRef}
+            setTokenAmount={setSecondTokenAmount}
+            updateAnotherTokenAmount={updateFirstTokenAmount}
+            tokenBalanceLoading={token1BalanceLoading}
+            tokenBalance={token1Balance}
+            otherTokenAmount={firstTokenAmount}
+            otherTokenSymbol={farmAsset0?.symbol}
+            disableInput={isProcessing}
+          />
+          {/* Relative Conversion and Share of Pool */}
+          <div className="p-3 flex flex-row justify-between text-[#667085] text-[14px] leading-5 font-bold text-opacity-50">
+            <div className="flex flex-col items-start gap-y-2">
+              <p>
+                {getFirstTokenRelation} {farmAsset0?.symbol} per{" "}
+                {farmAsset1?.symbol}
+              </p>
+              <p>
+                {getSecondTokenRelation} {farmAsset1?.symbol} per{" "}
+                {farmAsset0?.symbol}
+              </p>
+            </div>
+            <p className="flex flex-col items-end">
+              <span>
+                {(totalSupply !== 0 && minLpTokens > 0
+                  ? (minLpTokens / totalSupply) * 100 < 0.001
+                    ? "<0.001"
+                    : (minLpTokens / totalSupply) * 100
+                  : 0
+                ).toLocaleString("en-US")}
+                %
+              </span>
+              <span>Share of pool</span>
             </p>
           </div>
-          <p className="flex flex-col items-end">
-            <span>
-              {(totalSupply !== 0 && minLpTokens > 0
-                ? (minLpTokens / totalSupply) * 100 < 0.001
-                  ? "<0.001"
-                  : (minLpTokens / totalSupply) * 100
-                : 0
-              ).toLocaleString("en-US")}
-              %
-            </span>
-            <span>Share of pool</span>
-          </p>
         </div>
+        {/* Process Spinner */}
+        {isProcessing && (
+          <div className="absolute top-[102px] left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <ProcessSpinner />
+          </div>
+        )}
         {/* Buttons */}
         <div className="flex flex-row gap-x-3 mt-9">
           {isToken0ApprovedLoading || isToken1ApprovedLoading ? (

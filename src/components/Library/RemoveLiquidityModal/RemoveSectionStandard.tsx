@@ -38,7 +38,7 @@ import useMinimumUnderlyingTokens from "./useMinUnderlyingTokens";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
-import Spinner from "../Spinner";
+import { ProcessSpinner, Spinner } from "../Spinners";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
@@ -58,6 +58,8 @@ import Countdown from "../Countdown";
 import { createNumRegex } from "@utils/createRegex";
 import SlippageBox from "../SlippageBox";
 
+const THIRTY_MINUTES_IN_MS = 60000 * 30;
+
 const RemoveSectionStandard = () => {
   const { address, connector } = useAccount();
   const publicClient = usePublicClient();
@@ -74,13 +76,6 @@ const RemoveSectionStandard = () => {
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
 
-  // useEffect(() => console.log("farm @removeliq", farm), [farm]);
-
-  // Balance of LP Token
-  const { lpBalanceObj, lpBalance, lpBalanceLoading } = useLPBalance(
-    farm?.asset.address!
-  );
-
   const [percentage, setPercentage] = useState("");
   const [lpTokens, setLpTokens] = useState("");
   const [methodId, setMethodId] = useState<Method>(Method.PERCENTAGE);
@@ -88,6 +83,12 @@ const RemoveSectionStandard = () => {
   const { chain } = useNetwork();
 
   const isCorrectChain = farm?.chain.toLowerCase() == chain?.name.toLowerCase();
+
+  // Balance of LP Token
+  const { lpBalanceObj, lpBalance, lpBalanceLoading } = useLPBalance(
+    farm?.asset.address!,
+    isCorrectChain
+  );
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
   // const [token0, token1] = tokenNames;
@@ -152,13 +153,7 @@ const RemoveSectionStandard = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    // console.log(
-    //   "tokenkey",
-    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    // );
-    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
@@ -315,8 +310,7 @@ const RemoveSectionStandard = () => {
       // Fetch latest block's timestamp
       const block = await publicClient.getBlock();
       const blocktimestamp =
-        Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
-      // console.log("timestamp fetched //", blocktimestamp);
+        Number(block.timestamp.toString() + "000") + THIRTY_MINUTES_IN_MS; // Adding 30 minutes
 
       // console.log(
       //   "calling removeliquidity method...",
@@ -346,61 +340,23 @@ const RemoveSectionStandard = () => {
       const removeArgs = [
         farmAsset0?.address, // tokenA Address
         farmAsset1?.address, // tokenB Address
-        methodId == Method.PERCENTAGE
-          ? //   ? parseUnits(
-            //       `${
-            //         (parseFloat(lpBalance!) *
-            //           parseFloat(percentage == "" ? "0" : percentage)) /
-            //         100
-            //       }`,
-            //       18
-            //     )
-            //   : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-            // // 1,
-            // // 1,
-            // parseUnits(
-            //   `${minUnderlyingAssets[0].toString() as any}`,
-            //   farmAsset0?.decimals
-            // ), // amountAMin
-            // parseUnits(
-            //   `${minUnderlyingAssets[1].toString() as any}`,
-            //   farmAsset1?.decimals
-            // ), // amountBMin
-            // ? parseUnits(
-            //     `${
-            //       (fixedAmtNum(lpBalance!) *
-            //         parseFloat(percentage == "" ? "0" : percentage)) /
-            //       100
-            //     }`,
-            //     18
-            //   )
-            BigNumber(lpBalance!, 10)
+        methodId == Method.PERCENTAGE // Amount to remove
+          ? BigNumber(lpBalance!, 10)
               .multipliedBy(
                 parseFloat(percentage == "" ? "0" : percentage) / 100
               )
               .multipliedBy(BigNumber(10).pow(18))
               .decimalPlaces(0, 1)
               .toString()
-          : // : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-            BigNumber(lpTokens)
+          : BigNumber(lpTokens)
               .multipliedBy(BigNumber(10).pow(18))
               .decimalPlaces(0, 1)
               .toString(),
-        // 1,
-        // 1,
-        // parseUnits(
-        //   `${minUnderlyingAssets[0].toString() as any}`,
-        //   farmAsset0?.decimals
-        // ), // amountAMin
-        // parseUnits(
-        //   `${minUnderlyingAssets[1].toString() as any}`,
-        //   farmAsset1?.decimals
-        // ), // amountBMin
-        BigNumber(minUnderlyingAssets[0].toString())
+        BigNumber(minUnderlyingAssets[0].toString()) // amountAMin
           .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
-        BigNumber(minUnderlyingAssets[1].toString())
+        BigNumber(minUnderlyingAssets[1].toString()) // amountBMin
           .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
@@ -408,24 +364,28 @@ const RemoveSectionStandard = () => {
         blocktimestamp, // deadline (uint256)
       ];
 
-      // console.log("Remove Liquidity setting args:", removeArgs);
-
       const txnRes = await removeLiquidity?.({
         args: removeArgs,
       });
       if (!!txnRes) {
         setTxnHash(txnRes?.hash);
       }
-      // console.log("called removeliquidity method.", txnRes);
     } catch (error) {
       console.error("Error in Removing liquidity", error);
     }
   };
 
   const InputStep = () => {
+    const isProcessing = approveLpLoading || approveLpLoadingTxn;
+
     return (
       <div className="w-full flex mt-8 flex-col gap-y-8">
-        <div className="flex flex-col gap-y-3">
+        <div
+          className={clsx(
+            isProcessing && "opacity-20 select-none",
+            "relative flex flex-col gap-y-3"
+          )}
+        >
           <ChosenMethod
             farm={farm!}
             percentage={percentage.toString()}
@@ -437,6 +397,7 @@ const RemoveSectionStandard = () => {
             setLpTokens={setLpTokens}
             handleLpTokensChange={handleLpTokensChange}
             methodId={methodId}
+            disableInput={isProcessing}
           />
           <div
             className={clsx(
@@ -486,8 +447,19 @@ const RemoveSectionStandard = () => {
             </p>
           </div>
         </div>
+        {/* Process Spinner */}
+        {isProcessing && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <ProcessSpinner />
+          </div>
+        )}
         {/* Tokens to receive */}
-        <div className="text-[#344054] text-left">
+        <div
+          className={clsx(
+            isProcessing && "opacity-20 select-none",
+            "text-[#344054] text-left"
+          )}
+        >
           <p className="text-base font-medium leading-5">You receive:</p>
           <div className="inline-flex gap-x-4 mt-3">
             {farm?.asset.underlyingAssets.map((token, index) => (
@@ -546,8 +518,9 @@ const RemoveSectionStandard = () => {
                   typeof approveLpToken == "undefined" ||
                   (methodId == Method.PERCENTAGE
                     ? fixedAmtNum(percentage) <= 0
-                    : fixedAmtNum(lpTokens) <= 0)
-                  // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                    : fixedAmtNum(lpTokens) <= 0) ||
+                  (methodId == Method.LP &&
+                    fixedAmtNum(lpTokens) > fixedAmtNum(lpBalance))
                 }
                 onClick={async () => {
                   try {

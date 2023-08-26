@@ -14,7 +14,7 @@ import _ from "lodash";
 
 // Component, Util and Hook Imports
 import MButton from "@components/Library/MButton";
-import Spinner from "@components/Library/Spinner";
+import { Spinner } from "@components/Library/Spinners";
 import {
   accountInitAtom,
   addLiqModalOpenAtom,

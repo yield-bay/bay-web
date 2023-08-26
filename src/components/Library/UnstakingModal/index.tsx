@@ -27,7 +27,7 @@ import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
 import { FarmType } from "@utils/types/common";
 import { Method } from "@utils/types/enums";
-import Spinner from "../Spinner";
+import { Spinner } from "../Spinners";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
 import { fixedAmtNum, getChefAbi } from "@utils/abis/contract-helper-methods";
@@ -205,19 +205,6 @@ const UnstakingModal = () => {
       !!address &&
       farm?.chain.toLowerCase() == chain?.name.toLowerCase(),
   });
-
-  // useEffect(() => {
-  // console.log("userInfo", userInfo, "\nargs", {
-  // address: farm?.chef as Address,
-  // abi: parseAbi(chefAbi),
-  // functionName:
-  //   farm?.protocol == "curve" || farm?.protocol.toLowerCase() == "sirius"
-  //     ? "balanceOf"
-  //     : "userInfo",
-  // args: farm?.protocol == "curve" ? [address] : [farm?.id, address],
-  // enabled: !!farm && !!address,
-  // });
-  // }, [userInfo]);
 
   const staked: string = useMemo(() => {
     // console.log("stakeduserInfo", userInfo);

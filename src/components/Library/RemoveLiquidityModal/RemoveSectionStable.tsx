@@ -37,7 +37,7 @@ import { Method } from "@utils/types/enums";
 import useLPBalance from "@hooks/useLPBalance";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
-import Spinner from "../Spinner";
+import { ProcessSpinner, Spinner } from "../Spinners";
 import { useApproveToken, useIsApprovedToken } from "@hooks/useApprovalHooks";
 import Link from "next/link";
 import { CogIcon } from "@heroicons/react/solid";
@@ -286,17 +286,7 @@ const RemoveSectionStable: FC = () => {
   });
 
   useEffect(() => {
-    if (isLoadingRemoveLiqCall) {
-      // console.log("removeliq method loading... sign the txn");
-    } else if (isLoadingRemoveLiqTxn) {
-      // console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
-    }
-  }, [isLoadingRemoveLiqCall, isLoadingRemoveLiqTxn]);
-
-  useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
-      // console.log("liquidity removed successfully", removeLiqTxnData);
-
       handleRemoveLiquidityEvent({
         userAddress: address!,
         walletType: "EVM",
@@ -384,9 +374,6 @@ const RemoveSectionStable: FC = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + 60000 * 30; // Adding 30 minutes
-      // console.log("timestamp fetched //", blocktimestamp);
-
-      // console.log("calling removeliquidity method...");
 
       const args_to_pass = getArgs(
         removeMethodId,
@@ -409,156 +396,170 @@ const RemoveSectionStable: FC = () => {
   };
 
   const InputStep = () => {
+    const isProcessing = approveLpLoading || approveLpLoadingTxn;
     return (
       <div className="w-full flex mt-8 flex-col gap-y-8">
-        <div className="flex flex-col gap-y-3">
-          <ChosenMethod
-            farm={farm!}
-            percentage={percentage.toString()}
-            setPercentage={setPercentage}
-            handlePercChange={handlePercChange}
-            lpBal={lpBalance!}
-            lpBalLoading={lpBalanceLoading}
-            lpTokens={lpTokens.toString()}
-            setLpTokens={setLpTokens}
-            handleLpTokensChange={handleLpTokensChange}
-            methodId={methodId}
-          />
-          <div
-            className={clsx(
-              "text-left text-base leading-6 font-bold -mt-[2px]",
-              fixedAmtNum(lpBalance) < fixedAmtNum(lpTokens) &&
-                methodId == Method.LP
-                ? "text-[#FF9999]"
-                : "hidden"
-            )}
-          >
-            Insufficient Balance
+        <div
+          className={clsx(
+            isProcessing && "opacity-20 select-none",
+            "relative flex flex-col gap-y-8"
+          )}
+        >
+          <div className="flex flex-col gap-y-3">
+            <ChosenMethod
+              farm={farm!}
+              percentage={percentage.toString()}
+              setPercentage={setPercentage}
+              handlePercChange={handlePercChange}
+              lpBal={lpBalance!}
+              lpBalLoading={lpBalanceLoading}
+              lpTokens={lpTokens.toString()}
+              setLpTokens={setLpTokens}
+              handleLpTokensChange={handleLpTokensChange}
+              methodId={methodId}
+              disableInput={isProcessing}
+            />
+            <div
+              className={clsx(
+                "text-left text-base leading-6 font-bold -mt-[2px]",
+                fixedAmtNum(lpBalance) < fixedAmtNum(lpTokens) &&
+                  methodId == Method.LP
+                  ? "text-[#FF9999]"
+                  : "hidden"
+              )}
+            >
+              Insufficient Balance
+            </div>
+            <div className="inline-flex items-center justify-between text-sm font-bold leading-5">
+              <div className="inline-flex gap-2 items-center">
+                {["Percentage", "LP Tokens"].map((method, index) => (
+                  <button
+                    key={index}
+                    className={clsx(
+                      "text-sm font-bold leading-5",
+                      methodId !== index && "opacity-40"
+                    )}
+                    onClick={() => setMethodId(index)}
+                  >
+                    {method}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[#344054] opacity-60">
+                {methodId == Method.PERCENTAGE ? (
+                  <span>
+                    {parseFloat(percentage) > 0
+                      ? (
+                          (fixedAmtNum(percentage) * fixedAmtNum(lpBalance)) /
+                          100
+                        ).toLocaleString("en-US")
+                      : "0"}{" "}
+                    Tokens
+                  </span>
+                ) : (
+                  <span>
+                    {fixedAmtNum(lpBalance) > 0
+                      ? (
+                          (fixedAmtNum(lpTokens) * 100) /
+                          fixedAmtNum(lpBalance)
+                        ).toFixed(2)
+                      : 0}
+                    %
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
-          <div className="inline-flex items-center justify-between text-sm font-bold leading-5">
-            <div className="inline-flex gap-2 items-center">
-              {["Percentage", "LP Tokens"].map((method, index) => (
+          {/* Tokens to receive */}
+          <div className="text-[#344054] text-left">
+            <p className="text-base font-medium leading-5">You receive:</p>
+            <div className="flex flex-col space-y-3 mt-3">
+              {tokens.map((token, index) => (
                 <button
                   key={index}
                   className={clsx(
-                    "text-sm font-bold leading-5",
-                    methodId !== index && "opacity-40"
+                    "inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                    removeMethodId == RemoveMethod.INDIVIDUAL &&
+                      indiTokenId == index
+                      ? "border border-[#8F8FFC] bg-[#ECECFF]"
+                      : "bg-[#FAFAFA]"
                   )}
-                  onClick={() => setMethodId(index)}
+                  onClick={() => {
+                    setRemoveMethodId(RemoveMethod.INDIVIDUAL);
+                    setIndiTokenId(index);
+                  }}
                 >
-                  {method}
+                  <Image
+                    src={farm!.asset.logos[index]}
+                    alt={token?.address}
+                    width={24}
+                    height={24}
+                    className="rounded-full"
+                  />
+                  <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                    {removeMethodId == RemoveMethod.INDIVIDUAL &&
+                    indiTokenId == index
+                      ? Array.isArray(minAmount)
+                        ? minAmount[index] < 0.01
+                          ? "<0.01"
+                          : toUnits(minAmount[index], 2)
+                        : minAmount < 0.01
+                        ? "<0.01"
+                        : toUnits(minAmount, 2)
+                      : ""}{" "}
+                    {token?.symbol}
+                  </span>
                 </button>
               ))}
-            </div>
-            <p className="text-[#344054] opacity-60">
-              {methodId == Method.PERCENTAGE ? (
-                <span>
-                  {parseFloat(percentage) > 0
-                    ? (
-                        (fixedAmtNum(percentage) * fixedAmtNum(lpBalance)) /
-                        100
-                      ).toLocaleString("en-US")
-                    : "0"}{" "}
-                  Tokens
-                </span>
+              {farm?.protocol !== "curve" ? (
+                <button
+                  className={clsx(
+                    "mt-3 inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
+                    removeMethodId == RemoveMethod.ALL
+                      ? "border border-[#8F8FFC] bg-[#ECECFF]"
+                      : "bg-[#FAFAFA]"
+                  )}
+                  disabled={farm?.protocol.toLowerCase() == "curve"}
+                  onClick={() => setRemoveMethodId(RemoveMethod.ALL)}
+                >
+                  {tokens.map((token, index) => (
+                    <p
+                      key={index}
+                      className="inline-flex items-center space-x-3"
+                    >
+                      <Image
+                        src={farm!.asset.logos[index]}
+                        alt={token?.address}
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                      <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
+                        {removeMethodId === RemoveMethod.ALL
+                          ? (minAmount as number[])[index] < 0.01
+                            ? "<0.01"
+                            : toUnits((minAmount as number[])[index], 2)
+                          : ""}{" "}
+                        {token?.symbol}
+                      </span>
+                      {index !== tokens.length - 1 && (
+                        <span className="text-lg font-medium leading-5">+</span>
+                      )}
+                    </p>
+                  ))}
+                </button>
               ) : (
-                <span>
-                  {fixedAmtNum(lpBalance) > 0
-                    ? (
-                        (fixedAmtNum(lpTokens) * 100) /
-                        fixedAmtNum(lpBalance)
-                      ).toFixed(2)
-                    : 0}
-                  %
-                </span>
+                ""
               )}
-            </p>
+            </div>
           </div>
         </div>
-        {/* Tokens to receive */}
-        <div className="text-[#344054] text-left">
-          <p className="text-base font-medium leading-5">You receive:</p>
-          <div className="flex flex-col space-y-3 mt-3">
-            {tokens.map((token, index) => (
-              <button
-                key={index}
-                className={clsx(
-                  "inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
-                  removeMethodId == RemoveMethod.INDIVIDUAL &&
-                    indiTokenId == index
-                    ? "border border-[#8F8FFC] bg-[#ECECFF]"
-                    : "bg-[#FAFAFA]"
-                )}
-                onClick={() => {
-                  setRemoveMethodId(RemoveMethod.INDIVIDUAL);
-                  setIndiTokenId(index);
-                }}
-              >
-                <Image
-                  src={farm!.asset.logos[index]}
-                  alt={token?.address}
-                  width={24}
-                  height={24}
-                  className="rounded-full"
-                />
-                <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                  {removeMethodId == RemoveMethod.INDIVIDUAL &&
-                  indiTokenId == index
-                    ? // ? toUnits(
-                      //     Array.isArray(minAmount) ? minAmount[index] : minAmount,
-                      //     3
-                      //   )
-                      Array.isArray(minAmount)
-                      ? minAmount[index] < 0.01
-                        ? "<0.01"
-                        : toUnits(minAmount[index], 2)
-                      : minAmount < 0.01
-                      ? "<0.01"
-                      : toUnits(minAmount, 2)
-                    : ""}{" "}
-                  {token?.symbol}
-                </span>
-              </button>
-            ))}
-            {farm?.protocol !== "curve" ? (
-              <button
-                className={clsx(
-                  "mt-3 inline-flex items-center space-x-3 hover:-translate-y-[2px] active:translate-y-0 hover:shadow-sm transition-all duration-200 rounded-xl px-6 py-3",
-                  removeMethodId == RemoveMethod.ALL
-                    ? "border border-[#8F8FFC] bg-[#ECECFF]"
-                    : "bg-[#FAFAFA]"
-                )}
-                disabled={farm?.protocol.toLowerCase() == "curve"}
-                onClick={() => setRemoveMethodId(RemoveMethod.ALL)}
-              >
-                {tokens.map((token, index) => (
-                  <p key={index} className="inline-flex items-center space-x-3">
-                    <Image
-                      src={farm!.asset.logos[index]}
-                      alt={token?.address}
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
-                    <span className="inline-flex text-lg font-medium leading-5 gap-x-2">
-                      {removeMethodId === RemoveMethod.ALL
-                        ? (minAmount as number[])[index] < 0.01
-                          ? "<0.01"
-                          : toUnits((minAmount as number[])[index], 2)
-                        : ""}{" "}
-                      {token?.symbol}
-                    </span>
-                    {index !== tokens.length - 1 && (
-                      <span className="text-lg font-medium leading-5">+</span>
-                    )}
-                  </p>
-                ))}
-              </button>
-            ) : (
-              ""
-            )}
+        {/* Process Spinner */}
+        {isProcessing && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <ProcessSpinner />
           </div>
-        </div>
+        )}
         <div className="flex flex-row mt-6 gap-2">
           {!isLpApprovedSuccess && !approveLpSuccessTxn && (
             <MButton
@@ -584,8 +585,9 @@ const RemoveSectionStable: FC = () => {
                 typeof approveLpToken == "undefined" ||
                 (methodId == Method.PERCENTAGE
                   ? fixedAmtNum(percentage) <= 0
-                  : fixedAmtNum(lpTokens) <= 0)
-                // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
+                  : fixedAmtNum(lpTokens) <= 0) ||
+                (methodId == Method.LP &&
+                  fixedAmtNum(lpTokens) > fixedAmtNum(lpBalance))
               }
               onClick={async () => {
                 const txn = await approveLpToken?.();
@@ -603,7 +605,6 @@ const RemoveSectionStable: FC = () => {
               (!isLpApprovedSuccess && !approveLpSuccessTxn) ||
               (methodId == Method.LP &&
                 fixedAmtNum(lpTokens) > fixedAmtNum(lpBalance))
-              // parseFloat(nativeBal?.formatted ?? "0") <= gasEstimate
             }
             text="Confirm Removing Liquidity"
             onClick={() => {
