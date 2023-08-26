@@ -22,7 +22,7 @@ import {
   useWaitForTransaction,
 } from "wagmi";
 import { useEffect, useMemo, useState } from "react";
-import Spinner from "../Spinner";
+import { Spinner } from "../Spinners";
 import Link from "next/link";
 import MButton from "../MButton";
 import {

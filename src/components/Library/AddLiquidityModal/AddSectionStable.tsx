@@ -34,7 +34,7 @@ import { Address, parseAbi, parseEther, parseUnits } from "viem";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import clsx from "clsx";
-import Spinner from "../Spinner";
+import { Spinner } from "../Spinners";
 import Link from "next/link";
 import Image from "next/image";
 import useMinLPTokensStable from "@hooks/useMinLPTokensStable";

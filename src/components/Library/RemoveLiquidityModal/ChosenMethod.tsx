@@ -16,6 +16,7 @@ interface Props {
   setLpTokens: (value: string) => void;
   handleLpTokensChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   methodId: Method;
+  disableInput?: boolean;
 }
 
 // ChosenMethod returns the type of input field
@@ -30,6 +31,7 @@ const ChosenMethod: React.FC<Props> = ({
   setLpTokens,
   handleLpTokensChange,
   methodId,
+  disableInput = false,
 }) => {
   return methodId === Method.PERCENTAGE ? (
     <div className="relative flex flex-row justify-between px-6 py-[14px] border border-[#D0D5DD] rounded-lg">
@@ -52,6 +54,7 @@ const ChosenMethod: React.FC<Props> = ({
         )}
         onChange={handlePercChange}
         value={percentage}
+        disabled={disableInput}
         autoFocus
       />
       <span
@@ -120,6 +123,7 @@ const ChosenMethod: React.FC<Props> = ({
         onChange={handleLpTokensChange}
         value={lpTokens}
         autoFocus
+        disabled={disableInput}
       />
       <div className="inline-flex items-center gap-x-2">
         <div className="flex flex-col items-end text-[#667085] text-sm font-bold leading-5 opacity-50">

@@ -18,7 +18,7 @@ import {
   mangataPoolsAtom,
   subPosLoadingAtom,
 } from "@store/commonAtoms";
-import Spinner from "../Spinner";
+import { Spinner } from "../Spinners";
 // import { useToast } from "@chakra-ui/react";
 // import ToastWrapper from "../ToastWrapper";
 import MButton from "../MButton";

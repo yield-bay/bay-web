@@ -200,7 +200,7 @@ const FarmPage: NextPage = () => {
                 : isConnected) && (
                 <Button
                   size="custom"
-                  style="inline-flex justify-between items-center gap-x-2 border border-[#D0D5DD]"
+                  style="inline-flex justify-between items-center gap-x-2"
                   type={ButtonType.PRIMARY}
                   onButtonClick={() => {
                     setSelectedFarm(farm);

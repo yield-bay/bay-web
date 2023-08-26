@@ -25,7 +25,7 @@ import {
 import { FarmType, MangataPool } from "@utils/types/common";
 import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import Image from "next/image";
-import Spinner from "../Spinner";
+import { Spinner } from "../Spinners";
 import { CogIcon } from "@heroicons/react/solid";
 // import { useToast } from "@chakra-ui/react";
 // import ToastWrapper from "../ToastWrapper";

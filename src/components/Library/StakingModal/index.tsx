@@ -29,7 +29,7 @@ import LiquidityModalWrapper from "../LiquidityModalWrapper";
 import { CogIcon } from "@heroicons/react/solid";
 import Image from "next/image";
 import { FarmType } from "@utils/types/common";
-import Spinner from "../Spinner";
+import { ProcessSpinner, Spinner } from "../Spinners";
 import Link from "next/link";
 import { fixedAmtNum, getChefAbi } from "@utils/abis/contract-helper-methods";
 import WrongNetworkModal from "../WrongNetworkModal";
@@ -165,13 +165,7 @@ const StakingModal = () => {
       tokenPricesMap[
         `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    // console.log(
-    //   "tokenkey",
-    //   `${farm?.chain!}-${farm?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    // );
-    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [farm, tokenPricesMap]);
@@ -282,8 +276,6 @@ const StakingModal = () => {
         },
       });
       (async () => {
-        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
-
         const a = await updateEvmPositions({
           farm: {
             id: farm?.id!,
@@ -300,7 +292,6 @@ const StakingModal = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -325,9 +316,16 @@ const StakingModal = () => {
     isSlippageModalOpen;
 
   const InputStep = () => {
+    const isProcessing = isLoadingApproveCall || isLoadingApproveTxn;
+
     return (
       <div className="w-full flex mt-8 flex-col gap-y-8">
-        <div className="flex flex-col gap-y-3">
+        <div
+          className={clsx(
+            isProcessing && "opacity-20 select-none",
+            "relative flex flex-col gap-y-3"
+          )}
+        >
           <ChosenMethod
             farm={farm!}
             percentage={percentage.toString()}
@@ -381,6 +379,12 @@ const StakingModal = () => {
             </p>
           </div>
         </div>
+        {/* Process Spinner */}
+        {isProcessing && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <ProcessSpinner />
+          </div>
+        )}
         <div className="flex flex-row mt-6 gap-2">
           {!isApprovedSuccess && !isSuccessApproveTxn && (
             <MButton
