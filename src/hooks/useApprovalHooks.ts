@@ -69,11 +69,6 @@ const useIsApprovedToken = (
       ? false
       : inputAmount.isLessThanOrEqualTo(allowance);
   // console.log("compare", compare);
-  // const isSuccess = useMemo(() => {
-  //   // return !tokenBalance
-  //   //   ? false
-  //   //   : numdata >= formatData(parseFloat(tokenBalance));
-  //   return compare;
   return { data, isLoading, isError, isSuccess: compare };
 };
 

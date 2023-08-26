@@ -11,7 +11,7 @@ import { useAtom } from "jotai";
 import {
   addLiqModalOpenAtom,
   evmPosLoadingAtom,
-  lpUpdatedAtom,
+  // lpUpdatedAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
 import {
@@ -102,12 +102,9 @@ const AddSectionStable: FC = () => {
 
   const isCorrectChain = farm?.chain.toLowerCase() == chain?.name.toLowerCase();
 
-  // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
-  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
-  const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
   // Checking if farm assets have a lp-token pair
   const logos = useMemo(() => {
     const symbol = farm?.asset.symbol;
@@ -125,10 +122,6 @@ const AddSectionStable: FC = () => {
   }, [farm]);
 
   const tokens = farm?.asset.underlyingAssets ?? [];
-
-  // useEffect(() => {
-  //   // console.log("balancemap", balanceMap);
-  // }, [balanceMap]);
 
   // Input focus states
   const [focusedInput, setFocusedInput] = useState<number>(0);
@@ -308,9 +301,13 @@ const AddSectionStable: FC = () => {
     });
   }, [approvalMap, inputMapAmount]);
 
+  const unapprovedTokens = useMemo(() => {
+    return tokens.filter((token) => !approvalMap[token.address]);
+  }, [approvalMap, tokens]);
+
   // useEffect(() => {
-  // console.log("balanceMap", balanceMap);
-  // }, [balanceMap]);
+  //   console.log("unapprovedTokens", unapprovedTokens);
+  // }, [unapprovedTokens]);
 
   const isSufficientBalance = useMemo(() => {
     return Object.entries(balanceMap).every(([tokenAddress, balance]) => {
@@ -412,7 +409,7 @@ const AddSectionStable: FC = () => {
         {/* Buttons */}
         <div className="w-full">
           <div className="flex flex-col gap-y-3 w-full">
-            {tokens.map((token, index) => (
+            {/* {tokens.map((token, index) => (
               <TokenButton
                 key={`${token?.symbol}-${index}`}
                 token={token}
@@ -423,7 +420,16 @@ const AddSectionStable: FC = () => {
                 setApprovalMap={setApprovalMap}
                 isCorrectChain={isCorrectChain}
               />
-            ))}
+            ))} */}
+            <TokenButton
+              key={`${unapprovedTokens[0]?.symbol}-${unapprovedTokens[0]?.decimals}`}
+              token={unapprovedTokens[0] ?? []}
+              inputMapAmount={inputMapAmount}
+              selectedFarm={farm!}
+              approvalMap={approvalMap}
+              setApprovalMap={setApprovalMap}
+              isCorrectChain={isCorrectChain}
+            />
           </div>
           {isRequirementApproved && (
             <MButton

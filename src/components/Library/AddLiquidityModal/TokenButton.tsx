@@ -16,11 +16,11 @@ interface Props {
       [address: Address]: boolean;
     }>
   >;
-  setIsApproving: React.Dispatch<
-    React.SetStateAction<{
-      [address: `0x${string}`]: boolean;
-    }>
-  >;
+  // setIsApproving: React.Dispatch<
+  //   React.SetStateAction<{
+  //     [address: `0x${string}`]: boolean;
+  //   }>
+  // >;
   isCorrectChain: boolean;
 }
 
@@ -30,7 +30,7 @@ const TokenButton: React.FC<Props> = ({
   selectedFarm,
   approvalMap,
   setApprovalMap,
-  setIsApproving,
+  // setIsApproving,
   isCorrectChain,
 }) => {
   const { address } = useAccount();
