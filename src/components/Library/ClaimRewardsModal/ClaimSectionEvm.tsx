@@ -41,26 +41,21 @@ import {
 import { handleClaimRewardsEvent } from "@utils/tracking";
 import getTimestamp from "@utils/getTimestamp";
 import Countdown from "../Countdown";
-// import { FarmType } from "@utils/types/common";
+import WrongNetworkModal from "../WrongNetworkModal";
 
 const ClaimSectionEvm = () => {
   const [isOpen, setIsOpen] = useAtom(claimModalOpenAtom);
   const { address, connector } = useAccount();
   const { chain } = useNetwork();
   const [position] = useAtom(selectedPositionAtom);
-  // const [lpUpdated, setLpUpdated] = useAtom(lpUpdatedAtom);
-
-  // useEffect(() => console.log("selected position @claimrewards"), [position]);
 
   const [isProcessStep, setIsProcessStep] = useState(false);
   const isOpenModalCondition = false; // Conditions to be written
   const [txnHash, setTxnHash] = useState<string>("");
 
-  // const [farms] = useAtom(farmsAtom);
   const [positions, setPositions] = useAtom(positionsAtom);
   const [lpTokenPricesMap, setLpTokenPricesMap] = useAtom(lpTokenPricesAtom);
   const [tokenPricesMap] = useAtom(tokenPricesAtom);
-  // const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
 
   useEffect(() => {
     setIsProcessStep(false);
@@ -81,13 +76,7 @@ const ClaimSectionEvm = () => {
       tokenPricesMap[
         `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
       ];
-    // console.log(
-    //   "tokenkey",
-    //   `${position?.chain!}-${position?.protocol!}-${tokenSymbol}-${tokenAddress}`
-    // );
-    // console.log("token", tokenPrice);
     if (!!tokenPrice && typeof tokenPrice == "number") {
-      // console.log("...setting tokenprice", tokenPrice);
       setNativePrice(tokenPrice);
     }
   }, [position, tokenPricesMap]);
@@ -97,7 +86,7 @@ const ClaimSectionEvm = () => {
   }, [position]);
 
   // Gas estimate
-  const { gasEstimate } = useGasEstimation(
+  const { gasEstimate, isError } = useGasEstimation(
     position!.chef,
     0,
     4,
@@ -115,6 +104,9 @@ const ClaimSectionEvm = () => {
   const chefAbi = useMemo(() => {
     return getChefAbi(position?.protocol!, position?.chef as Address);
   }, [position]);
+
+  const isCorrectChain =
+    position?.chain.toLowerCase() == chain?.name.toLowerCase();
 
   const {
     data: claimRewardsData,
@@ -140,7 +132,6 @@ const ClaimSectionEvm = () => {
 
   useEffect(() => {
     if (isSuccessClaimRewardsTxn) {
-      // console.log("claimrewards txn success!");
       // Tracking
       handleClaimRewardsEvent({
         userAddress: address!,
@@ -163,8 +154,6 @@ const ClaimSectionEvm = () => {
         })!,
       });
       (async () => {
-        // console.log("beforeuepos", position?.chain!, position?.protocol!);
-
         const a = await updateEvmPositions({
           farm: {
             id: position?.id!,
@@ -200,22 +189,12 @@ const ClaimSectionEvm = () => {
         address!,
         position?.lpAddress!
       );
-
-      // console.log("CLAIMREWARDS contract @params", {
-      //   address: position?.chef,
-      //   abi: parseAbi(getChefAbi(position?.protocol!, position?.chef!)),
-      //   functionName: getClaimRewardsFunctionName(position?.protocol!),
-      //   chainId: chain?.id,
-      //   args: thisArgs,
-      // });
-
       const txnRes = await claimRewards?.({
         args: [thisArgs],
       });
       if (!!txnRes) {
         setTxnHash(txnRes.hash);
       }
-      // console.log("called claim rewards method:", txnRes);
     } catch (error) {
       console.error("error while claiming rewards:", error);
     }
@@ -271,12 +250,23 @@ const ClaimSectionEvm = () => {
           >
             <div className="inline-flex justify-between text-[#4E4C4C] font-bold leading-5 text-base">
               <span>Estimated Gas Fees:</span>
-              <p>
-                <span className="opacity-40 mr-2 font-semibold">
-                  {gasEstimate.toFixed(3) ?? 0} {nativeBal?.symbol}
-                </span>
-                <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
-              </p>
+              {isError ? (
+                <p>Error estimating gas</p>
+              ) : gasEstimate == 0 ? (
+                <p>estimating gas...</p>
+              ) : (
+                <p>
+                  <span className="opacity-40 mr-2 font-semibold">
+                    {gasEstimate < 0.001 ? "<0.001" : gasEstimate.toFixed(3)}{" "}
+                    {nativeBal?.symbol}
+                  </span>
+                  {gasEstimate * nativePrice < 0.00001 ? (
+                    "<$0.00001"
+                  ) : (
+                    <span>${(gasEstimate * nativePrice).toFixed(5)}</span>
+                  )}
+                </p>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-y-2 items-center rounded-b-xl pt-[14px] pb-2 text-center">
@@ -384,6 +374,16 @@ const ClaimSectionEvm = () => {
       </div>
     );
   };
+
+  if (!isCorrectChain) {
+    return (
+      <WrongNetworkModal
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        farmChain={position?.chain.toLowerCase()!}
+      />
+    );
+  }
 
   return !!position ? (
     <LiquidityModalWrapper
