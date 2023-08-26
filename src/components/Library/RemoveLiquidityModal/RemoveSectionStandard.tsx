@@ -3,7 +3,7 @@ import { useAtom } from "jotai";
 import clsx from "clsx";
 import {
   // evmPosLoadingAtom,
-  lpUpdatedAtom,
+  // lpUpdatedAtom,
   removeLiqModalOpenAtom,
   slippageModalOpenAtom,
 } from "@store/commonAtoms";
@@ -91,10 +91,10 @@ const RemoveSectionStandard = () => {
   );
 
   const tokenNames = formatTokenSymbols(farm?.asset.symbol ?? "");
-  // const [token0, token1] = tokenNames;
   const [farmAsset0, farmAsset1] =
     farm?.asset.underlyingAssets ?? new Array<UnderlyingAssets>();
 
+  // The minimum amoun of tokens that will be returned when removing liquidity from a liquidity pool
   const minUnderlyingAssets = useMinimumUnderlyingTokens(
     farm?.asset.address!,
     farm?.protocol!,
@@ -222,23 +222,15 @@ const RemoveSectionStandard = () => {
   });
 
   // useEffect(() => {
-  //   if (!isLpApprovedLoading) {
-  //     // console.log("isTokenLpApproved", !!Number(isLpApprovedData));
-  //   }
-  // }, [isLpApprovedLoading]);
-
-  useEffect(() => {
-    if (isLoadingRemoveLiqTxn) {
-      // console.log("removeliq method loading... sign the txn");
-    } else if (isLoadingRemoveLiqTxn) {
-      // console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
-    }
-  }, [isLoadingRemoveLiqTxn, isLoadingRemoveLiqTxn]);
+  // if (isLoadingRemoveLiqTxn) {
+  // console.log("removeliq method loading... sign the txn");
+  // } else if (isLoadingRemoveLiqTxn) {
+  // console.log("removeliq txn loading...", isLoadingRemoveLiqTxn);
+  // }
+  // }, [isLoadingRemoveLiqTxn, isLoadingRemoveLiqTxn]);
 
   useEffect(() => {
     if (isSuccessRemoveLiqTxn) {
-      // console.log("liquidity removed successfully", removeLiqTxnData);
-
       handleRemoveLiquidityEvent({
         userAddress: address!,
         walletType: "EVM",
@@ -276,8 +268,6 @@ const RemoveSectionStandard = () => {
         },
       });
       (async () => {
-        // console.log("beforeuepos", farm?.chain!, farm?.protocol!);
-
         const a = await updateEvmPositions({
           farm: {
             id: farm?.id!,
@@ -294,7 +284,6 @@ const RemoveSectionStandard = () => {
           tokenPricesMap,
           lpTokenPricesMap,
         });
-        // console.log("npos", a?.name, a?.position);
         const tempPositions = { ...positions };
         tempPositions[a?.name!] = a?.position;
         setPositions((prevState: any) => ({
@@ -311,31 +300,6 @@ const RemoveSectionStandard = () => {
       const block = await publicClient.getBlock();
       const blocktimestamp =
         Number(block.timestamp.toString() + "000") + THIRTY_MINUTES_IN_MS; // Adding 30 minutes
-
-      // console.log(
-      //   "calling removeliquidity method...",
-      //   lpTokens,
-      //   lpBalance,
-      //   methodId == Method.PERCENTAGE
-      //     ? parseUnits(
-      //         `${
-      //           ((parseFloat(lpBalance!) *
-      //             parseFloat(percentage == "" ? "0" : percentage)) /
-      //             100) *
-      //           10 ** 18
-      //         }`,
-      //         18
-      //       )
-      //     : parseUnits(`${parseFloat(lpTokens) * 10 ** 18}`, 18),
-      //   parseUnits(
-      //     `${minUnderlyingAssets[0].toString() as any}`,
-      //     farmAsset0?.decimals
-      //   ), // amountAMin
-      //   parseUnits(
-      //     `${minUnderlyingAssets[1].toString() as any}`,
-      //     farmAsset1?.decimals
-      //   ) // amountBMin
-      // );
 
       const removeArgs = [
         farmAsset0?.address, // tokenA Address
@@ -569,42 +533,23 @@ const RemoveSectionStandard = () => {
       [
         farmAsset0?.address, // tokenA Address
         farmAsset1?.address, // tokenB Address
-        methodId == Method.PERCENTAGE
-          ? // ? parseUnits(
-            //     `${
-            //       (fixedAmtNum(lpBalance!) *
-            //         parseFloat(percentage == "" ? "0" : percentage)) /
-            //       100
-            //     }`,
-            //     18
-            //   )
-            BigNumber(lpBalance!, 10)
+        methodId == Method.PERCENTAGE // Lp Amount to be removed
+          ? BigNumber(lpBalance!, 10)
               .multipliedBy(
                 parseFloat(percentage == "" ? "0" : percentage) / 100
               )
               .multipliedBy(BigNumber(10).pow(18))
               .decimalPlaces(0, 1)
               .toString()
-          : // : parseUnits(`${parseFloat(lpTokens)}`, 18), // Liquidity
-            BigNumber(lpTokens)
+          : BigNumber(lpTokens)
               .multipliedBy(BigNumber(10).pow(18))
               .decimalPlaces(0, 1)
               .toString(),
-        // 1,
-        // 1,
-        // parseUnits(
-        //   `${minUnderlyingAssets[0].toString() as any}`,
-        //   farmAsset0?.decimals
-        // ), // amountAMin
-        // parseUnits(
-        //   `${minUnderlyingAssets[1].toString() as any}`,
-        //   farmAsset1?.decimals
-        // ), // amountBMin
-        BigNumber(minUnderlyingAssets[0].toString())
+        BigNumber(minUnderlyingAssets[0].toString()) // amountAMin
           .multipliedBy(BigNumber(10).pow(farmAsset0?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
-        BigNumber(minUnderlyingAssets[1].toString())
+        BigNumber(minUnderlyingAssets[1].toString()) // amountBMin
           .multipliedBy(BigNumber(10).pow(farmAsset1?.decimals))
           .decimalPlaces(0, 1)
           .toString(),
