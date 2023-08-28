@@ -302,8 +302,11 @@ const AddSectionStable: FC = () => {
   }, [approvalMap, inputMapAmount]);
 
   const unapprovedTokens = useMemo(() => {
-    return tokens.filter((token) => !approvalMap[token.address]);
-  }, [approvalMap, tokens]);
+    return tokens.filter(
+      (token) =>
+        inputMapAmount[token.address] > 0 && !approvalMap[token.address]
+    );
+  }, [approvalMap, tokens, inputMapAmount]);
 
   // useEffect(() => {
   //   console.log("unapprovedTokens", unapprovedTokens);
@@ -489,6 +492,7 @@ const AddSectionStable: FC = () => {
             1784096161000, // deadline (uint256)
           ]
     );
+
     return (
       <div className="flex flex-col gap-y-8 text-left">
         <button

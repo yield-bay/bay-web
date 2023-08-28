@@ -123,7 +123,7 @@ const TokenButton: React.FC<Props> = ({
   return (
     <MButton
       type="secondary"
-      className={clsx(!inputMapAmount[token?.address] && "hidden")}
+      // className={clsx(!inputMapAmount[token?.address] && "hidden")}
       text={
         typeof approveToken == "undefined"
           ? "Some error, try refreshing!"
