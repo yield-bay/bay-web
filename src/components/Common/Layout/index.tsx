@@ -56,8 +56,6 @@ import {
   fetchSubstratePositions,
 } from "@utils/position-utils/substratePositions";
 import Notifications from "@components/Library/Notifications";
-import Banner from "../Header/Banner";
-import { useLocalStorage, useSessionStorage } from "usehooks-ts";
 
 interface Props {
   children: ReactNode;
@@ -107,11 +105,6 @@ const Layout: FC<Props> = ({ children }) => {
 
   const [, setIsEvmPosLoading] = useAtom(evmPosLoadingAtom);
   const [, setIsSubPosLoading] = useAtom(subPosLoadingAtom);
-  const [showBanner, setShowBanner] = useState(true);
-
-  const handleOnClose = () => {
-    setShowBanner(false);
-  };
 
   // Accounts for testing
   // const address = "0xf3616d8cc52c67e7f0991a0a3c6db9f5025fa60c"; // Nightwing's Address
@@ -229,14 +222,6 @@ const Layout: FC<Props> = ({ children }) => {
 
     const mangataNativeToken = _.first(mangataHelper.config.assets);
 
-    // console.log(
-    //   `Mangata chain name: ${mangataChainName}, native token: ${JSON.stringify(
-    //     mangataNativeToken
-    //   )}\n`
-    // );
-
-    // console.log("1. Reading token and balance of account ...");
-
     // New account instance from connected account
     const account1 = new Account({
       address: account?.address,
@@ -347,7 +332,6 @@ const Layout: FC<Props> = ({ children }) => {
       {claimModalOpen && <ClaimRewardsModal />}
       <SlippageModal />
       <Notifications />
-      {showBanner && <Banner onClose={handleOnClose} />}
       <Header />
       {children}
       <Footer />
