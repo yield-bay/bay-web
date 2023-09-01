@@ -51,7 +51,6 @@ const useIsApprovedToken = (
     0,
     1
   );
-  // console.log("allowance bigint", allowance);
 
   const inputAmount = useMemo(() => {
     if (tokenBalance?.decimals && input) {
