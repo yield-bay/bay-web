@@ -157,7 +157,7 @@ const MobileFarmList: FC<Props> = ({
                   <div className="flex flex-row items-center gap-x-4">
                     <FarmAssets logos={farm?.asset.logos} />
                     <FarmBadge type={formatFarmType(farm?.farmType)} />
-                    <Image
+                    {/* <Image
                       src="/icons/umbrella.svg"
                       alt="supported farm"
                       height={20}
@@ -166,7 +166,7 @@ const MobileFarmList: FC<Props> = ({
                         "ml-2",
                         !checkIfPoolSupported(farm) && "saturate-0"
                       )}
-                    />
+                    /> */}
                   </div>
                   <div className="text-[#101828] font-medium text-sm leading-5">
                     {tokenNames.map((tokenName, index) => (
@@ -175,19 +175,20 @@ const MobileFarmList: FC<Props> = ({
                         {index !== tokenNames.length - 1 && "-"}
                       </span>
                     ))}
-                    <div className="font-normal text-sm leading-5 text-[#475467]">
+                    <div className="font-normal text-xs leading-5 text-[#475467]">
                       {formatFirstLetter(farm?.protocol)} on{" "}
                       {formatFirstLetter(farm?.chain)}
                     </div>
                   </div>
                   <div className="inline-flex items-center gap-x-3">
-                    <SafetyScorePill score={safetyScore} />
-                    <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-[#F4F4F4] text-[#475467]">
+                    
+                    <span className="py-[2px] px-[10px] rounded-full w-max text-sm leading-5 font-medium bg-slate-100 text-slate-700">
                       {toDollarUnits(farm?.tvl, 1)} TVL
                     </span>
-                    <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-[#F4F4F4] text-[#475467]">
+                    <span className="py-[2px] px-[10px] rounded-full w-max text-[10px] leading-5 font-medium text-sm bg-slate-100 text-slate-700">
                       {(farm?.apr.base + farm?.apr.reward).toFixed(2)}% APR
                     </span>
+                    <SafetyScorePill score={safetyScore} />
                   </div>
                 </div>
                 <div className="flex flex-row gap-x-3 items-center justify-between mt-[42px]">
@@ -201,7 +202,7 @@ const MobileFarmList: FC<Props> = ({
                   >
                     View Farm
                   </Button>
-                  <button
+                  {/* <button
                     className="bg-[#EDEDFF] text-[#1D2939] font-medium text-sm leading-5 rounded-lg shadow py-[10px] px-4"
                     onClick={() => {
                       setPositionModalOpen(true);
@@ -209,7 +210,7 @@ const MobileFarmList: FC<Props> = ({
                     }}
                   >
                     My Position
-                  </button>
+                  </button> */}
                   <ShareFarm farm={farm} />
                 </div>
               </div>
