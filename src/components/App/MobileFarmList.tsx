@@ -181,7 +181,6 @@ const MobileFarmList: FC<Props> = ({
                     </div>
                   </div>
                   <div className="inline-flex items-center gap-x-3">
-                    
                     <span className="py-[2px] px-[10px] rounded-full w-max text-sm leading-5 font-medium bg-slate-100 text-slate-700">
                       {toDollarUnits(farm?.tvl, 1)} TVL
                     </span>
