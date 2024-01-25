@@ -53,7 +53,7 @@ const Hero: FC<Props> = ({ farms, totalProtocols, setOpen }) => {
           className="mb-6 sm:mb-6 sm:px-4 font-satoshi font-bold text-[28px] sm:text-3xl md:text-[32px] leading-8 sm:leading-10 md:leading-[38.4px] text-center text-slate-100"
           id="hero-heading"
         >
-          Discover & Earn in Polkadot's Paraverse
+          Discover & Earn in Polkadot&apos;s Paraverse
         </h1>
         <div className="flex justify-center w-full">
           <FarmStats
